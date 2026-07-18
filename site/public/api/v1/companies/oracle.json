@@ -1,0 +1,147 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "1341439",
+  "class": "public",
+  "facts": [
+    {
+      "accession": "0001193125-26-101045",
+      "duration_days": 272,
+      "entity_id": "oracle",
+      "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "filed": "2026-03-11",
+      "fiscal_period": "Q3",
+      "form": "10-Q",
+      "kind": "operating_cash_flow",
+      "period_end": "2026-02-28",
+      "period_start": "2025-06-01",
+      "reported_value": 17357000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
+      "unit": "USD",
+      "value_usd_billions": 17.357
+    },
+    {
+      "accession": "0001193125-26-101045",
+      "duration_days": 272,
+      "entity_id": "oracle",
+      "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "filed": "2026-03-11",
+      "fiscal_period": "Q3",
+      "form": "10-Q",
+      "kind": "capital_expenditures",
+      "period_end": "2026-02-28",
+      "period_start": "2025-06-01",
+      "reported_value": 39170000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
+      "unit": "USD",
+      "value_usd_billions": 39.17
+    }
+  ],
+  "id": "oracle",
+  "name": "Oracle",
+  "quantitative_status": "reported_facts_same_period",
+  "recent_filings": [
+    {
+      "accession": "0001193125-26-277521",
+      "filed": "2026-06-22",
+      "form": "10-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/0001193125-26-277521-index.html",
+      "report_date": "2026-05-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+    },
+    {
+      "accession": "0001193125-26-265848",
+      "filed": "2026-06-10",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/0001193125-26-265848-index.html",
+      "report_date": "2026-06-10",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-20260610.htm"
+    },
+    {
+      "accession": "0001193125-26-219708",
+      "filed": "2026-05-12",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526219708/0001193125-26-219708-index.html",
+      "report_date": "2026-05-06",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526219708/d76569d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-142939",
+      "filed": "2026-04-06",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526142939/0001193125-26-142939-index.html",
+      "report_date": "2026-04-01",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526142939/d132760d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-101045",
+      "filed": "2026-03-11",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
+      "report_date": "2026-02-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/orcl-20260228.htm"
+    },
+    {
+      "accession": "0001193125-26-100148",
+      "filed": "2026-03-10",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/0001193125-26-100148-index.html",
+      "report_date": "2026-03-10",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/orcl-20260310.htm"
+    },
+    {
+      "accession": "0001193125-26-039344",
+      "filed": "2026-02-05",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526039344/0001193125-26-039344-index.html",
+      "report_date": "2026-02-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526039344/d63638d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-037840",
+      "filed": "2026-02-04",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526037840/0001193125-26-037840-index.html",
+      "report_date": "2026-02-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526037840/d23732d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-009002",
+      "filed": "2026-01-09",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526009002/0001193125-26-009002-index.html",
+      "report_date": "2026-01-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526009002/d34442d8k.htm"
+    },
+    {
+      "accession": "0001193125-25-315925",
+      "filed": "2025-12-11",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525315925/0001193125-25-315925-index.html",
+      "report_date": "2025-11-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525315925/orcl-20251130.htm"
+    },
+    {
+      "accession": "0001193125-25-314207",
+      "filed": "2025-12-10",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525314207/0001193125-25-314207-index.html",
+      "report_date": "2025-12-10",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525314207/orcl-20251210.htm"
+    },
+    {
+      "accession": "0001193125-25-291441",
+      "filed": "2025-11-21",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525291441/0001193125-25-291441-index.html",
+      "report_date": "2025-11-18",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525291441/d43173d8k.htm"
+    }
+  ],
+  "role": "cloud-provider",
+  "source": "SEC EDGAR",
+  "ticker": "ORCL"
+}

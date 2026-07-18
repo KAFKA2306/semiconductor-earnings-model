@@ -1,0 +1,1290 @@
+{
+  "companies": [
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1018724",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001018724-26-000014",
+          "duration_days": 89,
+          "entity_id": "amazon",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-04-30",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 26032000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+          "unit": "USD",
+          "value_usd_billions": 26.032
+        },
+        {
+          "accession": "0001018724-26-000014",
+          "duration_days": 89,
+          "entity_id": "amazon",
+          "fact_tag": "PaymentsToAcquireProductiveAssets",
+          "filed": "2026-04-30",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "capital_expenditures",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 44203000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+          "unit": "USD",
+          "value_usd_billions": 44.203
+        }
+      ],
+      "id": "amazon",
+      "name": "Amazon",
+      "quantitative_status": "reported_facts_same_period",
+      "recent_filings": [
+        {
+          "accession": "0001104659-26-082293",
+          "filed": "2026-07-09",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926082293/0001104659-26-082293-index.html",
+          "report_date": "2026-07-09",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926082293/tm2619352d4_8k.htm"
+        },
+        {
+          "accession": "0001104659-26-073562",
+          "filed": "2026-06-12",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926073562/0001104659-26-073562-index.html",
+          "report_date": "2026-06-12",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926073562/tm2613616d5_8k.htm"
+        },
+        {
+          "accession": "0001104659-26-072140",
+          "filed": "2026-06-10",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926072140/0001104659-26-072140-index.html",
+          "report_date": "2026-06-08",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926072140/tm2613616d4_8k.htm"
+        },
+        {
+          "accession": "0001104659-26-065717",
+          "filed": "2026-05-22",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926065717/0001104659-26-065717-index.html",
+          "report_date": "2026-05-20",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926065717/tm2614288d1_8k.htm"
+        },
+        {
+          "accession": "0001018724-26-000014",
+          "filed": "2026-04-30",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm"
+        },
+        {
+          "accession": "0001018724-26-000012",
+          "filed": "2026-04-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000012/0001018724-26-000012-index.html",
+          "report_date": "2026-04-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000012/amzn-20260429.htm"
+        },
+        {
+          "accession": "0001104659-26-042880",
+          "filed": "2026-04-14",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926042880/0001104659-26-042880-index.html",
+          "report_date": "2026-04-14",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926042880/tm2611746d1_8k.htm"
+        },
+        {
+          "accession": "0001104659-26-041034",
+          "filed": "2026-04-09",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926041034/0001104659-26-041034-index.html",
+          "report_date": "2026-04-09",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926041034/tm263815d2_8k.htm"
+        },
+        {
+          "accession": "0001104659-26-028556",
+          "filed": "2026-03-16",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926028556/0001104659-26-028556-index.html",
+          "report_date": "2026-03-16",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926028556/tm266670d9_8k.htm"
+        },
+        {
+          "accession": "0001104659-26-027729",
+          "filed": "2026-03-13",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926027729/0001104659-26-027729-index.html",
+          "report_date": "2026-03-13",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926027729/tm266670d8_8k.htm"
+        },
+        {
+          "accession": "0001104659-26-021050",
+          "filed": "2026-02-27",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926021050/0001104659-26-021050-index.html",
+          "report_date": "2026-02-27",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926021050/tm267374d1_8k.htm"
+        },
+        {
+          "accession": "0001018724-26-000004",
+          "filed": "2026-02-06",
+          "form": "10-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.html",
+          "report_date": "2025-12-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+        }
+      ],
+      "role": "hyperscaler",
+      "source": "SEC EDGAR",
+      "ticker": "AMZN"
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1652044",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001652044-26-000048",
+          "duration_days": 89,
+          "entity_id": "alphabet",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-04-30",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 45790000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+          "unit": "USD",
+          "value_usd_billions": 45.79
+        },
+        {
+          "accession": "0001652044-26-000048",
+          "duration_days": 89,
+          "entity_id": "alphabet",
+          "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "filed": "2026-04-30",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "capital_expenditures",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 35674000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+          "unit": "USD",
+          "value_usd_billions": 35.674
+        }
+      ],
+      "id": "alphabet",
+      "name": "Alphabet",
+      "quantitative_status": "reported_facts_same_period",
+      "recent_filings": [
+        {
+          "accession": "0001193125-26-267578",
+          "filed": "2026-06-11",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526267578/0001193125-26-267578-index.html",
+          "report_date": "2026-06-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526267578/d57679d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-259830",
+          "filed": "2026-06-05",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/0001193125-26-259830-index.html",
+          "report_date": "2026-06-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/d36818d8k.htm"
+        },
+        {
+          "accession": "0001652044-26-000059",
+          "filed": "2026-06-05",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/0001652044-26-000059-index.html",
+          "report_date": "2026-06-02",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/goog-20260602.htm"
+        },
+        {
+          "accession": "0001193125-26-257724",
+          "filed": "2026-06-04",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/0001193125-26-257724-index.html",
+          "report_date": "2026-06-04",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/d83560d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-234488",
+          "filed": "2026-05-21",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/0001193125-26-234488-index.html",
+          "report_date": "2026-05-21",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/d144566d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-216986",
+          "filed": "2026-05-11",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526216986/0001193125-26-216986-index.html",
+          "report_date": "2026-05-11",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526216986/d109021d8k.htm"
+        },
+        {
+          "accession": "0001652044-26-000048",
+          "filed": "2026-04-30",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm"
+        },
+        {
+          "accession": "0001652044-26-000043",
+          "filed": "2026-04-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000043/0001652044-26-000043-index.html",
+          "report_date": "2026-04-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000043/goog-20260429.htm"
+        },
+        {
+          "accession": "0001652044-26-000034",
+          "filed": "2026-04-10",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000034/0001652044-26-000034-index.html",
+          "report_date": "2026-04-07",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000034/goog-20260407.htm"
+        },
+        {
+          "accession": "0001652044-26-000031",
+          "filed": "2026-04-02",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000031/0001652044-26-000031-index.html",
+          "report_date": "2026-03-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000031/goog-20260330.htm"
+        },
+        {
+          "accession": "0001652044-26-000026",
+          "filed": "2026-03-06",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000026/0001652044-26-000026-index.html",
+          "report_date": "2026-03-04",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000026/goog-20260304.htm"
+        },
+        {
+          "accession": "0001193125-26-051423",
+          "filed": "2026-02-13",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526051423/0001193125-26-051423-index.html",
+          "report_date": "2026-02-13",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526051423/d946885d8k.htm"
+        }
+      ],
+      "role": "hyperscaler",
+      "source": "SEC EDGAR",
+      "ticker": "GOOGL"
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1326801",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001628280-26-028526",
+          "duration_days": 89,
+          "entity_id": "meta",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-04-30",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 32226000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.html",
+          "unit": "USD",
+          "value_usd_billions": 32.226
+        },
+        {
+          "accession": "0001628280-26-028526",
+          "duration_days": 89,
+          "entity_id": "meta",
+          "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "filed": "2026-04-30",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "capital_expenditures",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 18997000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.html",
+          "unit": "USD",
+          "value_usd_billions": 18.997
+        }
+      ],
+      "id": "meta",
+      "name": "Meta",
+      "quantitative_status": "reported_facts_same_period",
+      "recent_filings": [
+        {
+          "accession": "0001628280-26-039193",
+          "filed": "2026-05-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026039193/0001628280-26-039193-index.html",
+          "report_date": "2026-05-27",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026039193/meta-20260527.htm"
+        },
+        {
+          "accession": "0001193125-26-204128",
+          "filed": "2026-05-04",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526204128/0001193125-26-204128-index.html",
+          "report_date": "2026-04-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526204128/d134616d8k.htm"
+        },
+        {
+          "accession": "0001628280-26-028526",
+          "filed": "2026-04-30",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm"
+        },
+        {
+          "accession": "0001628280-26-028364",
+          "filed": "2026-04-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/0001628280-26-028364-index.html",
+          "report_date": "2026-04-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/meta-20260429.htm"
+        },
+        {
+          "accession": "0001628280-26-025108",
+          "filed": "2026-04-14",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025108/0001628280-26-025108-index.html",
+          "report_date": "2026-04-08",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025108/meta-20260408.htm"
+        },
+        {
+          "accession": "0001628280-26-003942",
+          "filed": "2026-01-29",
+          "form": "10-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.html",
+          "report_date": "2025-12-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+        },
+        {
+          "accession": "0001628280-26-003832",
+          "filed": "2026-01-28",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/0001628280-26-003832-index.html",
+          "report_date": "2026-01-28",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-20260128.htm"
+        },
+        {
+          "accession": "0001628280-26-002429",
+          "filed": "2026-01-16",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026002429/0001628280-26-002429-index.html",
+          "report_date": "2026-01-12",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026002429/meta-20260112.htm"
+        },
+        {
+          "accession": "0001628280-25-058337",
+          "filed": "2025-12-19",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025058337/0001628280-25-058337-index.html",
+          "report_date": "2025-12-19",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025058337/meta-20251219.htm"
+        },
+        {
+          "accession": "0001628280-25-056768",
+          "filed": "2025-12-12",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025056768/0001628280-25-056768-index.html",
+          "report_date": "2025-12-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025056768/meta-20251205.htm"
+        },
+        {
+          "accession": "0001193125-25-262593",
+          "filed": "2025-11-03",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312525262593/0001193125-25-262593-index.html",
+          "report_date": "2025-10-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312525262593/d75422d8k.htm"
+        },
+        {
+          "accession": "0001628280-25-047240",
+          "filed": "2025-10-30",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/0001628280-25-047240-index.html",
+          "report_date": "2025-09-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm"
+        }
+      ],
+      "role": "hyperscaler",
+      "source": "SEC EDGAR",
+      "ticker": "META"
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "789019",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001193125-26-191507",
+          "duration_days": 89,
+          "entity_id": "microsoft",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-04-29",
+          "fiscal_period": "Q3",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 46679000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+          "unit": "USD",
+          "value_usd_billions": 46.679
+        },
+        {
+          "accession": "0001193125-26-191507",
+          "duration_days": 89,
+          "entity_id": "microsoft",
+          "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "filed": "2026-04-29",
+          "fiscal_period": "Q3",
+          "form": "10-Q",
+          "kind": "capital_expenditures",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 30876000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+          "unit": "USD",
+          "value_usd_billions": 30.876
+        }
+      ],
+      "id": "microsoft",
+      "name": "Microsoft",
+      "quantitative_status": "reported_facts_same_period",
+      "recent_filings": [
+        {
+          "accession": "0001193125-26-258667",
+          "filed": "2026-06-05",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526258667/0001193125-26-258667-index.html",
+          "report_date": "2026-06-02",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526258667/d26760d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-224155",
+          "filed": "2026-05-14",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526224155/0001193125-26-224155-index.html",
+          "report_date": "2026-05-13",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526224155/d125909d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-191507",
+          "filed": "2026-04-29",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm"
+        },
+        {
+          "accession": "0001193125-26-191457",
+          "filed": "2026-04-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/0001193125-26-191457-index.html",
+          "report_date": "2026-04-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/msft-20260429.htm"
+        },
+        {
+          "accession": "0001193125-26-027207",
+          "filed": "2026-01-28",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.html",
+          "report_date": "2025-12-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm"
+        },
+        {
+          "accession": "0001193125-26-027198",
+          "filed": "2026-01-28",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/0001193125-26-027198-index.html",
+          "report_date": "2026-01-28",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/msft-20260128.htm"
+        },
+        {
+          "accession": "0001193125-25-311196",
+          "filed": "2025-12-08",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525311196/0001193125-25-311196-index.html",
+          "report_date": "2025-12-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525311196/d34077d8k.htm"
+        },
+        {
+          "accession": "0001193125-25-256321",
+          "filed": "2025-10-29",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256321/0001193125-25-256321-index.html",
+          "report_date": "2025-09-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256321/msft-20250930.htm"
+        },
+        {
+          "accession": "0001193125-25-256310",
+          "filed": "2025-10-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256310/0001193125-25-256310-index.html",
+          "report_date": "2025-10-28",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256310/msft-20251028.htm"
+        },
+        {
+          "accession": "0001193125-25-225125",
+          "filed": "2025-09-30",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525225125/0001193125-25-225125-index.html",
+          "report_date": "2025-09-24",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525225125/d863209d8k.htm"
+        },
+        {
+          "accession": "0000950170-25-100235",
+          "filed": "2025-07-30",
+          "form": "10-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/0000950170-25-100235-index.html",
+          "report_date": "2025-06-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm"
+        },
+        {
+          "accession": "0000950170-25-100226",
+          "filed": "2025-07-30",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100226/0000950170-25-100226-index.html",
+          "report_date": "2025-07-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100226/msft-20250730.htm"
+        }
+      ],
+      "role": "hyperscaler",
+      "source": "SEC EDGAR",
+      "ticker": "MSFT"
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1341439",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001193125-26-101045",
+          "duration_days": 272,
+          "entity_id": "oracle",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-03-11",
+          "fiscal_period": "Q3",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-02-28",
+          "period_start": "2025-06-01",
+          "reported_value": 17357000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
+          "unit": "USD",
+          "value_usd_billions": 17.357
+        },
+        {
+          "accession": "0001193125-26-101045",
+          "duration_days": 272,
+          "entity_id": "oracle",
+          "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "filed": "2026-03-11",
+          "fiscal_period": "Q3",
+          "form": "10-Q",
+          "kind": "capital_expenditures",
+          "period_end": "2026-02-28",
+          "period_start": "2025-06-01",
+          "reported_value": 39170000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
+          "unit": "USD",
+          "value_usd_billions": 39.17
+        }
+      ],
+      "id": "oracle",
+      "name": "Oracle",
+      "quantitative_status": "reported_facts_same_period",
+      "recent_filings": [
+        {
+          "accession": "0001193125-26-277521",
+          "filed": "2026-06-22",
+          "form": "10-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/0001193125-26-277521-index.html",
+          "report_date": "2026-05-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+        },
+        {
+          "accession": "0001193125-26-265848",
+          "filed": "2026-06-10",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/0001193125-26-265848-index.html",
+          "report_date": "2026-06-10",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-20260610.htm"
+        },
+        {
+          "accession": "0001193125-26-219708",
+          "filed": "2026-05-12",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526219708/0001193125-26-219708-index.html",
+          "report_date": "2026-05-06",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526219708/d76569d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-142939",
+          "filed": "2026-04-06",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526142939/0001193125-26-142939-index.html",
+          "report_date": "2026-04-01",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526142939/d132760d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-101045",
+          "filed": "2026-03-11",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
+          "report_date": "2026-02-28",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/orcl-20260228.htm"
+        },
+        {
+          "accession": "0001193125-26-100148",
+          "filed": "2026-03-10",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/0001193125-26-100148-index.html",
+          "report_date": "2026-03-10",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/orcl-20260310.htm"
+        },
+        {
+          "accession": "0001193125-26-039344",
+          "filed": "2026-02-05",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526039344/0001193125-26-039344-index.html",
+          "report_date": "2026-02-02",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526039344/d63638d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-037840",
+          "filed": "2026-02-04",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526037840/0001193125-26-037840-index.html",
+          "report_date": "2026-02-02",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526037840/d23732d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-009002",
+          "filed": "2026-01-09",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526009002/0001193125-26-009002-index.html",
+          "report_date": "2026-01-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526009002/d34442d8k.htm"
+        },
+        {
+          "accession": "0001193125-25-315925",
+          "filed": "2025-12-11",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525315925/0001193125-25-315925-index.html",
+          "report_date": "2025-11-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525315925/orcl-20251130.htm"
+        },
+        {
+          "accession": "0001193125-25-314207",
+          "filed": "2025-12-10",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525314207/0001193125-25-314207-index.html",
+          "report_date": "2025-12-10",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525314207/orcl-20251210.htm"
+        },
+        {
+          "accession": "0001193125-25-291441",
+          "filed": "2025-11-21",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525291441/0001193125-25-291441-index.html",
+          "report_date": "2025-11-18",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525291441/d43173d8k.htm"
+        }
+      ],
+      "role": "cloud-provider",
+      "source": "SEC EDGAR",
+      "ticker": "ORCL"
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1769628",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001769628-26-000222",
+          "duration_days": 89,
+          "entity_id": "coreweave",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-05-08",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 2984000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001769628.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
+          "unit": "USD",
+          "value_usd_billions": 2.984
+        },
+        {
+          "accession": "0001769628-26-000222",
+          "duration_days": 89,
+          "entity_id": "coreweave",
+          "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "filed": "2026-05-08",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "capital_expenditures",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 7695000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001769628.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
+          "unit": "USD",
+          "value_usd_billions": 7.695
+        }
+      ],
+      "id": "coreweave",
+      "name": "CoreWeave",
+      "quantitative_status": "reported_facts_same_period",
+      "recent_filings": [
+        {
+          "accession": "0001769628-26-000291",
+          "filed": "2026-06-18",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000291/0001769628-26-000291-index.html",
+          "report_date": "2026-06-18",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000291/crwv-20260618.htm"
+        },
+        {
+          "accession": "0001769628-26-000278",
+          "filed": "2026-06-11",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000278/0001769628-26-000278-index.html",
+          "report_date": "2026-06-11",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000278/crwv-20260611.htm"
+        },
+        {
+          "accession": "0001769628-26-000270",
+          "filed": "2026-06-10",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000270/0001769628-26-000270-index.html",
+          "report_date": "2026-06-08",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000270/crwv-20260608.htm"
+        },
+        {
+          "accession": "0001769628-26-000236",
+          "filed": "2026-05-18",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000236/0001769628-26-000236-index.html",
+          "report_date": "2026-05-15",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000236/crwv-20260515.htm"
+        },
+        {
+          "accession": "0001769628-26-000222",
+          "filed": "2026-05-08",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/crwv-20260331.htm"
+        },
+        {
+          "accession": "0001769628-26-000220",
+          "filed": "2026-05-07",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000220/0001769628-26-000220-index.html",
+          "report_date": "2026-05-07",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000220/crwv-20260507.htm"
+        },
+        {
+          "accession": "0001769628-26-000183",
+          "filed": "2026-04-21",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000183/0001769628-26-000183-index.html",
+          "report_date": "2026-04-16",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000183/crwv-20260416.htm"
+        },
+        {
+          "accession": "0001769628-26-000167",
+          "filed": "2026-04-15",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000167/0001769628-26-000167-index.html",
+          "report_date": "2026-04-15",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000167/crwv-20260415.htm"
+        },
+        {
+          "accession": "0001769628-26-000164",
+          "filed": "2026-04-14",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000164/0001769628-26-000164-index.html",
+          "report_date": "2026-04-09",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000164/crwv-20260409.htm"
+        },
+        {
+          "accession": "0001193125-26-148912",
+          "filed": "2026-04-09",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000119312526148912/0001193125-26-148912-index.html",
+          "report_date": "2026-04-09",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000119312526148912/d136714d8k.htm"
+        },
+        {
+          "accession": "0001769628-26-000154",
+          "filed": "2026-04-09",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000154/0001769628-26-000154-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000154/crwv-20260331.htm"
+        },
+        {
+          "accession": "0001769628-26-000129",
+          "filed": "2026-03-31",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000129/0001769628-26-000129-index.html",
+          "report_date": "2026-03-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000129/crwv-20260330.htm"
+        }
+      ],
+      "role": "ai-cloud",
+      "source": "SEC EDGAR",
+      "ticker": "CRWV"
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1101239",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001101239-26-000091",
+          "duration_days": 89,
+          "entity_id": "equinix",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-04-29",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 717000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001101239.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+          "unit": "USD",
+          "value_usd_billions": 0.717
+        },
+        {
+          "accession": "0001101239-26-000091",
+          "duration_days": 89,
+          "entity_id": "equinix",
+          "fact_tag": "PaymentsToAcquireProductiveAssets",
+          "filed": "2026-04-29",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "capital_expenditures",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 1256000000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001101239.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+          "unit": "USD",
+          "value_usd_billions": 1.256
+        }
+      ],
+      "id": "equinix",
+      "name": "Equinix",
+      "quantitative_status": "reported_facts_same_period",
+      "recent_filings": [
+        {
+          "accession": "0001101239-26-000131",
+          "filed": "2026-07-14",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000131/0001101239-26-000131-index.html",
+          "report_date": "2026-07-08",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000131/eqix-20260708.htm"
+        },
+        {
+          "accession": "0001101239-26-000109",
+          "filed": "2026-05-15",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000109/0001101239-26-000109-index.html",
+          "report_date": "2026-05-13",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000109/eqix-20260513.htm"
+        },
+        {
+          "accession": "0001101239-26-000095",
+          "filed": "2026-05-11",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000095/0001101239-26-000095-index.html",
+          "report_date": "2026-05-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000095/eqix-20260505.htm"
+        },
+        {
+          "accession": "0001104659-26-057167",
+          "filed": "2026-05-07",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926057167/0001104659-26-057167-index.html",
+          "report_date": "2026-05-07",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926057167/tm2613784d1_8k.htm"
+        },
+        {
+          "accession": "0001101239-26-000091",
+          "filed": "2026-04-29",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/eqix-20260331.htm"
+        },
+        {
+          "accession": "0001101239-26-000089",
+          "filed": "2026-04-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000089/0001101239-26-000089-index.html",
+          "report_date": "2026-04-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000089/eqix-20260429.htm"
+        },
+        {
+          "accession": "0001101239-26-000058",
+          "filed": "2026-03-10",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000058/0001101239-26-000058-index.html",
+          "report_date": "2026-03-07",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000058/eqix-20260307.htm"
+        },
+        {
+          "accession": "0001104659-26-024144",
+          "filed": "2026-03-05",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926024144/0001104659-26-024144-index.html",
+          "report_date": "2026-03-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926024144/tm267848d1_8k.htm"
+        },
+        {
+          "accession": "0001101239-26-000051",
+          "filed": "2026-02-27",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000051/0001101239-26-000051-index.html",
+          "report_date": "2026-02-27",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000051/eqix-20260227.htm"
+        },
+        {
+          "accession": "0001101239-26-000039",
+          "filed": "2026-02-18",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000039/0001101239-26-000039-index.html",
+          "report_date": "2026-02-16",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000039/eqix-20260216.htm"
+        },
+        {
+          "accession": "0001101239-26-000035",
+          "filed": "2026-02-12",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000035/0001101239-26-000035-index.html",
+          "report_date": "2026-02-06",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000035/eqix-20260206.htm"
+        },
+        {
+          "accession": "0001101239-26-000033",
+          "filed": "2026-02-11",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000033/0001101239-26-000033-index.html",
+          "report_date": "2026-02-11",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000033/eqix-20260211.htm"
+        }
+      ],
+      "role": "data-center-operator",
+      "source": "SEC EDGAR",
+      "ticker": "EQIX"
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1297996",
+      "class": "public",
+      "facts": [
+        {
+          "accession": "0001104659-26-054255",
+          "duration_days": 89,
+          "entity_id": "digital-realty",
+          "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+          "filed": "2026-05-01",
+          "fiscal_period": "Q1",
+          "form": "10-Q",
+          "kind": "operating_cash_flow",
+          "period_end": "2026-03-31",
+          "period_start": "2026-01-01",
+          "reported_value": 532421000,
+          "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001297996.json",
+          "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/0001104659-26-054255-index.html",
+          "unit": "USD",
+          "value_usd_billions": 0.532421
+        }
+      ],
+      "id": "digital-realty",
+      "name": "Digital Realty",
+      "quantitative_status": "capital_expenditure_fact_unavailable",
+      "recent_filings": [
+        {
+          "accession": "0001193125-26-292577",
+          "filed": "2026-07-01",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526292577/0001193125-26-292577-index.html",
+          "report_date": "2026-06-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526292577/d332992d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-288761",
+          "filed": "2026-06-29",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526288761/0001193125-26-288761-index.html",
+          "report_date": "2026-06-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526288761/d100507d8k.htm"
+        },
+        {
+          "accession": "0001193125-26-276844",
+          "filed": "2026-06-22",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526276844/0001193125-26-276844-index.html",
+          "report_date": "2026-06-22",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526276844/d50837d8k.htm"
+        },
+        {
+          "accession": "0001104659-26-068907",
+          "filed": "2026-06-01",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926068907/0001104659-26-068907-index.html",
+          "report_date": "2026-05-29",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926068907/dlr-20260529x8k.htm"
+        },
+        {
+          "accession": "0001193125-26-202581",
+          "filed": "2026-05-04",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526202581/0001193125-26-202581-index.html",
+          "report_date": "2026-05-04",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526202581/d140571d8k.htm"
+        },
+        {
+          "accession": "0001104659-26-054255",
+          "filed": "2026-05-01",
+          "form": "10-Q",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/0001104659-26-054255-index.html",
+          "report_date": "2026-03-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/dlr-20260331x10q.htm"
+        },
+        {
+          "accession": "0001104659-26-047702",
+          "filed": "2026-04-23",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926047702/0001104659-26-047702-index.html",
+          "report_date": "2026-04-23",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926047702/dlr-20260423x8k.htm"
+        },
+        {
+          "accession": "0001193125-26-053164",
+          "filed": "2026-02-17",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526053164/0001193125-26-053164-index.html",
+          "report_date": "2026-02-17",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526053164/d112316d8k.htm"
+        },
+        {
+          "accession": "0001104659-26-015365",
+          "filed": "2026-02-13",
+          "form": "10-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926015365/0001104659-26-015365-index.html",
+          "report_date": "2025-12-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926015365/dlr-20251231x10k.htm"
+        },
+        {
+          "accession": "0001104659-26-010887",
+          "filed": "2026-02-05",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926010887/0001104659-26-010887-index.html",
+          "report_date": "2026-02-05",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926010887/dlr-20260205x8k.htm"
+        },
+        {
+          "accession": "0001104659-25-121124",
+          "filed": "2025-12-15",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465925121124/0001104659-25-121124-index.html",
+          "report_date": "2025-12-15",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465925121124/dlr-20251215x8k.htm"
+        },
+        {
+          "accession": "0001193125-25-306874",
+          "filed": "2025-12-03",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312525306874/0001193125-25-306874-index.html",
+          "report_date": "2025-12-03",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312525306874/d92708d8k.htm"
+        }
+      ],
+      "role": "data-center-operator",
+      "source": "SEC EDGAR",
+      "ticker": "DLR"
+    },
+    {
+      "availability": "no_public_sec_10q_10k",
+      "cik": null,
+      "class": "private",
+      "facts": [],
+      "id": "xai",
+      "name": "xAI",
+      "product_aliases": [
+        "Grok"
+      ],
+      "quantitative_status": "excluded_without_estimate",
+      "role": "model-lab",
+      "source": "No public 10-Q/10-K in this database",
+      "ticker": null
+    },
+    {
+      "availability": "no_public_sec_10q_10k",
+      "cik": null,
+      "class": "private",
+      "facts": [],
+      "id": "openai",
+      "name": "OpenAI",
+      "quantitative_status": "excluded_without_estimate",
+      "role": "model-lab",
+      "source": "No public 10-Q/10-K in this database",
+      "ticker": null
+    },
+    {
+      "availability": "no_public_sec_10q_10k",
+      "cik": null,
+      "class": "private",
+      "facts": [],
+      "id": "anthropic",
+      "name": "Anthropic",
+      "quantitative_status": "excluded_without_estimate",
+      "role": "model-lab",
+      "source": "No public 10-Q/10-K in this database",
+      "ticker": null
+    },
+    {
+      "availability": "sec_companyfacts",
+      "cik": "1181412",
+      "class": "public",
+      "facts": [],
+      "id": "spacex",
+      "name": "SpaceX",
+      "quantitative_status": "public_no_10q_facts_yet",
+      "recent_filings": [
+        {
+          "accession": "0001628280-26-045763",
+          "filed": "2026-06-26",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026045763/0001628280-26-045763-index.html",
+          "report_date": "2026-06-26",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026045763/spcx-closing8xkjune2026.htm"
+        },
+        {
+          "accession": "0001628280-26-044955",
+          "filed": "2026-06-23",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044955/0001628280-26-044955-index.html",
+          "report_date": "2026-06-23",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044955/spcx-pricing8xk.htm"
+        },
+        {
+          "accession": "0001628280-26-044489",
+          "filed": "2026-06-22",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044489/0001628280-26-044489-index.html",
+          "report_date": "2026-06-22",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044489/spcx8-kxlaunchseniornotes.htm"
+        },
+        {
+          "accession": "0001628280-26-043865",
+          "filed": "2026-06-17",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043865/0001628280-26-043865-index.html",
+          "report_date": "2026-06-16",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043865/spaceexplorationtechnologi.htm"
+        },
+        {
+          "accession": "0001628280-26-043411",
+          "filed": "2026-06-16",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043411/0001628280-26-043411-index.html",
+          "report_date": "2026-06-16",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043411/spaceexplorationtechnologi.htm"
+        },
+        {
+          "accession": "0001628280-26-043288",
+          "filed": "2026-06-15",
+          "form": "8-K",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043288/0001628280-26-043288-index.html",
+          "report_date": "2026-06-15",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043288/spaceexplorationtechnologi.htm"
+        },
+        {
+          "accession": "0001628280-26-040364",
+          "filed": "2026-06-03",
+          "form": "S-1/A",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026040364/0001628280-26-040364-index.html",
+          "report_date": "",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026040364/spaceexplorationtechnologib.htm"
+        },
+        {
+          "accession": "0001628280-26-039276",
+          "filed": "2026-06-01",
+          "form": "S-1/A",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026039276/0001628280-26-039276-index.html",
+          "report_date": "",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026039276/spaceexplorationtechnologi.htm"
+        },
+        {
+          "accession": "0001628280-26-036936",
+          "filed": "2026-05-20",
+          "form": "S-1",
+          "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026036936/0001628280-26-036936-index.html",
+          "report_date": "",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026036936/spaceexplorationtechnologi.htm"
+        }
+      ],
+      "role": "aerospace-and-infrastructure",
+      "source": "SEC EDGAR",
+      "ticker": "SPCX"
+    }
+  ],
+  "generated_at": "2026-07-18",
+  "schema_version": "primary-finance-api.v1",
+  "source_policy": "Only reported primary financial data is quantitative. Missing data stays missing."
+}

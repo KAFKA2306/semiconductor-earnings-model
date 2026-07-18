@@ -1,0 +1,147 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "789019",
+  "class": "public",
+  "facts": [
+    {
+      "accession": "0001193125-26-191507",
+      "duration_days": 89,
+      "entity_id": "microsoft",
+      "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "filed": "2026-04-29",
+      "fiscal_period": "Q3",
+      "form": "10-Q",
+      "kind": "operating_cash_flow",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 46679000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+      "unit": "USD",
+      "value_usd_billions": 46.679
+    },
+    {
+      "accession": "0001193125-26-191507",
+      "duration_days": 89,
+      "entity_id": "microsoft",
+      "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "filed": "2026-04-29",
+      "fiscal_period": "Q3",
+      "form": "10-Q",
+      "kind": "capital_expenditures",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 30876000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+      "unit": "USD",
+      "value_usd_billions": 30.876
+    }
+  ],
+  "id": "microsoft",
+  "name": "Microsoft",
+  "quantitative_status": "reported_facts_same_period",
+  "recent_filings": [
+    {
+      "accession": "0001193125-26-258667",
+      "filed": "2026-06-05",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526258667/0001193125-26-258667-index.html",
+      "report_date": "2026-06-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526258667/d26760d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-224155",
+      "filed": "2026-05-14",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526224155/0001193125-26-224155-index.html",
+      "report_date": "2026-05-13",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526224155/d125909d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-191507",
+      "filed": "2026-04-29",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+      "report_date": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm"
+    },
+    {
+      "accession": "0001193125-26-191457",
+      "filed": "2026-04-29",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/0001193125-26-191457-index.html",
+      "report_date": "2026-04-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/msft-20260429.htm"
+    },
+    {
+      "accession": "0001193125-26-027207",
+      "filed": "2026-01-28",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.html",
+      "report_date": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm"
+    },
+    {
+      "accession": "0001193125-26-027198",
+      "filed": "2026-01-28",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/0001193125-26-027198-index.html",
+      "report_date": "2026-01-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/msft-20260128.htm"
+    },
+    {
+      "accession": "0001193125-25-311196",
+      "filed": "2025-12-08",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525311196/0001193125-25-311196-index.html",
+      "report_date": "2025-12-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525311196/d34077d8k.htm"
+    },
+    {
+      "accession": "0001193125-25-256321",
+      "filed": "2025-10-29",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256321/0001193125-25-256321-index.html",
+      "report_date": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256321/msft-20250930.htm"
+    },
+    {
+      "accession": "0001193125-25-256310",
+      "filed": "2025-10-29",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256310/0001193125-25-256310-index.html",
+      "report_date": "2025-10-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256310/msft-20251028.htm"
+    },
+    {
+      "accession": "0001193125-25-225125",
+      "filed": "2025-09-30",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525225125/0001193125-25-225125-index.html",
+      "report_date": "2025-09-24",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525225125/d863209d8k.htm"
+    },
+    {
+      "accession": "0000950170-25-100235",
+      "filed": "2025-07-30",
+      "form": "10-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/0000950170-25-100235-index.html",
+      "report_date": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm"
+    },
+    {
+      "accession": "0000950170-25-100226",
+      "filed": "2025-07-30",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100226/0000950170-25-100226-index.html",
+      "report_date": "2025-07-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100226/msft-20250730.htm"
+    }
+  ],
+  "role": "hyperscaler",
+  "source": "SEC EDGAR",
+  "ticker": "MSFT"
+}

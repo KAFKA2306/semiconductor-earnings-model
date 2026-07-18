@@ -1,0 +1,147 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "1018724",
+  "class": "public",
+  "facts": [
+    {
+      "accession": "0001018724-26-000014",
+      "duration_days": 89,
+      "entity_id": "amazon",
+      "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "filed": "2026-04-30",
+      "fiscal_period": "Q1",
+      "form": "10-Q",
+      "kind": "operating_cash_flow",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 26032000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+      "unit": "USD",
+      "value_usd_billions": 26.032
+    },
+    {
+      "accession": "0001018724-26-000014",
+      "duration_days": 89,
+      "entity_id": "amazon",
+      "fact_tag": "PaymentsToAcquireProductiveAssets",
+      "filed": "2026-04-30",
+      "fiscal_period": "Q1",
+      "form": "10-Q",
+      "kind": "capital_expenditures",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 44203000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+      "unit": "USD",
+      "value_usd_billions": 44.203
+    }
+  ],
+  "id": "amazon",
+  "name": "Amazon",
+  "quantitative_status": "reported_facts_same_period",
+  "recent_filings": [
+    {
+      "accession": "0001104659-26-082293",
+      "filed": "2026-07-09",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926082293/0001104659-26-082293-index.html",
+      "report_date": "2026-07-09",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926082293/tm2619352d4_8k.htm"
+    },
+    {
+      "accession": "0001104659-26-073562",
+      "filed": "2026-06-12",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926073562/0001104659-26-073562-index.html",
+      "report_date": "2026-06-12",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926073562/tm2613616d5_8k.htm"
+    },
+    {
+      "accession": "0001104659-26-072140",
+      "filed": "2026-06-10",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926072140/0001104659-26-072140-index.html",
+      "report_date": "2026-06-08",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926072140/tm2613616d4_8k.htm"
+    },
+    {
+      "accession": "0001104659-26-065717",
+      "filed": "2026-05-22",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926065717/0001104659-26-065717-index.html",
+      "report_date": "2026-05-20",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926065717/tm2614288d1_8k.htm"
+    },
+    {
+      "accession": "0001018724-26-000014",
+      "filed": "2026-04-30",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+      "report_date": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm"
+    },
+    {
+      "accession": "0001018724-26-000012",
+      "filed": "2026-04-29",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000012/0001018724-26-000012-index.html",
+      "report_date": "2026-04-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000012/amzn-20260429.htm"
+    },
+    {
+      "accession": "0001104659-26-042880",
+      "filed": "2026-04-14",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926042880/0001104659-26-042880-index.html",
+      "report_date": "2026-04-14",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926042880/tm2611746d1_8k.htm"
+    },
+    {
+      "accession": "0001104659-26-041034",
+      "filed": "2026-04-09",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926041034/0001104659-26-041034-index.html",
+      "report_date": "2026-04-09",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926041034/tm263815d2_8k.htm"
+    },
+    {
+      "accession": "0001104659-26-028556",
+      "filed": "2026-03-16",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926028556/0001104659-26-028556-index.html",
+      "report_date": "2026-03-16",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926028556/tm266670d9_8k.htm"
+    },
+    {
+      "accession": "0001104659-26-027729",
+      "filed": "2026-03-13",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926027729/0001104659-26-027729-index.html",
+      "report_date": "2026-03-13",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926027729/tm266670d8_8k.htm"
+    },
+    {
+      "accession": "0001104659-26-021050",
+      "filed": "2026-02-27",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926021050/0001104659-26-021050-index.html",
+      "report_date": "2026-02-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926021050/tm267374d1_8k.htm"
+    },
+    {
+      "accession": "0001018724-26-000004",
+      "filed": "2026-02-06",
+      "form": "10-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.html",
+      "report_date": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+    }
+  ],
+  "role": "hyperscaler",
+  "source": "SEC EDGAR",
+  "ticker": "AMZN"
+}

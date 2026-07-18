@@ -45,6 +45,23 @@ def validate_snapshot(state: AuditState) -> AuditState:
     errors = sorted(required - snapshot.keys())
     if not snapshot.get("sources"):
         errors.append("sources must not be empty")
+    source_required = {
+        "id",
+        "period_start",
+        "period_end",
+        "operating_cash_flow",
+        "capital_expenditures",
+        "operating_cash_flow_fact_tag",
+        "capital_expenditures_fact_tag",
+        "source_url",
+    }
+    for index, source in enumerate(snapshot.get("sources", [])):
+        missing = sorted(source_required - source.keys())
+        if missing:
+            errors.append(f"source[{index}] missing primary fields: {','.join(missing)}")
+    periods = {(source.get("period_start"), source.get("period_end")) for source in snapshot.get("sources", [])}
+    if len(periods) > 1:
+        errors.append("sources must cover one common reported period")
     valid = not errors
     return {
         **state,
@@ -62,15 +79,15 @@ def _d(value: Any) -> Decimal:
 def normalize_metrics(state: AuditState) -> AuditState:
     snapshot = state["snapshot"]
     ocf_total = sum((_d(row["operating_cash_flow"]) for row in snapshot["sources"]), Decimal("0"))
-    capex_total = sum((_d(row["capex_proxy"]) for row in snapshot["sources"]), Decimal("0"))
+    capex_total = sum((_d(row["capital_expenditures"]) for row in snapshot["sources"]), Decimal("0"))
     ratio = capex_total / ocf_total
     normalized = {
         "operating_cash_flow_total": float(ocf_total),
-        "capex_proxy_total": float(capex_total),
-        "capex_to_operating_cash_flow": float(ratio),
-        "residual_cash_flow_proxy": float(ocf_total - capex_total),
-        "residual_margin_proxy": float((ocf_total - capex_total) / ocf_total),
-        "definition_count": len({row["capex_definition"] for row in snapshot["sources"]}),
+        "capital_expenditures_total": float(capex_total),
+        "capital_expenditures_to_operating_cash_flow": float(ratio),
+        "residual_cash_flow": float(ocf_total - capex_total),
+        "residual_margin": float((ocf_total - capex_total) / ocf_total),
+        "fact_tag_count": len({row["capital_expenditures_fact_tag"] for row in snapshot["sources"]}),
     }
     return {
         **state,
@@ -111,11 +128,16 @@ def calculate_scenarios(state: AuditState) -> AuditState:
 def audit_model(state: AuditState) -> AuditState:
     snapshot = state["snapshot"]
     findings = [
-        {"id": "proxy_definition_mismatch", "severity": "major", "status": "open", "detail": "capex_proxy definitions differ across sources"},
         {"id": "beta_unestimated", "severity": "critical", "status": "open", "detail": "beta is a scenario assumption, not an estimated coefficient"},
         {"id": "investment_lag_missing", "severity": "major", "status": "open", "detail": "investment-to-revenue lag is not modeled"},
         {"id": "consensus_is_secondary", "severity": "major", "status": "open", "detail": "consensus is not a primary company forecast"},
     ]
+    periods = {(row.get("period_start"), row.get("period_end")) for row in snapshot["sources"]}
+    tags_present = all(row.get("operating_cash_flow_fact_tag") and row.get("capital_expenditures_fact_tag") for row in snapshot["sources"])
+    if len(periods) > 1:
+        findings.insert(0, {"id": "reported_period_mismatch", "severity": "critical", "status": "open", "detail": "reported facts do not cover one common period"})
+    if not tags_present:
+        findings.insert(0, {"id": "primary_fact_tag_missing", "severity": "critical", "status": "open", "detail": "one or more inputs lack a primary XBRL fact tag"})
     if snapshot["consensus"].get("raw_data_hash"):
         findings[-1]["status"] = "tracked"
     return {

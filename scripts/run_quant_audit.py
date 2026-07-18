@@ -21,6 +21,8 @@ def main() -> None:
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     result = run_audit(json.loads(args.snapshot.read_text(encoding="utf-8")))
+    if result["status"] == "blocked" or not result["audit"].get("valid_input"):
+        raise SystemExit("quant audit blocked: " + "; ".join(result["audit"].get("errors", [])))
     payload = json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     if args.output:
         args.output.write_text(payload, encoding="utf-8")

@@ -1,0 +1,147 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "1652044",
+  "class": "public",
+  "facts": [
+    {
+      "accession": "0001652044-26-000048",
+      "duration_days": 89,
+      "entity_id": "alphabet",
+      "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "filed": "2026-04-30",
+      "fiscal_period": "Q1",
+      "form": "10-Q",
+      "kind": "operating_cash_flow",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 45790000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+      "unit": "USD",
+      "value_usd_billions": 45.79
+    },
+    {
+      "accession": "0001652044-26-000048",
+      "duration_days": 89,
+      "entity_id": "alphabet",
+      "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "filed": "2026-04-30",
+      "fiscal_period": "Q1",
+      "form": "10-Q",
+      "kind": "capital_expenditures",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 35674000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+      "unit": "USD",
+      "value_usd_billions": 35.674
+    }
+  ],
+  "id": "alphabet",
+  "name": "Alphabet",
+  "quantitative_status": "reported_facts_same_period",
+  "recent_filings": [
+    {
+      "accession": "0001193125-26-267578",
+      "filed": "2026-06-11",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526267578/0001193125-26-267578-index.html",
+      "report_date": "2026-06-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526267578/d57679d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-259830",
+      "filed": "2026-06-05",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/0001193125-26-259830-index.html",
+      "report_date": "2026-06-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/d36818d8k.htm"
+    },
+    {
+      "accession": "0001652044-26-000059",
+      "filed": "2026-06-05",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/0001652044-26-000059-index.html",
+      "report_date": "2026-06-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/goog-20260602.htm"
+    },
+    {
+      "accession": "0001193125-26-257724",
+      "filed": "2026-06-04",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/0001193125-26-257724-index.html",
+      "report_date": "2026-06-04",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/d83560d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-234488",
+      "filed": "2026-05-21",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/0001193125-26-234488-index.html",
+      "report_date": "2026-05-21",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/d144566d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-216986",
+      "filed": "2026-05-11",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526216986/0001193125-26-216986-index.html",
+      "report_date": "2026-05-11",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526216986/d109021d8k.htm"
+    },
+    {
+      "accession": "0001652044-26-000048",
+      "filed": "2026-04-30",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+      "report_date": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm"
+    },
+    {
+      "accession": "0001652044-26-000043",
+      "filed": "2026-04-29",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000043/0001652044-26-000043-index.html",
+      "report_date": "2026-04-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000043/goog-20260429.htm"
+    },
+    {
+      "accession": "0001652044-26-000034",
+      "filed": "2026-04-10",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000034/0001652044-26-000034-index.html",
+      "report_date": "2026-04-07",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000034/goog-20260407.htm"
+    },
+    {
+      "accession": "0001652044-26-000031",
+      "filed": "2026-04-02",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000031/0001652044-26-000031-index.html",
+      "report_date": "2026-03-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000031/goog-20260330.htm"
+    },
+    {
+      "accession": "0001652044-26-000026",
+      "filed": "2026-03-06",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000026/0001652044-26-000026-index.html",
+      "report_date": "2026-03-04",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000026/goog-20260304.htm"
+    },
+    {
+      "accession": "0001193125-26-051423",
+      "filed": "2026-02-13",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526051423/0001193125-26-051423-index.html",
+      "report_date": "2026-02-13",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526051423/d946885d8k.htm"
+    }
+  ],
+  "role": "hyperscaler",
+  "source": "SEC EDGAR",
+  "ticker": "GOOGL"
+}

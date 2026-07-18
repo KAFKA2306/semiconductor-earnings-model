@@ -4,12 +4,6 @@
     "errors": [],
     "findings": [
       {
-        "detail": "capex_proxy definitions differ across sources",
-        "id": "proxy_definition_mismatch",
-        "severity": "major",
-        "status": "open"
-      },
-      {
         "detail": "beta is a scenario assumption, not an estimated coefficient",
         "id": "beta_unestimated",
         "severity": "critical",
@@ -52,7 +46,7 @@
     },
     {
       "event_index": 3,
-      "finding_count": 4,
+      "finding_count": 3,
       "node": "audit_model",
       "status": "success"
     },
@@ -64,60 +58,60 @@
     }
   ],
   "normalized": {
-    "capex_proxy_total": 129.624,
-    "capex_to_operating_cash_flow": 0.8598721044391966,
-    "definition_count": 4,
-    "operating_cash_flow_total": 150.748,
-    "residual_cash_flow_proxy": 21.124,
-    "residual_margin_proxy": 0.14012789556080346
+    "capital_expenditures_to_operating_cash_flow": 0.8981596601652551,
+    "capital_expenditures_total": 138.701,
+    "fact_tag_count": 2,
+    "operating_cash_flow_total": 154.428,
+    "residual_cash_flow": 15.727,
+    "residual_margin": 0.101840339834745
   },
   "scenarios": [
     {
-      "effective_investment_growth": 64.8,
+      "effective_investment_growth": 57.8,
       "name": "bull",
       "operating_earnings_growth_range": [
-        49.8,
-        63.8
+        45.3,
+        57.7
       ],
       "revenue_growth_range": [
-        38.9,
-        51.9
+        34.7,
+        46.3
       ]
     },
     {
-      "effective_investment_growth": 32.6,
+      "effective_investment_growth": 26.9,
       "name": "base",
       "operating_earnings_growth_range": [
-        19.5,
-        26.0
+        16.2,
+        21.5
       ],
       "revenue_growth_range": [
-        19.5,
-        26.0
+        16.2,
+        21.5
       ]
     },
     {
-      "effective_investment_growth": 11.3,
+      "effective_investment_growth": 6.6,
       "name": "bear",
       "operating_earnings_growth_range": [
-        -1.6,
-        0.5
+        -4.2,
+        -3.0
       ],
       "revenue_growth_range": [
-        6.8,
-        9.0
+        3.9,
+        5.2
       ]
     },
     {
-      "effective_investment_growth": -7.0,
+      "effective_investment_growth": -10.9,
       "name": "stress",
       "operating_earnings_growth_range": [
-        -22.2,
-        -21.1
+        -24.8,
+        -23.0
       ],
       "revenue_growth_range": [
-        -5.6,
-        -4.2
+        -8.7,
+        -6.6
       ]
     }
   ],
@@ -135,8 +129,13 @@
       "source": "Yardeni",
       "source_kind": "secondary"
     },
-    "graph_version": "2026-07-18.1",
-    "model_base_ratio": 0.86,
+    "graph_version": "2026-07-18.2",
+    "model_base_ratio": 0.8981596601652551,
+    "primary_api_generated_at": "2026-07-18",
+    "primary_period": {
+      "end": "2026-03-31",
+      "start": "2026-01-01"
+    },
     "scenarios": [
       {
         "external_financing": 0.1,
@@ -167,42 +166,89 @@
         "ocf_growth": 0.0
       }
     ],
-    "schema_version": "1",
+    "schema_version": "semiconductor-quant-audit.v2",
+    "selection_rule": "largest same-period group of reported primary facts; excluded entities remain in the API",
     "sources": [
       {
-        "capex_definition": "cash_capex_net",
-        "capex_proxy": 43.234,
-        "id": "amazon-q1-2026",
+        "capital_expenditures": 44.203,
+        "capital_expenditures_fact_tag": "PaymentsToAcquireProductiveAssets",
+        "id": "amazon",
+        "label": "Amazon",
         "operating_cash_flow": 26.032,
+        "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
         "period_end": "2026-03-31",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm"
+        "period_start": "2026-01-01",
+        "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+        "ticker": "AMZN"
       },
       {
-        "capex_definition": "ppe_purchases",
-        "capex_proxy": 35.674,
-        "id": "alphabet-q1-2026",
+        "capital_expenditures": 35.674,
+        "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+        "id": "alphabet",
+        "label": "Alphabet",
         "operating_cash_flow": 45.79,
+        "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
         "period_end": "2026-03-31",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm"
+        "period_start": "2026-01-01",
+        "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+        "ticker": "GOOGL"
       },
       {
-        "capex_definition": "capex_plus_finance_lease_principal",
-        "capex_proxy": 19.84,
-        "id": "meta-q1-2026",
+        "capital_expenditures": 18.997,
+        "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+        "id": "meta",
+        "label": "Meta",
         "operating_cash_flow": 32.226,
+        "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
         "period_end": "2026-03-31",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm"
+        "period_start": "2026-01-01",
+        "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.html",
+        "ticker": "META"
       },
       {
-        "capex_definition": "ppe_cash_additions",
-        "capex_proxy": 30.876,
-        "id": "microsoft-fy26-q3",
-        "operating_cash_flow": 46.7,
+        "capital_expenditures": 30.876,
+        "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+        "id": "microsoft",
+        "label": "Microsoft",
+        "operating_cash_flow": 46.679,
+        "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
         "period_end": "2026-03-31",
-        "source_url": "https://www.microsoft.com/en-us/investor/earnings/FY-2026-Q3/press-release-webcast"
+        "period_start": "2026-01-01",
+        "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+        "ticker": "MSFT"
+      },
+      {
+        "capital_expenditures": 7.695,
+        "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+        "id": "coreweave",
+        "label": "CoreWeave",
+        "operating_cash_flow": 2.984,
+        "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+        "period_end": "2026-03-31",
+        "period_start": "2026-01-01",
+        "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
+        "ticker": "CRWV"
+      },
+      {
+        "capital_expenditures": 1.256,
+        "capital_expenditures_fact_tag": "PaymentsToAcquireProductiveAssets",
+        "id": "equinix",
+        "label": "Equinix",
+        "operating_cash_flow": 0.717,
+        "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+        "period_end": "2026-03-31",
+        "period_start": "2026-01-01",
+        "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+        "ticker": "EQIX"
       }
     ]
   },
-  "snapshot_hash": "400f767578251870b273edc5340b8c322710b2484653b0b7909a06c0c94f3d92",
+  "snapshot_hash": "9bd65baa0a0cdf0b8698a3ba5fd54707921c32e52248c425a941881b3ca72a37",
   "status": "audited"
 }

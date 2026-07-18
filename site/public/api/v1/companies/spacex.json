@@ -1,0 +1,86 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "1181412",
+  "class": "public",
+  "facts": [],
+  "id": "spacex",
+  "name": "SpaceX",
+  "quantitative_status": "public_no_10q_facts_yet",
+  "recent_filings": [
+    {
+      "accession": "0001628280-26-045763",
+      "filed": "2026-06-26",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026045763/0001628280-26-045763-index.html",
+      "report_date": "2026-06-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026045763/spcx-closing8xkjune2026.htm"
+    },
+    {
+      "accession": "0001628280-26-044955",
+      "filed": "2026-06-23",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044955/0001628280-26-044955-index.html",
+      "report_date": "2026-06-23",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044955/spcx-pricing8xk.htm"
+    },
+    {
+      "accession": "0001628280-26-044489",
+      "filed": "2026-06-22",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044489/0001628280-26-044489-index.html",
+      "report_date": "2026-06-22",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044489/spcx8-kxlaunchseniornotes.htm"
+    },
+    {
+      "accession": "0001628280-26-043865",
+      "filed": "2026-06-17",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043865/0001628280-26-043865-index.html",
+      "report_date": "2026-06-16",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043865/spaceexplorationtechnologi.htm"
+    },
+    {
+      "accession": "0001628280-26-043411",
+      "filed": "2026-06-16",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043411/0001628280-26-043411-index.html",
+      "report_date": "2026-06-16",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043411/spaceexplorationtechnologi.htm"
+    },
+    {
+      "accession": "0001628280-26-043288",
+      "filed": "2026-06-15",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043288/0001628280-26-043288-index.html",
+      "report_date": "2026-06-15",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043288/spaceexplorationtechnologi.htm"
+    },
+    {
+      "accession": "0001628280-26-040364",
+      "filed": "2026-06-03",
+      "form": "S-1/A",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026040364/0001628280-26-040364-index.html",
+      "report_date": "",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026040364/spaceexplorationtechnologib.htm"
+    },
+    {
+      "accession": "0001628280-26-039276",
+      "filed": "2026-06-01",
+      "form": "S-1/A",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026039276/0001628280-26-039276-index.html",
+      "report_date": "",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026039276/spaceexplorationtechnologi.htm"
+    },
+    {
+      "accession": "0001628280-26-036936",
+      "filed": "2026-05-20",
+      "form": "S-1",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026036936/0001628280-26-036936-index.html",
+      "report_date": "",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026036936/spaceexplorationtechnologi.htm"
+    }
+  ],
+  "role": "aerospace-and-infrastructure",
+  "source": "SEC EDGAR",
+  "ticker": "SPCX"
+}

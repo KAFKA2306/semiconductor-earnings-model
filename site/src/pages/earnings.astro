@@ -6,6 +6,9 @@ const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') 
 const dataPath = path.join(root, 'site/public/data/quant-audit.json');
 if (!fs.existsSync(dataPath)) throw new Error(`Missing generated model data: ${dataPath}`);
 const model = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+const apiPath = path.join(root, 'site/public/api/v1/index.json');
+if (!fs.existsSync(apiPath)) throw new Error('Missing primary facts API: ' + apiPath);
+const primaryApi = JSON.parse(fs.readFileSync(apiPath, 'utf8'));
 const snapshot = model.snapshot;
 const consensus = snapshot.consensus;
 const base = import.meta.env.BASE_URL;
@@ -30,6 +33,21 @@ const modelRows = model.scenarios.map((scenario) => ({
 const baseScenario = modelRows.find((scenario) => scenario.name === 'base') || modelRows[0];
 const sources = snapshot.sources;
 const openFindings = model.audit.findings.filter((finding) => finding.status === 'open');
+const scenarioInputs = snapshot.scenarios;
+const baseInput = scenarioInputs.find((scenario) => scenario.name === 'base') || scenarioInputs[0];
+const formatDecimalPct = (value) => (Number(value) >= 0 ? '+' : '') + (Number(value) * 100).toFixed(0) + '%';
+const inputKind = { fact: 'FACT', definition: 'DEFINITION', assumption: 'ASSUMPTION', output: 'OUTPUT' };
+const sourceWalks = sources.map((source) => ({
+  ...source,
+  residual: Number(source.operating_cash_flow) - Number(source.capital_expenditures),
+}));
+const primaryFacts = primaryApi.companies.flatMap((company) => company.facts);
+const coverageLabel = {
+  reported_facts_same_period: 'AGGREGATED',
+  public_no_10q_facts_yet: 'PUBLIC / AWAITING 10-Q',
+  capital_expenditure_fact_unavailable: 'PUBLIC / CAPEX MISSING',
+  excluded_without_estimate: 'PRIVATE / NO PUBLIC FACTS',
+};
 ---
 
 <!doctype html>
@@ -45,7 +63,10 @@ const openFindings = model.audit.findings.filter((finding) => finding.status ===
     <main class="shell">
       <header class="topbar">
         <a class="brand" href={base}><span class="brand-dot"></span>KAFKA / MODEL ROOM</a>
-        <nav aria-label="ページ内ナビゲーション">
+      <nav aria-label="ページ内ナビゲーション">
+          <a href="#guide">読み方</a>
+          <a href="#raw-data">原データ</a>
+          <a href="#coverage">API</a>
           <a href="#scenarios">シナリオ</a>
           <a href="#evidence">証拠</a>
           <a href="#method">モデル定義</a>
@@ -70,13 +91,112 @@ const openFindings = model.audit.findings.filter((finding) => finding.status ===
         <article class="kpi kpi-accent"><span>2027 consensus / revenue</span><strong>{pct0(consensus.revenue_growth_2027)}</strong><small>Yardeni · {consensus.as_of}</small></article>
         <article class="kpi"><span>2027 consensus / operating earnings</span><strong>{pct0(consensus.operating_earnings_growth_2027)}</strong><small>margin implies {pct0(consensusMargin)}</small></article>
         <article class="kpi"><span>base case / earnings range</span><strong>{range(baseScenario.operating_earnings_growth_range).replace(' → ', '—')}</strong><small>β = {snapshot.beta_range[0]}—{snapshot.beta_range[1]}</small></article>
-        <article class="kpi"><span>capex proxy / operating CF</span><strong>{(model.normalized.capex_to_operating_cash_flow * 100).toFixed(1)}%</strong><small>{bn(model.normalized.capex_proxy_total)} / {bn(model.normalized.operating_cash_flow_total)}</small></article>
+        <article class="kpi"><span>capital expenditures / operating CF</span><strong>{(model.normalized.capital_expenditures_to_operating_cash_flow * 100).toFixed(1)}%</strong><small>{bn(model.normalized.capital_expenditures_total)} / {bn(model.normalized.operating_cash_flow_total)}</small></article>
       </section>
 
       <section class="signal-strip" aria-label="判定">
         <div class="signal-led"><span class="signal-mark">!</span><div><span class="micro">MODEL VERDICT</span><strong>{verdictJa[model.audit.verdict] || model.audit.verdict}</strong></div></div>
-        <p>{pct0(consensus.operating_earnings_growth_2027)}は強気レンジに入る。ただし、βは未推定、投資のラグは未実装、4社の設備投資定義は不統一。</p>
+        <p>{pct0(consensus.operating_earnings_growth_2027)}は強気レンジに入る。ただし、βは未推定、投資のラグは未実装、公開一次データで比較可能な銘柄だけを集計。</p>
         <span class="confidence">confidence {Math.round(model.audit.confidence * 100)}%</span>
+      </section>
+
+      <section id="guide" class="guide-section">
+        <div class="section-heading guide-heading">
+          <div><p class="eyebrow">00 / HOW TO READ</p><h2>このページの読み方</h2></div>
+          <span class="section-meta">FACT → ASSUMPTION → OUTPUT</span>
+        </div>
+        <div class="guide-lead">
+          <p class="guide-question">問いはひとつ。</p>
+          <h3>半導体の営業利益 <strong>{pct0(consensus.operating_earnings_growth_2027)}</strong> は、どんな前提なら成立するか。</h3>
+          <p>左から右へ読むと、元の決算数値がどの式を通り、どこで仮定になり、最後にどの監査項目が残るかが分かります。</p>
+        </div>
+        <ol class="guide-path">
+          <li class="guide-step"><span class="step-no">01</span><span class="kind fact">{inputKind.fact}</span><h3>決算から拾う</h3><p>同じ四半期の10-Qから、営業CFとcapital expendituresのXBRL factを読む。</p></li>
+          <li class="guide-step"><span class="step-no">02</span><span class="kind definition">{inputKind.definition}</span><h3>期間とタグを揃える</h3><p>同じperiod_start / period_end、報告されたfact tagだけを合計する。</p></li>
+          <li class="guide-step"><span class="step-no">03</span><span class="kind output">{inputKind.output}</span><h3>投資負担を測る</h3><p>{bn(model.normalized.capital_expenditures_total)} ÷ {bn(model.normalized.operating_cash_flow_total)} = {(model.normalized.capital_expenditures_to_operating_cash_flow * 100).toFixed(1)}%。一次情報の足し算から比率を出す。</p></li>
+          <li class="guide-step"><span class="step-no">04</span><span class="kind assumption">{inputKind.assumption}</span><h3>未来の仮定を置く</h3><p>OCF成長、残すFCF、借入・リース、β、利益率をシナリオごとに置く。</p></li>
+          <li class="guide-step"><span class="step-no">05</span><span class="kind output">{inputKind.output}</span><h3>結果を監査する</h3><p>売上成長→営業利益成長へ変換し、未推定のβや投資ラグをOPENとして残す。</p></li>
+        </ol>
+        <div class="legend" aria-label="表示区分">
+          <span><i class="legend-dot fact"></i>確認できる事実</span>
+          <span><i class="legend-dot definition"></i>定義・集計方法</span>
+          <span><i class="legend-dot assumption"></i>モデルの仮定</span>
+          <span><i class="legend-dot output"></i>計算結果</span>
+        </div>
+      </section>
+
+      <section id="raw-data" class="raw-data-section">
+        <div class="section-heading">
+          <div><p class="eyebrow">00.1 / RAW DATA</p><h2>数字の出発点</h2></div>
+          <a class="raw-link" href={base + 'data/quant-audit.json'}>raw snapshot ↗</a>
+        </div>
+        <p class="section-intro">ここにある数字がモデルの入力です。営業CFも設備投資も、SEC EDGAR Companyfactsに登録された10-Qの報告値です。推定値を足さず、リンク先の一次資料とfact tagを確認できます。</p>
+        <div class="raw-table-wrap">
+          <table class="raw-table">
+            <caption>2026年3月期 / USD billions</caption>
+            <thead><tr><th scope="col">Company</th><th scope="col">Period</th><th scope="col">Operating CF</th><th scope="col">Capital expenditures</th><th scope="col">SEC fact tag</th><th scope="col">Source</th></tr></thead>
+            <tbody>
+              {sources.map((source) => (
+                <tr><th scope="row">{source.label}</th><td>{source.period_end}</td><td class="number fact-number">{bn(source.operating_cash_flow)}</td><td class="number fact-number">{bn(source.capital_expenditures)}</td><td><span class="definition-text">{source.capital_expenditures_fact_tag}</span></td><td><a class="table-link" href={source.source_url} target="_blank" rel="noreferrer">10-Q ↗</a></td></tr>
+              ))}
+            </tbody>
+            <tfoot><tr><th scope="row">Total / reported facts</th><td>—</td><td class="number">{bn(model.normalized.operating_cash_flow_total)}</td><td class="number">{bn(model.normalized.capital_expenditures_total)}</td><td colspan="2">same-period group</td></tr></tfoot>
+          </table>
+        </div>
+        <div class="data-note"><span class="kind definition">{inputKind.definition}</span><p>会社ごとにXBRL fact tagは異なりますが、ここでは各社が報告したcapital expendituresの値をそのまま表示します。期間が揃わないOracleや、標準capex tagがまだ取れないDigital Realtyは、下の合計へ混ぜません。</p></div>
+      </section>
+
+      <section id="coverage" class="coverage-section">
+        <div class="section-heading">
+          <div><p class="eyebrow">00.15 / PRIMARY API</p><h2>誰を、どこまで測れるか</h2></div>
+          <a class="raw-link" href={base + 'api/v1/index.json'}>API index ↗</a>
+        </div>
+        <p class="section-intro">母集団を増やすほど良い、とは限りません。一次factが存在し、同じ期間で2項目そろう会社だけを集計し、残りは「欠測」として表示します。</p>
+        <div class="coverage-stats">
+          <div><span>REGISTERED ENTITIES</span><strong>{primaryApi.companies.length}</strong></div>
+          <div><span>PRIMARY FACTS</span><strong>{primaryFacts.length}</strong></div>
+          <div><span>IN AGGREGATE</span><strong>{sources.length}</strong></div>
+          <div><span>EXCLUDED / NO ESTIMATE</span><strong>{primaryApi.companies.length - sources.length}</strong></div>
+        </div>
+        <div class="coverage-table-wrap">
+          <table class="coverage-table">
+            <caption>Entity registry / status is data, not a forecast</caption>
+            <thead><tr><th scope="col">Entity</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Facts</th><th scope="col">Latest filing</th></tr></thead>
+            <tbody>
+              {primaryApi.companies.map((company) => (
+                <tr class={company.quantitative_status === 'reported_facts_same_period' ? 'included' : 'excluded'}>
+                  <th scope="row">{company.name}{company.product_aliases ? <small> ({company.product_aliases.join(', ')})</small> : ''}</th>
+                  <td>{company.role}</td>
+                  <td><span class="status-label">{coverageLabel[company.quantitative_status] || company.quantitative_status}</span></td>
+                  <td class="number">{company.facts.length}</td>
+                  <td>{company.recent_filings?.[0] ? <a class="table-link" href={company.recent_filings[0].source_url} target="_blank" rel="noreferrer">{company.recent_filings[0].form} / {company.recent_filings[0].filed} ↗</a> : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="company-ledger" class="company-section">
+        <div class="section-heading">
+          <div><p class="eyebrow">00.2 / COMPANY LEDGER</p><h2>銘柄ごとの決算ウォーク</h2></div>
+          <span class="section-meta">ONE COMPANY → ONE CONTRIBUTION</span>
+        </div>
+        <p class="section-intro">集計の前に、各社を1行ずつ見ます。ここでの「差額」はフリーキャッシュフローそのものではなく、報告された営業CFから報告された設備投資を引いただけの残差です。</p>
+        <div class="company-grid">
+          {sourceWalks.map((source, index) => (
+            <article class="company-card">
+              <header><span class="source-index">0{index + 1}</span><div><h3>{source.label}</h3><span>{source.period_end} / 10-Q</span></div><a href={source.source_url} target="_blank" rel="noreferrer">一次資料 ↗</a></header>
+              <div class="company-inputs">
+                <div><span>営業CF</span><strong>{bn(source.operating_cash_flow)}</strong><small>本業から生んだ現金</small></div>
+                <div class="operator">−</div>
+                <div><span>capital expenditures</span><strong>{bn(source.capital_expenditures)}</strong><small>SEC tag: {source.capital_expenditures_fact_tag}</small></div>
+              </div>
+              <div class="company-result"><span>2項目の残差</span><strong>{bn(source.residual)}</strong><small>{source.residual >= 0 ? '投資後に残る' : '営業CFを上回る'}（OCF − capital expenditures）</small></div>
+              <details><summary>この銘柄の読み方</summary><p>10-Qで営業CFと設備投資のXBRL fact tagを別々に確認し、このカードの2つの報告値を同じperiodで加算します。推定capexやリース推計はこの合計に入れていません。</p></details>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section id="scenarios" class="section-block">
@@ -100,13 +220,13 @@ const openFindings = model.audit.findings.filter((finding) => finding.status ===
           {sources.map((source) => (
             <article class="evidence-card">
               <div class="evidence-top"><span class="source-index">0{sources.indexOf(source) + 1}</span><h3>{source.label}</h3><a href={source.source_url} target="_blank" rel="noreferrer">10-Q ↗</a></div>
-              <div class="evidence-numbers"><div><span>OPERATING CF</span><strong>{bn(source.operating_cash_flow)}</strong></div><div><span>CAPEX PROXY</span><strong>{bn(source.capex_proxy)}</strong></div></div>
-              <p><span class="definition-dot"></span>{source.capex_definition.replaceAll('_', ' ')}</p>
+                <div class="evidence-numbers"><div><span>OPERATING CF</span><strong>{bn(source.operating_cash_flow)}</strong></div><div><span>CAPITAL EXPENDITURES</span><strong>{bn(source.capital_expenditures)}</strong></div></div>
+              <p><span class="definition-dot"></span>{source.capital_expenditures_fact_tag}</p>
             </article>
           ))}
         </div>
-        <div class="evidence-total"><div><span class="micro">AGGREGATED PROXY</span><strong>{bn(model.normalized.operating_cash_flow_total)} OCF</strong></div><div class="math-sign">−</div><div><span class="micro">CAPEX / LEASE MIX</span><strong>{bn(model.normalized.capex_proxy_total)}</strong></div><div class="math-sign">=</div><div class="total-result"><span class="micro">RESIDUAL PROXY</span><strong>{bn(model.normalized.residual_cash_flow_proxy)} <small>({(model.normalized.residual_margin_proxy * 100).toFixed(1)}%)</small></strong></div></div>
-        <p class="footnote">※ 4社のcapex proxyは会計定義が異なる。合計はGAAP指標ではなく、AIインフラ投資負担の比較用スナップショット。</p>
+        <div class="evidence-total"><div><span class="micro">REPORTED OCF</span><strong>{bn(model.normalized.operating_cash_flow_total)}</strong></div><div class="math-sign">−</div><div><span class="micro">REPORTED CAPEX</span><strong>{bn(model.normalized.capital_expenditures_total)}</strong></div><div class="math-sign">=</div><div class="total-result"><span class="micro">RESIDUAL</span><strong>{bn(model.normalized.residual_cash_flow)} <small>({(model.normalized.residual_margin * 100).toFixed(1)}%)</small></strong></div></div>
+        <p class="footnote">※ 合計は同じperiod_start / period_endと、SECのprimary fact tagを持つ銘柄だけ。6社の報告値を足した機械的な集計で、業界全体の設備投資推定ではありません。</p>
       </section>
 
       <section class="audit-grid">
@@ -116,6 +236,52 @@ const openFindings = model.audit.findings.filter((finding) => finding.status ===
             <div class="finding"><span class={`severity ${finding.severity}`}>{severityLabel[finding.severity]}</span><div><b>{finding.id.replaceAll('_', ' ')}</b><p>{finding.detail}</p></div><span class="open-dot"></span></div>
           ))}
         </div>
+      </section>
+
+      <section id="equations" class="equations-section">
+        <div class="section-heading">
+          <div><p class="eyebrow">03.1 / FROM CASH TO GROWTH</p><h2>足す、割る、掛ける。</h2></div>
+          <span class="section-meta">BASE CASE WORKED EXAMPLE</span>
+        </div>
+        <div class="equation-layout">
+          <article class="equation-card">
+            <span class="kind definition">{inputKind.definition}</span>
+            <h3>まず、投資に使える力を出す</h3>
+            <code>gI = (1 + gOCF) × (1 − mFCF + f) / r₀ − 1</code>
+            <p>営業CFが伸び、そのうちFCFとして残す分と外部資金を除いた「投資に回せる力」を、現在の投資負担率で割ります。</p>
+            <div class="variable-grid">
+              <div><code>r₀</code><span>現在のcapital expenditures / OCF</span><b>{(model.normalized.capital_expenditures_to_operating_cash_flow * 100).toFixed(1)}%</b></div>
+              <div><code>gOCF</code><span>営業CF成長</span><b>{formatDecimalPct(baseInput.ocf_growth)}</b></div>
+              <div><code>mFCF</code><span>残すFCF</span><b>{formatDecimalPct(baseInput.fcf_reserve)}</b></div>
+              <div><code>f</code><span>外部資金</span><b>{formatDecimalPct(baseInput.external_financing)}</b></div>
+            </div>
+            <div class="worked-example"><span>BASE CASE / 数字を代入</span><code>(1 + {formatDecimalPct(baseInput.ocf_growth)}) × (1 − {formatDecimalPct(baseInput.fcf_reserve)} + {formatDecimalPct(baseInput.external_financing)}) / {(model.normalized.capital_expenditures_to_operating_cash_flow).toFixed(2)} − 1 = <b>{pct(baseScenario.effective_investment_growth)}</b></code></div>
+          </article>
+          <article class="equation-card">
+            <span class="kind output">{inputKind.output}</span>
+            <h3>次に、投資を売上と利益へ移す</h3>
+            <code>gR = β × gI</code>
+            <code>gE = (1 + gR) × (M₁ / M₀) − 1</code>
+            <p>βは「投資成長が売上に伝わる強さ」。最後に利益率が変わる分を加えます。今回はβ = {snapshot.beta_range[0]}—{snapshot.beta_range[1]}を仮定し、ベースでは利益率を{pct0(baseInput.forward_margin)}で据え置きます。</p>
+            <div class="worked-example"><span>BASE CASE / βを掛ける</span><code>({snapshot.beta_range[0]}—{snapshot.beta_range[1]}) × {pct(baseScenario.effective_investment_growth)} = <b>{range(baseScenario.revenue_growth_range)}</b></code></div>
+            <div class="worked-example"><span>利益率が同じなら</span><code>(1 + gR) × ({pct0(baseInput.forward_margin)} / {pct0(consensus.forward_margin)}) − 1 = <b>{range(baseScenario.operating_earnings_growth_range)}</b></code></div>
+          </article>
+        </div>
+        <div class="assumption-heading"><p class="eyebrow">INPUTS / SCENARIO TABLE</p><h3>結果の前に置いた仮定</h3><p>ここは決算から直接読んだ事実ではなく、モデルが置いた未来の条件です。</p></div>
+        <div class="assumption-grid">
+          {scenarioInputs.map((scenario) => (
+            <article class="assumption-card">
+              <div><span class="scenario-pin"></span><h3>{titleCase(scenario.name)}</h3></div>
+              <dl>
+                <div><dt>OCF growth</dt><dd>{formatDecimalPct(scenario.ocf_growth)}</dd></div>
+                <div><dt>FCF reserve</dt><dd>{formatDecimalPct(scenario.fcf_reserve)}</dd></div>
+                <div><dt>External financing</dt><dd>{formatDecimalPct(scenario.external_financing)}</dd></div>
+                <div><dt>Forward margin</dt><dd>{formatDecimalPct(scenario.forward_margin)}</dd></div>
+              </dl>
+            </article>
+          ))}
+        </div>
+        <div class="consensus-box"><span class="kind assumption">{inputKind.assumption}</span><p><strong>市場コンセンサス</strong> 2027 revenue {pct0(consensus.revenue_growth_2027)} / operating earnings {pct0(consensus.operating_earnings_growth_2027)} / forward margin {pct0(consensus.forward_margin)}。出所は{consensus.source}の二次情報で、企業自身の一次予想ではありません。</p></div>
       </section>
 
       <section id="method" class="method-grid">
@@ -162,6 +328,12 @@ const openFindings = model.audit.findings.filter((finding) => finding.status ===
   .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid #27312e; } .kpi { min-height: 160px; padding: 24px 20px 20px 0; border-right: 1px solid #27312e; } .kpi:not(:first-child) { padding-left: 20px; } .kpi:last-child { border-right: 0; }
   .kpi span { display: block; min-height: 32px; color: #728078; font-size: .58rem; line-height: 1.5; } .kpi strong { display: block; margin: 18px 0 8px; color: #f0f3e9; font: 500 clamp(1.65rem, 3vw, 2.5rem) "IBM Plex Mono", monospace; letter-spacing: -.08em; } .kpi-accent strong { color: #c9f45a; } .kpi small { color: #69776e; font-size: .71rem; }
   .signal-strip { display: grid; grid-template-columns: 240px 1fr auto; gap: 20px; align-items: center; margin: 35px 0 70px; padding: 17px 20px; border: 1px solid #5d713b; background: linear-gradient(90deg, rgb(201 244 90 / .08), transparent 55%); } .signal-led { display: flex; align-items: center; gap: 12px; } .signal-mark { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid #c9f45a; border-radius: 50%; color: #c9f45a; font-weight: 800; } .signal-led strong { display: block; color: #c9f45a; font-family: "Noto Serif JP", serif; } .signal-strip p { margin: 0; color: #a1afa5; font-size: .84rem; line-height: 1.6; } .confidence { color: #c9f45a; font: .68rem "IBM Plex Mono", monospace; white-space: nowrap; }
+  .guide-section, .raw-data-section, .equations-section { margin: 0 0 80px; padding-top: 28px; border-top: 1px solid #27312e; } .guide-heading { margin-bottom: 18px; } .guide-lead { display: grid; grid-template-columns: 170px 1fr; gap: 8px 25px; align-items: baseline; padding: 23px 25px; border: 1px solid #4b5b47; background: linear-gradient(100deg, rgb(201 244 90 / .08), #101512 62%); } .guide-question { grid-row: span 2; margin: 0; color: #c9f45a; font: .67rem "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; } .guide-lead h3 { margin: 0; color: #e9eee3; font: 500 clamp(1.35rem, 2.5vw, 2rem) "Noto Serif JP", serif; } .guide-lead h3 strong { color: #c9f45a; font-family: "IBM Plex Mono", monospace; } .guide-lead > p:last-child { margin: 0; color: #89968e; font-size: .8rem; line-height: 1.7; }
+  .guide-path { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 25px 0 0; padding: 0; list-style: none; border: 1px solid #2b3830; background: #101512; } .guide-step { position: relative; min-height: 220px; padding: 18px 17px 20px; border-right: 1px solid #2b3830; } .guide-step:last-child { border-right: 0; } .step-no { display: block; margin-bottom: 18px; color: #59665c; font: .65rem "IBM Plex Mono", monospace; } .guide-step h3 { margin: 14px 0 10px; color: #e6eadf; font: 600 1rem "Noto Serif JP", serif; } .guide-step p { margin: 0; color: #7f8d83; font-size: .74rem; line-height: 1.75; } .kind { display: inline-block; padding: 4px 6px; border: 1px solid currentColor; font: .55rem "IBM Plex Mono", monospace; letter-spacing: .08em; } .kind.fact { color: #c9f45a; } .kind.definition { color: #ed9b56; } .kind.assumption { color: #c89cf2; } .kind.output { color: #7bb7ff; } .legend { display: flex; flex-wrap: wrap; gap: 16px 24px; margin: 15px 0 0; color: #68766d; font: .6rem "IBM Plex Mono", monospace; } .legend-dot { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: currentColor; } .legend-dot.fact { color: #c9f45a; } .legend-dot.definition { color: #ed9b56; } .legend-dot.assumption { color: #c89cf2; } .legend-dot.output { color: #7bb7ff; }
+  .raw-link, .table-link { color: #c9f45a; font: .62rem "IBM Plex Mono", monospace; text-decoration: none; } .raw-link:hover, .table-link:hover { text-decoration: underline; } .section-intro { max-width: 780px; margin: -6px 0 20px; color: #89968e; font-size: .86rem; line-height: 1.8; } .raw-table-wrap { overflow-x: auto; border: 1px solid #2b3830; background: #101512; } .raw-table { width: 100%; min-width: 850px; border-collapse: collapse; color: #a6b199; font-size: .73rem; } .raw-table caption { padding: 15px 17px; text-align: left; color: #68766d; font: .6rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .raw-table th, .raw-table td { padding: 14px 15px; border-top: 1px solid #27312e; text-align: left; white-space: nowrap; } .raw-table thead th { color: #68766d; font: .58rem "IBM Plex Mono", monospace; letter-spacing: .07em; text-transform: uppercase; } .raw-table tbody th { color: #e6eadf; font-family: "Noto Serif JP", serif; font-weight: 600; } .raw-table .number { color: #e6eadf; font: 600 .82rem "IBM Plex Mono", monospace; } .raw-table .fact-number { color: #c9f45a; } .raw-table tfoot th, .raw-table tfoot td { color: #c9f45a; background: #161d17; font-weight: 600; } .definition-text { color: #ed9b56; font: .61rem "IBM Plex Mono", monospace; } .data-note { display: grid; grid-template-columns: auto 1fr; gap: 13px; align-items: start; margin-top: 13px; padding: 15px 17px; border-left: 2px solid #ed9b56; background: #121914; } .data-note p { margin: 0; color: #89968e; font-size: .76rem; line-height: 1.7; }
+  .company-section { margin: 0 0 80px; padding-top: 28px; border-top: 1px solid #27312e; } .company-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; } .company-card { padding: 20px; border: 1px solid #2b3830; background: #101512; } .company-card > header { display: grid; grid-template-columns: 25px 1fr auto; gap: 10px; align-items: start; } .company-card header h3 { margin: 0 0 4px; color: #e6eadf; font: 600 1.25rem "Noto Serif JP", serif; } .company-card header div span { color: #68766d; font: .59rem "IBM Plex Mono", monospace; } .company-card header a { color: #c9f45a; font: .59rem "IBM Plex Mono", monospace; text-decoration: none; } .company-card header a:hover { text-decoration: underline; } .company-inputs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin: 28px 0 10px; padding: 14px 0; border-top: 1px solid #27312e; border-bottom: 1px solid #27312e; } .company-inputs span, .company-result span { display: block; color: #68766d; font: .57rem "IBM Plex Mono", monospace; letter-spacing: .06em; text-transform: uppercase; } .company-inputs strong { display: block; margin: 7px 0 5px; color: #c9f45a; font: 600 1.22rem "IBM Plex Mono", monospace; } .company-inputs small, .company-result small { display: block; color: #7f8d83; font-size: .63rem; line-height: 1.45; } .company-inputs .operator { color: #59665c; font: 1.4rem "IBM Plex Mono", monospace; } .company-result { padding: 13px 14px; border-left: 2px solid #7bb7ff; background: #121a23; } .company-result strong { display: block; margin: 6px 0 3px; color: #e6eadf; font: 600 1.05rem "IBM Plex Mono", monospace; } .company-card details { margin-top: 15px; } .company-card summary { cursor: pointer; color: #a6b199; font: .63rem "IBM Plex Mono", monospace; } .company-card details p { margin: 11px 0 0; color: #89968e; font-size: .72rem; line-height: 1.75; }
+  .coverage-section { margin: 0 0 80px; padding-top: 28px; border-top: 1px solid #27312e; } .coverage-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-bottom: 12px; border: 1px solid #2b3830; background: #2b3830; } .coverage-stats > div { padding: 17px; background: #101512; } .coverage-stats span { display: block; color: #68766d; font: .55rem "IBM Plex Mono", monospace; letter-spacing: .07em; } .coverage-stats strong { display: block; margin-top: 10px; color: #c9f45a; font: 600 1.5rem "IBM Plex Mono", monospace; } .coverage-table-wrap { overflow-x: auto; border: 1px solid #2b3830; background: #101512; } .coverage-table { width: 100%; min-width: 780px; border-collapse: collapse; color: #89968e; font-size: .72rem; } .coverage-table caption { padding: 15px 17px; text-align: left; color: #68766d; font: .6rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .coverage-table th, .coverage-table td { padding: 12px 15px; border-top: 1px solid #27312e; text-align: left; } .coverage-table thead th { color: #68766d; font: .58rem "IBM Plex Mono", monospace; text-transform: uppercase; } .coverage-table tbody th { color: #e6eadf; font: 600 .82rem "Noto Serif JP", serif; } .coverage-table tbody th small { color: #68766d; font: .6rem "IBM Plex Mono", monospace; } .coverage-table .included { background: rgb(201 244 90 / .035); } .coverage-table .included .status-label { color: #c9f45a; } .coverage-table .excluded .status-label { color: #ed9b56; } .coverage-table .number { color: #e6eadf; font: .75rem "IBM Plex Mono", monospace; } .status-label { font: .58rem "IBM Plex Mono", monospace; letter-spacing: .04em; }
+  .equation-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .equation-card { padding: 22px; border: 1px solid #344238; background: #101512; } .equation-card h3 { margin: 18px 0 12px; color: #e6eadf; font: 500 1.4rem "Noto Serif JP", serif; } .equation-card > code { display: block; margin: 14px 0; color: #e8f4df; font: clamp(.86rem, 1.6vw, 1.08rem) "IBM Plex Mono", monospace; } .equation-card > p { margin: 0; color: #89968e; font-size: .8rem; line-height: 1.8; } .variable-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-top: 20px; } .variable-grid > div { padding: 10px 8px; border: 1px solid #2b3830; } .variable-grid code { display: block; color: #c9f45a; font: .78rem "IBM Plex Mono", monospace; } .variable-grid span { display: block; min-height: 30px; margin: 6px 0; color: #68766d; font-size: .59rem; line-height: 1.4; } .variable-grid b { color: #e6eadf; font: .8rem "IBM Plex Mono", monospace; } .worked-example { display: grid; gap: 8px; margin-top: 17px; padding: 13px 14px; border-left: 2px solid #c9f45a; background: #161d17; } .worked-example span { color: #68766d; font: .57rem "IBM Plex Mono", monospace; letter-spacing: .06em; text-transform: uppercase; } .worked-example code { color: #dfe8d8; font: .82rem "IBM Plex Mono", monospace; } .worked-example b { color: #c9f45a; } .assumption-heading { margin: 45px 0 15px; } .assumption-heading .eyebrow { margin-bottom: 9px; } .assumption-heading h3 { margin: 0; color: #e6eadf; font: 500 1.55rem "Noto Serif JP", serif; } .assumption-heading p:last-child { margin: 9px 0 0; color: #89968e; font-size: .78rem; } .assumption-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; } .assumption-card { padding: 17px; border: 1px solid #2b3830; background: #101512; } .assumption-card > div:first-child { display: flex; align-items: center; gap: 9px; } .assumption-card h3 { margin: 0; color: #e6eadf; font: 600 1rem "IBM Plex Mono", monospace; } .assumption-card .scenario-pin { flex: 0 0 auto; } .assumption-card dl { margin: 20px 0 0; } .assumption-card dl > div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid #27312e; } .assumption-card dt { color: #68766d; font: .61rem "IBM Plex Mono", monospace; } .assumption-card dd { margin: 0; color: #c89cf2; font: .72rem "IBM Plex Mono", monospace; } .consensus-box { display: grid; grid-template-columns: auto 1fr; gap: 13px; align-items: start; margin-top: 14px; padding: 15px 17px; border: 1px solid #4c3b58; background: #17131b; } .consensus-box p { margin: 0; color: #b0a2b8; font-size: .76rem; line-height: 1.7; } .consensus-box strong { color: #e8dff0; }
   .section-block { margin: 0 0 80px; } .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 25px; } .section-heading.compact { margin-bottom: 18px; } .section-heading h2, .method-intro h2 { font-size: clamp(2rem, 4vw, 3.6rem); line-height: 1; } .section-meta { color: #68766d; font-size: .62rem; }
   .filterbar { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; } .filter { border: 1px solid #455343; padding: 10px 14px; background: transparent; color: #9aa79e; font: .63rem "IBM Plex Mono", monospace; cursor: pointer; } .filter.active, .filter:hover { border-color: #c9f45a; color: #c9f45a; }
   .scenario-frame { border-top: 1px solid #38443c; } .axis { display: grid; grid-template-columns: repeat(4, 1fr); padding: 9px 245px 10px 214px; color: #58665c; font-size: .56rem; } .axis span:not(:first-child) { text-align: right; }
@@ -177,4 +349,6 @@ const openFindings = model.audit.findings.filter((finding) => finding.status ===
   .footer { display: flex; justify-content: space-between; gap: 18px; padding-top: 20px; border-top: 1px solid #27312e; color: #59665c; font-size: .56rem; }
   @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-stamp { grid-template-columns: 65px 1fr 1fr; border-left: 0; border-top: 1px solid #3b493e; padding: 20px 0 0; } .stamp-ring { grid-row: span 2; } .kpi-grid { grid-template-columns: repeat(2, 1fr); } .kpi:nth-child(2) { border-right: 0; } .evidence-grid { grid-template-columns: repeat(2, 1fr); } .method-grid { grid-template-columns: 1fr; gap: 30px; } }
   @media (max-width: 620px) { .shell { width: min(100% - 26px, 1320px); } nav { gap: 10px; } nav a { font-size: .55rem; } .hero { padding: 65px 0 45px; } h1 { font-size: clamp(2.65rem, 14vw, 4.2rem); } .hero-stamp { grid-template-columns: 60px 1fr 1fr; } .signal-strip { grid-template-columns: 1fr; gap: 12px; } .confidence { justify-self: start; } .section-heading { align-items: start; flex-direction: column; } .axis { display: none; } .scenario-row { grid-template-columns: 1fr; gap: 9px; padding: 18px 0; } .range-track { order: 3; } .scenario-values { position: absolute; right: 13px; margin-top: -55px; } .scenario-name small { margin-left: 0; } .evidence-grid { grid-template-columns: 1fr; } .evidence-total { grid-template-columns: 1fr auto 1fr; gap: 12px; } .total-result { grid-column: 1 / -1; padding-top: 14px; border-top: 1px solid #344238; } .footer { flex-direction: column; gap: 8px; } }
+  @media (max-width: 900px) { .guide-path { grid-template-columns: repeat(2, 1fr); } .guide-step:nth-child(2n) { border-right: 0; } .guide-step:nth-child(n + 3) { border-top: 1px solid #2b3830; } .equation-layout, .company-grid { grid-template-columns: 1fr; } .coverage-stats { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .guide-lead { grid-template-columns: 1fr; gap: 12px; } .guide-question { grid-row: auto; } .guide-path { grid-template-columns: 1fr; } .guide-step, .guide-step:nth-child(2n) { border-right: 0; border-top: 1px solid #2b3830; } .guide-step:first-child { border-top: 0; } .variable-grid { grid-template-columns: repeat(2, 1fr); } .coverage-stats { grid-template-columns: 1fr 1fr; } }
 </style>

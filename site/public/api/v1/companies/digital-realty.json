@@ -1,0 +1,129 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "1297996",
+  "class": "public",
+  "facts": [
+    {
+      "accession": "0001104659-26-054255",
+      "duration_days": 89,
+      "entity_id": "digital-realty",
+      "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "filed": "2026-05-01",
+      "fiscal_period": "Q1",
+      "form": "10-Q",
+      "kind": "operating_cash_flow",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 532421000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001297996.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/0001104659-26-054255-index.html",
+      "unit": "USD",
+      "value_usd_billions": 0.532421
+    }
+  ],
+  "id": "digital-realty",
+  "name": "Digital Realty",
+  "quantitative_status": "capital_expenditure_fact_unavailable",
+  "recent_filings": [
+    {
+      "accession": "0001193125-26-292577",
+      "filed": "2026-07-01",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526292577/0001193125-26-292577-index.html",
+      "report_date": "2026-06-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526292577/d332992d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-288761",
+      "filed": "2026-06-29",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526288761/0001193125-26-288761-index.html",
+      "report_date": "2026-06-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526288761/d100507d8k.htm"
+    },
+    {
+      "accession": "0001193125-26-276844",
+      "filed": "2026-06-22",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526276844/0001193125-26-276844-index.html",
+      "report_date": "2026-06-22",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526276844/d50837d8k.htm"
+    },
+    {
+      "accession": "0001104659-26-068907",
+      "filed": "2026-06-01",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926068907/0001104659-26-068907-index.html",
+      "report_date": "2026-05-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926068907/dlr-20260529x8k.htm"
+    },
+    {
+      "accession": "0001193125-26-202581",
+      "filed": "2026-05-04",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526202581/0001193125-26-202581-index.html",
+      "report_date": "2026-05-04",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526202581/d140571d8k.htm"
+    },
+    {
+      "accession": "0001104659-26-054255",
+      "filed": "2026-05-01",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/0001104659-26-054255-index.html",
+      "report_date": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/dlr-20260331x10q.htm"
+    },
+    {
+      "accession": "0001104659-26-047702",
+      "filed": "2026-04-23",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926047702/0001104659-26-047702-index.html",
+      "report_date": "2026-04-23",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926047702/dlr-20260423x8k.htm"
+    },
+    {
+      "accession": "0001193125-26-053164",
+      "filed": "2026-02-17",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526053164/0001193125-26-053164-index.html",
+      "report_date": "2026-02-17",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312526053164/d112316d8k.htm"
+    },
+    {
+      "accession": "0001104659-26-015365",
+      "filed": "2026-02-13",
+      "form": "10-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926015365/0001104659-26-015365-index.html",
+      "report_date": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926015365/dlr-20251231x10k.htm"
+    },
+    {
+      "accession": "0001104659-26-010887",
+      "filed": "2026-02-05",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926010887/0001104659-26-010887-index.html",
+      "report_date": "2026-02-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926010887/dlr-20260205x8k.htm"
+    },
+    {
+      "accession": "0001104659-25-121124",
+      "filed": "2025-12-15",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465925121124/0001104659-25-121124-index.html",
+      "report_date": "2025-12-15",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465925121124/dlr-20251215x8k.htm"
+    },
+    {
+      "accession": "0001193125-25-306874",
+      "filed": "2025-12-03",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312525306874/0001193125-25-306874-index.html",
+      "report_date": "2025-12-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000119312525306874/d92708d8k.htm"
+    }
+  ],
+  "role": "data-center-operator",
+  "source": "SEC EDGAR",
+  "ticker": "DLR"
+}

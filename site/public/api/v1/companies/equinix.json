@@ -1,0 +1,147 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "1101239",
+  "class": "public",
+  "facts": [
+    {
+      "accession": "0001101239-26-000091",
+      "duration_days": 89,
+      "entity_id": "equinix",
+      "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "filed": "2026-04-29",
+      "fiscal_period": "Q1",
+      "form": "10-Q",
+      "kind": "operating_cash_flow",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 717000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001101239.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+      "unit": "USD",
+      "value_usd_billions": 0.717
+    },
+    {
+      "accession": "0001101239-26-000091",
+      "duration_days": 89,
+      "entity_id": "equinix",
+      "fact_tag": "PaymentsToAcquireProductiveAssets",
+      "filed": "2026-04-29",
+      "fiscal_period": "Q1",
+      "form": "10-Q",
+      "kind": "capital_expenditures",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "reported_value": 1256000000,
+      "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001101239.json",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+      "unit": "USD",
+      "value_usd_billions": 1.256
+    }
+  ],
+  "id": "equinix",
+  "name": "Equinix",
+  "quantitative_status": "reported_facts_same_period",
+  "recent_filings": [
+    {
+      "accession": "0001101239-26-000131",
+      "filed": "2026-07-14",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000131/0001101239-26-000131-index.html",
+      "report_date": "2026-07-08",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000131/eqix-20260708.htm"
+    },
+    {
+      "accession": "0001101239-26-000109",
+      "filed": "2026-05-15",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000109/0001101239-26-000109-index.html",
+      "report_date": "2026-05-13",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000109/eqix-20260513.htm"
+    },
+    {
+      "accession": "0001101239-26-000095",
+      "filed": "2026-05-11",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000095/0001101239-26-000095-index.html",
+      "report_date": "2026-05-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000095/eqix-20260505.htm"
+    },
+    {
+      "accession": "0001104659-26-057167",
+      "filed": "2026-05-07",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926057167/0001104659-26-057167-index.html",
+      "report_date": "2026-05-07",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926057167/tm2613784d1_8k.htm"
+    },
+    {
+      "accession": "0001101239-26-000091",
+      "filed": "2026-04-29",
+      "form": "10-Q",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+      "report_date": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/eqix-20260331.htm"
+    },
+    {
+      "accession": "0001101239-26-000089",
+      "filed": "2026-04-29",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000089/0001101239-26-000089-index.html",
+      "report_date": "2026-04-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000089/eqix-20260429.htm"
+    },
+    {
+      "accession": "0001101239-26-000058",
+      "filed": "2026-03-10",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000058/0001101239-26-000058-index.html",
+      "report_date": "2026-03-07",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000058/eqix-20260307.htm"
+    },
+    {
+      "accession": "0001104659-26-024144",
+      "filed": "2026-03-05",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926024144/0001104659-26-024144-index.html",
+      "report_date": "2026-03-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110465926024144/tm267848d1_8k.htm"
+    },
+    {
+      "accession": "0001101239-26-000051",
+      "filed": "2026-02-27",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000051/0001101239-26-000051-index.html",
+      "report_date": "2026-02-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000051/eqix-20260227.htm"
+    },
+    {
+      "accession": "0001101239-26-000039",
+      "filed": "2026-02-18",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000039/0001101239-26-000039-index.html",
+      "report_date": "2026-02-16",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000039/eqix-20260216.htm"
+    },
+    {
+      "accession": "0001101239-26-000035",
+      "filed": "2026-02-12",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000035/0001101239-26-000035-index.html",
+      "report_date": "2026-02-06",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000035/eqix-20260206.htm"
+    },
+    {
+      "accession": "0001101239-26-000033",
+      "filed": "2026-02-11",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000033/0001101239-26-000033-index.html",
+      "report_date": "2026-02-11",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000033/eqix-20260211.htm"
+    }
+  ],
+  "role": "data-center-operator",
+  "source": "SEC EDGAR",
+  "ticker": "EQIX"
+}

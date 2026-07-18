@@ -1,0 +1,134 @@
+{
+  "as_of": "2026-07-18",
+  "beta_range": [
+    0.6,
+    0.8
+  ],
+  "consensus": {
+    "as_of": "2026-07-17",
+    "forward_margin": 0.51,
+    "operating_earnings_growth_2027": 0.585,
+    "revenue_growth_2027": 0.464,
+    "source": "Yardeni",
+    "source_kind": "secondary"
+  },
+  "graph_version": "2026-07-18.2",
+  "model_base_ratio": 0.8981596601652551,
+  "primary_api_generated_at": "2026-07-18",
+  "primary_period": {
+    "end": "2026-03-31",
+    "start": "2026-01-01"
+  },
+  "scenarios": [
+    {
+      "external_financing": 0.1,
+      "fcf_reserve": 0.05,
+      "forward_margin": 0.55,
+      "name": "bull",
+      "ocf_growth": 0.35
+    },
+    {
+      "external_financing": 0.05,
+      "fcf_reserve": 0.1,
+      "forward_margin": 0.51,
+      "name": "base",
+      "ocf_growth": 0.2
+    },
+    {
+      "external_financing": 0.02,
+      "fcf_reserve": 0.15,
+      "forward_margin": 0.47,
+      "name": "bear",
+      "ocf_growth": 0.1
+    },
+    {
+      "external_financing": 0.0,
+      "fcf_reserve": 0.2,
+      "forward_margin": 0.42,
+      "name": "stress",
+      "ocf_growth": 0.0
+    }
+  ],
+  "schema_version": "semiconductor-quant-audit.v2",
+  "selection_rule": "largest same-period group of reported primary facts; excluded entities remain in the API",
+  "sources": [
+    {
+      "capital_expenditures": 44.203,
+      "capital_expenditures_fact_tag": "PaymentsToAcquireProductiveAssets",
+      "id": "amazon",
+      "label": "Amazon",
+      "operating_cash_flow": 26.032,
+      "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
+      "ticker": "AMZN"
+    },
+    {
+      "capital_expenditures": 35.674,
+      "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "id": "alphabet",
+      "label": "Alphabet",
+      "operating_cash_flow": 45.79,
+      "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
+      "ticker": "GOOGL"
+    },
+    {
+      "capital_expenditures": 18.997,
+      "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "id": "meta",
+      "label": "Meta",
+      "operating_cash_flow": 32.226,
+      "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.html",
+      "ticker": "META"
+    },
+    {
+      "capital_expenditures": 30.876,
+      "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "id": "microsoft",
+      "label": "Microsoft",
+      "operating_cash_flow": 46.679,
+      "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+      "ticker": "MSFT"
+    },
+    {
+      "capital_expenditures": 7.695,
+      "capital_expenditures_fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "id": "coreweave",
+      "label": "CoreWeave",
+      "operating_cash_flow": 2.984,
+      "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
+      "ticker": "CRWV"
+    },
+    {
+      "capital_expenditures": 1.256,
+      "capital_expenditures_fact_tag": "PaymentsToAcquireProductiveAssets",
+      "id": "equinix",
+      "label": "Equinix",
+      "operating_cash_flow": 0.717,
+      "operating_cash_flow_fact_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "period_end": "2026-03-31",
+      "period_start": "2026-01-01",
+      "source_kind": "SEC EDGAR Companyfacts / 10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
+      "ticker": "EQIX"
+    }
+  ]
+}

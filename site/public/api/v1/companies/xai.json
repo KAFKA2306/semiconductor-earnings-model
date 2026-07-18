@@ -1,0 +1,15 @@
+{
+  "availability": "no_public_sec_10q_10k",
+  "cik": null,
+  "class": "private",
+  "facts": [],
+  "id": "xai",
+  "name": "xAI",
+  "product_aliases": [
+    "Grok"
+  ],
+  "quantitative_status": "excluded_without_estimate",
+  "role": "model-lab",
+  "source": "No public 10-Q/10-K in this database",
+  "ticker": null
+}
