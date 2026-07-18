@@ -104,7 +104,7 @@ jobs:
           grep -Fq "現在の判定" <<< "$html"
           grep -Fq "未成立" <<< "$html"
           grep -Fq "判定までの、" <<< "$html"
-          grep -Fq "会社別に見る" <<< "$html"
+          grep -Fq "会社別の原fact。" <<< "$html"
           grep -Fq "半導体企業の" <<< "$html"
           grep -Fq "内部資金と" <<< "$html"
           grep -Fq "リース・借入" <<< "$html"
@@ -119,13 +119,13 @@ jobs:
           demand_api_hash="$(jq -er '.content_hash' <<< "$demand_api_json")"
           grep -Fq "data-demand-api-hash=\"$demand_api_hash\"" <<< "$html"
           grep -Fq "内部資金と" <<< "$html"
-          printf '%s' "$html" | python -c 'import sys; html=sys.stdin.read(); markers=["id=\"how\"", "id=\"status\"", "id=\"demand\"", "id=\"profit\"", "id=\"companies\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+          printf '%s' "$html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"how\"", "id=\"status\"", "id=\"demand\"", "id=\"profit\"", "id=\"companies\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
           model_html="$(curl -fsSL "$base/model/")"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$model_html"
           grep -Fq "入力 → 式 → 中間値 → 判定" <<< "$model_html"
           grep -Fq "予測値は計算していません" <<< "$model_html"
           grep -Fq "β・ラグ・指数ウェイト" <<< "$model_html"
-          printf '%s' "$model_html" | python -c 'import sys; html=sys.stdin.read(); markers=["id=\"inputs\"", "id=\"formula\"", "id=\"forward\"", "id=\"output\"", "id=\"verdict\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+          printf '%s' "$model_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"inputs\"", "id=\"formula\"", "id=\"forward\"", "id=\"output\"", "id=\"verdict\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
           ! grep -Fq "MODEL VERDICT" <<< "$html"
           ! grep -Fq "30秒でわかる決算データ" <<< "$html"
           ! grep -Fqi "confidence 60%" <<< "$html"
