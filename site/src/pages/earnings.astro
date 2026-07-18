@@ -8,31 +8,43 @@ const primaryApi = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v
 const snapshot = model.snapshot;
 const normalized = model.normalized;
 const sources = snapshot.sources;
+const findings = model.audit.findings;
 const base = import.meta.env.BASE_URL;
 const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
 if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
 
 const usd = (value) => `$${(Number(value) / 1_000_000_000).toFixed(3)}B`;
-const wholeUsd = (value) => `$${Number(value).toLocaleString('en-US')} USD`;
-const stamp = (value) => value.replace('T', ' ').replace(/\.\d+Z$/, 'Z');
-const period = `${snapshot.primary_period.start} → ${snapshot.primary_period.end}`;
+const exactUsd = (value) => `$${Number(value).toLocaleString('en-US')} USD`;
+const dateJP = (value) => {
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+  return `${year}年${month}月${day}日`;
+};
+const periodLabel = `${dateJP(snapshot.primary_period.start)}〜${dateJP(snapshot.primary_period.end)}`;
 const cohortIds = new Set(sources.map((source) => source.id));
-const statusLabel = {
-  reported_facts_same_period: 'FACTS PRESENT',
-  public_no_10q_facts_yet: 'PUBLIC / NO 10-Q',
-  public_no_quarterly_10q_facts: 'PUBLIC / NO QUARTERLY FACT',
-  capital_expenditure_fact_unavailable: 'PUBLIC / CAPEX MISSING',
-  operating_cash_flow_fact_unavailable: 'PUBLIC / OCF MISSING',
-  reported_facts_period_mismatch: 'PUBLIC / PERIOD MISMATCH',
-  excluded_without_estimate: 'PRIVATE / NO PUBLIC FACT',
+const primaryFactsCount = primaryApi.companies.reduce((total, company) => total + company.facts.length, 0);
+const capexTagCount = normalized.capital_expenditures_fact_tag_count;
+const capexIsComparable = capexTagCount === 1;
+const capexSummary = capexIsComparable
+  ? '設備投資は同じタグで揃っているため、合計を表示します。'
+  : `設備投資は${capexTagCount}種類のタグに分かれるため、全社合計は計算しません。`;
+const findingSummary = {
+  capital_expenditure_concepts_not_comparable: `設備投資が${capexTagCount}種類のXBRLタグに分かれるため、全社の設備投資合計と残差は公開していません。`,
+};
+
+const statusCopy = {
+  reported_facts_same_period: { label: '数字あり', description: '同じ四半期のOCFと設備投資を確認' },
+  public_no_10q_facts_yet: { label: '10-Q待ち', description: '公開企業だが、まだ10-Qのfactなし' },
+  public_no_quarterly_10q_facts: { label: '四半期数字なし', description: '公開資料に対象factなし' },
+  capital_expenditure_fact_unavailable: { label: '設備投資なし', description: '設備投資factが未取得' },
+  operating_cash_flow_fact_unavailable: { label: '営業CFなし', description: '営業CF factが未取得' },
+  reported_facts_period_mismatch: { label: '期間不一致', description: '2つの数字が同じ四半期ではない' },
+  excluded_without_estimate: { label: '公開数字なし', description: '非公開企業のため推定しない' },
 };
 for (const company of primaryApi.companies) {
-  if (!(company.quantitative_status in statusLabel)) throw new Error(`Unknown quantitative status: ${company.quantitative_status}`);
+  if (!(company.quantitative_status in statusCopy)) throw new Error(`Unknown quantitative status: ${company.quantitative_status}`);
 }
-const capexGroups = Object.entries(normalized.capital_expenditures_by_fact_tag_usd);
-const findings = model.audit.findings;
-const sourceFor = (source, kind) => kind === 'operating_cash_flow' ? source.operating_cash_flow_source_url : source.capital_expenditures_source_url;
-const factFor = (source, kind) => kind === 'operating_cash_flow' ? source.operating_cash_flow_fact_tag : source.capital_expenditures_fact_tag;
+const sourceFor = (source) => source.operating_cash_flow_source_url;
+const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
 ---
 
 <!doctype html>
@@ -40,153 +52,162 @@ const factFor = (source, kind) => kind === 'operating_cash_flow' ? source.operat
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="SEC EDGARの提出書類から取得した一次財務factの観測台帳。推定値を混ぜない。" />
-    <title>PRIMARY FACTS / Evidence Ledger</title>
+    <meta name="description" content="決算資料から、AI投資を支える会社の営業キャッシュフローと設備投資を一次情報で読む。" />
+    <title>決算の読み方 / 一次情報台帳</title>
   </head>
   <body>
-    <main class="shell">
+    <main class="page">
       <header class="topbar">
-        <a class="brand" href={base}><span class="brand-mark">＋</span>PRIMARY FACTS / 01</a>
+        <a class="brand" href={base} aria-label="トップへ戻る"><span class="brand-mark">＋</span><span>決算の読み方<span class="brand-sub"> / PRIMARY FACTS</span></span></a>
         <nav aria-label="ページ内ナビゲーション">
-          <a href="#facts">Facts</a>
-          <a href="#ledger">Ledger</a>
-          <a href="#coverage">Coverage</a>
-          <a href="#audit">Audit</a>
+          <a href="#how">読み方</a>
+          <a href="#companies">会社別</a>
+          <a href="#limits">注意点</a>
         </nav>
       </header>
 
-      <section class="hero">
-        <div>
-          <p class="eyebrow"><span class="live-dot"></span> OBSERVED DATA ONLY</p>
-          <h1>見えた数字だけを、<em>残す。</em></h1>
-          <p class="lede">これは半導体利益の予言ではない。SEC EDGARに提出された10-Qのfactを、会社・期間・タグ・提出書類つきで読むための証拠台帳です。</p>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="kicker"><span class="live-dot"></span>30秒でわかる決算データ</p>
+          <h1 id="page-title"><span>AI投資を支える会社の、</span><em>入ったお金と使ったお金。</em></h1>
+          <p class="hero-lede">このページは、各社がSECに提出した決算資料から、営業キャッシュフローと設備投資を同じ四半期で並べています。予測ではなく、確認できた数字だけです。</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#how">まず読み方を見る <span>↓</span></a>
+            <a class="button button-quiet" href="#companies">数字を見る <span>→</span></a>
+          </div>
         </div>
-        <div class="hero-meta">
-          <div><span>PRIMARY PERIOD</span><b>{period}</b></div>
-          <div><span>API RETRIEVED</span><b>{stamp(snapshot.primary_api_generated_at)}</b></div>
-          <div><span>FACT GRAPH</span><b>{model.audit.graph_version}</b></div>
-          <div><span>STATE</span><b class="state">{model.audit.verdict.toUpperCase()}</b></div>
+        <aside class="hero-card" aria-label="今回のデータ範囲">
+          <p class="card-kicker">今回読める範囲</p>
+          <strong>{sources.length}<small>社</small></strong>
+          <p>{periodLabel}</p>
+          <div class="hero-card-rule"></div>
+          <span>同じ四半期で2つのfactが揃った会社</span>
+        </aside>
+      </section>
+
+      <section id="how" class="how section-block" aria-labelledby="how-title">
+        <div class="section-intro">
+          <p class="section-number">01 / HOW TO READ</p>
+          <h2 id="how-title">見る場所は、<br /><em>3つだけ。</em></h2>
         </div>
-      </section>
-
-      <section class="truth-banner">
-        <span class="seal">FACT<br />ONLY</span>
-        <div><strong>数値の種類を混ぜない。</strong><p>報告値は一次資料。合計・比率は機械的な派生値。将来予測、β、コンセンサス、proxyはこの画面に置きません。</p></div>
-      </section>
-
-      <section class="metric-grid" aria-label="観測概要">
-        <article><span>REGISTERED ENTITIES</span><strong>{primaryApi.companies.length}</strong><small>registry records</small></article>
-        <article><span>PRIMARY FACTS</span><strong>{primaryApi.companies.reduce((total, company) => total + company.facts.length, 0)}</strong><small>SEC Companyfacts records</small></article>
-        <article><span>IN COHORT</span><strong>{sources.length}</strong><small>same reported quarter</small></article>
-        <article><span>Σ REPORTED OCF</span><strong>{usd(normalized.operating_cash_flow_total_usd)}</strong><small>arithmetic sum, USD</small></article>
-      </section>
-
-      <section id="facts" class="section">
-        <div class="section-head"><div><p class="eyebrow">01 / RAW FACTS</p><h2>数字の出発点</h2></div><a class="text-link" href={base + 'api/v1/index.json'}>API INDEX ↗</a></div>
-        <p class="intro">値は整数USDのまま保存されています。下の表示だけを読みやすく丸めています。各値から提出書類とXBRL fact tagへ直接移動できます。</p>
-        <div class="table-wrap">
-          <table>
-            <caption>One row = one issuer / one reported quarter / two reported facts</caption>
-            <thead><tr><th>Company</th><th>Period</th><th>Operating CF</th><th>Capital expenditures</th><th>Reported tags</th><th>Source</th></tr></thead>
-            <tbody>
-              {sources.map((source) => (
-                <tr>
-                  <th>{source.label}<small>{source.ticker}</small></th>
-                  <td>{source.period_end}</td>
-                  <td class="number">{usd(source.operating_cash_flow_usd)}</td>
-                  <td class="number">{usd(source.capital_expenditures_usd)}</td>
-                  <td><code>{source.operating_cash_flow_fact_tag}</code><code>{source.capital_expenditures_fact_tag}</code></td>
-                  <td><a class="source-link" href={sourceFor(source, 'operating_cash_flow')} target="_blank" rel="noreferrer">10-Q ↗</a></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div class="how-grid">
+          <article class="how-card"><span class="step">01</span><div><h3>期間を見る</h3><p>まず同じ四半期かを確認します。期間が違う数字は、足しません。</p></div></article>
+          <article class="how-card"><span class="step">02</span><div><h3>2つの数字を見る</h3><p>営業キャッシュフローは稼いだ現金。設備投資は事業に使った現金です。</p></div></article>
+          <article class="how-card"><span class="step">03</span><div><h3>資料へ戻る</h3><p>「出典を見る」からSECの提出書類へ移動できます。数字の原文を確認できます。</p></div></article>
         </div>
       </section>
 
-      <section id="ledger" class="section">
-        <div class="section-head"><div><p class="eyebrow">02 / COMPANY LEDGER</p><h2>一社ずつ読む</h2></div><span class="section-note">NO ESTIMATE / NO POOLING</span></div>
-        <p class="intro">会社別の差額は、営業CFからcapital expendituresを引いた算術差です。会社ごとの報告定義を超えてFCFと呼びません。</p>
-        <div class="ledger-grid">
+      <section class="snapshot section-block" aria-labelledby="snapshot-title">
+        <div class="section-heading">
+          <div><p class="section-number">02 / AT A GLANCE</p><h2 id="snapshot-title">今回の全体像</h2></div>
+          <span class="period-chip">{periodLabel}</span>
+        </div>
+        <div class="snapshot-grid">
+          <article class="snapshot-card snapshot-card-main"><span>同じ期間で読める会社</span><strong>{sources.length}<small>社</small></strong><p>この期間の営業CFと設備投資が、一次資料で揃っています。</p></article>
+          <article class="snapshot-card"><span>営業CFの単純合計</span><strong>{usd(normalized.operating_cash_flow_total_usd)}</strong><p>同じXBRLタグの報告値を足したものです。</p></article>
+          <article class="snapshot-card"><span>設備投資の扱い</span><strong>{capexTagCount}<small>種類のタグ</small></strong><p>{capexSummary}</p></article>
+        </div>
+        <div class="boundary-note"><span class="note-icon">i</span><p><strong>ここで分かるのは「事実」と「足し算」まで。</strong> 未来の利益、株価、コンセンサス予想は、この台帳には含めていません。</p></div>
+      </section>
+
+      <section id="companies" class="companies section-block" aria-labelledby="companies-title">
+        <div class="section-heading">
+          <div><p class="section-number">03 / COMPANY BY COMPANY</p><h2 id="companies-title">会社別に見る</h2></div>
+          <a class="outline-link" href={`${base}api/v1/index.json`}>データ一覧を開く <span>↗</span></a>
+        </div>
+        <p class="section-lede">カードの数字は同じ四半期の報告値です。会社ごとに出典が違うので、まとめて比較する前に1社ずつ確認できます。</p>
+        <div class="company-grid">
           {sources.map((source, index) => (
-            <article class="ledger-card">
-              <header><span class="index">{String(index + 1).padStart(2, '0')}</span><div><h3>{source.label}</h3><small>{source.ticker} / {source.period_start}—{source.period_end}</small></div><a class="source-link" href={sourceFor(source, 'capital_expenditures')} target="_blank" rel="noreferrer">SOURCE ↗</a></header>
-              <div class="equation"><div><span>OPERATING CF</span><strong>{wholeUsd(source.operating_cash_flow_usd)}</strong><code>{factFor(source, 'operating_cash_flow')}</code></div><b>−</b><div><span>CAPITAL EXPENDITURES</span><strong>{wholeUsd(source.capital_expenditures_usd)}</strong><code>{factFor(source, 'capital_expenditures')}</code></div></div>
-              <div class="card-foot"><span>ARITHMETIC DIFFERENCE</span><strong>{wholeUsd(Number(source.operating_cash_flow_usd) - Number(source.capital_expenditures_usd))}</strong></div>
+            <article class="company-card">
+              <header class="company-head">
+                <span class="company-index">{String(index + 1).padStart(2, '0')}</span>
+                <div><h3>{source.label}</h3><p>{source.ticker} · {dateJP(source.period_end)}時点</p></div>
+                <span class="verified-badge">確認済み</span>
+              </header>
+              <div class="company-values">
+                <div><span>営業CF</span><strong>{usd(source.operating_cash_flow_usd)}</strong><small>入ったお金</small></div>
+                <div><span>設備投資</span><strong>{usd(source.capital_expenditures_usd)}</strong><small>使ったお金</small></div>
+              </div>
+              <div class="company-foot"><a href={sourceFor(source)} target="_blank" rel="noreferrer">SEC提出書類を見る <span>↗</span></a><a href={companyApiFor(source)}>この会社のAPI <span>→</span></a></div>
+              <details class="raw-details"><summary>タグと正確な値を表示</summary><dl><dt>営業CF tag</dt><dd>{source.operating_cash_flow_fact_tag}</dd><dt>設備投資 tag</dt><dd>{source.capital_expenditures_fact_tag}</dd><dt>営業CF raw</dt><dd>{exactUsd(source.operating_cash_flow_usd)}</dd><dt>設備投資 raw</dt><dd>{exactUsd(source.capital_expenditures_usd)}</dd></dl></details>
             </article>
           ))}
         </div>
       </section>
 
-      <section class="section derived">
-        <div class="section-head"><div><p class="eyebrow">03 / DERIVED, NOT FACT</p><h2>足し算の境界線</h2></div><span class="section-note">EXPLICIT LIMIT</span></div>
-        <div class="derived-grid">
-          <article><span class="label">OPERATING CF</span><strong>{usd(normalized.operating_cash_flow_total_usd)}</strong><p>同一タグの報告値を合計した算術値。</p></article>
-          <article><span class="label">CAPEX CONCEPTS</span><strong>{normalized.capital_expenditures_fact_tag_count}</strong><p>タグが複数あるため、capex総額と残差は公開しない。</p></article>
-          <article><span class="label">TAG GROUPS</span>{capexGroups.map(([tag, value]) => <p class="tag-group"><code>{tag}</code><b>{usd(value)}</b></p>)}</article>
+      <section id="limits" class="limits section-block" aria-labelledby="limits-title">
+        <div class="section-heading"><div><p class="section-number">04 / WHAT THIS MEANS</p><h2 id="limits-title">数字の使い方と、<em>限界。</em></h2></div></div>
+        <div class="meaning-grid">
+          <article class="meaning-card meaning-card-good"><span class="meaning-mark">◎</span><h3>この台帳でできること</h3><ul><li>同じ四半期の営業CFを会社別に比べる</li><li>設備投資の報告額とXBRLタグを確認する</li><li>SEC提出書類まで戻って原文を読む</li></ul></article>
+          <article class="meaning-card meaning-card-limit"><span class="meaning-mark">!</span><h3>この台帳だけではできないこと</h3><ul><li>異なる設備投資タグを全社で合計する</li><li>未提出企業の数字を推定する</li><li>この数字だけで将来の利益や株価を予測する</li></ul></article>
         </div>
+        {findings.length ? <div class="audit-callout"><span class="warning-icon">!</span><div><strong>今回の注意点</strong><p>{findingSummary[findings[0].id] || findings[0].detail}</p></div><a href="#technical">技術情報 <span>↓</span></a></div> : null}
       </section>
 
-      <section id="coverage" class="section">
-        <div class="section-head"><div><p class="eyebrow">04 / COVERAGE</p><h2>誰を、どこまで測れたか</h2></div><a class="text-link" href={base + 'api/v1/facts.json'}>FACTS API ↗</a></div>
-        <p class="intro">対象範囲は現在のregistryとSEC取得結果の交差です。欠測はゼロや推定値に変換しません。</p>
-        <div class="table-wrap">
-          <table class="coverage">
-            <caption>Missing is a state, never a number</caption>
-            <thead><tr><th>Entity</th><th>Role</th><th>Status</th><th>Facts</th><th>Fact period</th><th>Latest filing</th></tr></thead>
-            <tbody>
-              {primaryApi.companies.map((company) => (
-                <tr class={cohortIds.has(company.id) ? 'included' : ''}>
-                  <th>{company.name}{company.product_aliases ? <small> ({company.product_aliases.join(', ')})</small> : ''}</th>
-                  <td>{company.role}</td>
-                  <td><span class="status">{cohortIds.has(company.id) ? 'IN COHORT' : statusLabel[company.quantitative_status]}</span></td>
-                  <td class="number">{company.facts.length}</td>
-                  <td>{company.facts.length ? `${company.facts[0].period_start} → ${company.facts[0].period_end}` : 'NO REPORTED FACT'}</td>
-                  <td>{company.recent_filings && company.recent_filings.length > 0 ? <a class="source-link" href={company.recent_filings[0].source_url} target="_blank" rel="noreferrer">{company.recent_filings[0].form} / {company.recent_filings[0].filed} ↗</a> : 'NO PUBLIC FILING'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <section class="coverage section-block" aria-labelledby="coverage-title">
+        <details class="coverage-details">
+          <summary><span><span class="section-number">05 / COVERAGE</span><strong id="coverage-title">対象企業をすべて見る</strong></span><span class="summary-count">{primaryApi.companies.length}社の登録状況 <b>＋</b></span></summary>
+          <p class="section-lede">登録されている企業のうち、同じ期間の一次factが揃った会社だけが上のカードに入ります。欠測はゼロや推定値に変換しません。</p>
+          <div class="coverage-list">
+            {primaryApi.companies.map((company) => {
+              const status = statusCopy[company.quantitative_status];
+              const included = cohortIds.has(company.id);
+              return <div class:list={['coverage-row', { included }]}><span class="coverage-name">{company.name}</span><span class="coverage-status">{included ? '今回のカードに表示' : status.label}</span><span class="coverage-desc">{included ? `${company.facts.length}件のfact / ${periodLabel}` : status.description}</span></div>;
+            })}
+          </div>
+        </details>
       </section>
 
-      <section id="audit" class="section audit">
-        <div class="section-head"><div><p class="eyebrow">05 / AUDIT</p><h2>未解決の境界</h2></div><span class="section-note">{findings.length ? `${findings.length} OPEN` : 'NO OPEN FINDINGS'}</span></div>
-        {findings.length ? <div class="finding-list">{findings.map((finding) => <article><span>{finding.severity.toUpperCase()}</span><div><strong>{finding.id.replaceAll('_', ' ')}</strong><p>{finding.detail}</p></div></article>)}</div> : <p class="clean">入力契約と一次資料の必須項目を確認済み。</p>}
-        <div class="provenance"><span>BUILD SHA</span><b data-build-sha={buildSha}>{buildSha}</b><span>SNAPSHOT AS OF</span><b>{stamp(snapshot.as_of)}</b><span>PRIMARY API HASH</span><b>{snapshot.primary_api_content_hash}</b><span>SNAPSHOT HASH</span><b data-snapshot-hash={model.snapshot_hash}>{model.snapshot_hash}</b><span>SELECTION RULE</span><b>{snapshot.selection_rule}</b></div>
+      <section id="technical" class="technical section-block" aria-labelledby="technical-title">
+        <details>
+          <summary><span><span class="section-number">TECHNICAL / PROVENANCE</span><strong id="technical-title">根拠データと更新情報</strong></span><span class="summary-count">開く <b>＋</b></span></summary>
+          <div class="technical-grid"><div><span>データ取得</span><strong>{dateJP(snapshot.as_of)} / SEC EDGAR</strong></div><div><span>画面のbuild SHA</span><strong data-build-sha={buildSha}>{buildSha}</strong></div><div><span>snapshot hash</span><strong data-snapshot-hash={model.snapshot_hash}>{model.snapshot_hash}</strong></div><div><span>API</span><a href={`${base}api/v1/facts.json`}>全fact JSONを開く ↗</a></div></div>
+        </details>
       </section>
 
-      <footer><span>PRIMARY FACTS / evidence before interpretation</span><span>Source: SEC EDGAR · no investment advice</span></footer>
+      <footer><span>一次資料から、意味を分けて読む。</span><span>SEC EDGAR · 投資助言ではありません</span></footer>
     </main>
   </body>
 </html>
 
 <style>
   :global(*) { box-sizing: border-box; }
-  :global(html) { background: #0a0d0c; scroll-behavior: smooth; }
-  :global(body) { margin: 0; color: #e9eee5; background: #0a0d0c; font-family: "Noto Sans JP", "Yu Gothic", sans-serif; }
+  :global(html) { width: 100%; overflow-x: hidden; scroll-behavior: smooth; background: #f2eee5; }
+  :global(body) { width: 100%; overflow-x: hidden; margin: 0; color: #17241d; background: #f2eee5; font-family: "Hiragino Sans", "Yu Gothic", sans-serif; }
   :global(a) { color: inherit; }
-  .shell { width: min(1280px, calc(100% - 42px)); margin: auto; padding: 22px 0 55px; }
-  .topbar { display: flex; justify-content: space-between; align-items: center; min-height: 52px; border-bottom: 1px solid #29332d; }
-  .brand, nav a, .eyebrow, .metric-grid span, .hero-meta span, .section-note, .section-head + .intro, .label, .equation span, .card-foot span, footer { font-family: "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
-  .brand { display: flex; gap: 9px; align-items: center; color: #f2f5eb; font: .72rem "IBM Plex Mono", monospace; text-decoration: none; }
-  .brand-mark { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid #b8ee67; color: #b8ee67; }
-  nav { display: flex; gap: 22px; } nav a { color: #87958a; font-size: .6rem; text-decoration: none; } nav a:hover, .text-link:hover, .source-link:hover { color: #c7f477; }
-  .hero { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 55px; padding: clamp(65px, 10vw, 130px) 0 70px; border-bottom: 1px solid #29332d; }
-  .eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; color: #8d9b90; font-size: .62rem; }
-  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #c7f477; box-shadow: 0 0 15px #c7f477; }
-  h1, h2, h3 { margin: 0; font-family: "Noto Serif JP", serif; font-weight: 500; letter-spacing: -.05em; } h1 { max-width: 790px; color: #f0f4e9; font-size: clamp(3.2rem, 8vw, 7.8rem); line-height: .96; } h1 em { color: #c7f477; font-style: normal; }
-  .lede { max-width: 680px; margin: 28px 0 0; color: #8e9b91; font-size: .98rem; line-height: 1.9; }
-  .hero-meta { display: grid; align-content: center; gap: 18px; padding-left: 24px; border-left: 1px solid #3c4b3d; } .hero-meta div { display: grid; gap: 6px; } .hero-meta span, .metric-grid span { color: #69776d; font-size: .55rem; } .hero-meta b { color: #e5ecdf; font: .72rem "IBM Plex Mono", monospace; } .hero-meta .state { color: #c7f477; }
-  .truth-banner { display: grid; grid-template-columns: 63px 1fr; gap: 18px; align-items: center; margin: 28px 0 0; padding: 18px; border: 1px solid #566a42; background: linear-gradient(110deg, rgb(199 244 119 / .11), transparent 65%); } .seal { display: grid; place-items: center; width: 50px; height: 50px; border: 1px solid #c7f477; color: #c7f477; font: .5rem "IBM Plex Mono", monospace; line-height: 1.2; text-align: center; } .truth-banner strong { color: #eaf4df; font: 1.12rem "Noto Serif JP", serif; } .truth-banner p { margin: 6px 0 0; color: #94a198; font-size: .78rem; line-height: 1.7; }
-  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); margin: 28px 0 90px; border-top: 1px solid #29332d; border-bottom: 1px solid #29332d; } .metric-grid article { min-height: 142px; padding: 20px 18px 18px 0; border-right: 1px solid #29332d; } .metric-grid article:not(:first-child) { padding-left: 18px; } .metric-grid article:last-child { border-right: 0; } .metric-grid strong { display: block; margin: 20px 0 6px; color: #c7f477; font: 500 clamp(1.6rem, 3vw, 2.4rem) "IBM Plex Mono", monospace; } .metric-grid small { color: #718077; font-size: .68rem; }
-  .section { margin: 0 0 88px; } .section-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 20px; } h2 { color: #eff3e9; font-size: clamp(2rem, 4vw, 4rem); line-height: 1; } .text-link, .source-link { color: #c7f477; font: .6rem "IBM Plex Mono", monospace; text-decoration: none; } .section-note { color: #6f7d73; font-size: .56rem; } .intro { max-width: 780px; margin: 0 0 20px; color: #8d9a90; font-size: .82rem; line-height: 1.8; }
-  .table-wrap { overflow-x: auto; border: 1px solid #29332d; background: #0f1511; } table { width: 100%; min-width: 980px; border-collapse: collapse; font-size: .72rem; } caption { padding: 15px; color: #67756b; font: .57rem "IBM Plex Mono", monospace; text-align: left; text-transform: uppercase; letter-spacing: .08em; } th, td { padding: 13px 15px; border-top: 1px solid #29332d; text-align: left; vertical-align: top; } thead th { color: #69776d; font: .56rem "IBM Plex Mono", monospace; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; } tbody th { color: #edf2e8; font: 600 .84rem "Noto Serif JP", serif; } tbody th small { display: block; margin-top: 4px; color: #68766d; font: .57rem "IBM Plex Mono", monospace; } td { color: #9aa79c; } .number { color: #dff0d4; font: .75rem "IBM Plex Mono", monospace; white-space: nowrap; } code { display: block; margin: 3px 0; color: #dda76d; font: .56rem "IBM Plex Mono", monospace; white-space: nowrap; }
-  .ledger-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; } .ledger-card { padding: 21px; border: 1px solid #29332d; background: #0f1511; } .ledger-card header { display: grid; grid-template-columns: 28px 1fr auto; gap: 11px; align-items: start; } .index { color: #65736a; font: .65rem "IBM Plex Mono", monospace; } .ledger-card h3 { color: #edf2e8; font-size: 1.25rem; } .ledger-card header small { color: #6f7d73; font: .57rem "IBM Plex Mono", monospace; } .equation { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin: 25px 0 13px; padding: 15px 0; border-top: 1px solid #29332d; border-bottom: 1px solid #29332d; } .equation span, .card-foot span { display: block; color: #6b796f; font-size: .53rem; } .equation strong { display: block; margin: 9px 0 6px; color: #c7f477; font: .86rem "IBM Plex Mono", monospace; white-space: nowrap; } .equation > b { color: #64736a; font: 1.2rem "IBM Plex Mono", monospace; } .card-foot { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; } .card-foot strong { color: #e6eee0; font: .85rem "IBM Plex Mono", monospace; }
-  .derived { padding: 25px 0 0; border-top: 1px solid #29332d; } .derived-grid { display: grid; grid-template-columns: 1fr 1fr 1.6fr; gap: 10px; } .derived-grid article { min-height: 145px; padding: 18px; border: 1px solid #3c4b3d; background: #111a13; } .label { color: #75847a; font-size: .55rem; } .derived-grid strong { display: block; margin: 18px 0 8px; color: #e8f2e2; font: 1.45rem "IBM Plex Mono", monospace; } .derived-grid p { margin: 0; color: #88968c; font-size: .74rem; line-height: 1.7; } .tag-group { display: flex !important; justify-content: space-between; gap: 15px; padding: 7px 0; border-bottom: 1px solid #29332d; } .tag-group b { color: #c7f477; font: .7rem "IBM Plex Mono", monospace; white-space: nowrap; }
-  .coverage .included { background: rgb(199 244 119 / .05); } .status { color: #dda76d; font: .57rem "IBM Plex Mono", monospace; white-space: nowrap; } .included .status { color: #c7f477; }
-  .audit { padding-top: 25px; border-top: 1px solid #29332d; } .finding-list { display: grid; gap: 8px; } .finding-list article { display: grid; grid-template-columns: 85px 1fr; gap: 15px; padding: 15px 0; border-bottom: 1px solid #29332d; } .finding-list article > span { color: #dda76d; font: .57rem "IBM Plex Mono", monospace; } .finding-list strong { color: #edf2e8; font: .78rem "IBM Plex Mono", monospace; } .finding-list p { margin: 5px 0 0; color: #89968d; font-size: .76rem; } .clean { color: #c7f477; font: .72rem "IBM Plex Mono", monospace; } .provenance { display: grid; grid-template-columns: 160px 1fr; gap: 10px 18px; margin-top: 28px; padding: 17px; border: 1px solid #29332d; background: #0f1511; } .provenance span { color: #69776d; font: .55rem "IBM Plex Mono", monospace; } .provenance b { color: #b0bdb1; font: .62rem "IBM Plex Mono", monospace; line-height: 1.5; overflow-wrap: anywhere; }
-  footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; border-top: 1px solid #29332d; color: #5f6d64; font-size: .55rem; }
-  @media (max-width: 850px) { .hero { grid-template-columns: 1fr; gap: 35px; } .hero-meta { grid-template-columns: 1fr 1fr; padding: 20px 0 0; border-left: 0; border-top: 1px solid #3c4b3d; } .metric-grid { grid-template-columns: repeat(2, 1fr); } .metric-grid article:nth-child(2) { border-right: 0; } .metric-grid article:nth-child(n + 3) { border-top: 1px solid #29332d; } .ledger-grid, .derived-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 560px) { .shell { width: min(100% - 26px, 1280px); } nav { gap: 10px; } nav a { font-size: .51rem; } .hero { padding-top: 60px; } h1 { font-size: clamp(3rem, 17vw, 5rem); } .hero-meta { grid-template-columns: 1fr; } .metric-grid strong { font-size: 1.35rem; } .section-head { align-items: start; flex-direction: column; } .equation { grid-template-columns: 1fr; } .equation > b { display: none; } .provenance { grid-template-columns: 1fr; gap: 5px; } footer { flex-direction: column; } }
+  :global(::selection) { color: #17241d; background: #d7fa67; }
+  .page { width: calc(100% - 44px); max-width: 1160px; margin: auto; padding: 0 0 54px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; min-height: 74px; border-bottom: 1px solid #c9c6bc; }
+  .brand { display: flex; align-items: center; gap: 10px; color: #17241d; font: 700 .78rem "IBM Plex Mono", monospace; letter-spacing: .04em; text-decoration: none; }
+  .brand-sub { color: #778077; font-weight: 400; }
+  .brand-mark { display: grid; place-items: center; width: 25px; height: 25px; color: #17241d; border: 1px solid #17241d; font-size: 1rem; }
+  nav { display: flex; gap: 24px; } nav a { color: #667168; font: .66rem "IBM Plex Mono", monospace; text-decoration: none; } nav a:hover, .outline-link:hover, .company-foot a:hover { color: #758f00; }
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) 285px; gap: 65px; align-items: end; padding: clamp(65px, 9vw, 115px) 0 82px; }
+  .kicker, .section-number, .card-kicker, .snapshot-card span, .company-values span, .company-values small, .verified-badge, .meaning-mark, .technical-grid span, footer { font-family: "IBM Plex Mono", monospace; letter-spacing: .09em; text-transform: uppercase; }
+  .kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 25px; color: #68766c; font-size: .63rem; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #7d9700; box-shadow: 0 0 0 4px #dce8b0; }
+  h1, h2, h3 { margin: 0; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 600; letter-spacing: -.07em; } h1 > span, h1 > em { display: block; }
+  .hero-copy { width: 100%; min-width: 0; } h1 { max-width: 790px; color: #17241d; font-size: clamp(3rem, 7.2vw, 7rem); line-height: .99; overflow-wrap: anywhere; word-break: break-all; } h1 em, h2 em { color: #738d00; font-style: normal; }
+  .hero-lede { width: 100%; max-width: 700px; margin: 30px 0 0; color: #55645a; font-size: 1rem; line-height: 1.9; overflow-wrap: anywhere; word-break: break-all; }
+  .hero-actions { display: flex; gap: 10px; margin-top: 30px; }
+  .button { display: inline-flex; gap: 14px; align-items: center; padding: 13px 17px; font: .68rem "IBM Plex Mono", monospace; text-decoration: none; transition: transform .2s ease, background .2s ease; } .button:hover { transform: translateY(-2px); } .button-primary { color: #eff6e8; background: #172d23; } .button-primary:hover { background: #294b38; } .button-quiet { color: #4d5c51; border: 1px solid #b7b9ac; }
+  .hero-card { padding: 24px; color: #eef4e8; background: #172d23; box-shadow: 12px 12px 0 #d7ddbd; } .card-kicker { margin: 0 0 25px; color: #b5c5a6; font-size: .58rem; } .hero-card strong { display: block; color: #d7fa67; font: 600 5.5rem/ .85 "IBM Plex Mono", monospace; letter-spacing: -.08em; } .hero-card strong small { margin-left: 7px; color: #eef4e8; font: 1rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .hero-card p:not(.card-kicker) { margin: 19px 0 0; color: #d8e2d3; font: .72rem "IBM Plex Mono", monospace; } .hero-card-rule { margin: 26px 0 13px; border-top: 1px solid #4e6c52; } .hero-card > span { color: #9eb09e; font-size: .72rem; line-height: 1.6; }
+  .section-block { margin: 0 0 100px; } .section-intro, .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; } .section-number { margin: 0 0 14px; color: #859086; font-size: .6rem; } h2 { color: #17241d; font-size: clamp(2.5rem, 5vw, 4.8rem); line-height: .98; } .section-lede { max-width: 730px; margin: 22px 0 28px; color: #67746a; font-size: .86rem; line-height: 1.8; }
+  .how { display: grid; grid-template-columns: .78fr 1.6fr; gap: 75px; padding: 30px 0 0; border-top: 1px solid #c9c6bc; } .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } .how-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 190px; padding: 18px; background: #e4e3d8; } .how-card:nth-child(2) { background: #d7fa67; } .how-card:nth-child(3) { color: #eef4e8; background: #172d23; } .step { color: #758077; font: .7rem "IBM Plex Mono", monospace; } .how-card:nth-child(2) .step, .how-card:nth-child(3) .step { color: inherit; opacity: .65; } .how-card h3 { margin: 30px 0 10px; font-size: 1.25rem; letter-spacing: -.04em; } .how-card p { margin: 0; color: #627066; font-size: .77rem; line-height: 1.7; } .how-card:nth-child(3) p { color: #c5d2c2; }
+  .section-heading { margin-bottom: 25px; } .period-chip { padding: 8px 11px; color: #607000; border: 1px solid #bdcb85; font: .62rem "IBM Plex Mono", monospace; }
+  .snapshot-grid { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 10px; } .snapshot-card { min-height: 190px; padding: 23px; border: 1px solid #cbcabe; background: #f8f6ef; } .snapshot-card-main { color: #eef4e8; background: #172d23; border-color: #172d23; } .snapshot-card span { display: block; color: #718074; font-size: .56rem; } .snapshot-card-main span { color: #b4c6b1; } .snapshot-card strong { display: block; margin-top: 29px; color: #738d00; font: 600 clamp(2.3rem, 5vw, 4rem) "IBM Plex Mono", monospace; letter-spacing: -.08em; } .snapshot-card-main strong { color: #d7fa67; } .snapshot-card strong small { margin-left: 6px; color: inherit; font: .9rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .snapshot-card p { max-width: 260px; margin: 12px 0 0; color: #728077; font-size: .76rem; line-height: 1.65; } .snapshot-card-main p { color: #bfd0bc; }
+  .boundary-note, .audit-callout { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding: 16px 18px; color: #59665d; background: #e7eadb; } .note-icon, .warning-icon { display: grid; flex: 0 0 23px; place-items: center; width: 23px; height: 23px; color: #536700; border: 1px solid #94a544; border-radius: 50%; font: .75rem Georgia, serif; } .boundary-note p, .audit-callout p { margin: 0; font-size: .78rem; line-height: 1.6; } .boundary-note strong { color: #27392a; }
+  .outline-link { color: #647900; font: .65rem "IBM Plex Mono", monospace; text-decoration: none; } .outline-link span, .company-foot span, .audit-callout a span { margin-left: 5px; }
+  .company-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .company-card { padding: 22px; border: 1px solid #cbcabe; background: #f8f6ef; } .company-head { display: grid; grid-template-columns: 29px 1fr auto; gap: 12px; align-items: start; } .company-index { color: #9ba39a; font: .66rem "IBM Plex Mono", monospace; } .company-card h3 { font-size: 1.5rem; letter-spacing: -.04em; } .company-head p { margin: 5px 0 0; color: #7c877f; font: .62rem "IBM Plex Mono", monospace; } .verified-badge { padding: 6px 7px; color: #607400; border: 1px solid #c2ce91; font-size: .5rem; }
+  .company-values { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 24px; background: #d4d2c7; } .company-values > div { padding: 15px; background: #eeece3; } .company-values span, .company-values small { display: block; color: #7b867d; font-size: .54rem; } .company-values strong { display: block; margin: 12px 0 4px; color: #23382a; font: 600 clamp(1.35rem, 3vw, 2rem) "IBM Plex Mono", monospace; letter-spacing: -.08em; } .company-values small { color: #9ca59e; text-transform: none; letter-spacing: 0; }
+  .company-foot { display: flex; justify-content: space-between; gap: 15px; margin-top: 16px; } .company-foot a { color: #687c00; font: .61rem "IBM Plex Mono", monospace; text-decoration: none; }
+  .raw-details { margin-top: 16px; border-top: 1px solid #d3d2c9; } summary { cursor: pointer; list-style: none; } summary::-webkit-details-marker { display: none; } .raw-details summary { padding-top: 13px; color: #7d877f; font: .58rem "IBM Plex Mono", monospace; } .raw-details summary::after { content: ' ＋'; color: #829900; } .raw-details[open] summary::after { content: ' −'; } .raw-details dl { display: grid; grid-template-columns: 110px 1fr; gap: 7px 12px; margin: 15px 0 0; } .raw-details dt { color: #8b948d; font-size: .62rem; } .raw-details dd { margin: 0; color: #56645a; font: .59rem "IBM Plex Mono", monospace; overflow-wrap: anywhere; }
+  .meaning-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .meaning-card { min-height: 220px; padding: 24px; } .meaning-card-good { color: #eef4e8; background: #172d23; } .meaning-card-limit { background: #d7fa67; } .meaning-mark { display: block; margin-bottom: 26px; font-size: 1.2rem; } .meaning-card h3 { font-size: 1.5rem; letter-spacing: -.04em; } .meaning-card ul { display: grid; gap: 9px; margin: 22px 0 0; padding: 0 0 0 18px; font-size: .8rem; line-height: 1.6; } .meaning-card-good li::marker { color: #d7fa67; } .meaning-card-limit li::marker { color: #758d00; }
+  .audit-callout { color: #654d2f; background: #f1e5d0; } .warning-icon { color: #a16625; border-color: #c68f50; } .audit-callout strong { display: block; margin-bottom: 4px; color: #684b28; font: .8rem "IBM Plex Mono", monospace; } .audit-callout a { margin-left: auto; color: #956324; font: .6rem "IBM Plex Mono", monospace; text-decoration: none; white-space: nowrap; }
+  .coverage-details, .technical details { border-top: 1px solid #c9c6bc; border-bottom: 1px solid #c9c6bc; } .coverage-details > summary, .technical summary { display: flex; justify-content: space-between; gap: 20px; padding: 23px 0; } .coverage-details summary strong, .technical summary strong { display: block; color: #25372a; font: 1.45rem "Hiragino Mincho ProN", serif; } .summary-count { align-self: center; color: #788279; font: .61rem "IBM Plex Mono", monospace; } .summary-count b { margin-left: 12px; color: #728b00; font-size: 1rem; } .coverage-details[open] > summary, .technical details[open] summary { border-bottom: 1px solid #d4d2c7; } .coverage-details > summary .section-number, .technical .section-number { margin-bottom: 8px; }
+  .coverage-details > .section-lede { margin-top: 20px; } .coverage-list { display: grid; margin-bottom: 23px; border: 1px solid #d3d2c9; } .coverage-row { display: grid; grid-template-columns: 1fr 160px 1.4fr; gap: 12px; padding: 13px 15px; border-bottom: 1px solid #d3d2c9; font-size: .72rem; } .coverage-row:last-child { border-bottom: 0; } .coverage-row.included { background: #e7efd0; } .coverage-name { color: #26372b; font-weight: 600; } .coverage-status { color: #718400; font: .59rem "IBM Plex Mono", monospace; } .coverage-desc { color: #7c877f; }
+  .technical { margin-bottom: 70px; } .technical-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding: 0 0 24px; background: #d3d2c9; } .technical-grid > div { display: grid; gap: 10px; padding: 15px; background: #e9e7dd; } .technical-grid span { color: #818b82; font-size: .54rem; } .technical-grid strong, .technical-grid a { color: #52625a; font: .62rem "IBM Plex Mono", monospace; overflow-wrap: anywhere; } .technical-grid a { color: #687d00; text-decoration: none; }
+  footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; color: #879087; border-top: 1px solid #c9c6bc; font-size: .55rem; }
+  @media (max-width: 860px) { .hero, .how { grid-template-columns: 1fr; gap: 38px; } .hero-card { max-width: 340px; } .how { padding-top: 26px; } .snapshot-grid, .company-grid { grid-template-columns: 1fr 1fr; } .snapshot-card-main { grid-column: span 2; } }
+  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub, nav a:first-child { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .how-grid, .snapshot-grid, .company-grid, .meaning-grid { grid-template-columns: 1fr; } .snapshot-card-main { grid-column: auto; } .how-card { min-height: 155px; } .company-values strong { font-size: 1.35rem; } .company-head { grid-template-columns: 24px 1fr; } .verified-badge { grid-column: 2; justify-self: start; } .coverage-row { grid-template-columns: 1fr; gap: 5px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
 </style>
