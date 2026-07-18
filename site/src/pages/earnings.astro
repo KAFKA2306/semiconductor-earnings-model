@@ -9,6 +9,8 @@ const snapshot = model.snapshot;
 const normalized = model.normalized;
 const sources = snapshot.sources;
 const base = import.meta.env.BASE_URL;
+const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
+if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
 
 const usd = (value) => `$${(Number(value) / 1_000_000_000).toFixed(3)}B`;
 const wholeUsd = (value) => `$${Number(value).toLocaleString('en-US')} USD`;
@@ -39,7 +41,7 @@ const factFor = (source, kind) => kind === 'operating_cash_flow' ? source.operat
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="SEC EDGARの提出書類から取得した一次財務factの観測台帳。推定値を混ぜない。" />
-    <title>Primary Facts / Evidence Ledger</title>
+    <title>PRIMARY FACTS / Evidence Ledger</title>
   </head>
   <body>
     <main class="shell">
@@ -151,7 +153,7 @@ const factFor = (source, kind) => kind === 'operating_cash_flow' ? source.operat
       <section id="audit" class="section audit">
         <div class="section-head"><div><p class="eyebrow">05 / AUDIT</p><h2>未解決の境界</h2></div><span class="section-note">{findings.length ? `${findings.length} OPEN` : 'NO OPEN FINDINGS'}</span></div>
         {findings.length ? <div class="finding-list">{findings.map((finding) => <article><span>{finding.severity.toUpperCase()}</span><div><strong>{finding.id.replaceAll('_', ' ')}</strong><p>{finding.detail}</p></div></article>)}</div> : <p class="clean">入力契約と一次資料の必須項目を確認済み。</p>}
-        <div class="provenance"><span>SNAPSHOT AS OF</span><b>{stamp(snapshot.as_of)}</b><span>PRIMARY API HASH</span><b>{snapshot.primary_api_content_hash}</b><span>SNAPSHOT HASH</span><b>{model.snapshot_hash}</b><span>SELECTION RULE</span><b>{snapshot.selection_rule}</b></div>
+        <div class="provenance"><span>BUILD SHA</span><b data-build-sha={buildSha}>{buildSha}</b><span>SNAPSHOT AS OF</span><b>{stamp(snapshot.as_of)}</b><span>PRIMARY API HASH</span><b>{snapshot.primary_api_content_hash}</b><span>SNAPSHOT HASH</span><b data-snapshot-hash={model.snapshot_hash}>{model.snapshot_hash}</b><span>SELECTION RULE</span><b>{snapshot.selection_rule}</b></div>
       </section>
 
       <footer><span>PRIMARY FACTS / evidence before interpretation</span><span>Source: SEC EDGAR · no investment advice</span></footer>

@@ -58,6 +58,7 @@ jobs:
         working-directory: site
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
+          PUBLIC_BUILD_SHA: ${{ github.sha }}
         run: |
           npm ci
           npm run build
@@ -77,9 +78,21 @@ jobs:
       - name: Verify public Pages and APIs
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_BUILD_SHA: ${{ github.sha }}
         run: |
           test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
+          html="$(curl -fsSL "$base/earnings/")"
+          audit_json="$(curl -fsSL "$base/data/quant-audit.json")"
+          snapshot_hash="$(jq -er '.snapshot_hash' <<< "$audit_json")"
+          grep -Fq "OBSERVED DATA ONLY" <<< "$html"
+          grep -Fq "PRIMARY FACTS / Evidence Ledger" <<< "$html"
+          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$html"
+          grep -Fq "data-snapshot-hash=\"$snapshot_hash\"" <<< "$html"
+          ! grep -Fq "MODEL VERDICT" <<< "$html"
+          ! grep -Fqi "confidence 60%" <<< "$html"
+          ! grep -Fq "Yardeni" <<< "$html"
+          ! grep -Fq "β = 0.6" <<< "$html"
