@@ -9,6 +9,7 @@ on:
       - "src/**"
       - "scripts/**"
       - "site/**"
+      - "README.md"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/pages.yml"
