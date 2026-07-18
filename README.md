@@ -6,6 +6,7 @@ Public evidence:
 
 - GitHub Pages: [https://kafka2306.github.io/semiconductor-earnings-model/earnings/](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
 - [Evidence ledger](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
+- [Calculation model / input → formula → intermediate value → verdict](https://kafka2306.github.io/semiconductor-earnings-model/model/)
 - [Primary API index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
 - [All primary facts](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/facts.json)
 - [Semiconductor profit API / 5-year time series](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-profit/index.json)
@@ -14,6 +15,11 @@ Public evidence:
 - [Semiconductor issuer registry](data/primary/semiconductor_entities.json)
 - [GitHub Actions workflow](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/pages.yml)
 - [Main branch history](https://github.com/KAFKA2306/semiconductor-earnings-model/commits/main)
+
+The Pages site has two deliberately separate routes:
+
+- `/earnings/` is the primary-facts ledger. It shows reported revenue, operating income, operating cash flow, CapEx, periods, XBRL tags, and directly derived values such as FCF. It does not forecast earnings or invent an index total.
+- `/model/` is the calculation boundary. It places inputs, formulas, intermediate values, unknown variables, and the verdict in that order. It currently stops at `未計算` because external funding, semiconductor allocation, investment lag, index weights, and future margin inputs are not registered as primary facts.
 
 ## Update contract
 

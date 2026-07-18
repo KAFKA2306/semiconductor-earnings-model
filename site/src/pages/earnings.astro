@@ -29,6 +29,12 @@ const demandCompanies = demandApi.companies.filter((company) => company.quarters
 const demandHistoryQuarters = Math.min(...demandCompanies.map((company) => company.quarters.length));
 const latestProfit = (company) => company.quarters[0];
 const latestDemand = (company) => company.quarters[0];
+const operatingMargin = (company) => {
+  const quarter = latestProfit(company);
+  const revenue = Number(quarter?.revenue?.reported_value);
+  const income = Number(quarter?.operating_income?.reported_value);
+  return revenue ? income / revenue * 100 : null;
+};
 const previousYearQuarter = (company) => {
   const current = latestProfit(company);
   if (current?.fiscal_year == null || current?.fiscal_period == null) return null;
@@ -45,6 +51,7 @@ const chartHeight = (company, value) => {
   return Math.max(3, Math.round(Math.abs(Number(value)) / max * 100));
 };
 const pct = (value) => `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
+const marginPct = (value) => value == null ? '計算不可' : `${value.toFixed(1)}%`;
 const ratio = (value) => value == null ? '計算不可' : `${(Number(value) * 100).toFixed(1)}%`;
 const capexTagCount = normalized.capital_expenditures_fact_tag_count;
 const capexIsComparable = capexTagCount === 1;
@@ -76,8 +83,8 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="決算資料から、AI投資を支える会社の営業キャッシュフローと設備投資を一次情報で読む。" />
-    <title>決算の読み方 / 一次情報台帳</title>
+    <meta name="description" content="顧客の資金余力が半導体企業の利益成長を支えられるかを、SEC一次factで検証する。" />
+    <title>半導体利益の持続可能性 / 一次情報台帳</title>
   </head>
   <body>
     <main class="page">
@@ -85,105 +92,83 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         <a class="brand" href={base} aria-label="トップへ戻る"><span class="brand-mark">＋</span><span>決算の読み方<span class="brand-sub"> / PRIMARY FACTS</span></span></a>
         <nav aria-label="ページ内ナビゲーション">
           <a href="#how">読み方</a>
-          <a href="#profit">利益推移</a>
           <a href="#demand">需要推移</a>
+          <a href="#profit">利益推移</a>
           <a href="#companies">会社別</a>
           <a href="#limits">注意点</a>
+          <a href={`${base}model/`}>計算モデル ↗</a>
         </nav>
       </header>
 
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-copy">
-          <p class="kicker"><span class="live-dot"></span>30秒でわかる決算データ</p>
-          <h1 id="page-title"><span>半導体企業の利益が、</span><em>どこまで伸びているか。</em></h1>
-          <p class="hero-lede">半導体企業の利益と、データセンター企業の営業CF・設備投資を、SECに提出された決算factから最大5年追います。利益と需要を同じ時間軸で読む画面です。</p>
+          <p class="kicker"><span class="status-dot"></span>EVIDENCE-BOUND / 30秒で現在地</p>
+          <h1 id="page-title"><span>高い半導体利益成長は、</span><em>顧客の資金余力で支えられるか。</em></h1>
+          <p class="hero-lede">SEC一次factから、営業CF・設備投資・半導体企業の売上と営業利益を最大5年追います。需要の強さではなく、投資を継続できる資金力と利益率の維持を検証します。</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#how">まず読み方を見る <span>↓</span></a>
-            <a class="button button-quiet" href="#profit">利益を見る <span>→</span></a>
+            <a class="button button-quiet" href="#status">現在の判定 <span>→</span></a>
           </div>
         </div>
         <aside class="hero-card" aria-label="今回のデータ範囲">
-          <p class="card-kicker">利益factを読める範囲</p>
-          <strong>{profitCompanies.length}<small>社</small></strong>
-          <p>{profitHistoryQuarters}四半期以上 / 最大5年</p>
+          <p class="card-kicker">現在の判定</p>
+          <strong class="verdict">未成立</strong>
+          <p>外部資金と指数ウェイトが未取得</p>
           <div class="hero-card-rule"></div>
-          <span>売上高と営業利益が同じ期間で揃った会社</span>
+          <span>一次factは観測済み。持続可能性はまだ判定しません。</span>
         </aside>
       </section>
 
       <section id="how" class="how section-block" aria-labelledby="how-title">
         <div class="section-intro">
-          <p class="section-number">01 / HOW TO READ</p>
-          <h2 id="how-title">見る場所は、<br /><em>3つだけ。</em></h2>
+          <p class="section-number">01 / LOGIC</p>
+          <h2 id="how-title">判定までの、<br /><em>論理。</em></h2>
         </div>
         <div class="how-grid">
-          <article class="how-card"><span class="step">01</span><div><h3>利益を見る</h3><p>まず半導体企業の売上高と営業利益を、四半期ごとのバーで追います。</p></div></article>
-          <article class="how-card"><span class="step">02</span><div><h3>需要を見る</h3><p>データセンターの営業CFと設備投資を、正規化したバーと実額で追います。</p></div></article>
-          <article class="how-card"><span class="step">03</span><div><h3>資料へ戻る</h3><p>出典からSEC提出書類へ移動し、数字の原文とXBRLタグを確認します。</p></div></article>
+          <article class="how-card"><span class="step">01</span><div><h3>資金を生む</h3><p>顧客企業の営業CFが伸びているかを確認します。</p></div></article>
+          <article class="how-card"><span class="step">02</span><div><h3>投資を続ける</h3><p>CapEx、FCF、外部資金で投資余力を確認します。</p></div></article>
+          <article class="how-card"><span class="step">03</span><div><h3>利益へ転換する</h3><p>半導体企業の売上、営業利益、利益率を確認します。</p></div></article>
+          <article class="how-card"><span class="step">04</span><div><h3>指数へ接続する</h3><p>公式ウェイトと期間が揃って初めて指数利益を判定します。</p></div></article>
         </div>
       </section>
 
-      <section class="snapshot section-block" aria-labelledby="snapshot-title">
+      <section id="status" class="snapshot section-block" aria-labelledby="snapshot-title">
         <div class="section-heading">
-          <div><p class="section-number">02 / AT A GLANCE</p><h2 id="snapshot-title">今回の全体像</h2></div>
+          <div><p class="section-number">02 / CURRENT STATE</p><h2 id="snapshot-title">現在の判定。</h2></div>
           <span class="period-chip">{periodLabel}</span>
         </div>
-        <div class="snapshot-grid">
-          <article class="snapshot-card snapshot-card-main"><span>同じ期間で読める会社</span><strong>{sources.length}<small>社</small></strong><p>この期間の営業CFと設備投資が、一次資料で揃っています。</p></article>
-          <article class="snapshot-card"><span>営業CFの単純合計</span><strong>{usd(normalized.operating_cash_flow_total_usd)}</strong><p>同じXBRLタグの報告値を足したものです。</p></article>
-          <article class="snapshot-card"><span>設備投資の扱い</span><strong>{capexTagCount}<small>種類のタグ</small></strong><p>{capexSummary}</p></article>
+        <div class="verdict-panel">
+          <div><span>判定</span><strong>未成立</strong></div>
+          <p>顧客側の営業CF・設備投資と、半導体企業の利益factは取得済みです。しかし、外部資金の複数年継続能力、利益率の維持、公式ウェイトによる指数利益は未検証です。</p>
         </div>
-        <div class="boundary-note"><span class="note-icon">i</span><p><strong>ここで分かるのは「事実」と「足し算」まで。</strong> 未来の利益、株価、コンセンサス予想は、この台帳には含めていません。</p></div>
-      </section>
-
-      <section id="profit" class="profit section-block" aria-labelledby="profit-title">
-        <div class="section-heading">
-          <div><p class="section-number">03 / PROFIT THROUGH TIME</p><h2 id="profit-title">半導体企業の<br /><em>利益推移。</em></h2></div>
-          <a class="outline-link" href={profitApi.target.index_url} target="_blank" rel="noreferrer">SOXの定義を見る <span>↗</span></a>
+        <div class="evidence-grid">
+          <article class="evidence-card evidence-observed"><span>OBSERVED / 顧客側</span><strong>{demandCompanies.length}<small>社</small> / {demandHistoryQuarters}<small>四半期以上</small></strong><p>営業CF・設備投資の時系列</p></article>
+          <article class="evidence-card evidence-observed"><span>OBSERVED / 半導体側</span><strong>{profitCompanies.length}<small>社</small> / {profitHistoryQuarters}<small>四半期以上</small></strong><p>売上高・営業利益の時系列</p></article>
+          <article class="evidence-card evidence-derived"><span>DERIVED / 計算可能</span><strong>FCF</strong><p>営業CF − CapEx。会社別・同一期間で計算</p></article>
+          <article class="evidence-card evidence-unknown"><span>UNKNOWN / 未取得</span><strong>外部資金・指数</strong><p>リース、借入、公式ウェイトは未判定</p></article>
         </div>
-        <p class="section-lede">バーは各社の営業利益です。会社ごとに最大値を100として、約5年の増減を形で見せています。会社の会計期末が違うため、異なる期間を合算した「指数利益」は表示しません。</p>
-        <div class="profit-bridge">
-          <div><span>直接読める企業</span><strong>{profitCompanies.length}<small>社</small></strong><p>売上高＋営業利益</p></div>
-          <div><span>履歴</span><strong>{profitHistoryQuarters}<small>四半期以上</small></strong><p>最大20四半期を保存</p></div>
-          <div><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '未成立'}</strong><p>{profitApi.cohort.status === 'unique' ? '同じ期間だけ集計可能' : '異なる期間を合算しない'}</p></div>
-        </div>
-        <div class="time-view-head"><div><span class="section-number">TIME VIEW / OPERATING INCOME</span><h3>四半期ごとのバーを見る</h3></div><span class="chart-legend"><i></i>営業利益　<i class="legend-negative"></i>赤字</span></div>
-        <div class="profit-chart-grid">
-          {profitCompanies.map((company) => (
-            <article class="profit-chart-card">
-              <header><div><h3>{company.name}</h3><p>{company.ticker} · {company.role}</p></div><strong>{usd(latestProfit(company).operating_income.reported_value)}</strong></header>
-              <p class="profit-yoy">{yoyIncome(company) === null ? '前年同期比較は計算不可' : `前年同期比 ${pct(yoyIncome(company))}`}</p>
-              <div class="bar-chart" role="img" aria-label={`${company.name}の営業利益、過去${company.quarters.length}四半期`}>
-                <div class="bar-zero"></div>
-                {company.quarters.slice().reverse().map((quarter, index) => {
-                  const value = Number(quarter.operating_income.reported_value);
-                  return <div class="bar-column"><div class:list={['bar-value', value < 0 ? 'negative' : 'positive']} style={`--bar-size:${chartHeight(company, value)}%`} title={`${quarter.period_end} 営業利益 ${exactUsd(value)}`}></div><small>{index % 4 === 0 || index === company.quarters.length - 1 ? quarter.period_end.slice(0, 7) : ''}</small></div>;
-                })}
-              </div>
-              <div class="profit-chart-foot"><span>売上高 {usd(latestProfit(company).revenue.reported_value)}</span><a href={`${base}api/v1/semiconductor-profit/companies/${company.id}.json`}>fact API ↗</a></div>
-            </article>
-          ))}
-        </div>
+        <div class="boundary-note"><span class="note-icon">i</span><p><strong>この画面の結論は「未成立」です。</strong> 事実がないのではなく、持続可能性を判定するための条件がまだ揃っていません。</p></div>
       </section>
 
       <section id="demand" class="demand section-block" aria-labelledby="demand-title">
         <div class="section-heading">
-          <div><p class="section-number">04 / FUNDING CAPACITY</p><h2 id="demand-title">支払い能力と<br /><em>投資推移。</em></h2></div>
+          <div><p class="section-number">03 / FUNDING CAPACITY</p><h2 id="demand-title">内部資金と<br /><em>投資負担。</em></h2></div>
           <a class="outline-link" href={`${base}api/v1/demand/index.json`}>需要APIを開く <span>↗</span></a>
         </div>
-        <p class="section-lede">見るのは「需要が強いか」だけではありません。営業CFが投資を何年支えられるかを、営業CFと設備投資の同じ四半期データで追います。未開始リース、社債、長期購入契約、AI売上は未取得として推測しません。</p>
-        <div class="demand-chain" aria-label="資金余力から半導体利益までの検証順"><span>営業CF</span><b>→</b><span>CapEx / リース / 借入</span><b>→</b><span>半導体売上</span><b>→</b><span>営業利益</span></div>
+        <p class="section-lede">営業CFが投資を何年支えられるかを、同じ四半期の営業CF・設備投資で追います。正規化バーは同一社内の時間変化だけを比較し、実額と元factはAPIで確認できます。</p>
+        <div class="demand-chain" aria-label="資金余力から半導体利益までの検証順"><span class="chain-node observed">営業CF</span><b>→</b><span class="chain-node observed">CapEx</span><b>→</b><span class="chain-node unknown">リース・借入 <small>未取得</small></span><b>→</b><span class="chain-node hypothesis">半導体売上</span><b>→</b><span class="chain-node hypothesis">営業利益</span></div>
         <div class="profit-bridge">
-          <div><span>支払い能力を読める企業</span><strong>{demandCompanies.length}<small>社</small></strong><p>営業CF＋設備投資</p></div>
+          <div><span>内部資金を読める企業</span><strong>{demandCompanies.length}<small>社</small></strong><p>営業CF＋設備投資</p></div>
           <div><span>履歴</span><strong>{demandHistoryQuarters}<small>四半期以上</small></strong><p>最大20四半期を保存</p></div>
           <div><span>正規化</span><strong>100<small>基準</small></strong><p>各社の最大絶対値</p></div>
         </div>
-        <div class="time-view-head"><div><span class="section-number">TIME VIEW / CASH FLOW</span><h3>営業CFと設備投資のバーを見る</h3></div><span class="chart-legend"><i></i>営業CF　<i class="legend-capex"></i>設備投資</span></div>
+        <div class="time-view-head"><div><span class="section-number">TIME VIEW / OBSERVED CASH FLOW</span><h3>営業CFと設備投資のバーを見る</h3></div><span class="chart-legend"><i></i>営業CF　<i class="legend-capex"></i>設備投資</span></div>
+        <p class="chart-note">チャートの高さは同じ会社の中だけで比較できます。各社間の規模比較には、下の実額を使います。</p>
         <div class="profit-chart-grid">
           {demandCompanies.map((company) => (
             <article class="profit-chart-card demand-chart-card">
-              <header><div><h3>{company.name}</h3><p>{company.ticker} · {company.role}</p></div><strong>{usd(latestDemand(company).capital_expenditures.value_usd)}</strong></header>
-              <p class="profit-yoy">最新設備投資 / 営業CF {ratio(latestDemand(company).capital_expenditure_to_operating_cash_flow)}</p>
+              <header><div><h3>{company.name}</h3><p>{company.ticker} · {company.role}</p></div><strong><span class="metric-label">最新設備投資</span>{usd(latestDemand(company).capital_expenditures.value_usd)}</strong></header>
+              <p class="profit-yoy">設備投資 / 営業CF {ratio(latestDemand(company).capital_expenditure_to_operating_cash_flow)}　<span class="derived-note">同一四半期</span></p>
               <div class="bar-chart demand-bar-chart" role="img" aria-label={`${company.name}の営業CFと設備投資、過去${company.quarters.length}四半期`}>
                 <div class="bar-zero"></div>
                 {company.quarters.slice().reverse().map((quarter, index) => {
@@ -198,9 +183,39 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         </div>
       </section>
 
+      <section id="profit" class="profit section-block" aria-labelledby="profit-title">
+        <div class="section-heading">
+          <div><p class="section-number">04 / PROFIT CONVERSION</p><h2 id="profit-title">売上は、<br /><em>利益に変わったか。</em></h2></div>
+          <a class="outline-link" href={profitApi.target.index_url} target="_blank" rel="noreferrer">SOXの定義を見る <span>↗</span></a>
+        </div>
+        <p class="section-lede">売上高と営業利益を同じ四半期で読み、営業利益率の変化を確認します。バーは各社の最大値を100に正規化した形の比較です。会計期末が違うため、指数利益は再構成しません。</p>
+        <div class="profit-bridge">
+          <div><span>直接読める企業</span><strong>{profitCompanies.length}<small>社</small></strong><p>売上高＋営業利益</p></div>
+          <div><span>履歴</span><strong>{profitHistoryQuarters}<small>四半期以上</small></strong><p>最大20四半期を保存</p></div>
+          <div><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '未成立'}</strong><p>{profitApi.cohort.status === 'unique' ? '同じ期間だけ集計可能' : '異なる期間を合算しない'}</p></div>
+        </div>
+        <div class="time-view-head"><div><span class="section-number">TIME VIEW / OBSERVED PROFIT</span><h3>四半期ごとのバーを見る</h3></div><span class="chart-legend"><i></i>営業利益　<i class="legend-negative"></i>赤字</span></div>
+        <div class="profit-chart-grid">
+          {profitCompanies.map((company) => (
+            <article class="profit-chart-card">
+              <header><div><h3>{company.name}</h3><p>{company.ticker} · {company.role}</p></div><strong><span class="metric-label">最新営業利益</span>{usd(latestProfit(company).operating_income.reported_value)}</strong></header>
+              <p class="profit-yoy">前年同期比 {yoyIncome(company) === null ? '計算不可' : pct(yoyIncome(company))}　/　営業利益率 {marginPct(operatingMargin(company))}</p>
+              <div class="bar-chart" role="img" aria-label={`${company.name}の営業利益、過去${company.quarters.length}四半期`}>
+                <div class="bar-zero"></div>
+                {company.quarters.slice().reverse().map((quarter, index) => {
+                  const value = Number(quarter.operating_income.reported_value);
+                  return <div class="bar-column"><div class:list={['bar-value', value < 0 ? 'negative' : 'positive']} style={`--bar-size:${chartHeight(company, value)}%`} title={`${quarter.period_end} 営業利益 ${exactUsd(value)}`}></div><small>{index % 4 === 0 || index === company.quarters.length - 1 ? quarter.period_end.slice(0, 7) : ''}</small></div>;
+                })}
+              </div>
+              <div class="profit-chart-foot"><span>売上高 {usd(latestProfit(company).revenue.reported_value)} / 利益率 {marginPct(operatingMargin(company))}</span><a href={`${base}api/v1/semiconductor-profit/companies/${company.id}.json`}>fact API ↗</a></div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section id="companies" class="companies section-block" aria-labelledby="companies-title">
         <div class="section-heading">
-          <div><p class="section-number">05 / CURRENT DEMAND</p><h2 id="companies-title">需要側を会社別に見る</h2></div>
+          <div><p class="section-number">05 / SOURCE FACTS</p><h2 id="companies-title">会社別の原fact。</h2></div>
           <a class="outline-link" href={`${base}api/v1/index.json`}>データ一覧を開く <span>↗</span></a>
         </div>
         <p class="section-lede">カードは現在の同じ四半期の報告値です。時系列バーの正規化値と混ぜず、実額とXBRLタグを1社ずつ確認できます。</p>
@@ -210,7 +225,7 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
               <header class="company-head">
                 <span class="company-index">{String(index + 1).padStart(2, '0')}</span>
                 <div><h3>{source.label}</h3><p>{source.ticker} · {dateJP(source.period_end)}時点</p></div>
-                <span class="verified-badge">確認済み</span>
+                <span class="verified-badge">SEC factあり</span>
               </header>
               <div class="company-values">
                 <div><span>営業CF</span><strong>{usd(source.operating_cash_flow_usd)}</strong><small>入ったお金</small></div>
@@ -224,10 +239,11 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
       </section>
 
       <section id="limits" class="limits section-block" aria-labelledby="limits-title">
-        <div class="section-heading"><div><p class="section-number">06 / WHAT THIS MEANS</p><h2 id="limits-title">数字の使い方と、<em>限界。</em></h2></div></div>
+        <div class="section-heading"><div><p class="section-number">06 / DECISION BOUNDARY</p><h2 id="limits-title">どこまで、<em>判定できるか。</em></h2></div></div>
         <div class="meaning-grid">
-          <article class="meaning-card meaning-card-good"><span class="meaning-mark">◎</span><h3>この台帳でできること</h3><ul><li>同じ四半期の営業CFを会社別に比べる</li><li>設備投資の報告額とXBRLタグを確認する</li><li>SEC提出書類まで戻って原文を読む</li></ul></article>
-          <article class="meaning-card meaning-card-limit"><span class="meaning-mark">!</span><h3>この台帳だけではできないこと</h3><ul><li>異なる設備投資タグを全社で合計する</li><li>未提出企業の数字を推定する</li><li>この数字だけで将来の利益や株価を予測する</li></ul></article>
+          <article class="meaning-card meaning-card-good"><span class="meaning-mark">◎</span><h3>観測できること</h3><ul><li>顧客企業の営業CF・CapExを時系列で追う</li><li>半導体企業の売上・営業利益・利益率を見る</li><li>同一社内の5年変化と元factを確認する</li></ul></article>
+          <article class="meaning-card meaning-card-limit"><span class="meaning-mark">!</span><h3>まだ判定できないこと</h3><ul><li>リース・借入で何年投資を補えるか</li><li>顧客投資が半導体利益を生んだ因果関係</li><li>公式ウェイトによる指数利益成長</li></ul></article>
+          <article class="meaning-card meaning-card-watch"><span class="meaning-mark">△</span><h3>仮説を棄却する条件</h3><ul><li>営業CF成長の一桁化</li><li>CapEx / 営業CFの上昇継続</li><li>半導体企業の利益率低下</li></ul></article>
         </div>
         {findings.length ? <div class="audit-callout"><span class="warning-icon">!</span><div><strong>今回の注意点</strong><p>{findingSummary[findings[0].id] || findings[0].detail}</p></div><a href="#technical">技術情報 <span>↓</span></a></div> : null}
       </section>
@@ -273,33 +289,34 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
   .hero { display: grid; grid-template-columns: minmax(0, 1fr) 285px; gap: 65px; align-items: end; padding: clamp(65px, 9vw, 115px) 0 82px; }
   .kicker, .section-number, .card-kicker, .snapshot-card span, .company-values span, .company-values small, .verified-badge, .meaning-mark, .technical-grid span, footer { font-family: "IBM Plex Mono", monospace; letter-spacing: .09em; text-transform: uppercase; }
   .kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 25px; color: #68766c; font-size: .63rem; }
-  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #7d9700; box-shadow: 0 0 0 4px #dce8b0; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #c68f50; box-shadow: 0 0 0 4px #f1e5d0; }
   h1, h2, h3 { margin: 0; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 600; letter-spacing: -.07em; } h1 > span, h1 > em { display: block; }
   .hero-copy { width: 100%; min-width: 0; } h1 { max-width: 790px; color: #17241d; font-size: clamp(3rem, 7.2vw, 7rem); line-height: .99; overflow-wrap: anywhere; word-break: break-all; } h1 em, h2 em { color: #738d00; font-style: normal; }
   .hero-lede { width: 100%; max-width: 700px; margin: 30px 0 0; color: #55645a; font-size: 1rem; line-height: 1.9; overflow-wrap: anywhere; word-break: break-all; }
   .hero-actions { display: flex; gap: 10px; margin-top: 30px; }
   .button { display: inline-flex; gap: 14px; align-items: center; padding: 13px 17px; font: .68rem "IBM Plex Mono", monospace; text-decoration: none; transition: transform .2s ease, background .2s ease; } .button:hover { transform: translateY(-2px); } .button-primary { color: #eff6e8; background: #172d23; } .button-primary:hover { background: #294b38; } .button-quiet { color: #4d5c51; border: 1px solid #b7b9ac; }
-  .hero-card { padding: 24px; color: #eef4e8; background: #172d23; box-shadow: 12px 12px 0 #d7ddbd; } .card-kicker { margin: 0 0 25px; color: #b5c5a6; font-size: .58rem; } .hero-card strong { display: block; color: #d7fa67; font: 600 5.5rem/ .85 "IBM Plex Mono", monospace; letter-spacing: -.08em; } .hero-card strong small { margin-left: 7px; color: #eef4e8; font: 1rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .hero-card p:not(.card-kicker) { margin: 19px 0 0; color: #d8e2d3; font: .72rem "IBM Plex Mono", monospace; } .hero-card-rule { margin: 26px 0 13px; border-top: 1px solid #4e6c52; } .hero-card > span { color: #9eb09e; font-size: .72rem; line-height: 1.6; }
+  .hero-card { padding: 24px; color: #eef4e8; background: #172d23; box-shadow: 12px 12px 0 #d7ddbd; } .card-kicker { margin: 0 0 25px; color: #b5c5a6; font-size: .58rem; } .hero-card strong { display: block; color: #d7fa67; font: 600 5.5rem/ .85 "IBM Plex Mono", monospace; letter-spacing: -.08em; } .hero-card strong.verdict { color: #f0c878; font-size: 3.6rem; letter-spacing: -.1em; } .hero-card strong small { margin-left: 7px; color: #eef4e8; font: 1rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .hero-card p:not(.card-kicker) { margin: 19px 0 0; color: #d8e2d3; font: .72rem "IBM Plex Mono", monospace; } .hero-card-rule { margin: 26px 0 13px; border-top: 1px solid #4e6c52; } .hero-card > span { color: #9eb09e; font-size: .72rem; line-height: 1.6; }
   .section-block { margin: 0 0 100px; } .section-intro, .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; } .section-number { margin: 0 0 14px; color: #859086; font-size: .6rem; } h2 { color: #17241d; font-size: clamp(2.5rem, 5vw, 4.8rem); line-height: .98; } .section-lede { max-width: 730px; margin: 22px 0 28px; color: #67746a; font-size: .86rem; line-height: 1.8; }
-  .how { display: grid; grid-template-columns: .78fr 1.6fr; gap: 75px; padding: 30px 0 0; border-top: 1px solid #c9c6bc; } .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } .how-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 190px; padding: 18px; background: #e4e3d8; } .how-card:nth-child(2) { background: #d7fa67; } .how-card:nth-child(3) { color: #eef4e8; background: #172d23; } .step { color: #758077; font: .7rem "IBM Plex Mono", monospace; } .how-card:nth-child(2) .step, .how-card:nth-child(3) .step { color: inherit; opacity: .65; } .how-card h3 { margin: 30px 0 10px; font-size: 1.25rem; letter-spacing: -.04em; } .how-card p { margin: 0; color: #627066; font-size: .77rem; line-height: 1.7; } .how-card:nth-child(3) p { color: #c5d2c2; }
+  .how { display: grid; grid-template-columns: .78fr 1.6fr; gap: 75px; padding: 30px 0 0; border-top: 1px solid #c9c6bc; } .how-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; } .how-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 190px; padding: 18px; background: #e4e3d8; } .how-card:nth-child(2) { background: #d7fa67; } .how-card:nth-child(3) { color: #eef4e8; background: #172d23; } .how-card:nth-child(4) { background: #f1e5d0; } .step { color: #758077; font: .7rem "IBM Plex Mono", monospace; } .how-card:nth-child(2) .step, .how-card:nth-child(3) .step { color: inherit; opacity: .65; } .how-card h3 { margin: 30px 0 10px; font-size: 1.25rem; letter-spacing: -.04em; } .how-card p { margin: 0; color: #627066; font-size: .77rem; line-height: 1.7; } .how-card:nth-child(3) p { color: #c5d2c2; }
   .section-heading { margin-bottom: 25px; } .period-chip { padding: 8px 11px; color: #607000; border: 1px solid #bdcb85; font: .62rem "IBM Plex Mono", monospace; }
   .snapshot-grid { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 10px; } .snapshot-card { min-height: 190px; padding: 23px; border: 1px solid #cbcabe; background: #f8f6ef; } .snapshot-card-main { color: #eef4e8; background: #172d23; border-color: #172d23; } .snapshot-card span { display: block; color: #718074; font-size: .56rem; } .snapshot-card-main span { color: #b4c6b1; } .snapshot-card strong { display: block; margin-top: 29px; color: #738d00; font: 600 clamp(2.3rem, 5vw, 4rem) "IBM Plex Mono", monospace; letter-spacing: -.08em; } .snapshot-card-main strong { color: #d7fa67; } .snapshot-card strong small { margin-left: 6px; color: inherit; font: .9rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .snapshot-card p { max-width: 260px; margin: 12px 0 0; color: #728077; font-size: .76rem; line-height: 1.65; } .snapshot-card-main p { color: #bfd0bc; }
+  .verdict-panel { display: grid; grid-template-columns: 180px 1fr; gap: 25px; align-items: center; padding: 20px; color: #eef4e8; background: #172d23; } .verdict-panel span, .evidence-card > span { display: block; color: #a9bd9f; font: .55rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .verdict-panel strong { display: block; margin-top: 10px; color: #f0c878; font: 600 2.4rem "IBM Plex Mono", monospace; letter-spacing: -.08em; } .verdict-panel p { margin: 0; color: #c8d6c2; font-size: .82rem; line-height: 1.8; } .evidence-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 12px; background: #c9c6bc; } .evidence-card { min-height: 145px; padding: 18px; background: #f8f6ef; } .evidence-card strong { display: block; margin-top: 20px; color: #26372b; font: 600 1.4rem "IBM Plex Mono", monospace; letter-spacing: -.06em; } .evidence-card strong small { margin-left: 4px; font: .68rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .evidence-card p { margin: 8px 0 0; color: #758178; font-size: .68rem; line-height: 1.55; } .evidence-observed { border-top: 3px solid #879f00; } .evidence-derived { border-top: 3px solid #cf9d41; } .evidence-unknown { border-top: 3px solid #c5745f; } .chart-note { margin: -2px 0 12px; color: #7c877f; font: .62rem "IBM Plex Mono", monospace; }
   .profit-bridge { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 28px 0 42px; background: #c9c6bc; } .profit-bridge > div { min-height: 125px; padding: 18px; background: #172d23; } .profit-bridge span { color: #b1c3ae; font: .55rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .profit-bridge strong { display: block; margin-top: 17px; color: #d7fa67; font: 600 2rem "IBM Plex Mono", monospace; letter-spacing: -.08em; } .profit-bridge strong small { margin-left: 5px; font: .72rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .profit-bridge p { margin: 7px 0 0; color: #b7c9b3; font-size: .7rem; }
-  .demand-chain { display: flex; align-items: center; gap: 10px; margin: 28px 0 4px; padding: 15px 18px; color: #d7fa67; background: #172d23; font: .63rem "IBM Plex Mono", monospace; } .demand-chain span { padding: 7px 9px; color: #172d23; background: #d7fa67; } .demand-chain b { color: #a9bd9f; font-weight: 400; }
+  .demand-chain { display: flex; align-items: center; gap: 8px; margin: 28px 0 4px; padding: 15px 18px; color: #d7fa67; background: #172d23; font: .6rem "IBM Plex Mono", monospace; } .demand-chain .chain-node { display: inline-flex; gap: 5px; align-items: center; padding: 7px 9px; color: #172d23; background: #d7fa67; } .demand-chain .chain-node.unknown { color: #6d4d2b; background: #f0c878; } .demand-chain .chain-node.hypothesis { color: #d8e2d3; background: transparent; border: 1px dashed #81947d; } .demand-chain small { font-size: .5rem; } .demand-chain b { color: #a9bd9f; font-weight: 400; }
   .time-view-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 14px; } .time-view-head h3 { margin-top: 9px; font-size: 1.55rem; letter-spacing: -.04em; } .chart-legend { color: #7d887f; font: .59rem "IBM Plex Mono", monospace; } .chart-legend i { display: inline-block; width: 8px; height: 8px; margin-right: 4px; background: #879f00; } .chart-legend .legend-negative { margin-left: 9px; background: #c5745f; } .chart-legend .legend-capex { margin-left: 9px; background: #cf9d41; }
-  .profit-chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .profit-chart-card { padding: 20px 20px 15px; border: 1px solid #cbcabe; background: #f8f6ef; } .profit-chart-card > header { display: flex; justify-content: space-between; align-items: start; gap: 15px; } .profit-chart-card h3 { font-size: 1.3rem; letter-spacing: -.04em; } .profit-chart-card header p { margin: 5px 0 0; color: #7c877f; font: .58rem "IBM Plex Mono", monospace; } .profit-chart-card header strong { color: #637900; font: .9rem "IBM Plex Mono", monospace; white-space: nowrap; } .profit-yoy { margin: 13px 0 0; color: #68766c; font: .62rem "IBM Plex Mono", monospace; } .bar-chart { position: relative; display: flex; height: 185px; margin-top: 8px; padding: 0 2px 25px; border-bottom: 1px solid #d0cec4; } .bar-zero { position: absolute; top: 50%; right: 2px; left: 2px; border-top: 1px dashed #bfc1b6; } .bar-column { position: relative; flex: 1; height: 160px; min-width: 0; } .bar-value { position: absolute; right: 20%; bottom: 50%; left: 20%; height: var(--bar-size); min-height: 3px; background: #879f00; } .bar-value.negative { top: 50%; bottom: auto; background: #c5745f; } .bar-column small { position: absolute; top: calc(100% + 4px); left: 50%; color: #929b91; font: .48rem "IBM Plex Mono", monospace; transform: translateX(-50%); white-space: nowrap; } .profit-chart-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; color: #758178; font: .58rem "IBM Plex Mono", monospace; } .profit-chart-foot a { color: #687d00; text-decoration: none; } .demand-bar-pair { position: absolute; inset: 0; } .demand-bar-pair .bar-value { right: auto; left: auto; width: 34%; } .demand-bar-pair .demand-ocf { left: 8%; } .demand-bar-pair .demand-capex { right: 8%; background: #cf9d41; } .demand-bar-pair .bar-value.negative { top: 50%; bottom: auto; }
+  .profit-chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .profit-chart-card { padding: 20px 20px 15px; border: 1px solid #cbcabe; background: #f8f6ef; } .profit-chart-card > header { display: flex; justify-content: space-between; align-items: start; gap: 15px; } .profit-chart-card h3 { font-size: 1.3rem; letter-spacing: -.04em; } .profit-chart-card header p { margin: 5px 0 0; color: #7c877f; font: .58rem "IBM Plex Mono", monospace; } .profit-chart-card header strong { color: #637900; font: .9rem "IBM Plex Mono", monospace; white-space: nowrap; } .metric-label { display: block; margin-bottom: 5px; color: #8b948d; font: .49rem "IBM Plex Mono", monospace; letter-spacing: .03em; text-transform: uppercase; } .profit-yoy { margin: 13px 0 0; color: #68766c; font: .62rem "IBM Plex Mono", monospace; } .derived-note { color: #a16625; } .bar-chart { position: relative; display: flex; height: 185px; margin-top: 8px; padding: 0 2px 25px; border-bottom: 1px solid #d0cec4; } .bar-zero { position: absolute; top: 50%; right: 2px; left: 2px; border-top: 1px dashed #bfc1b6; } .bar-column { position: relative; flex: 1; height: 160px; min-width: 0; } .bar-value { position: absolute; right: 20%; bottom: 50%; left: 20%; height: var(--bar-size); min-height: 3px; background: #879f00; } .bar-value.negative { top: 50%; bottom: auto; background: #c5745f; } .bar-column small { position: absolute; top: calc(100% + 4px); left: 50%; color: #929b91; font: .48rem "IBM Plex Mono", monospace; transform: translateX(-50%); white-space: nowrap; } .profit-chart-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; color: #758178; font: .58rem "IBM Plex Mono", monospace; } .profit-chart-foot a { color: #687d00; text-decoration: none; } .demand-bar-pair { position: absolute; inset: 0; } .demand-bar-pair .bar-value { right: auto; left: auto; width: 34%; } .demand-bar-pair .demand-ocf { left: 8%; } .demand-bar-pair .demand-capex { right: 8%; background: #cf9d41; } .demand-bar-pair .bar-value.negative { top: 50%; bottom: auto; }
   .boundary-note, .audit-callout { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding: 16px 18px; color: #59665d; background: #e7eadb; } .note-icon, .warning-icon { display: grid; flex: 0 0 23px; place-items: center; width: 23px; height: 23px; color: #536700; border: 1px solid #94a544; border-radius: 50%; font: .75rem Georgia, serif; } .boundary-note p, .audit-callout p { margin: 0; font-size: .78rem; line-height: 1.6; } .boundary-note strong { color: #27392a; }
   .outline-link { color: #647900; font: .65rem "IBM Plex Mono", monospace; text-decoration: none; } .outline-link span, .company-foot span, .audit-callout a span { margin-left: 5px; }
   .company-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .company-card { padding: 22px; border: 1px solid #cbcabe; background: #f8f6ef; } .company-head { display: grid; grid-template-columns: 29px 1fr auto; gap: 12px; align-items: start; } .company-index { color: #9ba39a; font: .66rem "IBM Plex Mono", monospace; } .company-card h3 { font-size: 1.5rem; letter-spacing: -.04em; } .company-head p { margin: 5px 0 0; color: #7c877f; font: .62rem "IBM Plex Mono", monospace; } .verified-badge { padding: 6px 7px; color: #607400; border: 1px solid #c2ce91; font-size: .5rem; }
   .company-values { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 24px; background: #d4d2c7; } .company-values > div { padding: 15px; background: #eeece3; } .company-values span, .company-values small { display: block; color: #7b867d; font-size: .54rem; } .company-values strong { display: block; margin: 12px 0 4px; color: #23382a; font: 600 clamp(1.35rem, 3vw, 2rem) "IBM Plex Mono", monospace; letter-spacing: -.08em; } .company-values small { color: #9ca59e; text-transform: none; letter-spacing: 0; }
   .company-foot { display: flex; justify-content: space-between; gap: 15px; margin-top: 16px; } .company-foot a { color: #687c00; font: .61rem "IBM Plex Mono", monospace; text-decoration: none; }
   .raw-details { margin-top: 16px; border-top: 1px solid #d3d2c9; } summary { cursor: pointer; list-style: none; } summary::-webkit-details-marker { display: none; } .raw-details summary { padding-top: 13px; color: #7d877f; font: .58rem "IBM Plex Mono", monospace; } .raw-details summary::after { content: ' ＋'; color: #829900; } .raw-details[open] summary::after { content: ' −'; } .raw-details dl { display: grid; grid-template-columns: 110px 1fr; gap: 7px 12px; margin: 15px 0 0; } .raw-details dt { color: #8b948d; font-size: .62rem; } .raw-details dd { margin: 0; color: #56645a; font: .59rem "IBM Plex Mono", monospace; overflow-wrap: anywhere; }
-  .meaning-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .meaning-card { min-height: 220px; padding: 24px; } .meaning-card-good { color: #eef4e8; background: #172d23; } .meaning-card-limit { background: #d7fa67; } .meaning-mark { display: block; margin-bottom: 26px; font-size: 1.2rem; } .meaning-card h3 { font-size: 1.5rem; letter-spacing: -.04em; } .meaning-card ul { display: grid; gap: 9px; margin: 22px 0 0; padding: 0 0 0 18px; font-size: .8rem; line-height: 1.6; } .meaning-card-good li::marker { color: #d7fa67; } .meaning-card-limit li::marker { color: #758d00; }
+  .meaning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; } .meaning-card { min-height: 220px; padding: 24px; } .meaning-card-good { color: #eef4e8; background: #172d23; } .meaning-card-limit { background: #d7fa67; } .meaning-card-watch { color: #654d2f; background: #f1e5d0; } .meaning-mark { display: block; margin-bottom: 26px; font-size: 1.2rem; } .meaning-card h3 { font-size: 1.5rem; letter-spacing: -.04em; } .meaning-card ul { display: grid; gap: 9px; margin: 22px 0 0; padding: 0 0 0 18px; font-size: .8rem; line-height: 1.6; } .meaning-card-good li::marker { color: #d7fa67; } .meaning-card-limit li::marker { color: #758d00; } .meaning-card-watch li::marker { color: #a16625; }
   .audit-callout { color: #654d2f; background: #f1e5d0; } .warning-icon { color: #a16625; border-color: #c68f50; } .audit-callout strong { display: block; margin-bottom: 4px; color: #684b28; font: .8rem "IBM Plex Mono", monospace; } .audit-callout a { margin-left: auto; color: #956324; font: .6rem "IBM Plex Mono", monospace; text-decoration: none; white-space: nowrap; }
   .coverage-details, .technical details { border-top: 1px solid #c9c6bc; border-bottom: 1px solid #c9c6bc; } .coverage-details > summary, .technical summary { display: flex; justify-content: space-between; gap: 20px; padding: 23px 0; } .coverage-details summary strong, .technical summary strong { display: block; color: #25372a; font: 1.45rem "Hiragino Mincho ProN", serif; } .summary-count { align-self: center; color: #788279; font: .61rem "IBM Plex Mono", monospace; } .summary-count b { margin-left: 12px; color: #728b00; font-size: 1rem; } .coverage-details[open] > summary, .technical details[open] summary { border-bottom: 1px solid #d4d2c7; } .coverage-details > summary .section-number, .technical .section-number { margin-bottom: 8px; }
   .coverage-details > .section-lede { margin-top: 20px; } .coverage-list { display: grid; margin-bottom: 23px; border: 1px solid #d3d2c9; } .coverage-row { display: grid; grid-template-columns: 1fr 160px 1.4fr; gap: 12px; padding: 13px 15px; border-bottom: 1px solid #d3d2c9; font-size: .72rem; } .coverage-row:last-child { border-bottom: 0; } .coverage-row.included { background: #e7efd0; } .coverage-name { color: #26372b; font-weight: 600; } .coverage-status { color: #718400; font: .59rem "IBM Plex Mono", monospace; } .coverage-desc { color: #7c877f; }
   .technical { margin-bottom: 70px; } .technical-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding: 0 0 24px; background: #d3d2c9; } .technical-grid > div { display: grid; gap: 10px; padding: 15px; background: #e9e7dd; } .technical-grid span { color: #818b82; font-size: .54rem; } .technical-grid strong, .technical-grid a { color: #52625a; font: .62rem "IBM Plex Mono", monospace; overflow-wrap: anywhere; } .technical-grid a { color: #687d00; text-decoration: none; }
   footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; color: #879087; border-top: 1px solid #c9c6bc; font-size: .55rem; }
-  @media (max-width: 860px) { .hero, .how { grid-template-columns: 1fr; gap: 38px; } .hero-card { max-width: 340px; } .how { padding-top: 26px; } .snapshot-grid, .company-grid { grid-template-columns: 1fr 1fr; } .snapshot-card-main { grid-column: span 2; } }
-  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub, nav a:first-child { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .how-grid, .snapshot-grid, .company-grid, .meaning-grid, .profit-chart-grid { grid-template-columns: 1fr; } .snapshot-card-main { grid-column: auto; } .profit-bridge { grid-template-columns: 1fr; } .demand-chain { align-items: stretch; flex-direction: column; gap: 5px; } .demand-chain b { display: none; } .demand-chain span { text-align: center; } .time-view-head { align-items: start; flex-direction: column; gap: 12px; } .how-card { min-height: 155px; } .company-values strong { font-size: 1.35rem; } .company-head { grid-template-columns: 24px 1fr; } .verified-badge { grid-column: 2; justify-self: start; } .coverage-row { grid-template-columns: 1fr; gap: 5px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
+  @media (max-width: 860px) { .hero, .how { grid-template-columns: 1fr; gap: 38px; } .hero-card { max-width: 340px; } .how { padding-top: 26px; } .how-grid { grid-template-columns: repeat(2, 1fr); } .snapshot-grid, .company-grid { grid-template-columns: 1fr 1fr; } .snapshot-card-main { grid-column: span 2; } .evidence-grid { grid-template-columns: repeat(2, 1fr); } .meaning-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub, nav a:first-child { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .how-grid, .snapshot-grid, .company-grid, .meaning-grid, .profit-chart-grid, .evidence-grid { grid-template-columns: 1fr; } .snapshot-card-main { grid-column: auto; } .profit-bridge { grid-template-columns: 1fr; } .verdict-panel { grid-template-columns: 1fr; gap: 8px; } .demand-chain { align-items: stretch; flex-direction: column; gap: 5px; } .demand-chain b { display: none; } .demand-chain .chain-node { justify-content: center; } .time-view-head { align-items: start; flex-direction: column; gap: 12px; } .how-card { min-height: 155px; } .company-values strong { font-size: 1.35rem; } .company-head { grid-template-columns: 24px 1fr; } .verified-badge { grid-column: 2; justify-self: start; } .coverage-row { grid-template-columns: 1fr; gap: 5px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
 </style>
