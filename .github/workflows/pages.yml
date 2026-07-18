@@ -48,6 +48,10 @@ jobs:
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_semiconductor_profit_api.py
+      - name: Fetch normalized demand-side facts
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_demand_api.py
       - name: Build same-period model snapshot
         run: uv run python scripts/build_model_snapshot.py
       - name: Run generated data contract tests
@@ -89,6 +93,8 @@ jobs:
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-profit/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/demand/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
           html="$(curl -fsSL "$base/earnings/")"
           audit_json="$(curl -fsSL "$base/data/quant-audit.json")"
@@ -103,6 +109,11 @@ jobs:
           profit_api_json="$(curl -fsSL "$base/api/v1/semiconductor-profit/index.json")"
           profit_api_hash="$(jq -er '.content_hash' <<< "$profit_api_json")"
           grep -Fq "data-profit-api-hash=\"$profit_api_hash\"" <<< "$html"
+          demand_api_json="$(curl -fsSL "$base/api/v1/demand/index.json")"
+          demand_api_hash="$(jq -er '.content_hash' <<< "$demand_api_json")"
+          grep -Fq "data-demand-api-hash=\"$demand_api_hash\"" <<< "$html"
+          grep -Fq "支払い能力と" <<< "$html"
+          grep -Fq "CapEx / リース / 借入" <<< "$html"
           ! grep -Fq "MODEL VERDICT" <<< "$html"
           ! grep -Fqi "confidence 60%" <<< "$html"
           ! grep -Fq "Yardeni" <<< "$html"

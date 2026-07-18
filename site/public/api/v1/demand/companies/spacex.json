@@ -1,0 +1,13 @@
+{
+  "availability": "sec_companyfacts_without_us_gaap",
+  "cik": "1181412",
+  "class": "public",
+  "fact_tags": {},
+  "id": "spacex",
+  "name": "SpaceX",
+  "quantitative_status": "public_no_quarterly_demand_facts",
+  "quarters": [],
+  "role": "aerospace-and-infrastructure",
+  "source": "SEC EDGAR",
+  "ticker": "SPCX"
+}

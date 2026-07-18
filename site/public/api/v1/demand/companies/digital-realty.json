@@ -1,0 +1,20 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "1297996",
+  "class": "public",
+  "fact_tags": {
+    "operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities"
+  },
+  "id": "digital-realty",
+  "name": "Digital Realty",
+  "normalization": {
+    "display_range": "-100 to +100",
+    "method": "within_company_shared_absolute_max",
+    "scale_usd": 0
+  },
+  "quantitative_status": "public_no_quarterly_demand_facts",
+  "quarters": [],
+  "role": "data-center-operator",
+  "source": "SEC EDGAR",
+  "ticker": "DLR"
+}

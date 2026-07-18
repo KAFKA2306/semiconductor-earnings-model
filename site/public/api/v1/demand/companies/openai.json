@@ -1,0 +1,12 @@
+{
+  "availability": "no_public_sec_10q_10k",
+  "cik": null,
+  "class": "private",
+  "id": "openai",
+  "name": "OpenAI",
+  "quantitative_status": "excluded_without_estimate",
+  "quarters": [],
+  "role": "model-lab",
+  "source": "No public 10-Q/10-K in this database",
+  "ticker": null
+}
