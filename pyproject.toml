@@ -1,7 +1,7 @@
 [project]
 name = "semiconductor-earnings-model"
 version = "0.1.0"
-description = "Reproducible semiconductor earnings scenario model."
+description = "Reproducible primary financial facts ledger."
 requires-python = ">=3.12"
 dependencies = [
     "langgraph==0.4.7",

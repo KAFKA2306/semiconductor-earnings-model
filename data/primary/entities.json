@@ -2,17 +2,17 @@
   "schema_version": "primary-entity-registry.v1",
   "source_policy": "Only reported primary financial data is quantitative. Missing data stays missing.",
   "entities": [
-    {"id": "amazon", "name": "Amazon", "ticker": "AMZN", "cik": "1018724", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR"},
-    {"id": "alphabet", "name": "Alphabet", "ticker": "GOOGL", "cik": "1652044", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR"},
-    {"id": "meta", "name": "Meta", "ticker": "META", "cik": "1326801", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR"},
-    {"id": "microsoft", "name": "Microsoft", "ticker": "MSFT", "cik": "789019", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR"},
-    {"id": "oracle", "name": "Oracle", "ticker": "ORCL", "cik": "1341439", "class": "public", "role": "cloud-provider", "source": "SEC EDGAR"},
-    {"id": "coreweave", "name": "CoreWeave", "ticker": "CRWV", "cik": "1769628", "class": "public", "role": "ai-cloud", "source": "SEC EDGAR"},
-    {"id": "equinix", "name": "Equinix", "ticker": "EQIX", "cik": "1101239", "class": "public", "role": "data-center-operator", "source": "SEC EDGAR"},
-    {"id": "digital-realty", "name": "Digital Realty", "ticker": "DLR", "cik": "1297996", "class": "public", "role": "data-center-operator", "source": "SEC EDGAR"},
+    {"id": "amazon", "name": "Amazon", "ticker": "AMZN", "cik": "1018724", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities", "capital_expenditures": "PaymentsToAcquireProductiveAssets"}},
+    {"id": "alphabet", "name": "Alphabet", "ticker": "GOOGL", "cik": "1652044", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities", "capital_expenditures": "PaymentsToAcquirePropertyPlantAndEquipment"}},
+    {"id": "meta", "name": "Meta", "ticker": "META", "cik": "1326801", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities", "capital_expenditures": "PaymentsToAcquirePropertyPlantAndEquipment"}},
+    {"id": "microsoft", "name": "Microsoft", "ticker": "MSFT", "cik": "789019", "class": "public", "role": "hyperscaler", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities", "capital_expenditures": "PaymentsToAcquirePropertyPlantAndEquipment"}},
+    {"id": "oracle", "name": "Oracle", "ticker": "ORCL", "cik": "1341439", "class": "public", "role": "cloud-provider", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities", "capital_expenditures": "PaymentsToAcquirePropertyPlantAndEquipment"}},
+    {"id": "coreweave", "name": "CoreWeave", "ticker": "CRWV", "cik": "1769628", "class": "public", "role": "ai-cloud", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities", "capital_expenditures": "PaymentsToAcquirePropertyPlantAndEquipment"}},
+    {"id": "equinix", "name": "Equinix", "ticker": "EQIX", "cik": "1101239", "class": "public", "role": "data-center-operator", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities", "capital_expenditures": "PaymentsToAcquireProductiveAssets"}},
+    {"id": "digital-realty", "name": "Digital Realty", "ticker": "DLR", "cik": "1297996", "class": "public", "role": "data-center-operator", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities"}},
     {"id": "xai", "name": "xAI", "ticker": null, "cik": null, "class": "private", "role": "model-lab", "product_aliases": ["Grok"], "source": "No public 10-Q/10-K in this database"},
     {"id": "openai", "name": "OpenAI", "ticker": null, "cik": null, "class": "private", "role": "model-lab", "source": "No public 10-Q/10-K in this database"},
     {"id": "anthropic", "name": "Anthropic", "ticker": null, "cik": null, "class": "private", "role": "model-lab", "source": "No public 10-Q/10-K in this database"},
-    {"id": "spacex", "name": "SpaceX", "ticker": "SPCX", "cik": "1181412", "class": "public", "role": "aerospace-and-infrastructure", "source": "SEC EDGAR"}
+    {"id": "spacex", "name": "SpaceX", "ticker": "SPCX", "cik": "1181412", "class": "public", "role": "aerospace-and-infrastructure", "source": "SEC EDGAR", "fact_tags": {}}
   ]
 }

@@ -2,6 +2,10 @@
   "availability": "sec_companyfacts",
   "cik": "789019",
   "class": "public",
+  "fact_tags": {
+    "capital_expenditures": "PaymentsToAcquirePropertyPlantAndEquipment",
+    "operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities"
+  },
   "facts": [
     {
       "accession": "0001193125-26-191507",
@@ -15,11 +19,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 46679000000,
+      "retrieved_at": "2026-07-18T14:11:52.666810+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
-      "unit": "USD",
-      "value_usd_billions": 46.679
+      "unit": "USD"
     },
     {
       "accession": "0001193125-26-191507",
@@ -33,11 +37,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 30876000000,
+      "retrieved_at": "2026-07-18T14:11:52.666810+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
-      "unit": "USD",
-      "value_usd_billions": 30.876
+      "unit": "USD"
     }
   ],
   "id": "microsoft",

@@ -1,12 +1,11 @@
 import { defineConfig } from 'astro/config';
 
-const [, repository = ''] = (process.env.GITHUB_REPOSITORY || '').split('/');
-const rawBase = process.env.SITE_BASE?.trim();
-const normalizedBase = rawBase
-  ? (rawBase === '/' ? '/' : '/' + rawBase.replace(/^\/+|\/+$/g, '') + '/')
-  : (repository ? '/' + repository + '/' : '/');
+const repository = process.env.GITHUB_REPOSITORY;
+if (!repository || !repository.includes('/')) throw new Error('GITHUB_REPOSITORY is required');
+const [, repositoryName] = repository.split('/');
+if (!repositoryName) throw new Error('GITHUB_REPOSITORY must include a repository name');
 
 export default defineConfig({
-  base: normalizedBase,
+  base: `/${repositoryName}/`,
   trailingSlash: 'always',
 });

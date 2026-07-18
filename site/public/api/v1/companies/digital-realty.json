@@ -2,6 +2,9 @@
   "availability": "sec_companyfacts",
   "cik": "1297996",
   "class": "public",
+  "fact_tags": {
+    "operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities"
+  },
   "facts": [
     {
       "accession": "0001104659-26-054255",
@@ -15,11 +18,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 532421000,
+      "retrieved_at": "2026-07-18T14:11:57.777079+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001297996.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/0001104659-26-054255-index.html",
-      "unit": "USD",
-      "value_usd_billions": 0.532421
+      "unit": "USD"
     }
   ],
   "id": "digital-realty",

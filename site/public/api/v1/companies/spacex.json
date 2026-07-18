@@ -2,6 +2,7 @@
   "availability": "sec_companyfacts",
   "cik": "1181412",
   "class": "public",
+  "fact_tags": {},
   "facts": [],
   "id": "spacex",
   "name": "SpaceX",

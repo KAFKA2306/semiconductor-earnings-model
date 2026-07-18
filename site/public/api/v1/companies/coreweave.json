@@ -2,6 +2,10 @@
   "availability": "sec_companyfacts",
   "cik": "1769628",
   "class": "public",
+  "fact_tags": {
+    "capital_expenditures": "PaymentsToAcquirePropertyPlantAndEquipment",
+    "operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities"
+  },
   "facts": [
     {
       "accession": "0001769628-26-000222",
@@ -15,11 +19,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 2984000000,
+      "retrieved_at": "2026-07-18T14:11:55.173373+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001769628.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
-      "unit": "USD",
-      "value_usd_billions": 2.984
+      "unit": "USD"
     },
     {
       "accession": "0001769628-26-000222",
@@ -33,11 +37,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 7695000000,
+      "retrieved_at": "2026-07-18T14:11:55.173373+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001769628.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
-      "unit": "USD",
-      "value_usd_billions": 7.695
+      "unit": "USD"
     }
   ],
   "id": "coreweave",
@@ -117,20 +121,20 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000164/crwv-20260409.htm"
     },
     {
-      "accession": "0001193125-26-148912",
-      "filed": "2026-04-09",
-      "form": "8-K",
-      "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000119312526148912/0001193125-26-148912-index.html",
-      "report_date": "2026-04-09",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000119312526148912/d136714d8k.htm"
-    },
-    {
       "accession": "0001769628-26-000154",
       "filed": "2026-04-09",
       "form": "8-K",
       "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000154/0001769628-26-000154-index.html",
       "report_date": "2026-03-31",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000154/crwv-20260331.htm"
+    },
+    {
+      "accession": "0001193125-26-148912",
+      "filed": "2026-04-09",
+      "form": "8-K",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/1769628/000119312526148912/0001193125-26-148912-index.html",
+      "report_date": "2026-04-09",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000119312526148912/d136714d8k.htm"
     },
     {
       "accession": "0001769628-26-000129",

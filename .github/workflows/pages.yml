@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with:
-          version: "latest"
+          version: "0.8.22"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -41,7 +41,7 @@ jobs:
           uv sync --frozen
       - name: Fetch primary SEC facts and build static API
         env:
-          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT || format('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36 {0}', github.repository) }}
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_primary_api.py
       - name: Build same-period model snapshot
         run: uv run python scripts/build_model_snapshot.py
@@ -51,7 +51,7 @@ jobs:
         run: uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "22.18.0"
           cache: npm
           cache-dependency-path: site/package-lock.json
       - name: Build Astro site
@@ -75,3 +75,12 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public Pages and APIs
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          test -n "$PAGE_URL"
+          base="${PAGE_URL%/}"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"

@@ -12,11 +12,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 26032000000,
+      "retrieved_at": "2026-07-18T14:11:49.332255+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
-      "unit": "USD",
-      "value_usd_billions": 26.032
+      "unit": "USD"
     },
     {
       "accession": "0001018724-26-000014",
@@ -30,11 +30,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 44203000000,
+      "retrieved_at": "2026-07-18T14:11:49.332255+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.html",
-      "unit": "USD",
-      "value_usd_billions": 44.203
+      "unit": "USD"
     },
     {
       "accession": "0001652044-26-000048",
@@ -48,11 +48,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 45790000000,
+      "retrieved_at": "2026-07-18T14:11:50.399078+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
-      "unit": "USD",
-      "value_usd_billions": 45.79
+      "unit": "USD"
     },
     {
       "accession": "0001652044-26-000048",
@@ -66,11 +66,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 35674000000,
+      "retrieved_at": "2026-07-18T14:11:50.399078+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.html",
-      "unit": "USD",
-      "value_usd_billions": 35.674
+      "unit": "USD"
     },
     {
       "accession": "0001628280-26-028526",
@@ -84,11 +84,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 32226000000,
+      "retrieved_at": "2026-07-18T14:11:51.470966+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.html",
-      "unit": "USD",
-      "value_usd_billions": 32.226
+      "unit": "USD"
     },
     {
       "accession": "0001628280-26-028526",
@@ -102,11 +102,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 18997000000,
+      "retrieved_at": "2026-07-18T14:11:51.470966+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.html",
-      "unit": "USD",
-      "value_usd_billions": 18.997
+      "unit": "USD"
     },
     {
       "accession": "0001193125-26-191507",
@@ -120,11 +120,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 46679000000,
+      "retrieved_at": "2026-07-18T14:11:52.666810+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
-      "unit": "USD",
-      "value_usd_billions": 46.679
+      "unit": "USD"
     },
     {
       "accession": "0001193125-26-191507",
@@ -138,47 +138,47 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 30876000000,
+      "retrieved_at": "2026-07-18T14:11:52.666810+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
-      "unit": "USD",
-      "value_usd_billions": 30.876
+      "unit": "USD"
     },
     {
-      "accession": "0001193125-26-101045",
-      "duration_days": 272,
+      "accession": "0001193125-25-200095",
+      "duration_days": 91,
       "entity_id": "oracle",
       "fact_tag": "NetCashProvidedByUsedInOperatingActivities",
-      "filed": "2026-03-11",
-      "fiscal_period": "Q3",
+      "filed": "2025-09-10",
+      "fiscal_period": "Q1",
       "form": "10-Q",
       "kind": "operating_cash_flow",
-      "period_end": "2026-02-28",
+      "period_end": "2025-08-31",
       "period_start": "2025-06-01",
-      "reported_value": 17357000000,
+      "reported_value": 8140000000,
+      "retrieved_at": "2026-07-18T14:11:54.410185+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
-      "unit": "USD",
-      "value_usd_billions": 17.357
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525200095/0001193125-25-200095-index.html",
+      "unit": "USD"
     },
     {
-      "accession": "0001193125-26-101045",
-      "duration_days": 272,
+      "accession": "0001193125-25-200095",
+      "duration_days": 91,
       "entity_id": "oracle",
       "fact_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
-      "filed": "2026-03-11",
-      "fiscal_period": "Q3",
+      "filed": "2025-09-10",
+      "fiscal_period": "Q1",
       "form": "10-Q",
       "kind": "capital_expenditures",
-      "period_end": "2026-02-28",
+      "period_end": "2025-08-31",
       "period_start": "2025-06-01",
-      "reported_value": 39170000000,
+      "reported_value": 8502000000,
+      "retrieved_at": "2026-07-18T14:11:54.410185+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/0001193125-26-101045-index.html",
-      "unit": "USD",
-      "value_usd_billions": 39.17
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525200095/0001193125-25-200095-index.html",
+      "unit": "USD"
     },
     {
       "accession": "0001769628-26-000222",
@@ -192,11 +192,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 2984000000,
+      "retrieved_at": "2026-07-18T14:11:55.173373+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001769628.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
-      "unit": "USD",
-      "value_usd_billions": 2.984
+      "unit": "USD"
     },
     {
       "accession": "0001769628-26-000222",
@@ -210,11 +210,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 7695000000,
+      "retrieved_at": "2026-07-18T14:11:55.173373+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001769628.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000222/0001769628-26-000222-index.html",
-      "unit": "USD",
-      "value_usd_billions": 7.695
+      "unit": "USD"
     },
     {
       "accession": "0001101239-26-000091",
@@ -228,11 +228,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 717000000,
+      "retrieved_at": "2026-07-18T14:11:56.430534+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001101239.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
-      "unit": "USD",
-      "value_usd_billions": 0.717
+      "unit": "USD"
     },
     {
       "accession": "0001101239-26-000091",
@@ -246,11 +246,11 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 1256000000,
+      "retrieved_at": "2026-07-18T14:11:56.430534+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001101239.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000091/0001101239-26-000091-index.html",
-      "unit": "USD",
-      "value_usd_billions": 1.256
+      "unit": "USD"
     },
     {
       "accession": "0001104659-26-054255",
@@ -264,13 +264,13 @@
       "period_end": "2026-03-31",
       "period_start": "2026-01-01",
       "reported_value": 532421000,
+      "retrieved_at": "2026-07-18T14:11:57.777079+00:00",
       "source_api_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001297996.json",
       "source_kind": "SEC EDGAR Companyfacts / 10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926054255/0001104659-26-054255-index.html",
-      "unit": "USD",
-      "value_usd_billions": 0.532421
+      "unit": "USD"
     }
   ],
-  "generated_at": "2026-07-18",
+  "generated_at": "2026-07-18T14:11:58.426176+00:00",
   "schema_version": "primary-finance-api.v1"
 }
