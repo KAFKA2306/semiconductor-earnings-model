@@ -2,5 +2,6 @@
 .uv-cache/
 site/node_modules/
 site/dist/
+site/.astro/
 __pycache__/
 .pytest_cache/
