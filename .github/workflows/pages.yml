@@ -44,6 +44,10 @@ jobs:
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_primary_api.py
+      - name: Fetch direct semiconductor profit facts
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_semiconductor_profit_api.py
       - name: Build same-period model snapshot
         run: uv run python scripts/build_model_snapshot.py
       - name: Run generated data contract tests
@@ -89,11 +93,16 @@ jobs:
           html="$(curl -fsSL "$base/earnings/")"
           audit_json="$(curl -fsSL "$base/data/quant-audit.json")"
           snapshot_hash="$(jq -er '.snapshot_hash' <<< "$audit_json")"
-          grep -Fq "AI投資を支える会社の" <<< "$html"
+          grep -Fq "半導体企業の利益が" <<< "$html"
           grep -Fq "30秒でわかる決算データ" <<< "$html"
           grep -Fq "会社別に見る" <<< "$html"
+          grep -Fq "半導体企業の" <<< "$html"
+          grep -Fq "TIME VIEW / OPERATING INCOME" <<< "$html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$html"
           grep -Fq "data-snapshot-hash=\"$snapshot_hash\"" <<< "$html"
+          profit_api_json="$(curl -fsSL "$base/api/v1/semiconductor-profit/index.json")"
+          profit_api_hash="$(jq -er '.content_hash' <<< "$profit_api_json")"
+          grep -Fq "data-profit-api-hash=\"$profit_api_hash\"" <<< "$html"
           ! grep -Fq "MODEL VERDICT" <<< "$html"
           ! grep -Fqi "confidence 60%" <<< "$html"
           ! grep -Fq "Yardeni" <<< "$html"

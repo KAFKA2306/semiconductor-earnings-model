@@ -1,0 +1,13 @@
+{
+  "availability": "sec_companyfacts",
+  "cik": "319201",
+  "facts": [],
+  "id": "kla",
+  "name": "KLA",
+  "operating_income_tag": "OperatingIncomeLoss",
+  "quantitative_status": "public_no_quarterly_profit_facts",
+  "quarters": [],
+  "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+  "role": "semiconductor-equipment",
+  "ticker": "KLAC"
+}

@@ -5,6 +5,7 @@ import path from 'node:path';
 const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
 const model = JSON.parse(fs.readFileSync(path.join(root, 'site/public/data/quant-audit.json'), 'utf8'));
 const primaryApi = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v1/index.json'), 'utf8'));
+const profitApi = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v1/semiconductor-profit/index.json'), 'utf8'));
 const snapshot = model.snapshot;
 const normalized = model.normalized;
 const sources = snapshot.sources;
@@ -21,7 +22,25 @@ const dateJP = (value) => {
 };
 const periodLabel = `${dateJP(snapshot.primary_period.start)}〜${dateJP(snapshot.primary_period.end)}`;
 const cohortIds = new Set(sources.map((source) => source.id));
-const primaryFactsCount = primaryApi.companies.reduce((total, company) => total + company.facts.length, 0);
+const profitCompanies = profitApi.companies.filter((company) => company.quarters.length > 0);
+const profitHistoryQuarters = Math.min(...profitCompanies.map((company) => company.quarters.length));
+const latestProfit = (company) => company.quarters[0];
+const previousYearQuarter = (company) => {
+  const current = latestProfit(company);
+  if (current?.fiscal_year == null || current?.fiscal_period == null) return null;
+  return company.quarters.find((quarter) => quarter.fiscal_year === current.fiscal_year - 1 && quarter.fiscal_period === current.fiscal_period) || null;
+};
+const yoyIncome = (company) => {
+  const current = latestProfit(company)?.operating_income.reported_value;
+  const previous = previousYearQuarter(company)?.operating_income.reported_value;
+  if (current == null || previous == null || previous === 0) return null;
+  return (Number(current) / Number(previous) - 1) * 100;
+};
+const chartHeight = (company, value) => {
+  const max = Math.max(...company.quarters.map((quarter) => Math.abs(Number(quarter.operating_income.reported_value))), 1);
+  return Math.max(3, Math.round(Math.abs(Number(value)) / max * 100));
+};
+const pct = (value) => `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
 const capexTagCount = normalized.capital_expenditures_fact_tag_count;
 const capexIsComparable = capexTagCount === 1;
 const capexSummary = capexIsComparable
@@ -61,6 +80,7 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         <a class="brand" href={base} aria-label="トップへ戻る"><span class="brand-mark">＋</span><span>決算の読み方<span class="brand-sub"> / PRIMARY FACTS</span></span></a>
         <nav aria-label="ページ内ナビゲーション">
           <a href="#how">読み方</a>
+          <a href="#profit">利益推移</a>
           <a href="#companies">会社別</a>
           <a href="#limits">注意点</a>
         </nav>
@@ -69,19 +89,19 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-copy">
           <p class="kicker"><span class="live-dot"></span>30秒でわかる決算データ</p>
-          <h1 id="page-title"><span>AI投資を支える会社の、</span><em>入ったお金と使ったお金。</em></h1>
-          <p class="hero-lede">このページは、各社がSECに提出した決算資料から、営業キャッシュフローと設備投資を同じ四半期で並べています。予測ではなく、確認できた数字だけです。</p>
+          <h1 id="page-title"><span>半導体企業の利益が、</span><em>どこまで伸びているか。</em></h1>
+          <p class="hero-lede">半導体企業自身の売上高と営業利益を、SECに提出された決算factから5年分追います。データセンター投資は、その利益につながる需要側の補助線として別に読みます。</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#how">まず読み方を見る <span>↓</span></a>
             <a class="button button-quiet" href="#companies">数字を見る <span>→</span></a>
           </div>
         </div>
         <aside class="hero-card" aria-label="今回のデータ範囲">
-          <p class="card-kicker">今回読める範囲</p>
-          <strong>{sources.length}<small>社</small></strong>
-          <p>{periodLabel}</p>
+          <p class="card-kicker">利益factを読める範囲</p>
+          <strong>{profitCompanies.length}<small>社</small></strong>
+          <p>{profitHistoryQuarters}四半期以上 / 最大5年</p>
           <div class="hero-card-rule"></div>
-          <span>同じ四半期で2つのfactが揃った会社</span>
+          <span>売上高と営業利益が同じ期間で揃った会社</span>
         </aside>
       </section>
 
@@ -91,9 +111,9 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
           <h2 id="how-title">見る場所は、<br /><em>3つだけ。</em></h2>
         </div>
         <div class="how-grid">
-          <article class="how-card"><span class="step">01</span><div><h3>期間を見る</h3><p>まず同じ四半期かを確認します。期間が違う数字は、足しません。</p></div></article>
-          <article class="how-card"><span class="step">02</span><div><h3>2つの数字を見る</h3><p>営業キャッシュフローは稼いだ現金。設備投資は事業に使った現金です。</p></div></article>
-          <article class="how-card"><span class="step">03</span><div><h3>資料へ戻る</h3><p>「出典を見る」からSECの提出書類へ移動できます。数字の原文を確認できます。</p></div></article>
+          <article class="how-card"><span class="step">01</span><div><h3>利益を見る</h3><p>まず半導体企業の売上高と営業利益を、四半期ごとのバーで追います。</p></div></article>
+          <article class="how-card"><span class="step">02</span><div><h3>需要を見る</h3><p>データセンターの営業CFと設備投資は、利益の前にある需要側の数字です。</p></div></article>
+          <article class="how-card"><span class="step">03</span><div><h3>資料へ戻る</h3><p>出典からSEC提出書類へ移動し、数字の原文とXBRLタグを確認します。</p></div></article>
         </div>
       </section>
 
@@ -110,9 +130,39 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         <div class="boundary-note"><span class="note-icon">i</span><p><strong>ここで分かるのは「事実」と「足し算」まで。</strong> 未来の利益、株価、コンセンサス予想は、この台帳には含めていません。</p></div>
       </section>
 
+      <section id="profit" class="profit section-block" aria-labelledby="profit-title">
+        <div class="section-heading">
+          <div><p class="section-number">03 / PROFIT THROUGH TIME</p><h2 id="profit-title">半導体企業の<br /><em>利益推移。</em></h2></div>
+          <a class="outline-link" href={profitApi.target.index_url} target="_blank" rel="noreferrer">SOXの定義を見る <span>↗</span></a>
+        </div>
+        <p class="section-lede">バーは各社の営業利益です。会社ごとに最大値を100として、約5年の増減を形で見せています。会社の会計期末が違うため、異なる期間を合算した「指数利益」は表示しません。</p>
+        <div class="profit-bridge">
+          <div><span>直接読める企業</span><strong>{profitCompanies.length}<small>社</small></strong><p>売上高＋営業利益</p></div>
+          <div><span>履歴</span><strong>{profitHistoryQuarters}<small>四半期以上</small></strong><p>最大20四半期を保存</p></div>
+          <div><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '未成立'}</strong><p>{profitApi.cohort.status === 'unique' ? '同じ期間だけ集計可能' : '異なる期間を合算しない'}</p></div>
+        </div>
+        <div class="time-view-head"><div><span class="section-number">TIME VIEW / OPERATING INCOME</span><h3>四半期ごとのバーを見る</h3></div><span class="chart-legend"><i></i>営業利益　<i class="legend-negative"></i>赤字</span></div>
+        <div class="profit-chart-grid">
+          {profitCompanies.map((company) => (
+            <article class="profit-chart-card">
+              <header><div><h3>{company.name}</h3><p>{company.ticker} · {company.role}</p></div><strong>{usd(latestProfit(company).operating_income.reported_value)}</strong></header>
+              <p class="profit-yoy">{yoyIncome(company) === null ? '前年同期比較は計算不可' : `前年同期比 ${pct(yoyIncome(company))}`}</p>
+              <div class="bar-chart" role="img" aria-label={`${company.name}の営業利益、過去${company.quarters.length}四半期`}>
+                <div class="bar-zero"></div>
+                {company.quarters.slice().reverse().map((quarter, index) => {
+                  const value = Number(quarter.operating_income.reported_value);
+                  return <div class="bar-column"><div class:list={['bar-value', value < 0 ? 'negative' : 'positive']} style={`--bar-size:${chartHeight(company, value)}%`} title={`${quarter.period_end} 営業利益 ${exactUsd(value)}`}></div><small>{index % 4 === 0 || index === company.quarters.length - 1 ? quarter.period_end.slice(0, 7) : ''}</small></div>;
+                })}
+              </div>
+              <div class="profit-chart-foot"><span>売上高 {usd(latestProfit(company).revenue.reported_value)}</span><a href={`${base}api/v1/semiconductor-profit/companies/${company.id}.json`}>fact API ↗</a></div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section id="companies" class="companies section-block" aria-labelledby="companies-title">
         <div class="section-heading">
-          <div><p class="section-number">03 / COMPANY BY COMPANY</p><h2 id="companies-title">会社別に見る</h2></div>
+          <div><p class="section-number">04 / DEMAND SIDE</p><h2 id="companies-title">需要側を会社別に見る</h2></div>
           <a class="outline-link" href={`${base}api/v1/index.json`}>データ一覧を開く <span>↗</span></a>
         </div>
         <p class="section-lede">カードの数字は同じ四半期の報告値です。会社ごとに出典が違うので、まとめて比較する前に1社ずつ確認できます。</p>
@@ -136,7 +186,7 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
       </section>
 
       <section id="limits" class="limits section-block" aria-labelledby="limits-title">
-        <div class="section-heading"><div><p class="section-number">04 / WHAT THIS MEANS</p><h2 id="limits-title">数字の使い方と、<em>限界。</em></h2></div></div>
+        <div class="section-heading"><div><p class="section-number">05 / WHAT THIS MEANS</p><h2 id="limits-title">数字の使い方と、<em>限界。</em></h2></div></div>
         <div class="meaning-grid">
           <article class="meaning-card meaning-card-good"><span class="meaning-mark">◎</span><h3>この台帳でできること</h3><ul><li>同じ四半期の営業CFを会社別に比べる</li><li>設備投資の報告額とXBRLタグを確認する</li><li>SEC提出書類まで戻って原文を読む</li></ul></article>
           <article class="meaning-card meaning-card-limit"><span class="meaning-mark">!</span><h3>この台帳だけではできないこと</h3><ul><li>異なる設備投資タグを全社で合計する</li><li>未提出企業の数字を推定する</li><li>この数字だけで将来の利益や株価を予測する</li></ul></article>
@@ -146,7 +196,7 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
 
       <section class="coverage section-block" aria-labelledby="coverage-title">
         <details class="coverage-details">
-          <summary><span><span class="section-number">05 / COVERAGE</span><strong id="coverage-title">対象企業をすべて見る</strong></span><span class="summary-count">{primaryApi.companies.length}社の登録状況 <b>＋</b></span></summary>
+          <summary><span><span class="section-number">06 / COVERAGE</span><strong id="coverage-title">対象企業をすべて見る</strong></span><span class="summary-count">{primaryApi.companies.length}社の登録状況 <b>＋</b></span></summary>
           <p class="section-lede">登録されている企業のうち、同じ期間の一次factが揃った会社だけが上のカードに入ります。欠測はゼロや推定値に変換しません。</p>
           <div class="coverage-list">
             {primaryApi.companies.map((company) => {
@@ -161,7 +211,7 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
       <section id="technical" class="technical section-block" aria-labelledby="technical-title">
         <details>
           <summary><span><span class="section-number">TECHNICAL / PROVENANCE</span><strong id="technical-title">根拠データと更新情報</strong></span><span class="summary-count">開く <b>＋</b></span></summary>
-          <div class="technical-grid"><div><span>データ取得</span><strong>{dateJP(snapshot.as_of)} / SEC EDGAR</strong></div><div><span>画面のbuild SHA</span><strong data-build-sha={buildSha}>{buildSha}</strong></div><div><span>snapshot hash</span><strong data-snapshot-hash={model.snapshot_hash}>{model.snapshot_hash}</strong></div><div><span>API</span><a href={`${base}api/v1/facts.json`}>全fact JSONを開く ↗</a></div></div>
+          <div class="technical-grid"><div><span>データ取得</span><strong>{dateJP(snapshot.as_of)} / SEC EDGAR</strong></div><div><span>画面のbuild SHA</span><strong data-build-sha={buildSha}>{buildSha}</strong></div><div><span>snapshot hash</span><strong data-snapshot-hash={model.snapshot_hash}>{model.snapshot_hash}</strong></div><div><span>利益API hash</span><strong data-profit-api-hash={profitApi.content_hash}>{profitApi.content_hash}</strong></div><div><span>API</span><a href={`${base}api/v1/semiconductor-profit/index.json`}>半導体利益APIを開く ↗</a></div></div>
         </details>
       </section>
 
@@ -196,6 +246,9 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
   .how { display: grid; grid-template-columns: .78fr 1.6fr; gap: 75px; padding: 30px 0 0; border-top: 1px solid #c9c6bc; } .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } .how-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 190px; padding: 18px; background: #e4e3d8; } .how-card:nth-child(2) { background: #d7fa67; } .how-card:nth-child(3) { color: #eef4e8; background: #172d23; } .step { color: #758077; font: .7rem "IBM Plex Mono", monospace; } .how-card:nth-child(2) .step, .how-card:nth-child(3) .step { color: inherit; opacity: .65; } .how-card h3 { margin: 30px 0 10px; font-size: 1.25rem; letter-spacing: -.04em; } .how-card p { margin: 0; color: #627066; font-size: .77rem; line-height: 1.7; } .how-card:nth-child(3) p { color: #c5d2c2; }
   .section-heading { margin-bottom: 25px; } .period-chip { padding: 8px 11px; color: #607000; border: 1px solid #bdcb85; font: .62rem "IBM Plex Mono", monospace; }
   .snapshot-grid { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 10px; } .snapshot-card { min-height: 190px; padding: 23px; border: 1px solid #cbcabe; background: #f8f6ef; } .snapshot-card-main { color: #eef4e8; background: #172d23; border-color: #172d23; } .snapshot-card span { display: block; color: #718074; font-size: .56rem; } .snapshot-card-main span { color: #b4c6b1; } .snapshot-card strong { display: block; margin-top: 29px; color: #738d00; font: 600 clamp(2.3rem, 5vw, 4rem) "IBM Plex Mono", monospace; letter-spacing: -.08em; } .snapshot-card-main strong { color: #d7fa67; } .snapshot-card strong small { margin-left: 6px; color: inherit; font: .9rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .snapshot-card p { max-width: 260px; margin: 12px 0 0; color: #728077; font-size: .76rem; line-height: 1.65; } .snapshot-card-main p { color: #bfd0bc; }
+  .profit-bridge { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 28px 0 42px; background: #c9c6bc; } .profit-bridge > div { min-height: 125px; padding: 18px; background: #172d23; } .profit-bridge span { color: #b1c3ae; font: .55rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .profit-bridge strong { display: block; margin-top: 17px; color: #d7fa67; font: 600 2rem "IBM Plex Mono", monospace; letter-spacing: -.08em; } .profit-bridge strong small { margin-left: 5px; font: .72rem "Hiragino Sans", sans-serif; letter-spacing: 0; } .profit-bridge p { margin: 7px 0 0; color: #b7c9b3; font-size: .7rem; }
+  .time-view-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 14px; } .time-view-head h3 { margin-top: 9px; font-size: 1.55rem; letter-spacing: -.04em; } .chart-legend { color: #7d887f; font: .59rem "IBM Plex Mono", monospace; } .chart-legend i { display: inline-block; width: 8px; height: 8px; margin-right: 4px; background: #879f00; } .chart-legend .legend-negative { margin-left: 9px; background: #c5745f; }
+  .profit-chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .profit-chart-card { padding: 20px 20px 15px; border: 1px solid #cbcabe; background: #f8f6ef; } .profit-chart-card > header { display: flex; justify-content: space-between; align-items: start; gap: 15px; } .profit-chart-card h3 { font-size: 1.3rem; letter-spacing: -.04em; } .profit-chart-card header p { margin: 5px 0 0; color: #7c877f; font: .58rem "IBM Plex Mono", monospace; } .profit-chart-card header strong { color: #637900; font: .9rem "IBM Plex Mono", monospace; white-space: nowrap; } .profit-yoy { margin: 13px 0 0; color: #68766c; font: .62rem "IBM Plex Mono", monospace; } .bar-chart { position: relative; display: flex; height: 185px; margin-top: 8px; padding: 0 2px 25px; border-bottom: 1px solid #d0cec4; } .bar-zero { position: absolute; top: 50%; right: 2px; left: 2px; border-top: 1px dashed #bfc1b6; } .bar-column { position: relative; flex: 1; height: 160px; min-width: 0; } .bar-value { position: absolute; right: 20%; bottom: 50%; left: 20%; height: var(--bar-size); min-height: 3px; background: #879f00; } .bar-value.negative { top: 50%; bottom: auto; background: #c5745f; } .bar-column small { position: absolute; top: calc(100% + 4px); left: 50%; color: #929b91; font: .48rem "IBM Plex Mono", monospace; transform: translateX(-50%); white-space: nowrap; } .profit-chart-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; color: #758178; font: .58rem "IBM Plex Mono", monospace; } .profit-chart-foot a { color: #687d00; text-decoration: none; }
   .boundary-note, .audit-callout { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding: 16px 18px; color: #59665d; background: #e7eadb; } .note-icon, .warning-icon { display: grid; flex: 0 0 23px; place-items: center; width: 23px; height: 23px; color: #536700; border: 1px solid #94a544; border-radius: 50%; font: .75rem Georgia, serif; } .boundary-note p, .audit-callout p { margin: 0; font-size: .78rem; line-height: 1.6; } .boundary-note strong { color: #27392a; }
   .outline-link { color: #647900; font: .65rem "IBM Plex Mono", monospace; text-decoration: none; } .outline-link span, .company-foot span, .audit-callout a span { margin-left: 5px; }
   .company-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .company-card { padding: 22px; border: 1px solid #cbcabe; background: #f8f6ef; } .company-head { display: grid; grid-template-columns: 29px 1fr auto; gap: 12px; align-items: start; } .company-index { color: #9ba39a; font: .66rem "IBM Plex Mono", monospace; } .company-card h3 { font-size: 1.5rem; letter-spacing: -.04em; } .company-head p { margin: 5px 0 0; color: #7c877f; font: .62rem "IBM Plex Mono", monospace; } .verified-badge { padding: 6px 7px; color: #607400; border: 1px solid #c2ce91; font-size: .5rem; }
@@ -209,5 +262,5 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
   .technical { margin-bottom: 70px; } .technical-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding: 0 0 24px; background: #d3d2c9; } .technical-grid > div { display: grid; gap: 10px; padding: 15px; background: #e9e7dd; } .technical-grid span { color: #818b82; font-size: .54rem; } .technical-grid strong, .technical-grid a { color: #52625a; font: .62rem "IBM Plex Mono", monospace; overflow-wrap: anywhere; } .technical-grid a { color: #687d00; text-decoration: none; }
   footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; color: #879087; border-top: 1px solid #c9c6bc; font-size: .55rem; }
   @media (max-width: 860px) { .hero, .how { grid-template-columns: 1fr; gap: 38px; } .hero-card { max-width: 340px; } .how { padding-top: 26px; } .snapshot-grid, .company-grid { grid-template-columns: 1fr 1fr; } .snapshot-card-main { grid-column: span 2; } }
-  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub, nav a:first-child { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .how-grid, .snapshot-grid, .company-grid, .meaning-grid { grid-template-columns: 1fr; } .snapshot-card-main { grid-column: auto; } .how-card { min-height: 155px; } .company-values strong { font-size: 1.35rem; } .company-head { grid-template-columns: 24px 1fr; } .verified-badge { grid-column: 2; justify-self: start; } .coverage-row { grid-template-columns: 1fr; gap: 5px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
+  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub, nav a:first-child { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .how-grid, .snapshot-grid, .company-grid, .meaning-grid, .profit-chart-grid { grid-template-columns: 1fr; } .snapshot-card-main { grid-column: auto; } .profit-bridge { grid-template-columns: 1fr; } .time-view-head { align-items: start; flex-direction: column; gap: 12px; } .how-card { min-height: 155px; } .company-values strong { font-size: 1.35rem; } .company-head { grid-template-columns: 24px 1fr; } .verified-badge { grid-column: 2; justify-self: start; } .coverage-row { grid-template-columns: 1fr; gap: 5px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
 </style>

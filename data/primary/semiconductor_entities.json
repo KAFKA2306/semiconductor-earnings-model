@@ -1,0 +1,25 @@
+{
+  "schema_version": "semiconductor-profit-entity-registry.v1",
+  "target": {
+    "id": "sox",
+    "name": "PHLX Semiconductor Sector Index",
+    "index_url": "https://indexes.nasdaq.com/Index/Overview/SOX",
+    "methodology_url": "https://indexes.nasdaq.com/docs/methodology_SOX.pdf",
+    "coverage_note": "Direct SEC issuer facts only. Index membership, weights, and index-level earnings are not inferred."
+  },
+  "source_policy": "Only reported SEC 10-Q revenue and operating income are quantitative. Missing data stays missing.",
+  "entities": [
+    {"id": "nvidia", "name": "NVIDIA", "ticker": "NVDA", "cik": "1045810", "role": "semiconductor", "revenue_tag": "Revenues", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "amd", "name": "AMD", "ticker": "AMD", "cik": "2488", "role": "semiconductor", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "broadcom", "name": "Broadcom", "ticker": "AVGO", "cik": "1730168", "role": "semiconductor", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "micron", "name": "Micron Technology", "ticker": "MU", "cik": "723125", "role": "semiconductor", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "intel", "name": "Intel", "ticker": "INTC", "cik": "50863", "role": "semiconductor", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "qualcomm", "name": "Qualcomm", "ticker": "QCOM", "cik": "804328", "role": "semiconductor", "revenue_tag": "Revenues", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "marvell", "name": "Marvell Technology", "ticker": "MRVL", "cik": "1835632", "role": "semiconductor", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "texas-instruments", "name": "Texas Instruments", "ticker": "TXN", "cik": "97476", "role": "semiconductor", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "applied-materials", "name": "Applied Materials", "ticker": "AMAT", "cik": "6951", "role": "semiconductor-equipment", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "lam-research", "name": "Lam Research", "ticker": "LRCX", "cik": "707549", "role": "semiconductor-equipment", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "kla", "name": "KLA", "ticker": "KLAC", "cik": "319201", "role": "semiconductor-equipment", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"},
+    {"id": "analog-devices", "name": "Analog Devices", "ticker": "ADI", "cik": "6281", "role": "semiconductor", "revenue_tag": "RevenueFromContractWithCustomerExcludingAssessedTax", "operating_income_tag": "OperatingIncomeLoss"}
+  ]
+}
