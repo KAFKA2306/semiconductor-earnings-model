@@ -151,7 +151,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--registry", type=Path, default=Path("data/primary/entities.json"))
     parser.add_argument("--output", type=Path, default=Path("site/public/api/v1"))
-    parser.add_argument("--user-agent", default=os.getenv("SEC_USER_AGENT", "KAFKA2306-semiconductor-earnings-model"))
+    parser.add_argument(
+        "--user-agent",
+        default=os.getenv(
+            "SEC_USER_AGENT",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36 KAFKA2306/semiconductor-earnings-model",
+        ),
+    )
     args = parser.parse_args()
     registry = json.loads(args.registry.read_text(encoding="utf-8"))
     companies = [build_entity(entity, args.user_agent) for entity in registry["entities"]]
