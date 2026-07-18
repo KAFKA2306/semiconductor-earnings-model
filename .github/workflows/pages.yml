@@ -89,7 +89,7 @@ jobs:
           html="$(curl -fsSL "$base/earnings/")"
           audit_json="$(curl -fsSL "$base/data/quant-audit.json")"
           snapshot_hash="$(jq -er '.snapshot_hash' <<< "$audit_json")"
-          grep -Fq "OBSERVED DATA ONLY" <<< "$html"
+          grep -Fq "AI投資を支える会社の" <<< "$html"
           grep -Fq "30秒でわかる決算データ" <<< "$html"
           grep -Fq "会社別に見る" <<< "$html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$html"
