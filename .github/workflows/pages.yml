@@ -41,7 +41,7 @@ jobs:
           uv sync --frozen
       - name: Fetch primary SEC facts and build static API
         env:
-          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT || format('{0} github-actions', github.repository) }}
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT || format('{0} contact=kafka2306@users.noreply.github.com', github.repository) }}
         run: uv run python scripts/build_primary_api.py
       - name: Build same-period model snapshot
         run: uv run python scripts/build_model_snapshot.py
