@@ -1,0 +1,6 @@
+.venv/
+.uv-cache/
+site/node_modules/
+site/dist/
+__pycache__/
+.pytest_cache/

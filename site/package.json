@@ -1,0 +1,13 @@
+{
+  "name": "semiconductor-earnings-model",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "5.18.2"
+  }
+}

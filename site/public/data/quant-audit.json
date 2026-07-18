@@ -1,0 +1,208 @@
+{
+  "audit": {
+    "confidence": 0.6,
+    "errors": [],
+    "findings": [
+      {
+        "detail": "capex_proxy definitions differ across sources",
+        "id": "proxy_definition_mismatch",
+        "severity": "major",
+        "status": "open"
+      },
+      {
+        "detail": "beta is a scenario assumption, not an estimated coefficient",
+        "id": "beta_unestimated",
+        "severity": "critical",
+        "status": "open"
+      },
+      {
+        "detail": "investment-to-revenue lag is not modeled",
+        "id": "investment_lag_missing",
+        "severity": "major",
+        "status": "open"
+      },
+      {
+        "detail": "consensus is not a primary company forecast",
+        "id": "consensus_is_secondary",
+        "severity": "major",
+        "status": "open"
+      }
+    ],
+    "valid_input": true,
+    "verdict": "conditional"
+  },
+  "events": [
+    {
+      "errors": [],
+      "event_index": 0,
+      "node": "validate_snapshot",
+      "status": "success"
+    },
+    {
+      "event_index": 1,
+      "metric_count": 6,
+      "node": "normalize_metrics",
+      "status": "success"
+    },
+    {
+      "event_index": 2,
+      "node": "calculate_scenarios",
+      "scenario_count": 4,
+      "status": "success"
+    },
+    {
+      "event_index": 3,
+      "finding_count": 4,
+      "node": "audit_model",
+      "status": "success"
+    },
+    {
+      "event_index": 4,
+      "final_status": "audited",
+      "node": "finish",
+      "status": "success"
+    }
+  ],
+  "normalized": {
+    "capex_proxy_total": 129.624,
+    "capex_to_operating_cash_flow": 0.8598721044391966,
+    "definition_count": 4,
+    "operating_cash_flow_total": 150.748,
+    "residual_cash_flow_proxy": 21.124,
+    "residual_margin_proxy": 0.14012789556080346
+  },
+  "scenarios": [
+    {
+      "effective_investment_growth": 64.8,
+      "name": "bull",
+      "operating_earnings_growth_range": [
+        49.8,
+        63.8
+      ],
+      "revenue_growth_range": [
+        38.9,
+        51.9
+      ]
+    },
+    {
+      "effective_investment_growth": 32.6,
+      "name": "base",
+      "operating_earnings_growth_range": [
+        19.5,
+        26.0
+      ],
+      "revenue_growth_range": [
+        19.5,
+        26.0
+      ]
+    },
+    {
+      "effective_investment_growth": 11.3,
+      "name": "bear",
+      "operating_earnings_growth_range": [
+        -1.6,
+        0.5
+      ],
+      "revenue_growth_range": [
+        6.8,
+        9.0
+      ]
+    },
+    {
+      "effective_investment_growth": -7.0,
+      "name": "stress",
+      "operating_earnings_growth_range": [
+        -22.2,
+        -21.1
+      ],
+      "revenue_growth_range": [
+        -5.6,
+        -4.2
+      ]
+    }
+  ],
+  "snapshot": {
+    "as_of": "2026-07-18",
+    "beta_range": [
+      0.6,
+      0.8
+    ],
+    "consensus": {
+      "as_of": "2026-07-17",
+      "forward_margin": 0.51,
+      "operating_earnings_growth_2027": 0.585,
+      "revenue_growth_2027": 0.464,
+      "source": "Yardeni",
+      "source_kind": "secondary"
+    },
+    "graph_version": "2026-07-18.1",
+    "model_base_ratio": 0.86,
+    "scenarios": [
+      {
+        "external_financing": 0.1,
+        "fcf_reserve": 0.05,
+        "forward_margin": 0.55,
+        "name": "bull",
+        "ocf_growth": 0.35
+      },
+      {
+        "external_financing": 0.05,
+        "fcf_reserve": 0.1,
+        "forward_margin": 0.51,
+        "name": "base",
+        "ocf_growth": 0.2
+      },
+      {
+        "external_financing": 0.02,
+        "fcf_reserve": 0.15,
+        "forward_margin": 0.47,
+        "name": "bear",
+        "ocf_growth": 0.1
+      },
+      {
+        "external_financing": 0.0,
+        "fcf_reserve": 0.2,
+        "forward_margin": 0.42,
+        "name": "stress",
+        "ocf_growth": 0.0
+      }
+    ],
+    "schema_version": "1",
+    "sources": [
+      {
+        "capex_definition": "cash_capex_net",
+        "capex_proxy": 43.234,
+        "id": "amazon-q1-2026",
+        "operating_cash_flow": 26.032,
+        "period_end": "2026-03-31",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm"
+      },
+      {
+        "capex_definition": "ppe_purchases",
+        "capex_proxy": 35.674,
+        "id": "alphabet-q1-2026",
+        "operating_cash_flow": 45.79,
+        "period_end": "2026-03-31",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm"
+      },
+      {
+        "capex_definition": "capex_plus_finance_lease_principal",
+        "capex_proxy": 19.84,
+        "id": "meta-q1-2026",
+        "operating_cash_flow": 32.226,
+        "period_end": "2026-03-31",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm"
+      },
+      {
+        "capex_definition": "ppe_cash_additions",
+        "capex_proxy": 30.876,
+        "id": "microsoft-fy26-q3",
+        "operating_cash_flow": 46.7,
+        "period_end": "2026-03-31",
+        "source_url": "https://www.microsoft.com/en-us/investor/earnings/FY-2026-Q3/press-release-webcast"
+      }
+    ]
+  },
+  "snapshot_hash": "400f767578251870b273edc5340b8c322710b2484653b0b7909a06c0c94f3d92",
+  "status": "audited"
+}

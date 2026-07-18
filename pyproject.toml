@@ -1,0 +1,13 @@
+[project]
+name = "semiconductor-earnings-model"
+version = "0.1.0"
+description = "Reproducible semiconductor earnings scenario model."
+requires-python = ">=3.12"
+dependencies = [
+    "langgraph==0.4.7",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
