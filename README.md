@@ -4,6 +4,7 @@ SEC primary facts API → exact quarterly selection → deterministic fact audit
 
 Public evidence:
 
+- GitHub Pages: [https://kafka2306.github.io/semiconductor-earnings-model/earnings/](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
 - [Evidence ledger](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
 - [Primary API index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
 - [All primary facts](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/facts.json)
