@@ -1,6 +1,7 @@
 ---
 import fs from 'node:fs';
 import path from 'node:path';
+import { DEMAND_COHORTS, buildDemandAggregation } from '../lib/demand-aggregation.js';
 
 const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
 const profitApi = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v1/semiconductor-profit/index.json'), 'utf8'));
@@ -26,28 +27,20 @@ const latestDemand = (company) => company.quarters[0];
 const profitHistoryQuarters = profitApi.companies.filter((company) => company.quarters.length > 0).length
   ? Math.min(...profitApi.companies.filter((company) => company.quarters.length > 0).map((company) => company.quarters.length))
   : 0;
-const latestDemandPeriods = demandCompanies.reduce((counts, company) => {
-  const period = latestDemand(company)?.period_end;
-  if (period) counts.set(period, (counts.get(period) || 0) + 1);
-  return counts;
-}, new Map());
-const commonDemandPeriod = [...latestDemandPeriods.entries()].sort((a, b) => b[1] - a[1] || b[0].localeCompare(a[0]))[0]?.[0] || null;
-const commonDemandCompanies = demandCompanies.filter((company) => latestDemand(company)?.period_end === commonDemandPeriod);
+const demandAggregation = buildDemandAggregation(demandApi);
+const commonDemandPeriod = demandAggregation.commonPeriod;
+const commonDemandCompanies = demandAggregation.commonCompanies;
 const profitCompanies = profitApi.companies.filter((company) => company.quarters.length > 0);
-const observedChainEstablished = commonDemandCompanies.length > 0 && profitCompanies.length > 0 && profitHistoryQuarters >= 5;
-const currentStatus = observedChainEstablished ? '一部成立' : 'データ不足';
+const currentStatus = demandAggregation.ready ? '総括済み' : '集計待ち';
 const fcf = (company) => latestDemand(company).operating_cash_flow.value_usd - latestDemand(company).capital_expenditures.value_usd;
 const burden = (company) => {
   const ocf = latestDemand(company).operating_cash_flow.value_usd;
   return ocf ? latestDemand(company).capital_expenditures.value_usd / ocf * 100 : null;
 };
 const pct = (value) => value == null ? '計算不可' : `${value.toFixed(1)}%`;
-const cohorts = [
-  { id: 'hyperscalers', label: 'Hyperscalers', roles: ['hyperscaler'] },
-  { id: 'ai-cloud', label: 'AI cloud', roles: ['ai-cloud'] },
-  { id: 'data-center', label: 'Data-center operators', roles: ['data-center-operator'] },
-  { id: 'other-cloud', label: 'Other cloud', roles: ['cloud-provider'] },
-];
+const barWidth = (value) => `${Math.max(2, Number(value) / demandAggregation.scale * 100).toFixed(1)}%`;
+const burdenLabel = (cohort) => cohort.comparableBurden == null ? 'タグ別に表示' : pct(cohort.comparableBurden * 100);
+const cohorts = DEMAND_COHORTS;
 const cohortRows = cohorts.map((cohort) => {
   const rows = demandCompanies.filter((company) => cohort.roles.includes(company.role));
   const periods = [...new Set(rows.map((company) => latestDemand(company).period_end))];
@@ -79,7 +72,7 @@ const sampleQ = latestDemand(sample);
           <p class="hero-lede">半導体の高い利益成長が、顧客の資金余力で支えられるかを検証します。入力・式・中間値・未知変数を分け、データがない場所では予測を出しません。</p>
           <div class="hero-actions"><a class="button button-primary" href="#inputs">入力から見る ↓</a><a class="button button-quiet" href={`${base}earnings/`}>一次台帳へ →</a></div>
         </div>
-        <aside class="hero-card"><p class="card-kicker">MODEL RESULT</p><strong data-observed-chain={observedChainEstablished ? 'established' : 'insufficient'}>{currentStatus}</strong><p>観測チェーンは成立</p><div class="hero-card-rule"></div><span>2027年予測は、β・ラグ・指数ウェイトが未登録のため計算していません。</span></aside>
+        <aside class="hero-card"><p class="card-kicker">MODEL RESULT</p><strong data-aggregation-status={demandAggregation.ready ? 'computed' : 'insufficient'}>{currentStatus}</strong><p>総和・比較を計算済み</p><div class="hero-card-rule"></div><span>顧客投資から半導体利益への因果は、β・ラグ・指数ウェイトが未登録のため未成立です。</span></aside>
       </section>
 
       <section class="flow section-block" aria-labelledby="flow-title">
@@ -106,6 +99,25 @@ const sampleQ = latestDemand(sample);
             </article>
           ))}
         </div>
+      </section>
+
+      <section id="aggregate" class="aggregate section-block" aria-labelledby="aggregate-title" data-aggregation-status={demandAggregation.ready ? 'computed' : 'insufficient'} data-aggregation-total-ocf={demandAggregation.totalOcf} data-aggregation-common-companies={commonDemandCompanies.length}>
+        <div class="section-heading"><div><div class="section-label">02 / AGGREGATE & COMPARE</div><h2 id="aggregate-title">まず、<em>総和と比較。</em></h2></div><span class="date-chip">{commonDemandPeriod ? dateJP(commonDemandPeriod) : '期間未確定'}</span></div>
+        <p class="section-lede">同じ最新期間の{commonDemandCompanies.length}社をコホート別に集計します。営業CFは合計し、CapExはXBRLタグごとに積み上げます。タグの違うCapExを一つの意味に合算しないため、比較できる負担率だけを数値化します。</p>
+        <div class="aggregate-summary"><article><span>同一期間の対象</span><strong>{commonDemandCompanies.length}社</strong><p>{commonDemandPeriod ? dateJP(commonDemandPeriod) : '期間未確定'}</p></article><article><span>営業CFの総和</span><strong>{usd(demandAggregation.totalOcf)}</strong><p>全対象のNetCashProvidedByUsedInOperatingActivities</p></article><article><span>CapEx構成</span><strong>{demandAggregation.tagTotals.length}種類</strong><p>タグ別に積み上げ、全タグ総額は作らない</p></article></div>
+        <div class="aggregate-legend"><span><i class="aggregate-ocf-swatch"></i>営業CF総和</span>{demandAggregation.tagTotals.map((tag, index) => <span><i class:list={['aggregate-capex-swatch', `tag-${index % 3}`]}></i>{tag.label}</span>)}</div>
+        <div class="aggregate-chart">
+          {demandAggregation.cohorts.map((cohort) => (
+            <article class="aggregate-row">
+              <header><div><strong>{cohort.label}</strong><span>{cohort.rows.length}社</span></div><b>{burdenLabel(cohort)}</b></header>
+              <div class="aggregate-line"><label>OCF</label><div class="aggregate-track"><div class="aggregate-bar aggregate-ocf" style={`width:${barWidth(cohort.ocf)}`}></div></div><strong>{usd(cohort.ocf)}</strong></div>
+              <div class="aggregate-line"><label>CapEx</label><div class="aggregate-track aggregate-stack">{cohort.tags.map((tag) => <div class:list={['aggregate-bar', 'aggregate-capex', `tag-${tag.colorIndex % 3}`]} style={`width:${barWidth(tag.total)}`} title={`${tag.label}: ${usd(tag.total)}`}></div>)}</div><strong>{cohort.tags.length === 1 ? usd(cohort.tags[0].total) : 'タグ別'}</strong></div>
+              <p>{cohort.tags.map((tag) => `${tag.label} ${usd(tag.total)} / FCF ${usd(tag.fcf)}`).join('　·　')}</p>
+            </article>
+          ))}
+        </div>
+        <div class="aggregate-total">{demandAggregation.tagTotals.map((tag) => <div><span>CapEx / {tag.label}</span><strong>{usd(tag.total)}</strong><small>{tag.companies.join('・')}</small></div>)}</div>
+        <p class="aggregate-note"><strong>計算の境界：</strong>営業CF総和、タグ別CapEx、コホート別負担率、タグ別FCFを計算しました。タグ混在のHyperscalersには単一のCapEx/OCF負担率を置いていません。ここから半導体売上・指数利益へ接続する係数はまだ計算していません。</p>
       </section>
 
       <section id="formula" class="formula section-block" aria-labelledby="formula-title">
@@ -137,7 +149,7 @@ const sampleQ = latestDemand(sample);
       </section>
 
       <section id="verdict" class="verdict section-block" aria-labelledby="verdict-title">
-        <div class="verdict-box"><div><div class="section-label">05 / VERDICT BOUNDARY</div><h2 id="verdict-title">観測チェーンは、<em>成立。</em></h2></div><p>顧客{commonDemandCompanies.length}社の同一期間OCF・CapExと、半導体{profitCompanies.length}社の{profitHistoryQuarters}四半期以上の売上・営業利益を確認しました。これは観測事実の成立です。外部資金の継続能力、半導体への配分率、ラグ、利益率の将来値、指数ウェイトが揃うまで、2027年の利益成長率は計算しません。</p></div>
+        <div class="verdict-box"><div><div class="section-label">05 / VERDICT BOUNDARY</div><h2 id="verdict-title">因果判定は、<em>未成立。</em></h2></div><p>顧客{commonDemandCompanies.length}社の同一期間OCF・CapExについて、営業CF総和、タグ別CapEx、コホート別負担率、タグ別FCFを計算しました。しかし、外部資金の継続能力、半導体への配分率、ラグ、利益率の将来値、指数ウェイトが揃うまで、顧客投資から半導体利益への因果と2027年利益成長率は計算しません。</p></div>
         <div class="watch-grid"><div><span>支持に必要</span><p>営業CFが継続的に増加し、CapEx負担率が安定する。</p></div><div><span>反証条件</span><p>FCF悪化、外部資金だけの投資拡大、利益率低下。</p></div><div><span>次の入力</span><p>リース、社債、購入契約、AI売上、指数ウェイト。</p></div></div>
       </section>
 
@@ -156,9 +168,10 @@ const sampleQ = latestDemand(sample);
   .flow { padding-top: 30px; border-top: 1px solid #c9c6bc; } .flow-grid { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 8px; align-items: stretch; } .flow-grid article { display: grid; gap: 14px; min-height: 140px; padding: 18px; background: #e4e3d8; } .flow-grid article:nth-of-type(2) { background: #d7fa67; } .flow-grid article:nth-of-type(3) { color: #eef4e8; background: #172d23; } .flow-grid article:nth-of-type(4) { color: #654d2f; background: #f1e5d0; } .flow-grid b { color: #758077; font: .7rem "IBM Plex Mono", monospace; } .flow-grid strong { font: 1.25rem "Hiragino Mincho ProN", serif; } .flow-grid span { align-self: end; color: #627066; font-size: .72rem; line-height: 1.5; } .flow-grid article:nth-of-type(3) span { color: #c5d2c2; } .flow-grid i { align-self: center; color: #8a958a; font: 1.2rem "IBM Plex Mono", monospace; }
   .verdict-box { display: grid; grid-template-columns: 1fr 1.2fr; gap: 35px; padding: 27px; color: #eef4e8; background: #172d23; } .verdict-box h2 { color: #eef4e8; } .verdict-box h2 em { color: #f0c878; } .verdict-box > p { margin: 0; color: #c8d6c2; font-size: .84rem; line-height: 1.9; } .watch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 12px; background: #c9c6bc; } .watch-grid > div { min-height: 125px; padding: 18px; background: #f8f6ef; } .watch-grid span { color: #7a867d; font-size: .56rem; } .watch-grid p { margin: 16px 0 0; color: #5c6b60; font-size: .74rem; line-height: 1.7; }
   .cohort-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .cohort-card { padding: 20px; border: 1px solid #cbcabe; background: #f8f6ef; } .cohort-card header { display: flex; justify-content: space-between; align-items: start; gap: 15px; } .cohort-card header > div > span { color: #68766c; font-size: .55rem; } .cohort-card h3 { margin-top: 9px; font-size: 1.5rem; } .cohort-card header strong { color: #637900; font: .6rem "IBM Plex Mono", monospace; } .unknown-text { color: #a16625 !important; } .cohort-note { margin: 13px 0; color: #929b91; font-size: .5rem; } .input-table { display: grid; border-top: 1px solid #d3d2c9; } .input-row { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid #e1dfd6; color: #56645a; font-size: .56rem; letter-spacing: 0; text-transform: none; } .input-row span:not(:first-child) { text-align: right; } .input-row b { display: block; color: #26372b; font: .7rem "Hiragino Sans", sans-serif; } .input-row small { display: block; margin-top: 3px; color: #929b91; font-size: .5rem; } .input-head { color: #8b948d; font-size: .48rem; text-transform: uppercase; } .input-head span:not(:first-child) { text-align: right; } .source-link { display: inline-block; margin-top: 14px; color: #687d00; font: .6rem "IBM Plex Mono", monospace; text-decoration: none; } .empty-note { color: #a16625; font-size: .75rem; }
+  .aggregate-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-bottom: 16px; background: #c9c6bc; } .aggregate-summary article { min-height: 122px; padding: 20px; background: #172d23; } .aggregate-summary span, .aggregate-total span, .aggregate-legend, .aggregate-row header span, .aggregate-line label { color: #a9bca7; font: .55rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .aggregate-summary strong { display: block; margin-top: 18px; color: #d7fa67; font: 600 1.7rem "IBM Plex Mono", monospace; letter-spacing: -.06em; } .aggregate-summary p { margin: 7px 0 0; color: #c0d0bb; font-size: .68rem; line-height: 1.5; } .aggregate-legend { display: flex; flex-wrap: wrap; gap: 15px; margin: 18px 0 10px; color: #69766d; } .aggregate-legend i { display: inline-block; width: 9px; height: 9px; margin-right: 5px; background: #172d23; } .aggregate-legend .aggregate-capex-swatch { background: #a6b850; } .aggregate-legend .tag-1 { background: #d59a64; } .aggregate-legend .tag-2 { background: #8e9bb8; } .aggregate-chart { display: grid; gap: 1px; background: #c9c6bc; } .aggregate-row { padding: 19px 20px; background: #f8f6ef; } .aggregate-row header { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; margin-bottom: 15px; } .aggregate-row header strong { color: #26372b; font: 1.15rem "Hiragino Mincho ProN", serif; } .aggregate-row header span { margin-left: 10px; color: #879188; letter-spacing: 0; text-transform: none; } .aggregate-row header b { color: #687d00; font: .65rem "IBM Plex Mono", monospace; } .aggregate-line { display: grid; grid-template-columns: 55px minmax(0, 1fr) 95px; gap: 10px; align-items: center; margin-top: 8px; } .aggregate-line label { color: #78857b; letter-spacing: .02em; } .aggregate-track { display: flex; height: 14px; background: #e3e3d9; overflow: hidden; } .aggregate-bar { min-width: 2px; height: 100%; } .aggregate-ocf { background: #172d23; } .aggregate-capex { background: #a6b850; } .aggregate-capex.tag-1 { background: #d59a64; } .aggregate-capex.tag-2 { background: #8e9bb8; } .aggregate-line > strong { color: #56645a; font: .64rem "IBM Plex Mono", monospace; text-align: right; } .aggregate-row > p { margin: 15px 0 0 65px; color: #778178; font-size: .68rem; line-height: 1.7; } .aggregate-total { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 12px; background: #c9c6bc; } .aggregate-total > div { display: grid; gap: 9px; padding: 18px; background: #f1e5d0; } .aggregate-total span { color: #806b51; } .aggregate-total strong { color: #684b28; font: 1.15rem "IBM Plex Mono", monospace; } .aggregate-total small { color: #806b51; font-size: .68rem; } .aggregate-note { margin: 18px 0 0; padding: 16px 18px; color: #6a786e; border-left: 3px solid #c5745f; background: #f1e5d0; font-size: .73rem; line-height: 1.75; } .aggregate-note strong { color: #684b28; }
   .formula-grid, .unknown-grid, .output-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; } .formula-grid article, .unknown-grid article { min-height: 170px; padding: 21px; border: 1px solid #cbcabe; background: #f8f6ef; } .formula-grid article span, .unknown-grid article b { color: #68766c; font: .58rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } code { display: block; margin: 20px 0 13px; color: #25372a; font: .9rem "IBM Plex Mono", monospace; line-height: 1.55; overflow-wrap: anywhere; } .formula-grid p, .unknown-grid p { margin: 0; color: #6a786e; font-size: .73rem; line-height: 1.7; } .formula-grid .example { color: #654d2f; background: #f1e5d0; } .formula-grid .example code { color: #684b28; font-size: .72rem; }
   .unknown-grid { grid-template-columns: repeat(3, 1fr); } .unknown-grid article { border-top: 3px solid #c5745f; } .unknown-grid p strong { color: #a16625; } .output-grid { grid-template-columns: repeat(3, 1fr); } .output-grid article { padding: 21px; background: #172d23; } .output-grid span { color: #b1c3ae; font-size: .55rem; } .output-grid strong { display: block; margin-top: 19px; color: #d7fa67; font: 600 1.8rem "IBM Plex Mono", monospace; } .output-grid p { margin: 8px 0 0; color: #b7c9b3; font-size: .7rem; line-height: 1.6; }
   .technical details { border-top: 1px solid #c9c6bc; border-bottom: 1px solid #c9c6bc; } .technical summary { display: flex; justify-content: space-between; gap: 20px; padding: 23px 0; cursor: pointer; list-style: none; } .technical summary::-webkit-details-marker { display: none; } .technical summary strong { display: block; color: #25372a; font: 1.45rem "Hiragino Mincho ProN", serif; } .open-mark { color: #728b00; font: 1.1rem "IBM Plex Mono", monospace; } .technical-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding-bottom: 24px; background: #d3d2c9; } .technical-grid > div { display: grid; gap: 10px; padding: 15px; background: #e9e7dd; } .technical-grid span { color: #818b82; font: .54rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .technical-grid strong, .technical-grid a { color: #52625a; font: .62rem "IBM Plex Mono", monospace; overflow-wrap: anywhere; } .technical-grid a { color: #687d00; text-decoration: none; } footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; color: #879087; border-top: 1px solid #c9c6bc; font-size: .55rem; }
-  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 38px; } .hero-card { max-width: 340px; } .flow-grid { grid-template-columns: repeat(2, 1fr); } .flow-grid i { display: none; } .verdict-box { grid-template-columns: 1fr; gap: 18px; } .cohort-grid, .formula-grid, .unknown-grid, .output-grid, .watch-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .flow-grid, .cohort-grid, .formula-grid, .unknown-grid, .output-grid, .watch-grid { grid-template-columns: 1fr; } .input-row { grid-template-columns: 1.25fr repeat(4, minmax(0, 1fr)); font-size: .48rem; } .input-row b { font-size: .62rem; } .verdict-box { padding: 20px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
+  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 38px; } .hero-card { max-width: 340px; } .flow-grid { grid-template-columns: repeat(2, 1fr); } .flow-grid i { display: none; } .verdict-box { grid-template-columns: 1fr; gap: 18px; } .cohort-grid, .aggregate-summary, .formula-grid, .unknown-grid, .output-grid, .watch-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .flow-grid, .cohort-grid, .aggregate-summary, .formula-grid, .unknown-grid, .output-grid, .watch-grid { grid-template-columns: 1fr; } .aggregate-line { grid-template-columns: 45px minmax(0, 1fr) 75px; gap: 6px; } .aggregate-row > p { margin-left: 0; } .aggregate-total { grid-template-columns: 1fr; } .input-row { grid-template-columns: 1.25fr repeat(4, minmax(0, 1fr)); font-size: .48rem; } .input-row b { font-size: .62rem; } .verdict-box { padding: 20px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
 </style>

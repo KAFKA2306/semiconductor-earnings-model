@@ -1,6 +1,7 @@
 ---
 import fs from 'node:fs';
 import path from 'node:path';
+import { buildDemandAggregation } from '../lib/demand-aggregation.js';
 
 const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
 const model = JSON.parse(fs.readFileSync(path.join(root, 'site/public/data/quant-audit.json'), 'utf8'));
@@ -27,18 +28,15 @@ const profitCompanies = profitApi.companies.filter((company) => company.quarters
 const profitHistoryQuarters = profitCompanies.length ? Math.min(...profitCompanies.map((company) => company.quarters.length)) : 0;
 const demandCompanies = demandApi.companies.filter((company) => company.quarters.length > 0);
 const demandHistoryQuarters = demandCompanies.length ? Math.min(...demandCompanies.map((company) => company.quarters.length)) : 0;
-const latestDemandPeriods = demandCompanies.reduce((counts, company) => {
-  const period = company.quarters[0]?.period_end;
-  if (period) counts.set(period, (counts.get(period) || 0) + 1);
-  return counts;
-}, new Map());
-const commonDemandPeriod = [...latestDemandPeriods.entries()].sort((a, b) => b[1] - a[1] || b[0].localeCompare(a[0]))[0]?.[0] || null;
-const commonDemandCompanies = demandCompanies.filter((company) => company.quarters[0]?.period_end === commonDemandPeriod);
-const observedChainEstablished = commonDemandCompanies.length > 0 && profitCompanies.length > 0 && profitHistoryQuarters >= 5;
-const currentStatus = observedChainEstablished ? '一部成立' : 'データ不足';
-const currentStatusDescription = observedChainEstablished
-  ? '観測チェーン成立 / 将来の持続性は未判定'
-  : '観測データの共通範囲が不足';
+const demandAggregation = buildDemandAggregation(demandApi);
+const { commonDemandPeriod, commonDemandCompanies } = {
+  commonDemandPeriod: demandAggregation.commonPeriod,
+  commonDemandCompanies: demandAggregation.commonCompanies,
+};
+const currentStatus = demandAggregation.ready ? '総括済み' : '集計待ち';
+const currentStatusDescription = demandAggregation.ready
+  ? '同一期間・タグ別の総和と比較を計算済み'
+  : '同一期間の集計対象が不足';
 const latestProfit = (company) => company.quarters[0];
 const latestDemand = (company) => company.quarters[0];
 const operatingMargin = (company) => {
@@ -124,10 +122,10 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         </div>
         <aside class="hero-card" aria-label="今回のデータ範囲">
           <p class="card-kicker">現在の判定</p>
-          <strong class="verdict" data-observed-chain={observedChainEstablished ? 'established' : 'insufficient'}>{currentStatus}</strong>
+          <strong class="verdict" data-aggregation-status={demandAggregation.ready ? 'computed' : 'insufficient'}>{currentStatus}</strong>
           <p>{currentStatusDescription}</p>
           <div class="hero-card-rule"></div>
-          <span>観測チェーンは成立。外部資金・指数ウェイト・将来利益率はまだ判定しません。</span>
+          <span>総和と比較は計算済み。顧客投資から半導体利益への因果・将来推計はまだ判定しません。</span>
         </aside>
       </section>
 
@@ -151,15 +149,15 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         </div>
         <div class="verdict-panel">
           <div><span>判定</span><strong>{currentStatus}</strong></div>
-          <p>顧客側の営業CF・設備投資と、半導体企業の売上・営業利益は観測チェーンとして成立しています。ただし、外部資金の複数年継続能力、利益率の維持、公式ウェイトによる指数利益はまだ将来判定に接続していません。</p>
+          <p>顧客側の営業CF・設備投資は同一期間・同一XBRLタグごとに総和と比較を計算済みです。半導体企業の売上・営業利益も会社別に確認できます。ただし、顧客投資から半導体利益への因果、外部資金の複数年継続能力、公式ウェイトによる指数利益は未検証です。</p>
         </div>
         <div class="evidence-grid">
           <article class="evidence-card evidence-observed"><span>OBSERVED / 顧客側</span><strong>{commonDemandCompanies.length}<small>社</small> / {commonDemandPeriod ? dateJP(commonDemandPeriod) : '期間未確定'}</strong><p>同一最新期間の営業CF・設備投資</p></article>
           <article class="evidence-card evidence-observed"><span>OBSERVED / 半導体側</span><strong>{profitCompanies.length}<small>社</small> / {profitHistoryQuarters}<small>四半期以上</small></strong><p>売上高・営業利益の時系列</p></article>
-          <article class="evidence-card evidence-derived"><span>DERIVED / 計算可能</span><strong>FCF</strong><p>営業CF − CapEx。会社別・同一期間で計算</p></article>
-          <article class="evidence-card evidence-unknown"><span>UNKNOWN / 将来接続</span><strong>外部資金・指数</strong><p>リース、借入、公式ウェイトは未判定</p></article>
+          <article class="evidence-card evidence-derived"><span>DERIVED / 総括済み</span><strong>OCF {usd(demandAggregation.totalOcf)}</strong><p>{demandAggregation.tagTotals.length}種類のCapExタグ別に積み上げ</p></article>
+          <article class="evidence-card evidence-unknown"><span>UNKNOWN / 因果・予測</span><strong>売上転換・指数</strong><p>配分率、ラグ、利益率、公式ウェイトは未判定</p></article>
         </div>
-        <div class="boundary-note"><span class="note-icon">i</span><p><strong>観測チェーンは「一部成立」です。</strong> 顧客{commonDemandCompanies.length}社の同一期間factと、半導体{profitCompanies.length}社の{profitHistoryQuarters}四半期以上の時系列を確認済みです。ここから先の将来持続性は、一次情報の追加登録後に判定します。</p></div>
+        <div class="boundary-note"><span class="note-icon">i</span><p><strong>総括計算は完了しています。</strong> 顧客{commonDemandCompanies.length}社の同一期間factをタグ別に積み上げ、コホート比較しました。これは足し算の成立であり、半導体利益への因果成立ではありません。</p></div>
       </section>
 
       <section id="demand" class="demand section-block" aria-labelledby="demand-title">

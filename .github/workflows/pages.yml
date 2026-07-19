@@ -102,8 +102,9 @@ jobs:
           snapshot_hash="$(jq -er '.snapshot_hash' <<< "$audit_json")"
           grep -Fq "高い半導体利益成長は、" <<< "$html"
           grep -Fq "現在の判定" <<< "$html"
-          grep -Fq "一部成立" <<< "$html"
-          grep -Fq 'data-observed-chain="established"' <<< "$html"
+          grep -Fq "総括済み" <<< "$html"
+          grep -Fq 'data-aggregation-status="computed"' <<< "$html"
+          grep -Fq "因果成立ではありません" <<< "$html"
           grep -Fq "判定までの、" <<< "$html"
           grep -Fq "会社別の原fact。" <<< "$html"
           grep -Fq "半導体企業の" <<< "$html"
@@ -122,7 +123,29 @@ jobs:
           grep -Fq "内部資金と" <<< "$html"
           printf '%s' "$html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"how\"", "id=\"status\"", "id=\"demand\"", "id=\"profit\"", "id=\"companies\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
           model_html="$(curl -fsSL "$base/model/")"
-          grep -Fq 'data-observed-chain="established"' <<< "$model_html"
+          grep -Fq 'data-aggregation-status="computed"' <<< "$model_html"
+          grep -Fq "総和と比較。" <<< "$model_html"
+          grep -Fq "営業CFの総和" <<< "$model_html"
+          grep -Fq "因果判定は、" <<< "$model_html"
+          printf '%s' "$model_html" > "$RUNNER_TEMP/model.html"
+          printf '%s' "$demand_api_json" > "$RUNNER_TEMP/demand-api.json"
+          python3 "$RUNNER_TEMP/demand-api.json" "$RUNNER_TEMP/model.html" <<'PY'
+          import json
+          import re
+          import sys
+          from collections import Counter
+
+          api = json.loads(open(sys.argv[1], encoding="utf-8").read())
+          html = open(sys.argv[2], encoding="utf-8").read()
+          companies = [company for company in api["companies"] if company["quarters"]]
+          periods = Counter(company["quarters"][0]["period_end"] for company in companies)
+          common_period = max(periods, key=lambda period: (periods[period], period))
+          common = [company for company in companies if company["quarters"][0]["period_end"] == common_period]
+          total_ocf = sum(company["quarters"][0]["operating_cash_flow"]["value_usd"] for company in common)
+          total_companies = len(common)
+          assert re.search(rf'data-aggregation-total-ocf="{total_ocf}"', html)
+          assert re.search(rf'data-aggregation-common-companies="{total_companies}"', html)
+          PY
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$model_html"
           grep -Fq "入力 → 式 → 中間値 → 判定" <<< "$model_html"
           grep -Fq "予測値は計算していません" <<< "$model_html"
