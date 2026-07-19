@@ -129,7 +129,7 @@ jobs:
           grep -Fq "因果判定は、" <<< "$model_html"
           printf '%s' "$model_html" > "$RUNNER_TEMP/model.html"
           printf '%s' "$demand_api_json" > "$RUNNER_TEMP/demand-api.json"
-          python3 "$RUNNER_TEMP/demand-api.json" "$RUNNER_TEMP/model.html" <<'PY'
+          python3 - "$RUNNER_TEMP/demand-api.json" "$RUNNER_TEMP/model.html" <<'PY'
           import json
           import re
           import sys
