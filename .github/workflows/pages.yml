@@ -102,7 +102,8 @@ jobs:
           snapshot_hash="$(jq -er '.snapshot_hash' <<< "$audit_json")"
           grep -Fq "高い半導体利益成長は、" <<< "$html"
           grep -Fq "現在の判定" <<< "$html"
-          grep -Fq "未成立" <<< "$html"
+          grep -Fq "一部成立" <<< "$html"
+          grep -Fq 'data-observed-chain="established"' <<< "$html"
           grep -Fq "判定までの、" <<< "$html"
           grep -Fq "会社別の原fact。" <<< "$html"
           grep -Fq "半導体企業の" <<< "$html"
@@ -121,6 +122,7 @@ jobs:
           grep -Fq "内部資金と" <<< "$html"
           printf '%s' "$html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"how\"", "id=\"status\"", "id=\"demand\"", "id=\"profit\"", "id=\"companies\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
           model_html="$(curl -fsSL "$base/model/")"
+          grep -Fq 'data-observed-chain="established"' <<< "$model_html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$model_html"
           grep -Fq "入力 → 式 → 中間値 → 判定" <<< "$model_html"
           grep -Fq "予測値は計算していません" <<< "$model_html"

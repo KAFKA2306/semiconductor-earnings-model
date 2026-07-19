@@ -24,9 +24,21 @@ const dateJP = (value) => {
 const periodLabel = `${dateJP(snapshot.primary_period.start)}〜${dateJP(snapshot.primary_period.end)}`;
 const cohortIds = new Set(sources.map((source) => source.id));
 const profitCompanies = profitApi.companies.filter((company) => company.quarters.length > 0);
-const profitHistoryQuarters = Math.min(...profitCompanies.map((company) => company.quarters.length));
+const profitHistoryQuarters = profitCompanies.length ? Math.min(...profitCompanies.map((company) => company.quarters.length)) : 0;
 const demandCompanies = demandApi.companies.filter((company) => company.quarters.length > 0);
-const demandHistoryQuarters = Math.min(...demandCompanies.map((company) => company.quarters.length));
+const demandHistoryQuarters = demandCompanies.length ? Math.min(...demandCompanies.map((company) => company.quarters.length)) : 0;
+const latestDemandPeriods = demandCompanies.reduce((counts, company) => {
+  const period = company.quarters[0]?.period_end;
+  if (period) counts.set(period, (counts.get(period) || 0) + 1);
+  return counts;
+}, new Map());
+const commonDemandPeriod = [...latestDemandPeriods.entries()].sort((a, b) => b[1] - a[1] || b[0].localeCompare(a[0]))[0]?.[0] || null;
+const commonDemandCompanies = demandCompanies.filter((company) => company.quarters[0]?.period_end === commonDemandPeriod);
+const observedChainEstablished = commonDemandCompanies.length > 0 && profitCompanies.length > 0 && profitHistoryQuarters >= 5;
+const currentStatus = observedChainEstablished ? '一部成立' : 'データ不足';
+const currentStatusDescription = observedChainEstablished
+  ? '観測チェーン成立 / 将来の持続性は未判定'
+  : '観測データの共通範囲が不足';
 const latestProfit = (company) => company.quarters[0];
 const latestDemand = (company) => company.quarters[0];
 const operatingMargin = (company) => {
@@ -112,10 +124,10 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         </div>
         <aside class="hero-card" aria-label="今回のデータ範囲">
           <p class="card-kicker">現在の判定</p>
-          <strong class="verdict">未成立</strong>
-          <p>外部資金と指数ウェイトが未取得</p>
+          <strong class="verdict" data-observed-chain={observedChainEstablished ? 'established' : 'insufficient'}>{currentStatus}</strong>
+          <p>{currentStatusDescription}</p>
           <div class="hero-card-rule"></div>
-          <span>一次factは観測済み。持続可能性はまだ判定しません。</span>
+          <span>観測チェーンは成立。外部資金・指数ウェイト・将来利益率はまだ判定しません。</span>
         </aside>
       </section>
 
@@ -138,16 +150,16 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
           <span class="period-chip">{periodLabel}</span>
         </div>
         <div class="verdict-panel">
-          <div><span>判定</span><strong>未成立</strong></div>
-          <p>顧客側の営業CF・設備投資と、半導体企業の利益factは取得済みです。しかし、外部資金の複数年継続能力、利益率の維持、公式ウェイトによる指数利益は未検証です。</p>
+          <div><span>判定</span><strong>{currentStatus}</strong></div>
+          <p>顧客側の営業CF・設備投資と、半導体企業の売上・営業利益は観測チェーンとして成立しています。ただし、外部資金の複数年継続能力、利益率の維持、公式ウェイトによる指数利益はまだ将来判定に接続していません。</p>
         </div>
         <div class="evidence-grid">
-          <article class="evidence-card evidence-observed"><span>OBSERVED / 顧客側</span><strong>{demandCompanies.length}<small>社</small> / {demandHistoryQuarters}<small>四半期以上</small></strong><p>営業CF・設備投資の時系列</p></article>
+          <article class="evidence-card evidence-observed"><span>OBSERVED / 顧客側</span><strong>{commonDemandCompanies.length}<small>社</small> / {commonDemandPeriod ? dateJP(commonDemandPeriod) : '期間未確定'}</strong><p>同一最新期間の営業CF・設備投資</p></article>
           <article class="evidence-card evidence-observed"><span>OBSERVED / 半導体側</span><strong>{profitCompanies.length}<small>社</small> / {profitHistoryQuarters}<small>四半期以上</small></strong><p>売上高・営業利益の時系列</p></article>
           <article class="evidence-card evidence-derived"><span>DERIVED / 計算可能</span><strong>FCF</strong><p>営業CF − CapEx。会社別・同一期間で計算</p></article>
-          <article class="evidence-card evidence-unknown"><span>UNKNOWN / 未取得</span><strong>外部資金・指数</strong><p>リース、借入、公式ウェイトは未判定</p></article>
+          <article class="evidence-card evidence-unknown"><span>UNKNOWN / 将来接続</span><strong>外部資金・指数</strong><p>リース、借入、公式ウェイトは未判定</p></article>
         </div>
-        <div class="boundary-note"><span class="note-icon">i</span><p><strong>この画面の結論は「未成立」です。</strong> 事実がないのではなく、持続可能性を判定するための条件がまだ揃っていません。</p></div>
+        <div class="boundary-note"><span class="note-icon">i</span><p><strong>観測チェーンは「一部成立」です。</strong> 顧客{commonDemandCompanies.length}社の同一期間factと、半導体{profitCompanies.length}社の{profitHistoryQuarters}四半期以上の時系列を確認済みです。ここから先の将来持続性は、一次情報の追加登録後に判定します。</p></div>
       </section>
 
       <section id="demand" class="demand section-block" aria-labelledby="demand-title">
@@ -192,7 +204,7 @@ const companyApiFor = (source) => `${base}api/v1/companies/${source.id}.json`;
         <div class="profit-bridge">
           <div><span>直接読める企業</span><strong>{profitCompanies.length}<small>社</small></strong><p>売上高＋営業利益</p></div>
           <div><span>履歴</span><strong>{profitHistoryQuarters}<small>四半期以上</small></strong><p>最大20四半期を保存</p></div>
-          <div><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '未成立'}</strong><p>{profitApi.cohort.status === 'unique' ? '同じ期間だけ集計可能' : '異なる期間を合算しない'}</p></div>
+          <div><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '期間未確定'}</strong><p>{profitApi.cohort.status === 'unique' ? '同じ期間だけ集計可能' : '異なる期間を合算しない'}</p></div>
         </div>
         <div class="time-view-head"><div><span class="section-number">TIME VIEW / OBSERVED PROFIT</span><h3>四半期ごとのバーを見る</h3></div><span class="chart-legend"><i></i>営業利益　<i class="legend-negative"></i>赤字</span></div>
         <div class="profit-chart-grid">

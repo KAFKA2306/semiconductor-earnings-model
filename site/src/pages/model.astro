@@ -23,6 +23,19 @@ const roleJP = {
 };
 const demandCompanies = demandApi.companies.filter((company) => company.quarters.length > 0);
 const latestDemand = (company) => company.quarters[0];
+const profitHistoryQuarters = profitApi.companies.filter((company) => company.quarters.length > 0).length
+  ? Math.min(...profitApi.companies.filter((company) => company.quarters.length > 0).map((company) => company.quarters.length))
+  : 0;
+const latestDemandPeriods = demandCompanies.reduce((counts, company) => {
+  const period = latestDemand(company)?.period_end;
+  if (period) counts.set(period, (counts.get(period) || 0) + 1);
+  return counts;
+}, new Map());
+const commonDemandPeriod = [...latestDemandPeriods.entries()].sort((a, b) => b[1] - a[1] || b[0].localeCompare(a[0]))[0]?.[0] || null;
+const commonDemandCompanies = demandCompanies.filter((company) => latestDemand(company)?.period_end === commonDemandPeriod);
+const profitCompanies = profitApi.companies.filter((company) => company.quarters.length > 0);
+const observedChainEstablished = commonDemandCompanies.length > 0 && profitCompanies.length > 0 && profitHistoryQuarters >= 5;
+const currentStatus = observedChainEstablished ? '一部成立' : 'データ不足';
 const fcf = (company) => latestDemand(company).operating_cash_flow.value_usd - latestDemand(company).capital_expenditures.value_usd;
 const burden = (company) => {
   const ocf = latestDemand(company).operating_cash_flow.value_usd;
@@ -42,7 +55,6 @@ const cohortRows = cohorts.map((cohort) => {
 });
 const sample = demandCompanies[0];
 const sampleQ = latestDemand(sample);
-const profitCompanies = profitApi.companies.filter((company) => company.quarters.length > 0);
 ---
 
 <!doctype html>
@@ -67,7 +79,7 @@ const profitCompanies = profitApi.companies.filter((company) => company.quarters
           <p class="hero-lede">半導体の高い利益成長が、顧客の資金余力で支えられるかを検証します。入力・式・中間値・未知変数を分け、データがない場所では予測を出しません。</p>
           <div class="hero-actions"><a class="button button-primary" href="#inputs">入力から見る ↓</a><a class="button button-quiet" href={`${base}earnings/`}>一次台帳へ →</a></div>
         </div>
-        <aside class="hero-card"><p class="card-kicker">MODEL RESULT</p><strong>未計算</strong><p>2027年予測値は計算していません</p><div class="hero-card-rule"></div><span>β・ラグ・指数ウェイトが未登録のため、step 3以降は判定不能です。</span></aside>
+        <aside class="hero-card"><p class="card-kicker">MODEL RESULT</p><strong data-observed-chain={observedChainEstablished ? 'established' : 'insufficient'}>{currentStatus}</strong><p>観測チェーンは成立</p><div class="hero-card-rule"></div><span>2027年予測は、β・ラグ・指数ウェイトが未登録のため計算していません。</span></aside>
       </section>
 
       <section class="flow section-block" aria-labelledby="flow-title">
@@ -77,7 +89,7 @@ const profitCompanies = profitApi.companies.filter((company) => company.quarters
           <article><b>01</b><strong>入力</strong><span>OCF・CapEx・売上・営業利益</span></article>
           <i>→</i><article><b>02</b><strong>式</strong><span>FCF・投資負担率・利益率</span></article>
           <i>→</i><article><b>03</b><strong>中間値</strong><span>投資余力・売上転換・ラグ</span></article>
-          <i>→</i><article><b>04</b><strong>判定</strong><span>レンジ内／強気のみ／未成立</span></article>
+          <i>→</i><article><b>04</b><strong>判定</strong><span>レンジ内／強気のみ／未確定</span></article>
         </div>
       </section>
 
@@ -118,14 +130,14 @@ const profitCompanies = profitApi.companies.filter((company) => company.quarters
       <section id="output" class="output section-block" aria-labelledby="output-title">
         <div class="section-heading"><div><div class="section-label">04 / INTERMEDIATE OUTPUT</div><h2 id="output-title">利益への、<em>接続。</em></h2></div><a class="source-link" href={`${base}earnings/#profit`}>利益時系列を見る ↗</a></div>
         <div class="output-grid">
-          <article><span>半導体企業</span><strong>{profitCompanies.length}社</strong><p>売上高・営業利益を最大5年取得</p></article>
-          <article><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '未成立'}</strong><p>会計期間が揃わないため指数合算なし</p></article>
+              <article><span>半導体企業</span><strong>{profitCompanies.length}社</strong><p>売上高・営業利益を{profitHistoryQuarters}四半期以上取得</p></article>
+          <article><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '期間未確定'}</strong><p>会計期間が揃わないため指数合算なし</p></article>
           <article><span>コンセンサス</span><strong>未登録</strong><p>2027年予測はこのAPIに含めていません</p></article>
         </div>
       </section>
 
       <section id="verdict" class="verdict section-block" aria-labelledby="verdict-title">
-        <div class="verdict-box"><div><div class="section-label">05 / VERDICT BOUNDARY</div><h2 id="verdict-title">判定は、<em>未成立。</em></h2></div><p>現在確認できるのは、顧客企業の営業CF・CapExと、半導体企業の売上・営業利益です。外部資金の継続能力、半導体への配分率、ラグ、利益率の将来値、指数ウェイトが揃うまで、2027年の利益成長率は計算しません。</p></div>
+        <div class="verdict-box"><div><div class="section-label">05 / VERDICT BOUNDARY</div><h2 id="verdict-title">観測チェーンは、<em>成立。</em></h2></div><p>顧客{commonDemandCompanies.length}社の同一期間OCF・CapExと、半導体{profitCompanies.length}社の{profitHistoryQuarters}四半期以上の売上・営業利益を確認しました。これは観測事実の成立です。外部資金の継続能力、半導体への配分率、ラグ、利益率の将来値、指数ウェイトが揃うまで、2027年の利益成長率は計算しません。</p></div>
         <div class="watch-grid"><div><span>支持に必要</span><p>営業CFが継続的に増加し、CapEx負担率が安定する。</p></div><div><span>反証条件</span><p>FCF悪化、外部資金だけの投資拡大、利益率低下。</p></div><div><span>次の入力</span><p>リース、社債、購入契約、AI売上、指数ウェイト。</p></div></div>
       </section>
 
