@@ -1,0 +1,46 @@
+name: Validate pastel Astro design
+
+on:
+  pull_request:
+    paths:
+      - "site/**"
+      - ".github/workflows/design-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-design:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.18.0"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Build Astro from committed evidence data
+        working-directory: site
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PUBLIC_BUILD_SHA: ${{ github.sha }}
+        run: |
+          npm ci
+          npm run build
+      - name: Verify shared design injection
+        run: |
+          set -euo pipefail
+          test -s site/dist/pastel-watercolor.css
+          grep -F -- '--kafka-pastel-build: 20260723' site/dist/pastel-watercolor.css
+          grep -F -- '--lavender:' site/dist/pastel-watercolor.css
+          grep -F -- '--rose:' site/dist/pastel-watercolor.css
+          grep -F -- '--mint:' site/dist/pastel-watercolor.css
+          for page in site/dist/earnings/index.html site/dist/model/index.html; do
+            test -s "$page"
+            grep -F 'name="theme-color" content="#fbfaf7"' "$page"
+            grep -F 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$page"
+            grep -F 'href="/semiconductor-earnings-model/pastel-watercolor.css"' "$page"
+          done
+          grep -F 'data-aggregation-status="computed"' site/dist/earnings/index.html
+          grep -F 'data-aggregation-status="computed"' site/dist/model/index.html
