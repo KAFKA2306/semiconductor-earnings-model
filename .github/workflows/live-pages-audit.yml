@@ -1,0 +1,88 @@
+name: Audit live semiconductor earnings Pages
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/live-pages-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read
+
+jobs:
+  live-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect active Pages configuration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
+            | tee pages-config.json \
+            | jq '{html_url, status, build_type, source, public}'
+
+      - name: Verify the real public ledger, model, CSS, and APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://kafka2306.github.io/semiconductor-earnings-model"
+          tmp="$(mktemp -d)"
+
+          matched=false
+          for attempt in $(seq 1 42); do
+            curl --fail --silent --show-error --location \
+              "$base/earnings/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/earnings.html"
+            if grep -Fq 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$tmp/earnings.html"; then
+              matched=true
+              break
+            fi
+            echo "Live site has not propagated yet (attempt ${attempt})."
+            sleep 10
+          done
+          test "$matched" = true
+
+          curl --fail --silent --show-error --location "$base/model/?smoke=${GITHUB_SHA}" -o "$tmp/model.html"
+          curl --fail --silent --show-error --location "$base/pastel-watercolor.css?smoke=${GITHUB_SHA}" -o "$tmp/pastel.css"
+          curl --fail --silent --show-error --location "$base/api/v1/index.json?smoke=${GITHUB_SHA}" -o "$tmp/index.json"
+          curl --fail --silent --show-error --location "$base/api/v1/semiconductor-profit/index.json?smoke=${GITHUB_SHA}" -o "$tmp/profit.json"
+          curl --fail --silent --show-error --location "$base/api/v1/demand/index.json?smoke=${GITHUB_SHA}" -o "$tmp/demand.json"
+          curl --fail --silent --show-error --location "$base/data/quant-audit.json?smoke=${GITHUB_SHA}" -o "$tmp/audit.json"
+
+          for page in "$tmp/earnings.html" "$tmp/model.html"; do
+            grep -F 'name="theme-color" content="#fbfaf7"' "$page"
+            grep -F 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$page"
+            grep -F 'href="/semiconductor-earnings-model/pastel-watercolor.css"' "$page"
+            grep -F 'data-aggregation-status="computed"' "$page"
+          done
+
+          grep -F '高い半導体利益成長は、' "$tmp/earnings.html"
+          grep -F '計算を、入力から' "$tmp/model.html"
+          grep -F -- '--kafka-pastel-build: 20260723' "$tmp/pastel.css"
+          grep -F -- '--lavender:' "$tmp/pastel.css"
+          grep -F -- '--rose:' "$tmp/pastel.css"
+          grep -F -- '--mint:' "$tmp/pastel.css"
+          grep -F '.page .hero-card' "$tmp/pastel.css"
+          grep -F '.page .aggregate-row' "$tmp/pastel.css"
+
+          python -m json.tool "$tmp/index.json" >/dev/null
+          python -m json.tool "$tmp/profit.json" >/dev/null
+          python -m json.tool "$tmp/demand.json" >/dev/null
+          python -m json.tool "$tmp/audit.json" >/dev/null
+
+          AUDIT="$tmp/audit.json" python - <<'PY'
+          import json
+          import os
+
+          with open(os.environ["AUDIT"], encoding="utf-8") as handle:
+              data = json.load(handle)
+          assert data["snapshot_hash"]
+          assert data["audit"]["findings"] is not None
+          PY
+
+          echo "Live Pages audit passed: $base/"
