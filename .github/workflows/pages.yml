@@ -52,7 +52,7 @@ jobs:
       - name: Build semiconductor downside resilience ledger
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
-        run: uv run python scripts/build_semiconductor_resilience_api.py
+        run: uv run python scripts/build_semiconductor_resilience_api_v2.py
       - name: Fetch normalized demand-side facts
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -170,6 +170,7 @@ jobs:
           jq -e '.schema_version == "semiconductor-resilience-api.v1"' <<< "$resilience_api_json" >/dev/null
           jq -e '[.companies[] | select(.years | length > 0)] | length >= 10' <<< "$resilience_api_json" >/dev/null
           jq -e 'all(.companies[] | select(.years | length > 0); (.years | length) <= 5 and (.scenarios | length) == 3)' <<< "$resilience_api_json" >/dev/null
+          jq -e 'all(.companies[] | select(.years | length > 0); .years[0].period_end >= "2024-01-01")' <<< "$resilience_api_json" >/dev/null
           printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
 
           ! grep -Fq "MODEL VERDICT" <<< "$html"
