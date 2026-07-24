@@ -1,0 +1,306 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
+const api = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v1/semiconductor-resilience/index.json'), 'utf8'));
+const base = import.meta.env.BASE_URL;
+const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
+if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
+
+const companies = api.companies.filter((company) => company.years.length > 0);
+const usd = (value, digits = 1) => {
+  if (value == null) return '未取得';
+  const number = Number(value);
+  const absolute = Math.abs(number);
+  const sign = number < 0 ? '−' : '';
+  if (absolute >= 1_000_000_000) return `${sign}$${(absolute / 1_000_000_000).toFixed(digits)}B`;
+  if (absolute >= 1_000_000) return `${sign}$${(absolute / 1_000_000).toFixed(digits)}M`;
+  return `${sign}$${absolute.toLocaleString('en-US')}`;
+};
+const pct = (value) => `${Math.round(Number(value) * 100)}%`;
+const dateJP = (value) => {
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+  return `${year}年${month}月${day}日`;
+};
+const scenarioFor = (company, scenarioId) => company.scenarios.find((scenario) => scenario.scenario_id === scenarioId);
+const runwayLabel = (scenario) => scenario.annual_cash_burn_usd === 0 ? '自己資金で黒字維持' : `${scenario.liquid_reserve_runway_years.toFixed(1)}年`;
+const bandLabel = {
+  self_funding: 'ストレス後もFCF黒字',
+  five_years_plus: '5年以上',
+  two_to_five_years: '2〜5年',
+  under_two_years: '2年未満',
+};
+const riskOrder = { under_two_years: 0, two_to_five_years: 1, five_years_plus: 2, self_funding: 3 };
+const orderedFor = (scenarioId) => [...companies].sort((a, b) => {
+  const left = scenarioFor(a, scenarioId);
+  const right = scenarioFor(b, scenarioId);
+  return riskOrder[left.runway_band] - riskOrder[right.runway_band]
+    || (left.liquid_reserve_runway_years ?? 999) - (right.liquid_reserve_runway_years ?? 999);
+});
+const countBand = (scenarioId, band) => companies.filter((company) => scenarioFor(company, scenarioId).runway_band === band).length;
+const latestPeriod = companies.length ? companies.map((company) => company.years[0].period_end).sort().at(-1) : null;
+const maxTrend = (company) => Math.max(...company.years.flatMap((year) => [
+  Math.abs(Number(year.liquid_reserve.reported_value)),
+  Math.abs(Number(year.free_cash_flow.reported_value)),
+]), 1);
+const height = (company, value) => Math.max(4, Math.round(Math.abs(Number(value)) / maxTrend(company) * 100));
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="半導体企業12社の流動性、利益剰余金、FCFをSEC 10-K一次情報で5年追跡し、下振れ時の資金耐久年数を機械的に算定する。" />
+    <title>半導体企業の内部資金耐久力 / SEC一次情報</title>
+  </head>
+  <body data-build-sha={buildSha} data-resilience-api-hash={api.content_hash}>
+    <main class="resilience-page">
+      <header class="resilience-nav">
+        <a class="brand" href={`${base}earnings/`}><span class="brand-mark">＋</span><span>決算の読み方 <small>/ RESILIENCE</small></span></a>
+        <nav aria-label="ページナビゲーション">
+          <a href="#definition">定義</a>
+          <a href="#scenario">シナリオ</a>
+          <a href="#ranking">耐久順位</a>
+          <a href="#history">5年推移</a>
+          <a href={`${base}earnings/`}>決算台帳 ↗</a>
+        </nav>
+      </header>
+
+      <section class="resilience-hero">
+        <div>
+          <p class="eyebrow">SEC 10-K / FIVE-YEAR LIQUIDITY LEDGER</p>
+          <h1>半導体企業は、<em>下振れに何年耐えられるか。</em></h1>
+          <p class="lead">現金・短期運用資産、営業CF、設備投資、負債、利益剰余金を最大5年追跡。流動性を年間キャッシュ消耗で割り、資金耐久年数を機械的に表示します。</p>
+          <div class="hero-actions"><a class="button-primary" href="#ranking">耐久順位を見る ↓</a><a class="button-secondary" href={`${base}api/v1/semiconductor-resilience/index.json`}>一次API JSON ↗</a></div>
+        </div>
+        <aside class="scope-card">
+          <span>集計範囲</span>
+          <strong>{companies.length}<small>社</small></strong>
+          <p>米SEC登録企業。最新年次期間は会社ごとに異なります。</p>
+          <dl><div><dt>更新</dt><dd>{dateJP(api.generated_at)}</dd></div><div><dt>最新期末</dt><dd>{latestPeriod ? dateJP(latestPeriod) : '未取得'}</dd></div></dl>
+        </aside>
+      </section>
+
+      <section id="definition" class="section-block">
+        <div class="section-heading"><div><p>01 / DEFINITION</p><h2>「内部留保」を、<br /><em>使える資金と会計残高に分ける。</em></h2></div></div>
+        <div class="definition-grid">
+          <article><span>耐久計算に使用</span><h3>流動性準備</h3><strong>現金・現金同等物 ＋ 短期運用資産</strong><p>公開factで別途報告される場合のみ加算。実際のキャッシュ消耗を賄える分子として使用します。</p></article>
+          <article><span>会計上の参考</span><h3>利益剰余金</h3><strong>Retained Earnings</strong><p>累積利益の会計残高であり、現金とは一致しません。自社株買いや配当でも変動するため、耐久年数の分子には使いません。</p></article>
+          <article><span>下振れ後の消耗</span><h3>ストレスFCF</h3><strong>ストレス営業CF − 削減後CapEx</strong><p>売上予測や確率モデルではなく、最新年次factに一定率を掛けた感応度です。</p></article>
+        </div>
+        <div class="formula-strip"><code>耐久年数 = 流動性準備 ÷ max(−ストレスFCF, 0)</code><span>ストレスFCFが黒字なら「自己資金で黒字維持」</span></div>
+      </section>
+
+      <section id="scenario" class="section-block">
+        <div class="section-heading"><div><p>02 / SENSITIVITY</p><h2>3つの下振れシナリオ。</h2></div><p class="section-note">管理会社のガイダンスではありません。全社共通の機械的感応度です。</p></div>
+        <div class="scenario-grid">
+          {api.scenarios.map((scenario) => <article>
+            <span>{scenario.id.toUpperCase()}</span><h3>{scenario.name}</h3>
+            <div class="scenario-numbers"><strong>OCF −{pct(scenario.operating_cash_flow_decline)}</strong><strong>CapEx −{pct(scenario.capital_expenditure_reduction)}</strong></div>
+            <p>{scenario.description}</p>
+          </article>)}
+        </div>
+      </section>
+
+      <section id="ranking" class="section-block">
+        <div class="section-heading"><div><p>03 / DOWNSIDE RUNWAY</p><h2>流動性による、<br /><em>耐久順位。</em></h2></div></div>
+        <div class="scenario-tabs" role="tablist" aria-label="シナリオ切替">
+          {api.scenarios.map((scenario, index) => <button type="button" role="tab" aria-selected={index === 1 ? 'true' : 'false'} data-scenario-tab={scenario.id}>{scenario.name}</button>)}
+        </div>
+        {api.scenarios.map((scenario) => <div class="scenario-panel" data-scenario-panel={scenario.id} hidden={scenario.id !== 'severe'}>
+          <div class="band-summary">
+            <article><span>ストレス後も黒字</span><strong>{countBand(scenario.id, 'self_funding')}社</strong></article>
+            <article><span>5年以上</span><strong>{countBand(scenario.id, 'five_years_plus')}社</strong></article>
+            <article><span>2〜5年</span><strong>{countBand(scenario.id, 'two_to_five_years')}社</strong></article>
+            <article><span>2年未満</span><strong>{countBand(scenario.id, 'under_two_years')}社</strong></article>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>企業</th><th>最新期</th><th>流動性準備</th><th>負債</th><th>基準FCF</th><th>ストレスFCF</th><th>耐久年数</th><th>判定</th></tr></thead>
+              <tbody>
+                {orderedFor(scenario.id).map((company) => {
+                  const latest = company.years[0];
+                  const result = scenarioFor(company, scenario.id);
+                  return <tr>
+                    <td><strong>{company.name}</strong><span>{company.ticker} / {company.role === 'semiconductor-equipment' ? '製造装置' : '半導体'}</span></td>
+                    <td>{latest.period_end}</td>
+                    <td>{usd(latest.liquid_reserve.reported_value)}</td>
+                    <td>{usd(latest.total_debt?.reported_value)}</td>
+                    <td class={Number(latest.free_cash_flow.reported_value) < 0 ? 'negative' : 'positive'}>{usd(latest.free_cash_flow.reported_value)}</td>
+                    <td class={result.stressed_free_cash_flow_usd < 0 ? 'negative' : 'positive'}>{usd(result.stressed_free_cash_flow_usd)}</td>
+                    <td><strong>{runwayLabel(result)}</strong></td>
+                    <td><span class={`band band-${result.runway_band}`}>{bandLabel[result.runway_band]}</span></td>
+                  </tr>;
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>)}
+      </section>
+
+      <section id="history" class="section-block">
+        <div class="section-heading"><div><p>04 / FIVE-YEAR HISTORY</p><h2>流動性とFCFの、<br /><em>数年推移。</em></h2></div><p class="section-note">棒の高さは各社内で正規化。企業間比較は金額表示を使用してください。</p></div>
+        <div class="company-grid">
+          {companies.map((company) => {
+            const latest = company.years[0];
+            const latestSource = latest.operating_cash_flow.source_url;
+            return <article class="company-card">
+              <header><div><span>{company.ticker}</span><h3>{company.name}</h3></div><a href={`${base}api/v1/semiconductor-resilience/companies/${company.id}.json`}>会社API ↗</a></header>
+              <div class="metric-row"><div><span>流動性準備</span><strong>{usd(latest.liquid_reserve.reported_value)}</strong></div><div><span>利益剰余金</span><strong>{usd(latest.retained_earnings?.reported_value)}</strong></div><div><span>Net liquidity</span><strong>{usd(latest.net_liquidity_usd)}</strong></div></div>
+              <div class="trend" aria-label={`${company.name}の流動性とFCFの推移`}>
+                {company.years.slice().reverse().map((year) => <div class="trend-year">
+                  <div class="bars"><i class="reserve-bar" style={`height:${height(company, year.liquid_reserve.reported_value)}%`} title={`流動性 ${usd(year.liquid_reserve.reported_value)}`}></i><i class={Number(year.free_cash_flow.reported_value) < 0 ? 'fcf-bar negative-bar' : 'fcf-bar'} style={`height:${height(company, year.free_cash_flow.reported_value)}%`} title={`FCF ${usd(year.free_cash_flow.reported_value)}`}></i></div>
+                  <span>{year.period_end.slice(0, 4)}</span>
+                </div>)}
+              </div>
+              <div class="legend"><span><i class="reserve-dot"></i>流動性</span><span><i class="fcf-dot"></i>FCF</span></div>
+              <footer><span>{latest.period_start}〜{latest.period_end}</span><a href={latestSource}>SEC 10-K一次資料 ↗</a></footer>
+            </article>;
+          })}
+        </div>
+      </section>
+
+      <section class="method section-block">
+        <div class="section-heading"><div><p>05 / BOUNDARY</p><h2>このモデルが、<br /><em>言っていないこと。</em></h2></div></div>
+        <div class="method-grid">
+          <p><strong>倒産確率ではない。</strong> 借換余力、コミットメントライン、運転資本、配当、自社株買い、M&A、リース、契約上の最低購入義務は耐久年数に含めていません。</p>
+          <p><strong>利益剰余金は現金ではない。</strong> 会計上の累積残高を「使える内部留保」とみなす誤りを避け、流動性準備を別計算しています。</p>
+          <p><strong>期間は会社ごとに異なる。</strong> 各社の最新10-Kと最大5年を使用し、異なる決算期を無理に同一四半期へ揃えていません。</p>
+          <p><strong>欠損値は推定しない。</strong> SEC XBRLタグが取得できない項目は未取得のまま表示し、他社比率や外部データで穴埋めしません。</p>
+        </div>
+        <div class="provenance"><span>API HASH</span><code>{api.content_hash}</code><span>BUILD SHA</span><code>{buildSha}</code></div>
+      </section>
+    </main>
+
+    <script>
+      const tabs = [...document.querySelectorAll('[data-scenario-tab]')];
+      const panels = [...document.querySelectorAll('[data-scenario-panel]')];
+      tabs.forEach((tab) => tab.addEventListener('click', () => {
+        const selected = tab.dataset.scenarioTab;
+        tabs.forEach((button) => button.setAttribute('aria-selected', String(button === tab)));
+        panels.forEach((panel) => { panel.hidden = panel.dataset.scenarioPanel !== selected; });
+      }));
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*) { box-sizing: border-box; }
+  :global(html) { scroll-behavior: smooth; }
+  :global(body) { margin: 0; color: #252430; background: #fbfaf7; font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
+  :global(a) { color: inherit; }
+  .resilience-page { width: min(1240px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 80px; }
+  .resilience-nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(64,55,83,.14); }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; }
+  .brand small { font-size: .68rem; letter-spacing: .13em; color: #726c7b; }
+  .brand-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #dfe8df; color: #4f6757; }
+  nav { display: flex; gap: 18px; font-size: .82rem; font-weight: 700; }
+  nav a { text-decoration: none; }
+  .resilience-hero { min-height: 560px; display: grid; grid-template-columns: 1.5fr .65fr; gap: 64px; align-items: center; padding: 74px 0 58px; }
+  .eyebrow, .section-heading > div > p { margin: 0 0 14px; color: #76678a; font-size: .72rem; letter-spacing: .17em; font-weight: 800; }
+  h1 { margin: 0; max-width: 840px; font-family: Georgia, "Noto Serif JP", serif; font-size: clamp(3rem, 6vw, 5.8rem); line-height: 1.02; font-weight: 500; letter-spacing: -.045em; }
+  h1 em, h2 em { display: block; color: #8b6680; font-weight: 500; }
+  .lead { max-width: 760px; margin: 28px 0 0; color: #5d5964; font-size: 1.03rem; line-height: 1.9; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+  .hero-actions a { padding: 13px 18px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: .85rem; }
+  .button-primary { color: #fff; background: #6d5d77; }
+  .button-secondary { border: 1px solid rgba(64,55,83,.22); background: rgba(255,255,255,.65); }
+  .scope-card { padding: 30px; border: 1px solid rgba(64,55,83,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(232,224,240,.72), rgba(231,241,233,.72)); box-shadow: 0 24px 70px rgba(75,63,87,.08); }
+  .scope-card > span { font-size: .72rem; letter-spacing: .12em; font-weight: 800; color: #72687b; }
+  .scope-card > strong { display: block; margin: 10px 0; font-family: Georgia, serif; font-size: 4.8rem; font-weight: 500; }
+  .scope-card strong small { font-size: 1rem; }
+  .scope-card p { color: #645f68; line-height: 1.7; }
+  .scope-card dl { margin: 24px 0 0; border-top: 1px solid rgba(64,55,83,.14); }
+  .scope-card dl div { display: flex; justify-content: space-between; gap: 20px; padding: 12px 0; border-bottom: 1px solid rgba(64,55,83,.1); font-size: .76rem; }
+  .scope-card dt { color: #77717b; }
+  .scope-card dd { margin: 0; font-weight: 800; }
+  .section-block { padding: 76px 0; border-top: 1px solid rgba(64,55,83,.13); }
+  .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 34px; }
+  h2 { margin: 0; font-family: Georgia, "Noto Serif JP", serif; font-size: clamp(2.4rem, 4vw, 4.2rem); line-height: 1.08; font-weight: 500; letter-spacing: -.035em; }
+  .section-note { max-width: 480px; margin: 0; color: #716c75; line-height: 1.7; font-size: .83rem; }
+  .definition-grid, .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .definition-grid article, .scenario-grid article { min-height: 260px; padding: 26px; border: 1px solid rgba(64,55,83,.13); border-radius: 24px; background: rgba(255,255,255,.58); }
+  .definition-grid article:nth-child(1) { background: rgba(225,239,230,.65); }
+  .definition-grid article:nth-child(2) { background: rgba(239,229,240,.62); }
+  .definition-grid article:nth-child(3) { background: rgba(244,232,225,.62); }
+  .definition-grid span, .scenario-grid > article > span { color: #756e7b; font-size: .68rem; letter-spacing: .12em; font-weight: 800; }
+  .definition-grid h3, .scenario-grid h3 { margin: 16px 0 12px; font-family: Georgia, serif; font-size: 1.9rem; font-weight: 500; }
+  .definition-grid strong { display: block; min-height: 48px; font-size: .92rem; }
+  .definition-grid p, .scenario-grid p { color: #66616a; line-height: 1.75; font-size: .84rem; }
+  .formula-strip { display: flex; justify-content: space-between; gap: 24px; margin-top: 16px; padding: 20px 24px; border-radius: 18px; background: #2e2b34; color: #fff; }
+  .formula-strip code { font-size: .9rem; }
+  .formula-strip span { color: #d8d3dc; font-size: .78rem; }
+  .scenario-grid article:nth-child(1) { background: linear-gradient(145deg, rgba(231,240,233,.75), rgba(255,255,255,.65)); }
+  .scenario-grid article:nth-child(2) { background: linear-gradient(145deg, rgba(239,229,240,.75), rgba(255,255,255,.65)); }
+  .scenario-grid article:nth-child(3) { background: linear-gradient(145deg, rgba(245,226,221,.75), rgba(255,255,255,.65)); }
+  .scenario-numbers { display: flex; flex-wrap: wrap; gap: 8px; }
+  .scenario-numbers strong { padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,.6); font-size: .78rem; }
+  .scenario-tabs { display: inline-flex; padding: 5px; margin-bottom: 20px; border: 1px solid rgba(64,55,83,.14); border-radius: 999px; background: rgba(255,255,255,.65); }
+  .scenario-tabs button { padding: 10px 17px; border: 0; border-radius: 999px; background: transparent; color: #635d68; font: inherit; font-size: .8rem; font-weight: 800; cursor: pointer; }
+  .scenario-tabs button[aria-selected="true"] { background: #6d5d77; color: #fff; }
+  .band-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  .band-summary article { padding: 15px 18px; border-radius: 16px; background: rgba(255,255,255,.72); border: 1px solid rgba(64,55,83,.12); }
+  .band-summary span { display: block; color: #77717a; font-size: .7rem; }
+  .band-summary strong { display: block; margin-top: 5px; font-size: 1.3rem; }
+  .table-wrap { overflow-x: auto; border: 1px solid rgba(64,55,83,.13); border-radius: 22px; background: rgba(255,255,255,.62); }
+  table { width: 100%; border-collapse: collapse; min-width: 1080px; }
+  th, td { padding: 15px 14px; border-bottom: 1px solid rgba(64,55,83,.1); text-align: right; white-space: nowrap; font-size: .78rem; }
+  th { color: #746e78; font-size: .67rem; letter-spacing: .05em; }
+  th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: rgba(251,250,247,.96); }
+  td:first-child strong, td:first-child span { display: block; }
+  td:first-child span { color: #807984; margin-top: 3px; font-size: .67rem; }
+  .positive { color: #3f7255; }
+  .negative { color: #9a565d; }
+  .band { display: inline-block; padding: 6px 9px; border-radius: 999px; font-size: .67rem; font-weight: 800; }
+  .band-self_funding, .band-five_years_plus { background: #dfeee4; color: #3d6c50; }
+  .band-two_to_five_years { background: #f1ead7; color: #806c34; }
+  .band-under_two_years { background: #f2dddd; color: #925158; }
+  .company-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .company-card { padding: 24px; border: 1px solid rgba(64,55,83,.13); border-radius: 24px; background: rgba(255,255,255,.62); }
+  .company-card header { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
+  .company-card header span { color: #806f8b; font-size: .7rem; letter-spacing: .12em; font-weight: 800; }
+  .company-card h3 { margin: 5px 0 0; font-family: Georgia, serif; font-size: 1.7rem; font-weight: 500; }
+  .company-card header a, .company-card footer a { font-size: .7rem; font-weight: 800; text-decoration: none; }
+  .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 22px 0; }
+  .metric-row div { min-width: 0; padding: 12px; border-radius: 13px; background: rgba(238,234,242,.55); }
+  .metric-row span, .metric-row strong { display: block; }
+  .metric-row span { color: #7d7681; font-size: .62rem; }
+  .metric-row strong { margin-top: 4px; overflow: hidden; text-overflow: ellipsis; font-size: .85rem; }
+  .trend { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; height: 150px; padding-top: 12px; border-bottom: 1px solid rgba(64,55,83,.14); }
+  .trend-year { display: flex; flex-direction: column; justify-content: end; align-items: center; gap: 7px; }
+  .bars { width: 100%; height: 112px; display: flex; align-items: end; justify-content: center; gap: 4px; }
+  .bars i { display: block; width: min(17px, 37%); min-height: 4px; border-radius: 5px 5px 1px 1px; }
+  .reserve-bar { background: #a7c7b0; }
+  .fcf-bar { background: #b8a5c7; }
+  .negative-bar { background: #d1a1a5; }
+  .trend-year > span { color: #807984; font-size: .65rem; }
+  .legend { display: flex; gap: 14px; margin-top: 10px; color: #77717b; font-size: .65rem; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .legend i { width: 8px; height: 8px; border-radius: 50%; }
+  .reserve-dot { background: #a7c7b0; }
+  .fcf-dot { background: #b8a5c7; }
+  .company-card footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(64,55,83,.1); color: #77717a; font-size: .68rem; }
+  .method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .method-grid p { margin: 0; padding: 20px; border-radius: 18px; background: rgba(239,235,242,.55); color: #625d66; line-height: 1.75; font-size: .82rem; }
+  .method-grid strong { color: #343039; }
+  .provenance { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; margin-top: 20px; padding: 18px; border-radius: 14px; background: #2e2b34; color: #dcd7e0; font-size: .68rem; }
+  .provenance code { overflow-wrap: anywhere; color: #fff; }
+  [hidden] { display: none !important; }
+  @media (max-width: 900px) {
+    nav { display: none; }
+    .resilience-hero { grid-template-columns: 1fr; min-height: auto; gap: 30px; padding: 56px 0; }
+    .definition-grid, .scenario-grid, .company-grid { grid-template-columns: 1fr; }
+    .band-summary { grid-template-columns: repeat(2, 1fr); }
+    .section-heading { align-items: start; flex-direction: column; }
+  }
+  @media (max-width: 600px) {
+    .resilience-page { width: min(100% - 20px, 1240px); }
+    h1 { font-size: 2.85rem; }
+    .formula-strip, .company-card footer { flex-direction: column; }
+    .metric-row { grid-template-columns: 1fr; }
+    .method-grid { grid-template-columns: 1fr; }
+    .provenance { grid-template-columns: 1fr; }
+  }
+</style>
