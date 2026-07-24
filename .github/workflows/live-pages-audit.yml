@@ -34,6 +34,11 @@ jobs:
           echo "MAIN_SHA=${main_sha}" | tee -a "$GITHUB_ENV"
           echo "Expected live build SHA: ${main_sha}"
 
+      - name: Print live severe-scenario financial summary
+        run: |
+          curl --fail --silent --show-error --location "https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-resilience/index.json?summary=${GITHUB_SHA}" -o resilience.json
+          python -c 'import json; d=json.load(open("resilience.json")); cs=[c for c in d["companies"] if c["years"]]; print(f"SUMMARY generated_at={d[chr(103)+chr(101)+chr(110)+chr(101)+chr(114)+chr(97)+chr(116)+chr(101)+chr(100)+chr(95)+chr(97)+chr(116)]} companies={len(cs)} hash={d[chr(99)+chr(111)+chr(110)+chr(116)+chr(101)+chr(110)+chr(116)+chr(95)+chr(104)+chr(97)+chr(115)+chr(104)]}"); [(lambda r,y: print(f"SEVERE {c[chr(116)+chr(105)+chr(99)+chr(107)+chr(101)+chr(114)]} period={y[chr(112)+chr(101)+chr(114)+chr(105)+chr(111)+chr(100)+chr(95)+chr(101)+chr(110)+chr(100)]} liquid={y[chr(108)+chr(105)+chr(113)+chr(117)+chr(105)+chr(100)+chr(95)+chr(114)+chr(101)+chr(115)+chr(101)+chr(114)+chr(118)+chr(101)][chr(114)+chr(101)+chr(112)+chr(111)+chr(114)+chr(116)+chr(101)+chr(100)+chr(95)+chr(118)+chr(97)+chr(108)+chr(117)+chr(101)]} stressed_fcf={r[chr(115)+chr(116)+chr(114)+chr(101)+chr(115)+chr(115)+chr(101)+chr(100)+chr(95)+chr(102)+chr(114)+chr(101)+chr(101)+chr(95)+chr(99)+chr(97)+chr(115)+chr(104)+chr(95)+chr(102)+chr(108)+chr(111)+chr(119)+chr(95)+chr(117)+chr(115)+chr(100)]} runway={r[chr(108)+chr(105)+chr(113)+chr(117)+chr(105)+chr(100)+chr(95)+chr(114)+chr(101)+chr(115)+chr(101)+chr(114)+chr(118)+chr(101)+chr(95)+chr(114)+chr(117)+chr(110)+chr(119)+chr(97)+chr(121)+chr(95)+chr(121)+chr(101)+chr(97)+chr(114)+chr(115)]} band={r[chr(114)+chr(117)+chr(110)+chr(119)+chr(97)+chr(121)+chr(95)+chr(98)+chr(97)+chr(110)+chr(100)]}"))(next(x for x in c["scenarios"] if x["scenario_id"]=="severe"), c["years"][0]) for c in cs]'
+
       - name: Verify live resilience view, generated SEC API, and legacy routes
         shell: bash
         run: |
