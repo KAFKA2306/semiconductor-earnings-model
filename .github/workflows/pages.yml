@@ -9,6 +9,7 @@ on:
       - "src/**"
       - "scripts/**"
       - "site/**"
+      - "tests/**"
       - "README.md"
       - "pyproject.toml"
       - "uv.lock"
@@ -48,6 +49,10 @@ jobs:
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_semiconductor_profit_api.py
+      - name: Build semiconductor downside resilience ledger
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_semiconductor_resilience_api.py
       - name: Fetch normalized demand-side facts
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -93,8 +98,10 @@ jobs:
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/model/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/resilience/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-profit/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-resilience/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/demand/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
           html="$(curl -fsSL "$base/earnings/")"
@@ -151,6 +158,20 @@ jobs:
           grep -Fq "予測値は計算していません" <<< "$model_html"
           grep -Fq "β・ラグ・指数ウェイト" <<< "$model_html"
           printf '%s' "$model_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"inputs\"", "id=\"formula\"", "id=\"forward\"", "id=\"output\"", "id=\"verdict\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+
+          resilience_html="$(curl -fsSL "$base/resilience/")"
+          resilience_api_json="$(curl -fsSL "$base/api/v1/semiconductor-resilience/index.json")"
+          resilience_api_hash="$(jq -er '.content_hash' <<< "$resilience_api_json")"
+          grep -Fq "半導体企業は、" <<< "$resilience_html"
+          grep -Fq "下振れに何年耐えられるか。" <<< "$resilience_html"
+          grep -Fq "利益剰余金は現金ではない" <<< "$resilience_html"
+          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$resilience_html"
+          grep -Fq "data-resilience-api-hash=\"$resilience_api_hash\"" <<< "$resilience_html"
+          jq -e '.schema_version == "semiconductor-resilience-api.v1"' <<< "$resilience_api_json" >/dev/null
+          jq -e '[.companies[] | select(.years | length > 0)] | length >= 10' <<< "$resilience_api_json" >/dev/null
+          jq -e 'all(.companies[] | select(.years | length > 0); (.years | length) <= 5 and (.scenarios | length) == 3)' <<< "$resilience_api_json" >/dev/null
+          printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+
           ! grep -Fq "MODEL VERDICT" <<< "$html"
           ! grep -Fq "30秒でわかる決算データ" <<< "$html"
           ! grep -Fqi "confidence 60%" <<< "$html"
