@@ -20,25 +20,47 @@ def fetch(url: str, token: str | None = None, user_agent: str = "semiconductor-r
         return response.read()
 
 
-def print_revenue_candidates(company: dict) -> None:
+def annual_periods(fact: dict) -> set[tuple[str, str]]:
+    periods = set()
+    for row in fact.get("units", {}).get("USD", []):
+        if row.get("form") != "10-K" or not row.get("start") or not row.get("end"):
+            continue
+        days = (date.fromisoformat(row["end"]) - date.fromisoformat(row["start"])).days
+        if 300 <= days <= 450:
+            periods.add((row["start"], row["end"]))
+    return periods
+
+
+def instant_periods(fact: dict) -> set[str]:
+    return {
+        row["end"] for row in fact.get("units", {}).get("USD", [])
+        if row.get("form") == "10-K" and row.get("end") and not row.get("start")
+    }
+
+
+def print_fact_candidates(company: dict) -> None:
     user_agent = os.environ.get("SEC_USER_AGENT", "semiconductor-resilience-audit contact via github.com/KAFKA2306")
     cik = str(company["cik"]).zfill(10)
-    data = json.loads(fetch(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json", user_agent=user_agent))
-    candidates = []
-    for tag, fact in data["facts"]["us-gaap"].items():
-        if "Revenue" not in tag and "Sales" not in tag:
+    facts = json.loads(fetch(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json", user_agent=user_agent))["facts"]["us-gaap"]
+    selected = company["selected_tags"]
+    exact_tags = {
+        selected.get("revenue"), selected.get("operating_cash_flow"), selected.get("capital_expenditures"),
+        selected.get("cash"), "CashAndCashEquivalentsAtCarryingValue",
+        "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+        "NetCashProvidedByUsedInOperatingActivities",
+    }
+    for tag, fact in facts.items():
+        is_capex_like = "Payment" in tag and (
+            "PropertyPlantAndEquipment" in tag or "ProductiveAssets" in tag or "Equipment" in tag
+        )
+        if tag not in exact_tags and not is_capex_like:
             continue
-        periods = set()
-        for row in fact.get("units", {}).get("USD", []):
-            if row.get("form") != "10-K" or not row.get("start") or not row.get("end"):
-                continue
-            days = (date.fromisoformat(row["end"]) - date.fromisoformat(row["start"])).days
-            if 300 <= days <= 450:
-                periods.add((row["start"], row["end"]))
-        if periods:
-            candidates.append((max(end for _, end in periods), len(periods), tag))
-    for latest_end, count, tag in sorted(candidates, reverse=True)[:20]:
-        print(f"SEC_REVENUE_CANDIDATE {company['ticker']} latest={latest_end} periods={count} tag={tag}", flush=True)
+        annual = annual_periods(fact)
+        instant = instant_periods(fact)
+        if annual:
+            print(f"SEC_ANNUAL_CANDIDATE {company['ticker']} latest={max(end for _, end in annual)} periods={len(annual)} tag={tag}", flush=True)
+        if instant:
+            print(f"SEC_INSTANT_CANDIDATE {company['ticker']} latest={max(instant)} periods={len(instant)} tag={tag}", flush=True)
 
 
 def main() -> None:
@@ -73,11 +95,11 @@ def main() -> None:
     print(f"OBSERVED main_sha={main_sha} generated_at={resilience.get('generated_at')} companies={len(companies)}", flush=True)
     for company in companies:
         latest = company["years"][0]
-        print(f"OBSERVED {company['ticker']} period={latest['period_end']} revenue_tag={company['selected_tags']['revenue']} cash_tag={company['selected_tags']['cash']}", flush=True)
+        print(f"OBSERVED {company['ticker']} period={latest['period_end']} revenue_tag={company['selected_tags']['revenue']} cash_tag={company['selected_tags']['cash']} capex_tag={company['selected_tags']['capital_expenditures']}", flush=True)
 
     stale_companies = [company for company in companies if company["years"][0]["period_end"] < "2024-01-01"]
     for company in stale_companies:
-        print_revenue_candidates(company)
+        print_fact_candidates(company)
 
     assert resilience["schema_version"] == "semiconductor-resilience-api.v1"
     assert len(companies) >= 10, len(companies)
