@@ -54,3 +54,22 @@ def test_legacy_revenues_request_expands_to_newer_standard_revenue_tag():
     tag, rows = module.choose_recency_aware_tag_rows(facts, ("Revenues",), annual=True)
     assert tag == "RevenueFromContractWithCustomerExcludingAssessedTax"
     assert max(period[1] for period in rows) == "2025-01-26"
+
+
+def test_property_plant_equipment_request_expands_to_productive_assets():
+    facts = {
+        "PaymentsToAcquirePropertyPlantAndEquipment": {"units": {"USD": [
+            annual(10, "2011-01-31", "2012-01-29", "2012-03-01", "old")
+        ]}},
+        "PaymentsToAcquireProductiveAssets": {"units": {"USD": [
+            annual(20, "2024-01-29", "2025-01-26", "2025-03-01", "new-1"),
+            annual(30, "2025-01-27", "2026-01-25", "2026-03-01", "new-2"),
+        ]}},
+    }
+    tag, rows = module.choose_recency_aware_tag_rows(
+        facts,
+        ("PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsForAdditionsToPropertyPlantAndEquipment"),
+        annual=True,
+    )
+    assert tag == "PaymentsToAcquireProductiveAssets"
+    assert max(period[1] for period in rows) == "2026-01-25"
