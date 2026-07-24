@@ -28,4 +28,5 @@ jobs:
       - name: Audit deployed view and print company results
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: python audit_live_resilience.py
