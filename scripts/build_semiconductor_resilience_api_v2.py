@@ -13,13 +13,22 @@ REVENUE_EQUIVALENT_TAGS = (
     "Revenues",
     "SalesRevenueNet",
 )
+CAPEX_EQUIVALENT_TAGS = (
+    "PaymentsToAcquirePropertyPlantAndEquipment",
+    "PaymentsForAdditionsToPropertyPlantAndEquipment",
+    "PaymentsToAcquireProductiveAssets",
+)
 
 
 def expanded_equivalent_tags(tags: Iterable[str], *, annual: bool) -> tuple[str, ...]:
     requested = tuple(tags)
-    if not annual or len(requested) != 1 or requested[0] not in REVENUE_EQUIVALENT_TAGS:
+    if not annual:
         return requested
-    return tuple(dict.fromkeys((*requested, *REVENUE_EQUIVALENT_TAGS)))
+    if len(requested) == 1 and requested[0] in REVENUE_EQUIVALENT_TAGS:
+        return tuple(dict.fromkeys((*requested, *REVENUE_EQUIVALENT_TAGS)))
+    if requested and all(tag in CAPEX_EQUIVALENT_TAGS for tag in requested):
+        return tuple(dict.fromkeys((*requested, *CAPEX_EQUIVALENT_TAGS)))
+    return requested
 
 
 def choose_recency_aware_tag_rows(
@@ -31,9 +40,9 @@ def choose_recency_aware_tag_rows(
     """Choose the newest equivalent SEC concept, then the broadest history.
 
     SEC issuers can migrate between equivalent XBRL concepts. Selecting the first
-    tag with any history can pin a company to a stale period. For annual revenue,
-    the standard revenue concepts are treated as an explicit equivalent set.
-    Declared tag order remains the final tie-breaker only.
+    tag with any history can pin a company to a stale period. Standard annual
+    revenue concepts and CapEx concepts, including productive assets, are treated
+    as explicit equivalent sets. Declared tag order is the final tie-breaker only.
     """
     candidates: list[tuple[tuple[str, int, int], str, dict[Any, dict[str, Any]]]] = []
     candidate_tags = expanded_equivalent_tags(tags, annual=annual)
