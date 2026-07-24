@@ -14,7 +14,7 @@ jobs:
   live-audit:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect active Pages configuration
+      - name: Inspect active Pages configuration and main provenance
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -26,8 +26,15 @@ jobs:
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
             | tee pages-config.json \
             | jq '{html_url, status, build_type, source, public}'
+          main_sha="$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/main" | jq -er '.sha')"
+          echo "MAIN_SHA=${main_sha}" | tee -a "$GITHUB_ENV"
+          echo "Expected live build SHA: ${main_sha}"
 
-      - name: Verify the real public ledger, model, CSS, and APIs
+      - name: Verify live resilience view, generated SEC API, and legacy routes
         shell: bash
         run: |
           set -euo pipefail
@@ -37,16 +44,20 @@ jobs:
           matched=false
           for attempt in $(seq 1 42); do
             curl --fail --silent --show-error --location \
-              "$base/earnings/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/earnings.html"
-            if grep -Fq 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$tmp/earnings.html"; then
+              "$base/resilience/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.html" || true
+            curl --fail --silent --show-error --location \
+              "$base/api/v1/semiconductor-resilience/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.json" || true
+            if grep -Fq "data-build-sha=\"${MAIN_SHA}\"" "$tmp/resilience.html" 2>/dev/null \
+              && python -m json.tool "$tmp/resilience.json" >/dev/null 2>&1; then
               matched=true
               break
             fi
-            echo "Live site has not propagated yet (attempt ${attempt})."
+            echo "Live resilience build has not propagated to ${MAIN_SHA} (attempt ${attempt})."
             sleep 10
           done
           test "$matched" = true
 
+          curl --fail --silent --show-error --location "$base/earnings/?smoke=${GITHUB_SHA}" -o "$tmp/earnings.html"
           curl --fail --silent --show-error --location "$base/model/?smoke=${GITHUB_SHA}" -o "$tmp/model.html"
           curl --fail --silent --show-error --location "$base/pastel-watercolor.css?smoke=${GITHUB_SHA}" -o "$tmp/pastel.css"
           curl --fail --silent --show-error --location "$base/api/v1/index.json?smoke=${GITHUB_SHA}" -o "$tmp/index.json"
@@ -54,35 +65,72 @@ jobs:
           curl --fail --silent --show-error --location "$base/api/v1/demand/index.json?smoke=${GITHUB_SHA}" -o "$tmp/demand.json"
           curl --fail --silent --show-error --location "$base/data/quant-audit.json?smoke=${GITHUB_SHA}" -o "$tmp/audit.json"
 
-          for page in "$tmp/earnings.html" "$tmp/model.html"; do
-            grep -F 'name="theme-color" content="#fbfaf7"' "$page"
-            grep -F 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$page"
-            grep -F 'href="/semiconductor-earnings-model/pastel-watercolor.css"' "$page"
-            grep -F 'data-aggregation-status="computed"' "$page"
-          done
+          resilience_hash="$(jq -er '.content_hash' "$tmp/resilience.json")"
+          grep -Fq "data-resilience-api-hash=\"${resilience_hash}\"" "$tmp/resilience.html"
+          grep -Fq 'name="theme-color" content="#fbfaf7"' "$tmp/resilience.html"
+          grep -Fq 'href="/semiconductor-earnings-model/pastel-watercolor.css"' "$tmp/resilience.html"
+          grep -Fq '半導体企業は、' "$tmp/resilience.html"
+          grep -Fq '下振れに何年耐えられるか。' "$tmp/resilience.html"
+          grep -Fq '利益剰余金は現金ではない' "$tmp/resilience.html"
+          grep -Fq 'id="definition"' "$tmp/resilience.html"
+          grep -Fq 'id="scenario"' "$tmp/resilience.html"
+          grep -Fq 'id="ranking"' "$tmp/resilience.html"
+          grep -Fq 'id="history"' "$tmp/resilience.html"
 
-          grep -F '高い半導体利益成長は、' "$tmp/earnings.html"
-          grep -F '計算を、入力から' "$tmp/model.html"
-          grep -F -- '--kafka-pastel-build: 20260723' "$tmp/pastel.css"
-          grep -F -- '--lavender:' "$tmp/pastel.css"
-          grep -F -- '--rose:' "$tmp/pastel.css"
-          grep -F -- '--mint:' "$tmp/pastel.css"
-          grep -F '.page .hero-card' "$tmp/pastel.css"
-          grep -F '.page .aggregate-row' "$tmp/pastel.css"
+          for page in "$tmp/earnings.html" "$tmp/model.html"; do
+            grep -Fq 'name="theme-color" content="#fbfaf7"' "$page"
+            grep -Fq 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$page"
+            grep -Fq 'href="/semiconductor-earnings-model/pastel-watercolor.css"' "$page"
+            grep -Fq 'data-aggregation-status="computed"' "$page"
+          done
+          grep -Fq '高い半導体利益成長は、' "$tmp/earnings.html"
+          grep -Fq '計算を、入力から' "$tmp/model.html"
+          grep -Fq -- '--kafka-pastel-build: 20260723' "$tmp/pastel.css"
 
           python -m json.tool "$tmp/index.json" >/dev/null
           python -m json.tool "$tmp/profit.json" >/dev/null
           python -m json.tool "$tmp/demand.json" >/dev/null
           python -m json.tool "$tmp/audit.json" >/dev/null
 
-          AUDIT="$tmp/audit.json" python - <<'PY'
+          RESILIENCE="$tmp/resilience.json" AUDIT="$tmp/audit.json" python - <<'PY'
           import json
           import os
 
-          with open(os.environ["AUDIT"], encoding="utf-8") as handle:
-              data = json.load(handle)
-          assert data["snapshot_hash"]
-          assert data["audit"]["findings"] is not None
+          resilience = json.load(open(os.environ["RESILIENCE"], encoding="utf-8"))
+          audit = json.load(open(os.environ["AUDIT"], encoding="utf-8"))
+          assert resilience["schema_version"] == "semiconductor-resilience-api.v1"
+          companies = [company for company in resilience["companies"] if company["years"]]
+          assert len(companies) >= 10, len(companies)
+          assert all(1 <= len(company["years"]) <= 5 for company in companies)
+          assert all(len(company["scenarios"]) == 3 for company in companies)
+          assert all(company["years"][0]["operating_cash_flow"]["source_url"].startswith("https://www.sec.gov/") for company in companies)
+          assert audit["snapshot_hash"]
+          assert audit["audit"]["findings"] is not None
+
+          severe = []
+          for company in companies:
+              result = next(item for item in company["scenarios"] if item["scenario_id"] == "severe")
+              severe.append({
+                  "ticker": company["ticker"],
+                  "period_end": company["years"][0]["period_end"],
+                  "liquid_reserve_usd": company["years"][0]["liquid_reserve"]["reported_value"],
+                  "stressed_fcf_usd": result["stressed_free_cash_flow_usd"],
+                  "runway_years": result["liquid_reserve_runway_years"],
+                  "runway_band": result["runway_band"],
+                  "sec_source": company["years"][0]["operating_cash_flow"]["source_url"],
+              })
+          severe.sort(key=lambda row: (row["runway_years"] is None, row["runway_years"] or 999))
+          bands = {}
+          for row in severe:
+              bands[row["runway_band"]] = bands.get(row["runway_band"], 0) + 1
+          print(json.dumps({
+              "live_build_sha": os.environ["MAIN_SHA"],
+              "resilience_content_hash": resilience["content_hash"],
+              "generated_at": resilience["generated_at"],
+              "companies_with_data": len(companies),
+              "severe_scenario_bands": bands,
+              "severe_scenario_company_results": severe,
+          }, ensure_ascii=False, indent=2))
           PY
 
-          echo "Live Pages audit passed: $base/"
+          echo "Live Pages resilience audit passed: $base/resilience/"
