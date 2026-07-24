@@ -1,0 +1,22 @@
+name: Prove live semiconductor resilience Pages
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit_live_resilience.py"
+      - ".github/workflows/live-resilience-proof.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read
+
+jobs:
+  prove-live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit deployed view and print company results
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/audit_live_resilience.py
