@@ -8,20 +8,36 @@ from typing import Any, Iterable
 import build_semiconductor_resilience_api as legacy
 
 
+REVENUE_EQUIVALENT_TAGS = (
+    "RevenueFromContractWithCustomerExcludingAssessedTax",
+    "Revenues",
+    "SalesRevenueNet",
+)
+
+
+def expanded_equivalent_tags(tags: Iterable[str], *, annual: bool) -> tuple[str, ...]:
+    requested = tuple(tags)
+    if not annual or len(requested) != 1 or requested[0] not in REVENUE_EQUIVALENT_TAGS:
+        return requested
+    return tuple(dict.fromkeys((*requested, *REVENUE_EQUIVALENT_TAGS)))
+
+
 def choose_recency_aware_tag_rows(
     facts: dict[str, Any],
     tags: Iterable[str],
     *,
     annual: bool,
 ) -> tuple[str | None, dict[Any, dict[str, Any]]]:
-    """Choose the tag with the newest usable period, then the broadest history.
+    """Choose the newest equivalent SEC concept, then the broadest history.
 
     SEC issuers can migrate between equivalent XBRL concepts. Selecting the first
-    tag with any history can therefore pin a company to a stale period. Declared
-    tag order remains the final tie-breaker only.
+    tag with any history can pin a company to a stale period. For annual revenue,
+    the standard revenue concepts are treated as an explicit equivalent set.
+    Declared tag order remains the final tie-breaker only.
     """
     candidates: list[tuple[tuple[str, int, int], str, dict[Any, dict[str, Any]]]] = []
-    for priority, tag in enumerate(tags):
+    candidate_tags = expanded_equivalent_tags(tags, annual=annual)
+    for priority, tag in enumerate(candidate_tags):
         rows = legacy.rows_for_tag(facts, tag, annual=annual)
         by_period = legacy.latest_by_period(rows, instant=not annual)
         if not by_period:
