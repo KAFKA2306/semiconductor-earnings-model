@@ -1,0 +1,43 @@
+{
+  "schema_version": "semiconductor-resilience-api.v1",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "target": {
+    "id": "sox",
+    "name": "PHLX Semiconductor Sector Index",
+    "index_url": "https://indexes.nasdaq.com/Index/Overview/SOX",
+    "methodology_url": "https://indexes.nasdaq.com/docs/methodology_SOX.pdf",
+    "coverage_note": "Build-time contract snapshot. The deployment workflow replaces this file with direct SEC issuer facts."
+  },
+  "source_policy": "Build-time empty contract. Production deployment replaces this payload using annual SEC 10-K Companyfacts.",
+  "calculation_policy": {
+    "free_cash_flow": "operating cash flow - absolute capital expenditures",
+    "liquid_reserve": "cash and cash equivalents + short-term investments when separately reported",
+    "runway": "liquid reserve / annual cash burn when stressed free cash flow is negative; otherwise self-funding",
+    "warning": "Scenario outputs are deterministic sensitivities, not management guidance, forecasts, credit ratings, or bankruptcy probabilities."
+  },
+  "scenarios": [
+    {
+      "id": "cycle",
+      "name": "景気後退",
+      "operating_cash_flow_decline": 0.3,
+      "capital_expenditure_reduction": 0.15,
+      "description": "営業CFを30%減、CapExを15%削減。通常の半導体循環を想定した機械的感応度。"
+    },
+    {
+      "id": "severe",
+      "name": "深い下振れ",
+      "operating_cash_flow_decline": 0.6,
+      "capital_expenditure_reduction": 0.35,
+      "description": "営業CFを60%減、CapExを35%削減。需要急減と投資抑制が同時進行するケース。"
+    },
+    {
+      "id": "crisis",
+      "name": "危機",
+      "operating_cash_flow_decline": 0.9,
+      "capital_expenditure_reduction": 0.5,
+      "description": "営業CFを90%減、CapExを50%削減。資金創出がほぼ停止する極端な感応度。"
+    }
+  ],
+  "companies": [],
+  "content_hash": "build-contract-empty"
+}
