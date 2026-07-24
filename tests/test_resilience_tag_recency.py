@@ -17,6 +17,10 @@ def instant(value, end, filed, accession):
     return {"form": "10-K", "end": end, "filed": filed, "accn": accession, "val": value}
 
 
+def annual(value, start, end, filed, accession):
+    return {"form": "10-K", "start": start, "end": end, "filed": filed, "accn": accession, "val": value}
+
+
 def test_newer_fallback_tag_beats_stale_preferred_tag():
     facts = {
         "Preferred": {"units": {"USD": [instant(10, "2012-01-29", "2012-03-01", "old")]}},
@@ -38,3 +42,15 @@ def test_declared_priority_breaks_equal_recency_and_history_ties():
     tag, rows = module.choose_recency_aware_tag_rows(facts, ("Preferred", "Fallback"), annual=False)
     assert tag == "Preferred"
     assert rows["2025-01-26"]["val"] == 10
+
+
+def test_legacy_revenues_request_expands_to_newer_standard_revenue_tag():
+    facts = {
+        "Revenues": {"units": {"USD": [annual(10, "2011-01-31", "2012-01-29", "2012-03-01", "old")]}},
+        "RevenueFromContractWithCustomerExcludingAssessedTax": {"units": {"USD": [
+            annual(20, "2024-01-29", "2025-01-26", "2025-03-01", "new")
+        ]}},
+    }
+    tag, rows = module.choose_recency_aware_tag_rows(facts, ("Revenues",), annual=True)
+    assert tag == "RevenueFromContractWithCustomerExcludingAssessedTax"
+    assert max(period[1] for period in rows) == "2025-01-26"
