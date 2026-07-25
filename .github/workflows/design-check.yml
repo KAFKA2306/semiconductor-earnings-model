@@ -5,7 +5,9 @@ on:
     paths:
       - "data/benchmark/**"
       - "data/ontology/**"
+      - "scripts/**"
       - "site/**"
+      - "tests/**"
       - ".github/workflows/design-check.yml"
   workflow_dispatch:
 
@@ -17,12 +19,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build and validate ontology-backed research API
+        run: |
+          uv sync --frozen
+          uv run python scripts/build_semiconductor_research_api.py
+          uv run python scripts/finalize_semiconductor_research_api.py
+          uv run python -m pytest -q
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
+          assert api['schema_version'] == 'semiconductor-research-workbench.v2'
+          assert api['summary']['company_count'] >= 12
+          assert api['summary']['reported_fact_count'] >= 250
+          assert api['summary']['evaluation_count'] >= 72
+          assert api['summary']['evidence_edge_count'] >= 100
+          PY
       - uses: actions/setup-node@v4
         with:
           node-version: "22.18.0"
           cache: npm
           cache-dependency-path: site/package-lock.json
-      - name: Build Astro from committed contract snapshots
+      - name: Build Astro from generated research data
         working-directory: site
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -46,15 +70,17 @@ jobs:
           python - <<'PY'
           from html import unescape
           from pathlib import Path
+          import json
           import re
 
           html = Path('site/dist/resilience/index.html').read_text(encoding='utf-8')
           text = unescape(html)
+          api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
           assert 'RESEARCH WORKBENCH' in text
           assert '企業検索' in text
           assert 'DATABASE & ONTOLOGY' in text
           assert 'MARKET BENCHMARK' in text
-          assert re.search(r'data-research-api-hash=["\']build-time-placeholder["\']', html)
+          assert re.search(rf'data-research-api-hash=["\']{api["content_hash"]}["\']', html)
           markers = [
               'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
               'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
