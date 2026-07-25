@@ -27,6 +27,14 @@ jobs:
           python-version: "3.12"
       - name: Install deterministic Python environment
         run: uv sync --frozen
+      - name: Fetch direct quarterly semiconductor facts
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_semiconductor_profit_api.py
+      - name: Fetch annual resilience facts
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_semiconductor_resilience_api_v2.py
       - name: Build ontology-backed research API
         run: uv run python scripts/build_semiconductor_research_api.py
       - name: Finalize self-funding evaluation rules
