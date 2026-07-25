@@ -3,12 +3,42 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
-const api = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v1/semiconductor-resilience/index.json'), 'utf8'));
+const legacyApi = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v1/semiconductor-resilience/index.json'), 'utf8'));
+const research = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v2/semiconductor-research/index.json'), 'utf8'));
+const ontologyFallback = JSON.parse(fs.readFileSync(path.join(root, 'data/ontology/financial_research_ontology.json'), 'utf8'));
+const benchmarkFallback = JSON.parse(fs.readFileSync(path.join(root, 'data/benchmark/earnings_review_sites.json'), 'utf8'));
+const ontology = research.ontology?.entity_types?.length ? research.ontology : ontologyFallback;
+const benchmark = research.benchmark?.platforms?.length ? research.benchmark : benchmarkFallback;
 const base = import.meta.env.BASE_URL;
 const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
 if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
 
-const companies = api.companies.filter((company) => company.years.length > 0);
+const companies = research.companies || [];
+const summary = research.summary || {};
+const database = research.database || { entities: [], reported_facts: [], derived_metrics: [], evaluations: [], evidence_edges: [] };
+const evaluationRules = Object.fromEntries((ontology.evaluation_rules || []).map((rule) => [rule.id, rule]));
+const metricCatalog = Object.fromEntries((ontology.metric_catalog || []).map((metric) => [metric.id, metric]));
+const classificationLabels = {
+  resilient: '耐久・創出力あり',
+  watch: '要監視',
+  vulnerable: '脆弱',
+  incomplete: 'データ不足',
+};
+const classificationDescriptions = {
+  resilient: '深い下振れ後も自己資金で黒字、または主要判定が安定。',
+  watch: 'ストレス時の資金消耗、基準FCF赤字、または純流動性に注意。',
+  vulnerable: '深い下振れ時の流動性耐久が2年未満。',
+  incomplete: '一次データ充足率が判定基準に未達。',
+};
+const evaluationLabels = { pass: 'PASS', fail: 'WATCH', unknown: 'UNKNOWN' };
+const qualityFlagLabels = {
+  annual_history_under_five_years: '年次履歴5年未満',
+  short_term_investments_not_separately_reported: '短期運用資産の別掲なし',
+  debt_unavailable: '負債fact未取得',
+  alternative_capex_concept: '代替CapEx概念を採用',
+  quarterly_profit_unavailable: '四半期利益未取得',
+  prior_year_comparable_quarter_unavailable: '前年同期比較不可',
+};
 const usd = (value, digits = 1) => {
   if (value == null) return '未取得';
   const number = Number(value);
@@ -18,33 +48,38 @@ const usd = (value, digits = 1) => {
   if (absolute >= 1_000_000) return `${sign}$${(absolute / 1_000_000).toFixed(digits)}M`;
   return `${sign}$${absolute.toLocaleString('en-US')}`;
 };
-const pct = (value) => `${Math.round(Number(value) * 100)}%`;
+const percent = (value, digits = 1) => value == null ? '未取得' : `${Number(value) >= 0 ? '+' : ''}${(Number(value) * 100).toFixed(digits)}%`;
+const plainPercent = (value, digits = 0) => value == null ? '未取得' : `${(Number(value) * 100).toFixed(digits)}%`;
+const bps = (value) => value == null ? '未取得' : `${Number(value) >= 0 ? '+' : ''}${Number(value).toLocaleString('ja-JP')}bp`;
 const dateJP = (value) => {
+  if (!value) return '未取得';
   const [year, month, day] = value.slice(0, 10).split('-').map(Number);
   return `${year}年${month}月${day}日`;
 };
-const scenarioFor = (company, scenarioId) => company.scenarios.find((scenario) => scenario.scenario_id === scenarioId);
-const runwayLabel = (scenario) => scenario.annual_cash_burn_usd === 0 ? '自己資金で黒字維持' : `${scenario.liquid_reserve_runway_years.toFixed(1)}年`;
-const bandLabel = {
-  self_funding: 'ストレス後もFCF黒字',
-  five_years_plus: '5年以上',
-  two_to_five_years: '2〜5年',
-  under_two_years: '2年未満',
-};
-const riskOrder = { under_two_years: 0, two_to_five_years: 1, five_years_plus: 2, self_funding: 3 };
-const orderedFor = (scenarioId) => [...companies].sort((a, b) => {
-  const left = scenarioFor(a, scenarioId);
-  const right = scenarioFor(b, scenarioId);
-  return riskOrder[left.runway_band] - riskOrder[right.runway_band]
-    || (left.liquid_reserve_runway_years ?? 999) - (right.liquid_reserve_runway_years ?? 999);
+const runway = (company, scenarioId = 'severe') => company.scenarios.find((scenario) => scenario.scenario_id === scenarioId);
+const runwayLabel = (scenario) => !scenario ? '未取得' : scenario.annual_cash_burn_usd === 0 ? 'ストレス後もFCF黒字' : `${Number(scenario.liquid_reserve_runway_years).toFixed(1)}年`;
+const peerPercentile = (company, metric) => company.peer_context?.[metric]?.peer_percentile;
+const percentileLabel = (value) => value == null ? '比較不可' : `同業上位 ${Math.max(1, Math.round((1 - Number(value)) * 100))}%`;
+const evaluationFor = (company, ruleId) => company.evaluations.find((evaluation) => evaluation.rule_id === ruleId);
+const directionClass = (value) => value == null ? 'neutral' : Number(value) < 0 ? 'negative' : 'positive';
+const latestPeriod = companies.length ? companies.map((company) => company.latest_annual_period).sort().at(-1) : null;
+const benchmarkCategories = Object.entries(benchmark.platforms.reduce((result, platform) => {
+  result[platform.category] = (result[platform.category] || 0) + 1;
+  return result;
+}, {}));
+const roleLabels = { semiconductor: '半導体', 'semiconductor-equipment': '製造装置' };
+const severeOrder = [...companies].sort((a, b) => {
+  const left = runway(a);
+  const right = runway(b);
+  const bandOrder = { under_two_years: 0, two_to_five_years: 1, five_years_plus: 2, self_funding: 3 };
+  return bandOrder[left?.runway_band] - bandOrder[right?.runway_band]
+    || (left?.liquid_reserve_runway_years ?? 999) - (right?.liquid_reserve_runway_years ?? 999);
 });
-const countBand = (scenarioId, band) => companies.filter((company) => scenarioFor(company, scenarioId).runway_band === band).length;
-const latestPeriod = companies.length ? companies.map((company) => company.years[0].period_end).sort().at(-1) : null;
-const maxTrend = (company) => Math.max(...company.years.flatMap((year) => [
-  Math.abs(Number(year.liquid_reserve.reported_value)),
-  Math.abs(Number(year.free_cash_flow.reported_value)),
-]), 1);
-const height = (company, value) => Math.max(4, Math.round(Math.abs(Number(value)) / maxTrend(company) * 100));
+const overallMedians = {
+  revenueYoy: (() => { const values = companies.map((company) => company.metrics.revenue_yoy).filter((value) => value != null).sort((a, b) => a - b); return values.length ? values[Math.floor(values.length / 2)] : null; })(),
+  operatingMargin: (() => { const values = companies.map((company) => company.metrics.operating_margin).filter((value) => value != null).sort((a, b) => a - b); return values.length ? values[Math.floor(values.length / 2)] : null; })(),
+  fcfMargin: (() => { const values = companies.map((company) => company.metrics.free_cash_flow_margin).filter((value) => value != null).sort((a, b) => a - b); return values.length ? values[Math.floor(values.length / 2)] : null; })(),
+};
 ---
 
 <!doctype html>
@@ -52,135 +87,235 @@ const height = (company, value) => Math.max(4, Math.round(Math.abs(Number(value)
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="半導体企業12社の流動性、利益剰余金、FCFをSEC 10-K一次情報で5年追跡し、下振れ時の資金耐久年数を機械的に算定する。" />
-    <title>半導体企業の内部資金耐久力 / SEC一次情報</title>
+    <meta name="description" content="SEC一次情報、四半期利益、年次流動性、同業比較、下振れシナリオ、データ品質、オントロジーを統合した半導体企業の決算研究ワークベンチ。" />
+    <title>半導体決算リサーチ・ワークベンチ / SEC一次情報</title>
   </head>
-  <body data-build-sha={buildSha} data-resilience-api-hash={api.content_hash}>
-    <main class="resilience-page">
-      <header class="resilience-nav">
-        <a class="brand" href={`${base}earnings/`}><span class="brand-mark">＋</span><span>決算の読み方 <small>/ RESILIENCE</small></span></a>
-        <nav aria-label="ページナビゲーション">
-          <a href="#definition">定義</a>
-          <a href="#scenario">シナリオ</a>
-          <a href="#ranking">耐久順位</a>
-          <a href="#history">5年推移</a>
-          <a href={`${base}earnings/`}>決算台帳 ↗</a>
+  <body data-build-sha={buildSha} data-resilience-api-hash={legacyApi.content_hash} data-research-api-hash={research.content_hash}>
+    <main class="workbench-page">
+      <header class="topbar">
+        <a class="brand" href={`${base}earnings/`}><span class="brand-mark">＋</span><span>決算の読み方 <small>/ RESEARCH WORKBENCH</small></span></a>
+        <nav aria-label="ページ内ナビゲーション">
+          <a href="#quality">品質</a><a href="#actuals">実績</a><a href="#peers">同業</a><a href="#ranking">下振れ</a><a href="#ontology">構造</a><a href="#benchmark">比較</a><a href={`${base}earnings/`}>決算台帳 ↗</a>
         </nav>
       </header>
 
-      <section class="resilience-hero">
-        <div>
-          <p class="eyebrow">SEC 10-K / FIVE-YEAR LIQUIDITY LEDGER</p>
-          <h1>半導体企業は、<em>下振れに何年耐えられるか。</em></h1>
-          <p class="lead">現金・短期運用資産、営業CF、設備投資、負債、利益剰余金を最大5年追跡。流動性を年間キャッシュ消耗で割り、資金耐久年数を機械的に表示します。</p>
-          <div class="hero-actions"><a class="button-primary" href="#ranking">耐久順位を見る ↓</a><a class="button-secondary" href={`${base}api/v1/semiconductor-resilience/index.json`}>一次API JSON ↗</a></div>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">SEC FACTS × PEER CONTEXT × EXPLAINABLE RULES</p>
+          <h1>半導体企業は、<em>成長しながら下振れに耐えられるか。</em></h1>
+          <p class="lead">四半期の売上・営業利益と、年次の流動性・FCF・負債を一つの分析面へ統合しました。データ品質、同業中央値、機械的シナリオ、判定規則、XBRL概念、根拠edgeまで逆引きできます。</p>
+          <div class="hero-actions">
+            <a class="button-primary" href="#peers">企業比較を始める ↓</a>
+            <a class="button-secondary" href={`${base}api/v2/semiconductor-research/index.json`}>研究API v2 ↗</a>
+          </div>
         </div>
-        <aside class="scope-card">
-          <span>集計範囲</span>
-          <strong>{companies.length}<small>社</small></strong>
-          <p>米SEC登録企業。最新年次期間は会社ごとに異なります。</p>
-          <dl><div><dt>更新</dt><dd>{dateJP(api.generated_at)}</dd></div><div><dt>最新期末</dt><dd>{latestPeriod ? dateJP(latestPeriod) : '未取得'}</dd></div></dl>
+        <aside class="hero-audit">
+          <span>現在の研究面</span>
+          <strong>{summary.company_count || companies.length}<small>社</small></strong>
+          <p>実績・流動性・同業比較・耐久評価を一次情報から再構成。</p>
+          <dl>
+            <div><dt>報告fact</dt><dd>{summary.reported_fact_count || database.reported_facts.length}</dd></div>
+            <div><dt>派生指標</dt><dd>{summary.derived_metric_count || database.derived_metrics.length}</dd></div>
+            <div><dt>評価</dt><dd>{summary.evaluation_count || database.evaluations.length}</dd></div>
+            <div><dt>根拠edge</dt><dd>{summary.evidence_edge_count || database.evidence_edges.length}</dd></div>
+          </dl>
         </aside>
       </section>
 
-      <section id="definition" class="section-block">
-        <div class="section-heading"><div><p>01 / DEFINITION</p><h2>「内部留保」を、<br /><em>使える資金と会計残高に分ける。</em></h2></div></div>
-        <div class="definition-grid">
-          <article><span>耐久計算に使用</span><h3>流動性準備</h3><strong>現金・現金同等物 ＋ 短期運用資産</strong><p>公開factで別途報告される場合のみ加算。実際のキャッシュ消耗を賄える分子として使用します。</p></article>
-          <article><span>会計上の参考</span><h3>利益剰余金</h3><strong>Retained Earnings</strong><p>累積利益の会計残高であり、現金とは一致しません。自社株買いや配当でも変動するため、耐久年数の分子には使いません。</p></article>
-          <article><span>下振れ後の消耗</span><h3>ストレスFCF</h3><strong>ストレス営業CF − 削減後CapEx</strong><p>売上予測や確率モデルではなく、最新年次factに一定率を掛けた感応度です。</p></article>
+      <section id="definition" class="section-block definition-section">
+        <div class="section-heading">
+          <div><p>01 / RESEARCH CONTRACT</p><h2>実績・派生値・評価を、<br /><em>混ぜずに接続する。</em></h2></div>
+          <p class="section-note">一般的な決算サイトの情報量を模倣するのではなく、数値がどの資料・概念・式・判定へつながるかを明示します。</p>
         </div>
-        <div class="formula-strip"><code>耐久年数 = 流動性準備 ÷ max(−ストレスFCF, 0)</code><span>ストレスFCFが黒字なら「自己資金で黒字維持」</span></div>
+        <div class="logic-flow">
+          <article><span>01</span><h3>Reported fact</h3><p>SEC提出値。XBRLタグ、単位、期間、accession、資料URLを保存。</p></article>
+          <article><span>02</span><h3>Normalized concept</h3><p>タグ移行を吸収し、売上・OCF・CapEx等の比較可能な概念へ対応付け。</p></article>
+          <article><span>03</span><h3>Derived metric</h3><p>FCF、利益率、YoY、CAGR、変動性を公開式で計算。</p></article>
+          <article><span>04</span><h3>Evaluation</h3><p>閾値、値、PASS・WATCH・UNKNOWNを分解し、単一スコア化しない。</p></article>
+          <article><span>05</span><h3>Evidence edge</h3><p>派生指標から元fact、評価から使用指標へ機械的に逆引き。</p></article>
+        </div>
+        <div class="formula-strip"><code>耐久年数 = 流動性準備 ÷ max(−ストレスFCF, 0)</code><span>利益剰余金は現金ではない。流動性と会計残高を分離します。</span></div>
       </section>
 
-      <section id="scenario" class="section-block">
-        <div class="section-heading"><div><p>02 / SENSITIVITY</p><h2>3つの下振れシナリオ。</h2></div><p class="section-note">管理会社のガイダンスではありません。全社共通の機械的感応度です。</p></div>
-        <div class="scenario-grid">
-          {api.scenarios.map((scenario) => <article>
-            <span>{scenario.id.toUpperCase()}</span><h3>{scenario.name}</h3>
-            <div class="scenario-numbers"><strong>OCF −{pct(scenario.operating_cash_flow_decline)}</strong><strong>CapEx −{pct(scenario.capital_expenditure_reduction)}</strong></div>
-            <p>{scenario.description}</p>
+      <section id="quality" class="section-block">
+        <div class="section-heading">
+          <div><p>02 / DATA QUALITY</p><h2>結論より先に、<br /><em>データの状態を見る。</em></h2></div>
+          <p class="section-note">期間型、XBRL概念、比較可能期間、欠損、代替タグを会社別に公開します。</p>
+        </div>
+        <div class="quality-summary">
+          <article><span>COMPLETE</span><strong>{companies.filter((company) => company.metrics.data_completeness >= 0.8).length}<small>社</small></strong><p>必須一次factの80%以上を取得</p></article>
+          <article><span>5-YEAR HISTORY</span><strong>{companies.filter((company) => company.history_years >= 5).length}<small>社</small></strong><p>年次履歴を5期取得</p></article>
+          <article><span>QUARTERLY COMPARABLE</span><strong>{companies.filter((company) => company.metrics.revenue_yoy != null).length}<small>社</small></strong><p>前年同期の売上比較が可能</p></article>
+          <article><span>ALTERNATIVE CAPEX TAG</span><strong>{companies.filter((company) => company.quality.flags.includes('alternative_capex_concept')).length}<small>社</small></strong><p>最新の等価XBRL概念へ移行</p></article>
+        </div>
+        <div class="quality-grid">
+          {companies.map((company) => <article class="quality-card">
+            <header><div><span>{company.ticker}</span><h3>{company.name}</h3></div><strong>{plainPercent(company.metrics.data_completeness)}</strong></header>
+            <div class="quality-meter"><i style={`width:${Math.round(company.metrics.data_completeness * 100)}%`}></i></div>
+            <div class="check-list">
+              {Object.entries(company.quality.required_checks).map(([key, value]) => <span class={value ? 'check-pass' : 'check-missing'}>{value ? '✓' : '–'} {key.replaceAll('_', ' ')}</span>)}
+            </div>
+            <footer>{company.quality.flags.length ? company.quality.flags.map((flag) => <span>{qualityFlagLabels[flag] || flag}</span>) : <span>主要品質フラグなし</span>}</footer>
           </article>)}
         </div>
       </section>
 
-      <section id="ranking" class="section-block">
-        <div class="section-heading"><div><p>03 / DOWNSIDE RUNWAY</p><h2>流動性による、<br /><em>耐久順位。</em></h2></div></div>
-        <div class="scenario-tabs" role="tablist" aria-label="シナリオ切替">
-          {api.scenarios.map((scenario, index) => <button type="button" role="tab" aria-selected={index === 1 ? 'true' : 'false'} data-scenario-tab={scenario.id}>{scenario.name}</button>)}
+      <section id="actuals" class="section-block">
+        <div class="section-heading">
+          <div><p>03 / ACTUALS</p><h2>四半期の収益性と、<br /><em>年次の資金創出を統合。</em></h2></div>
+          <p class="section-note">四半期は成長と利益率、年次はFCF・流動性・設備投資を評価します。異なる期間型を無理に加算しません。</p>
         </div>
-        {api.scenarios.map((scenario) => <div class="scenario-panel" data-scenario-panel={scenario.id} hidden={scenario.id !== 'severe'}>
-          <div class="band-summary">
-            <article><span>ストレス後も黒字</span><strong>{countBand(scenario.id, 'self_funding')}社</strong></article>
-            <article><span>5年以上</span><strong>{countBand(scenario.id, 'five_years_plus')}社</strong></article>
-            <article><span>2〜5年</span><strong>{countBand(scenario.id, 'two_to_five_years')}社</strong></article>
-            <article><span>2年未満</span><strong>{countBand(scenario.id, 'under_two_years')}社</strong></article>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>企業</th><th>最新期</th><th>流動性準備</th><th>負債</th><th>基準FCF</th><th>ストレスFCF</th><th>耐久年数</th><th>判定</th></tr></thead>
-              <tbody>
-                {orderedFor(scenario.id).map((company) => {
-                  const latest = company.years[0];
-                  const result = scenarioFor(company, scenario.id);
-                  return <tr>
-                    <td><strong>{company.name}</strong><span>{company.ticker} / {company.role === 'semiconductor-equipment' ? '製造装置' : '半導体'}</span></td>
-                    <td>{latest.period_end}</td>
-                    <td>{usd(latest.liquid_reserve.reported_value)}</td>
-                    <td>{usd(latest.total_debt?.reported_value)}</td>
-                    <td class={Number(latest.free_cash_flow.reported_value) < 0 ? 'negative' : 'positive'}>{usd(latest.free_cash_flow.reported_value)}</td>
-                    <td class={result.stressed_free_cash_flow_usd < 0 ? 'negative' : 'positive'}>{usd(result.stressed_free_cash_flow_usd)}</td>
-                    <td><strong>{runwayLabel(result)}</strong></td>
-                    <td><span class={`band band-${result.runway_band}`}>{bandLabel[result.runway_band]}</span></td>
-                  </tr>;
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>)}
+        <div class="actuals-summary">
+          <article><span>売上高YoY 中央値</span><strong class={directionClass(overallMedians.revenueYoy)}>{percent(overallMedians.revenueYoy)}</strong><p>前年同期比較可能な企業のみ</p></article>
+          <article><span>営業利益率 中央値</span><strong class={directionClass(overallMedians.operatingMargin)}>{plainPercent(overallMedians.operatingMargin, 1)}</strong><p>各社の最新四半期</p></article>
+          <article><span>年次FCFマージン 中央値</span><strong class={directionClass(overallMedians.fcfMargin)}>{plainPercent(overallMedians.fcfMargin, 1)}</strong><p>各社の最新10-K</p></article>
+          <article><span>最新年次期末</span><strong>{latestPeriod ? latestPeriod.slice(0, 4) : '—'}</strong><p>{dateJP(latestPeriod)}</p></article>
+        </div>
+        <div class="peer-group-grid">
+          {research.peer_groups?.map((group) => <article>
+            <span>{group.id.toUpperCase()}</span><h3>{group.label_ja}</h3><strong>{group.member_ids.length}<small>社</small></strong>
+            <dl><div><dt>FCFマージン中央値</dt><dd>{plainPercent(group.medians.free_cash_flow_margin, 1)}</dd></div><div><dt>営業利益率中央値</dt><dd>{plainPercent(group.medians.operating_margin, 1)}</dd></div><div><dt>売上YoY中央値</dt><dd>{percent(group.medians.revenue_yoy)}</dd></div><div><dt>設備投資負担中央値</dt><dd>{plainPercent(group.medians.capex_intensity, 1)}</dd></div></dl>
+          </article>)}
+        </div>
       </section>
 
-      <section id="history" class="section-block">
-        <div class="section-heading"><div><p>04 / FIVE-YEAR HISTORY</p><h2>流動性とFCFの、<br /><em>数年推移。</em></h2></div><p class="section-note">棒の高さは各社内で正規化。企業間比較は金額表示を使用してください。</p></div>
-        <div class="company-grid">
-          {companies.map((company) => {
-            const latest = company.years[0];
-            const latestSource = latest.operating_cash_flow.source_url;
-            return <article class="company-card">
-              <header><div><span>{company.ticker}</span><h3>{company.name}</h3></div><a href={`${base}api/v1/semiconductor-resilience/companies/${company.id}.json`}>会社API ↗</a></header>
-              <div class="metric-row"><div><span>流動性準備</span><strong>{usd(latest.liquid_reserve.reported_value)}</strong></div><div><span>利益剰余金</span><strong>{usd(latest.retained_earnings?.reported_value)}</strong></div><div><span>Net liquidity</span><strong>{usd(latest.net_liquidity_usd)}</strong></div></div>
-              <div class="trend" aria-label={`${company.name}の流動性とFCFの推移`}>
-                {company.years.slice().reverse().map((year) => <div class="trend-year">
-                  <div class="bars"><i class="reserve-bar" style={`height:${height(company, year.liquid_reserve.reported_value)}%`} title={`流動性 ${usd(year.liquid_reserve.reported_value)}`}></i><i class={Number(year.free_cash_flow.reported_value) < 0 ? 'fcf-bar negative-bar' : 'fcf-bar'} style={`height:${height(company, year.free_cash_flow.reported_value)}%`} title={`FCF ${usd(year.free_cash_flow.reported_value)}`}></i></div>
-                  <span>{year.period_end.slice(0, 4)}</span>
-                </div>)}
+      <section id="peers" class="section-block">
+        <div class="section-heading">
+          <div><p>04 / PEER COMPARISON</p><h2>検索・分類・同業順位で、<br /><em>比較可能にする。</em></h2></div>
+          <p class="section-note">金額の大きさだけでなく、利益率、成長、流動性、設備投資負担を同業中央値と比較します。</p>
+        </div>
+        <div class="controls" aria-label="企業フィルター">
+          <label><span>企業検索</span><input id="company-search" type="search" placeholder="企業名・ティッカー" /></label>
+          <label><span>役割</span><select id="role-filter"><option value="all">すべて</option><option value="semiconductor">半導体</option><option value="semiconductor-equipment">製造装置</option></select></label>
+          <label><span>判定</span><select id="classification-filter"><option value="all">すべて</option><option value="resilient">耐久・創出力あり</option><option value="watch">要監視</option><option value="vulnerable">脆弱</option><option value="incomplete">データ不足</option></select></label>
+          <span id="visible-count" class="visible-count">{companies.length}社表示</span>
+        </div>
+        <div class="table-wrap">
+          <table class="research-table" id="peer-table">
+            <thead><tr><th>企業</th><th><button data-sort="classification">判定</button></th><th><button data-sort="quality">品質</button></th><th><button data-sort="revenue-yoy">売上YoY</button></th><th><button data-sort="op-margin">営業利益率</button></th><th>利益率前年差</th><th><button data-sort="fcf-margin">FCFマージン</button></th><th>流動性/売上</th><th>CapEx/売上</th><th>深い下振れ</th></tr></thead>
+            <tbody>
+              {companies.map((company) => {
+                const severe = runway(company);
+                return <tr data-company-row data-search={`${company.name} ${company.ticker}`.toLowerCase()} data-role={company.role} data-classification={company.classification} data-sort-classification={({ vulnerable: 0, watch: 1, incomplete: 2, resilient: 3 })[company.classification]} data-sort-quality={company.metrics.data_completeness} data-sort-revenue-yoy={company.metrics.revenue_yoy ?? -999} data-sort-op-margin={company.metrics.operating_margin ?? -999} data-sort-fcf-margin={company.metrics.free_cash_flow_margin ?? -999}>
+                  <td><strong>{company.name}</strong><span>{company.ticker} / {roleLabels[company.role]}</span></td>
+                  <td><span class={`classification classification-${company.classification}`}>{classificationLabels[company.classification]}</span></td>
+                  <td><strong>{plainPercent(company.metrics.data_completeness)}</strong><span>{company.history_years}年 / {company.quarter_history}四半期</span></td>
+                  <td class={directionClass(company.metrics.revenue_yoy)}><strong>{percent(company.metrics.revenue_yoy)}</strong><span>{percentileLabel(peerPercentile(company, 'revenue_yoy'))}</span></td>
+                  <td class={directionClass(company.metrics.operating_margin)}><strong>{plainPercent(company.metrics.operating_margin, 1)}</strong><span>{percentileLabel(peerPercentile(company, 'operating_margin'))}</span></td>
+                  <td class={directionClass(company.metrics.operating_margin_delta_bps)}>{bps(company.metrics.operating_margin_delta_bps)}</td>
+                  <td class={directionClass(company.metrics.free_cash_flow_margin)}><strong>{plainPercent(company.metrics.free_cash_flow_margin, 1)}</strong><span>{percentileLabel(peerPercentile(company, 'free_cash_flow_margin'))}</span></td>
+                  <td>{plainPercent(company.metrics.liquidity_to_revenue, 1)}</td>
+                  <td>{plainPercent(company.metrics.capex_intensity, 1)}</td>
+                  <td><strong>{runwayLabel(severe)}</strong><span>{severe?.runway_band}</span></td>
+                </tr>;
+              })}
+            </tbody>
+          </table>
+          <div id="empty-state" class="empty-state" hidden>条件に一致する企業がありません。</div>
+        </div>
+      </section>
+
+      <section id="scenario" class="section-block">
+        <div class="section-heading"><div><p>05 / SCENARIOS</p><h2>シナリオを、<br /><em>予測ではなく感応度として扱う。</em></h2></div><p class="section-note">全社共通の入力変化率で比較します。企業ガイダンスや確率予測ではありません。</p></div>
+        <div class="scenario-grid">
+          {legacyApi.scenarios.map((scenario) => <article><span>{scenario.id.toUpperCase()}</span><h3>{scenario.name}</h3><div><strong>OCF −{plainPercent(scenario.operating_cash_flow_decline)}</strong><strong>CapEx −{plainPercent(scenario.capital_expenditure_reduction)}</strong></div><p>{scenario.description}</p></article>)}
+        </div>
+      </section>
+
+      <section id="ranking" class="section-block">
+        <div class="section-heading"><div><p>06 / EXPLAINABLE EVALUATION</p><h2>耐久順位と、<br /><em>判定理由を分解する。</em></h2></div><p class="section-note">単一スコアではなく、6つの規則をPASS・WATCH・UNKNOWNで表示します。</p></div>
+        <div class="classification-summary">
+          {Object.entries(classificationLabels).map(([key, label]) => <article><span>{label}</span><strong>{summary.classification_counts?.[key] ?? companies.filter((company) => company.classification === key).length}<small>社</small></strong><p>{classificationDescriptions[key]}</p></article>)}
+        </div>
+        <div class="ranking-grid">
+          {severeOrder.map((company, index) => {
+            const severe = runway(company);
+            return <article class="ranking-card">
+              <header><span class="rank">{String(index + 1).padStart(2, '0')}</span><div><small>{company.ticker}</small><h3>{company.name}</h3></div><span class={`classification classification-${company.classification}`}>{classificationLabels[company.classification]}</span></header>
+              <div class="ranking-metrics"><div><span>深い下振れ</span><strong>{runwayLabel(severe)}</strong></div><div><span>流動性準備</span><strong>{usd(company.metrics.liquid_reserve_usd)}</strong></div><div><span>基準FCF</span><strong class={directionClass(company.metrics.free_cash_flow_usd)}>{usd(company.metrics.free_cash_flow_usd)}</strong></div></div>
+              <ul>{company.classification_reasons.map((reason) => <li>{reason}</li>)}</ul>
+              <div class="evaluation-grid">
+                {company.evaluations.map((evaluation) => <div class={`evaluation evaluation-${evaluation.result}`}><span>{evaluationRules[evaluation.rule_id]?.label_ja || evaluation.rule_id}</span><strong>{evaluationLabels[evaluation.result]}</strong></div>)}
               </div>
-              <div class="legend"><span><i class="reserve-dot"></i>流動性</span><span><i class="fcf-dot"></i>FCF</span></div>
-              <footer><span>{latest.period_start}〜{latest.period_end}</span><a href={latestSource}>SEC 10-K一次資料 ↗</a></footer>
             </article>;
           })}
         </div>
       </section>
 
-      <section class="method section-block">
-        <div class="section-heading"><div><p>05 / BOUNDARY</p><h2>このモデルが、<br /><em>言っていないこと。</em></h2></div></div>
-        <div class="method-grid">
-          <p><strong>倒産確率ではない。</strong> 借換余力、コミットメントライン、運転資本、配当、自社株買い、M&A、リース、契約上の最低購入義務は耐久年数に含めていません。</p>
-          <p><strong>利益剰余金は現金ではない。</strong> 会計上の累積残高を「使える内部留保」とみなす誤りを避け、流動性準備を別計算しています。</p>
-          <p><strong>期間は会社ごとに異なる。</strong> 各社の最新10-Kと最大5年を使用し、異なる決算期を無理に同一四半期へ揃えていません。</p>
-          <p><strong>欠損値は推定しない。</strong> SEC XBRLタグが取得できない項目は未取得のまま表示し、他社比率や外部データで穴埋めしません。</p>
+      <section id="history" class="section-block">
+        <div class="section-heading"><div><p>07 / COMPANY EVIDENCE</p><h2>企業ごとに、<br /><em>数年推移と一次資料へ降りる。</em></h2></div><p class="section-note">年次と四半期の期間を分離したまま、元資料・XBRLタグ・会社APIへ接続します。</p></div>
+        <div class="company-grid" id="company-cards">
+          {companies.map((company) => {
+            const latest = company.annual_history[0];
+            const latestQuarter = company.quarterly_history[0];
+            return <article class="company-card" data-company-card data-search={`${company.name} ${company.ticker}`.toLowerCase()} data-role={company.role} data-classification={company.classification}>
+              <header><div><span>{company.ticker} / {roleLabels[company.role]}</span><h3>{company.name}</h3></div><a href={`${base}api/v1/semiconductor-resilience/companies/${company.id}.json`}>会社API ↗</a></header>
+              <div class="company-kpis"><div><span>売上YoY</span><strong class={directionClass(company.metrics.revenue_yoy)}>{percent(company.metrics.revenue_yoy)}</strong></div><div><span>営業利益率</span><strong class={directionClass(company.metrics.operating_margin)}>{plainPercent(company.metrics.operating_margin, 1)}</strong></div><div><span>FCFマージン</span><strong class={directionClass(company.metrics.free_cash_flow_margin)}>{plainPercent(company.metrics.free_cash_flow_margin, 1)}</strong></div><div><span>純流動性</span><strong class={directionClass(company.metrics.net_liquidity_usd)}>{usd(company.metrics.net_liquidity_usd)}</strong></div></div>
+              <div class="history-table"><table><thead><tr><th>年次期末</th><th>売上</th><th>OCF</th><th>CapEx</th><th>FCF</th><th>流動性</th></tr></thead><tbody>{company.annual_history.map((year) => <tr><td>{year.period_end}</td><td>{usd(year.revenue.reported_value)}</td><td>{usd(year.operating_cash_flow.reported_value)}</td><td>{usd(Math.abs(year.capital_expenditures.reported_value))}</td><td class={directionClass(year.free_cash_flow.reported_value)}>{usd(year.free_cash_flow.reported_value)}</td><td>{usd(year.liquid_reserve.reported_value)}</td></tr>)}</tbody></table></div>
+              <div class="source-line"><span>年次 {latest.period_start}〜{latest.period_end}</span><a href={latest.operating_cash_flow.source_url}>SEC 10-K ↗</a>{latestQuarter && <><span>四半期 {latestQuarter.period_start}〜{latestQuarter.period_end}</span><a href={latestQuarter.revenue.source_url}>SEC 10-Q ↗</a></>}</div>
+              <details><summary>XBRL概念と品質フラグ</summary><dl class="tag-list">{Object.entries(company.quality.selected_tags).map(([concept, tag]) => <div><dt>{concept}</dt><dd><code>{tag || 'unavailable'}</code></dd></div>)}</dl></details>
+            </article>;
+          })}
         </div>
-        <div class="provenance"><span>API HASH</span><code>{api.content_hash}</code><span>BUILD SHA</span><code>{buildSha}</code></div>
+      </section>
+
+      <section id="ontology" class="section-block">
+        <div class="section-heading"><div><p>08 / DATABASE & ONTOLOGY</p><h2>画面の裏側を、<br /><em>機械可読な関係モデルにする。</em></h2></div><p class="section-note">表示カードだけでなく、fact・concept・metric・evaluation・evidenceを独立テーブルとして公開します。</p></div>
+        <div class="database-strip"><div><span>ISSUERS</span><strong>{database.entities.length}</strong></div><div><span>REPORTED FACTS</span><strong>{database.reported_facts.length}</strong></div><div><span>DERIVED METRICS</span><strong>{database.derived_metrics.length}</strong></div><div><span>EVALUATIONS</span><strong>{database.evaluations.length}</strong></div><div><span>EVIDENCE EDGES</span><strong>{database.evidence_edges.length}</strong></div></div>
+        <div class="ontology-layout">
+          <article><span>ENTITY TYPES</span><h3>{ontology.entity_types.length}種類</h3><div class="chip-cloud">{ontology.entity_types.map((entity) => <span title={entity.description}>{entity.label_ja}</span>)}</div></article>
+          <article><span>RELATIONSHIPS</span><h3>{ontology.relationship_types.length}種類</h3><div class="relation-list">{ontology.relationship_types.map((relation) => <code>{relation.from} —{relation.id}→ {relation.to}</code>)}</div></article>
+          <article><span>METRIC CATALOG</span><h3>{ontology.metric_catalog.length}指標</h3><div class="metric-catalog">{ontology.metric_catalog.map((metric) => <details><summary>{metric.label_ja}</summary><code>{metric.formula}</code><p>{metric.interpretation}</p></details>)}</div></article>
+        </div>
+        <div class="evidence-example"><span>根拠edgeの例</span>{database.evidence_edges.slice(0, 8).map((edge) => <code>{edge.from_id} —{edge.relationship}→ {edge.to_id}</code>)}</div>
+      </section>
+
+      <section id="benchmark" class="section-block">
+        <div class="section-heading"><div><p>09 / MARKET BENCHMARK</p><h2>他サイトの強みと、<br /><em>未実装領域を隠さない。</em></h2></div><p class="section-note">公式機能ページで確認できた範囲のみを記録しています。未接続の予想・資料・価格データは作りません。</p></div>
+        <div class="benchmark-summary"><article><span>調査サービス</span><strong>{benchmark.platforms.length}</strong><p>決算・IR・スクリーナー・品質標準</p></article><article><span>今回改善</span><strong>{benchmark.implementation_target.implemented.length}</strong><p>統合実績、同業比較、品質、評価、DB、オントロジー等</p></article><article><span>残る未接続</span><strong>{benchmark.implementation_target.remaining.length}</strong><p>予想、ガイダンス、トランスクリプト、株価、半導体KPI等</p></article><article><span>カテゴリ</span><strong>{benchmarkCategories.length}</strong><p>{benchmarkCategories.map(([category, count]) => `${category}:${count}`).join(' / ')}</p></article></div>
+        <div class="implemented-grid"><article><span>IMPLEMENTED</span><ul>{benchmark.implementation_target.implemented.map((item) => <li>{item}</li>)}</ul></article><article><span>REMAINING</span><ul>{benchmark.implementation_target.remaining.map((item) => <li>{item}</li>)}</ul></article></div>
+        <div class="platform-grid">{benchmark.platforms.map((platform) => <article><header><span>{platform.category}</span><h3>{platform.name}</h3></header><p>{platform.notable_strength}</p><div class="capabilities">{platform.capabilities.map((capability) => <span>{benchmark.capability_catalog.find((item) => item.id === capability)?.label_ja || capability}</span>)}</div><footer>{platform.sources.map((source, index) => <a href={source}>公式{index + 1} ↗</a>)}</footer></article>)}</div>
+      </section>
+
+      <section id="limits" class="section-block limits-section">
+        <div class="section-heading"><div><p>10 / ANALYTICAL BOUNDARY</p><h2>まだ言えないことを、<br /><em>データモデル上にも残す。</em></h2></div></div>
+        <div class="unsupported-grid">{ontology.unsupported_but_modeled_entity_types.map((item) => <article><span>{item.id}</span><h3>{item.id.replaceAll('_', ' ')}</h3><p>{item.reason}</p></article>)}</div>
+        <div class="boundary-grid"><p><strong>倒産確率ではない。</strong> 借換余力、信用枠、運転資本、配当、自社株買い、M&A、リース、最低購入義務は耐久年数に含めていません。</p><p><strong>コンセンサスを推定しない。</strong> 一次データ提供元が未接続のため、予想、サプライズ、目標株価、改定履歴は空欄ではなく未対応領域として管理します。</p><p><strong>会社固有KPIは次段階。</strong> HBM、CoWoS、wafer starts、utilization、backlog等は資料抽出と語彙設計が必要です。</p><p><strong>期間型を維持する。</strong> 四半期利益と年次流動性は同じ画面で比較しても、同じ期間の値として加算しません。</p></div>
+        <div class="provenance"><span>RESEARCH API HASH</span><code>{research.content_hash}</code><span>RESILIENCE API HASH</span><code>{legacyApi.content_hash}</code><span>BUILD SHA</span><code>{buildSha}</code></div>
       </section>
     </main>
 
     <script>
-      const tabs = [...document.querySelectorAll('[data-scenario-tab]')];
-      const panels = [...document.querySelectorAll('[data-scenario-panel]')];
-      tabs.forEach((tab) => tab.addEventListener('click', () => {
-        const selected = tab.dataset.scenarioTab;
-        tabs.forEach((button) => button.setAttribute('aria-selected', String(button === tab)));
-        panels.forEach((panel) => { panel.hidden = panel.dataset.scenarioPanel !== selected; });
+      const search = document.querySelector('#company-search');
+      const role = document.querySelector('#role-filter');
+      const classification = document.querySelector('#classification-filter');
+      const rows = [...document.querySelectorAll('[data-company-row]')];
+      const cards = [...document.querySelectorAll('[data-company-card]')];
+      const visibleCount = document.querySelector('#visible-count');
+      const emptyState = document.querySelector('#empty-state');
+      const applyFilters = () => {
+        const query = search.value.trim().toLowerCase();
+        const roleValue = role.value;
+        const classValue = classification.value;
+        const matches = (element) => (!query || element.dataset.search.includes(query))
+          && (roleValue === 'all' || element.dataset.role === roleValue)
+          && (classValue === 'all' || element.dataset.classification === classValue);
+        let visible = 0;
+        rows.forEach((row) => { row.hidden = !matches(row); if (!row.hidden) visible += 1; });
+        cards.forEach((card) => { card.hidden = !matches(card); });
+        visibleCount.textContent = `${visible}社表示`;
+        emptyState.hidden = visible !== 0;
+      };
+      [search, role, classification].forEach((control) => control.addEventListener('input', applyFilters));
+
+      const tbody = document.querySelector('#peer-table tbody');
+      document.querySelectorAll('[data-sort]').forEach((button) => button.addEventListener('click', () => {
+        const key = button.dataset.sort;
+        const direction = button.dataset.direction === 'desc' ? 'asc' : 'desc';
+        button.dataset.direction = direction;
+        [...tbody.querySelectorAll('tr')]
+          .sort((left, right) => (Number(left.dataset[`sort${key.split('-').map((part) => part[0].toUpperCase() + part.slice(1)).join('')}`]) - Number(right.dataset[`sort${key.split('-').map((part) => part[0].toUpperCase() + part.slice(1)).join('')}`])) * (direction === 'asc' ? 1 : -1))
+          .forEach((row) => tbody.appendChild(row));
       }));
     </script>
   </body>
@@ -191,116 +326,167 @@ const height = (company, value) => Math.max(4, Math.round(Math.abs(Number(value)
   :global(html) { scroll-behavior: smooth; }
   :global(body) { margin: 0; color: #252430; background: #fbfaf7; font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
   :global(a) { color: inherit; }
-  .resilience-page { width: min(1240px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 80px; }
-  .resilience-nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(64,55,83,.14); }
+  :global(button), :global(input), :global(select) { font: inherit; }
+  .workbench-page { width: min(1380px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 90px; }
+  .topbar { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(64,55,83,.14); }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; }
-  .brand small { font-size: .68rem; letter-spacing: .13em; color: #726c7b; }
-  .brand-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #dfe8df; color: #4f6757; }
-  nav { display: flex; gap: 18px; font-size: .82rem; font-weight: 700; }
+  .brand small { font-size: .66rem; letter-spacing: .13em; color: #726c7b; }
+  .brand-mark { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 50%; background: #dfe8df; color: #4f6757; }
+  nav { display: flex; flex-wrap: wrap; gap: 16px; font-size: .76rem; font-weight: 800; }
   nav a { text-decoration: none; }
-  .resilience-hero { min-height: 560px; display: grid; grid-template-columns: 1.5fr .65fr; gap: 64px; align-items: center; padding: 74px 0 58px; }
-  .eyebrow, .section-heading > div > p { margin: 0 0 14px; color: #76678a; font-size: .72rem; letter-spacing: .17em; font-weight: 800; }
-  h1 { margin: 0; max-width: 840px; font-family: Georgia, "Noto Serif JP", serif; font-size: clamp(3rem, 6vw, 5.8rem); line-height: 1.02; font-weight: 500; letter-spacing: -.045em; }
+  .hero { min-height: 610px; display: grid; grid-template-columns: 1.55fr .55fr; gap: 56px; align-items: center; padding: 78px 0 64px; }
+  .eyebrow, .section-heading > div > p { margin: 0 0 14px; color: #76678a; font-size: .7rem; letter-spacing: .17em; font-weight: 900; }
+  h1 { margin: 0; max-width: 900px; font-family: Georgia, "Noto Serif JP", serif; font-size: clamp(3rem, 6vw, 6rem); line-height: 1.01; font-weight: 500; letter-spacing: -.05em; }
   h1 em, h2 em { display: block; color: #8b6680; font-weight: 500; }
-  .lead { max-width: 760px; margin: 28px 0 0; color: #5d5964; font-size: 1.03rem; line-height: 1.9; }
+  .lead { max-width: 820px; margin: 28px 0 0; color: #5d5964; font-size: 1.02rem; line-height: 1.9; }
   .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
-  .hero-actions a { padding: 13px 18px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: .85rem; }
+  .hero-actions a { padding: 13px 18px; border-radius: 999px; text-decoration: none; font-weight: 850; font-size: .83rem; }
   .button-primary { color: #fff; background: #6d5d77; }
   .button-secondary { border: 1px solid rgba(64,55,83,.22); background: rgba(255,255,255,.65); }
-  .scope-card { padding: 30px; border: 1px solid rgba(64,55,83,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(232,224,240,.72), rgba(231,241,233,.72)); box-shadow: 0 24px 70px rgba(75,63,87,.08); }
-  .scope-card > span { font-size: .72rem; letter-spacing: .12em; font-weight: 800; color: #72687b; }
-  .scope-card > strong { display: block; margin: 10px 0; font-family: Georgia, serif; font-size: 4.8rem; font-weight: 500; }
-  .scope-card strong small { font-size: 1rem; }
-  .scope-card p { color: #645f68; line-height: 1.7; }
-  .scope-card dl { margin: 24px 0 0; border-top: 1px solid rgba(64,55,83,.14); }
-  .scope-card dl div { display: flex; justify-content: space-between; gap: 20px; padding: 12px 0; border-bottom: 1px solid rgba(64,55,83,.1); font-size: .76rem; }
-  .scope-card dt { color: #77717b; }
-  .scope-card dd { margin: 0; font-weight: 800; }
-  .section-block { padding: 76px 0; border-top: 1px solid rgba(64,55,83,.13); }
+  .hero-audit { padding: 30px; border: 1px solid rgba(64,55,83,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(232,224,240,.75), rgba(225,239,230,.72)); box-shadow: 0 24px 70px rgba(75,63,87,.08); }
+  .hero-audit > span, .database-strip span, .benchmark-summary span, .quality-summary span, .actuals-summary span { color: #72687b; font-size: .68rem; letter-spacing: .12em; font-weight: 900; }
+  .hero-audit > strong { display: block; margin: 8px 0; font-family: Georgia, serif; font-size: 4.8rem; font-weight: 500; }
+  .hero-audit strong small { font-size: 1rem; }
+  .hero-audit p { color: #625d68; line-height: 1.7; }
+  .hero-audit dl { margin: 20px 0 0; border-top: 1px solid rgba(64,55,83,.14); }
+  .hero-audit dl div { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(64,55,83,.1); font-size: .74rem; }
+  .hero-audit dt { color: #78717d; } .hero-audit dd { margin: 0; font-weight: 900; }
+  .section-block { padding: 78px 0; border-top: 1px solid rgba(64,55,83,.13); }
   .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 34px; }
-  h2 { margin: 0; font-family: Georgia, "Noto Serif JP", serif; font-size: clamp(2.4rem, 4vw, 4.2rem); line-height: 1.08; font-weight: 500; letter-spacing: -.035em; }
-  .section-note { max-width: 480px; margin: 0; color: #716c75; line-height: 1.7; font-size: .83rem; }
-  .definition-grid, .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .definition-grid article, .scenario-grid article { min-height: 260px; padding: 26px; border: 1px solid rgba(64,55,83,.13); border-radius: 24px; background: rgba(255,255,255,.58); }
-  .definition-grid article:nth-child(1) { background: rgba(225,239,230,.65); }
-  .definition-grid article:nth-child(2) { background: rgba(239,229,240,.62); }
-  .definition-grid article:nth-child(3) { background: rgba(244,232,225,.62); }
-  .definition-grid span, .scenario-grid > article > span { color: #756e7b; font-size: .68rem; letter-spacing: .12em; font-weight: 800; }
-  .definition-grid h3, .scenario-grid h3 { margin: 16px 0 12px; font-family: Georgia, serif; font-size: 1.9rem; font-weight: 500; }
-  .definition-grid strong { display: block; min-height: 48px; font-size: .92rem; }
-  .definition-grid p, .scenario-grid p { color: #66616a; line-height: 1.75; font-size: .84rem; }
-  .formula-strip { display: flex; justify-content: space-between; gap: 24px; margin-top: 16px; padding: 20px 24px; border-radius: 18px; background: #2e2b34; color: #fff; }
-  .formula-strip code { font-size: .9rem; }
+  h2 { margin: 0; font-family: Georgia, "Noto Serif JP", serif; font-size: clamp(2.4rem, 4vw, 4.5rem); line-height: 1.06; font-weight: 500; letter-spacing: -.04em; }
+  .section-note { max-width: 500px; margin: 0; color: #716c75; line-height: 1.75; font-size: .82rem; }
+  .logic-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .logic-flow article { min-height: 210px; padding: 22px; border: 1px solid rgba(64,55,83,.12); border-radius: 22px; background: rgba(255,255,255,.62); }
+  .logic-flow article:nth-child(1), .logic-flow article:nth-child(5) { background: rgba(225,239,230,.65); }
+  .logic-flow article:nth-child(2), .logic-flow article:nth-child(4) { background: rgba(239,229,240,.62); }
+  .logic-flow article > span { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.7); font-size: .67rem; font-weight: 900; }
+  .logic-flow h3 { margin: 24px 0 10px; font-family: Georgia, serif; font-size: 1.35rem; font-weight: 500; }
+  .logic-flow p { margin: 0; color: #68626d; line-height: 1.7; font-size: .78rem; }
+  .formula-strip { display: flex; justify-content: space-between; gap: 24px; margin-top: 14px; padding: 20px 24px; border-radius: 18px; background: #2e2b34; color: #fff; }
   .formula-strip span { color: #d8d3dc; font-size: .78rem; }
-  .scenario-grid article:nth-child(1) { background: linear-gradient(145deg, rgba(231,240,233,.75), rgba(255,255,255,.65)); }
-  .scenario-grid article:nth-child(2) { background: linear-gradient(145deg, rgba(239,229,240,.75), rgba(255,255,255,.65)); }
-  .scenario-grid article:nth-child(3) { background: linear-gradient(145deg, rgba(245,226,221,.75), rgba(255,255,255,.65)); }
-  .scenario-numbers { display: flex; flex-wrap: wrap; gap: 8px; }
-  .scenario-numbers strong { padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,.6); font-size: .78rem; }
-  .scenario-tabs { display: inline-flex; padding: 5px; margin-bottom: 20px; border: 1px solid rgba(64,55,83,.14); border-radius: 999px; background: rgba(255,255,255,.65); }
-  .scenario-tabs button { padding: 10px 17px; border: 0; border-radius: 999px; background: transparent; color: #635d68; font: inherit; font-size: .8rem; font-weight: 800; cursor: pointer; }
-  .scenario-tabs button[aria-selected="true"] { background: #6d5d77; color: #fff; }
-  .band-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
-  .band-summary article { padding: 15px 18px; border-radius: 16px; background: rgba(255,255,255,.72); border: 1px solid rgba(64,55,83,.12); }
-  .band-summary span { display: block; color: #77717a; font-size: .7rem; }
-  .band-summary strong { display: block; margin-top: 5px; font-size: 1.3rem; }
+  .quality-summary, .actuals-summary, .benchmark-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .quality-summary article, .actuals-summary article, .benchmark-summary article { padding: 20px; border: 1px solid rgba(64,55,83,.12); border-radius: 20px; background: rgba(255,255,255,.65); }
+  .quality-summary strong, .actuals-summary strong, .benchmark-summary strong { display: block; margin: 8px 0 4px; font-family: Georgia, serif; font-size: 2.1rem; font-weight: 500; }
+  .quality-summary strong small { font-size: .78rem; } .quality-summary p, .actuals-summary p, .benchmark-summary p { margin: 0; color: #716c75; font-size: .72rem; line-height: 1.55; }
+  .quality-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .quality-card { padding: 20px; border: 1px solid rgba(64,55,83,.12); border-radius: 20px; background: rgba(255,255,255,.58); }
+  .quality-card header { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
+  .quality-card header span { color: #806f8b; font-size: .68rem; font-weight: 900; letter-spacing: .12em; }
+  .quality-card h3 { margin: 4px 0 0; font-family: Georgia, serif; font-size: 1.4rem; font-weight: 500; }
+  .quality-card header > strong { font-size: 1.1rem; }
+  .quality-meter { height: 7px; margin: 15px 0; overflow: hidden; border-radius: 999px; background: #e8e4e9; }
+  .quality-meter i { display: block; height: 100%; background: #75917d; }
+  .check-list { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: .66rem; }
+  .check-pass { color: #477158; } .check-missing { color: #a05c62; }
+  .quality-card footer { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 15px; }
+  .quality-card footer span { padding: 5px 7px; border-radius: 999px; background: #f0edf1; color: #6f6874; font-size: .62rem; }
+  .peer-group-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .peer-group-grid article { padding: 25px; border-radius: 24px; background: linear-gradient(145deg, rgba(231,240,233,.7), rgba(239,229,240,.55)); border: 1px solid rgba(64,55,83,.12); }
+  .peer-group-grid > article > span { font-size: .66rem; letter-spacing: .13em; font-weight: 900; color: #776b80; }
+  .peer-group-grid h3 { margin: 10px 0 0; font-family: Georgia, serif; font-size: 1.8rem; font-weight: 500; }
+  .peer-group-grid > article > strong { display: block; margin: 10px 0; font-size: 2.5rem; }
+  .peer-group-grid strong small { font-size: .8rem; }
+  .peer-group-grid dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+  .peer-group-grid dl div { padding: 10px; border-radius: 12px; background: rgba(255,255,255,.55); }
+  .peer-group-grid dt { color: #77717a; font-size: .67rem; } .peer-group-grid dd { margin: 5px 0 0; font-weight: 900; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 14px; padding: 14px; border: 1px solid rgba(64,55,83,.12); border-radius: 18px; background: rgba(255,255,255,.6); }
+  .controls label { display: grid; gap: 5px; min-width: 180px; }
+  .controls label:first-child { flex: 1; min-width: 240px; }
+  .controls label span { color: #746e78; font-size: .66rem; font-weight: 850; }
+  .controls input, .controls select { width: 100%; padding: 10px 12px; border: 1px solid rgba(64,55,83,.16); border-radius: 11px; background: #fff; color: #302c36; font-size: .8rem; }
+  .visible-count { padding: 10px 13px; border-radius: 999px; background: #e5eee7; color: #486451; font-size: .72rem; font-weight: 900; }
   .table-wrap { overflow-x: auto; border: 1px solid rgba(64,55,83,.13); border-radius: 22px; background: rgba(255,255,255,.62); }
-  table { width: 100%; border-collapse: collapse; min-width: 1080px; }
-  th, td { padding: 15px 14px; border-bottom: 1px solid rgba(64,55,83,.1); text-align: right; white-space: nowrap; font-size: .78rem; }
-  th { color: #746e78; font-size: .67rem; letter-spacing: .05em; }
-  th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: rgba(251,250,247,.96); }
-  td:first-child strong, td:first-child span { display: block; }
-  td:first-child span { color: #807984; margin-top: 3px; font-size: .67rem; }
-  .positive { color: #3f7255; }
-  .negative { color: #9a565d; }
-  .band { display: inline-block; padding: 6px 9px; border-radius: 999px; font-size: .67rem; font-weight: 800; }
-  .band-self_funding, .band-five_years_plus { background: #dfeee4; color: #3d6c50; }
-  .band-two_to_five_years { background: #f1ead7; color: #806c34; }
-  .band-under_two_years { background: #f2dddd; color: #925158; }
-  .company-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .company-card { padding: 24px; border: 1px solid rgba(64,55,83,.13); border-radius: 24px; background: rgba(255,255,255,.62); }
-  .company-card header { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
-  .company-card header span { color: #806f8b; font-size: .7rem; letter-spacing: .12em; font-weight: 800; }
-  .company-card h3 { margin: 5px 0 0; font-family: Georgia, serif; font-size: 1.7rem; font-weight: 500; }
-  .company-card header a, .company-card footer a { font-size: .7rem; font-weight: 800; text-decoration: none; }
-  .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 22px 0; }
-  .metric-row div { min-width: 0; padding: 12px; border-radius: 13px; background: rgba(238,234,242,.55); }
-  .metric-row span, .metric-row strong { display: block; }
-  .metric-row span { color: #7d7681; font-size: .62rem; }
-  .metric-row strong { margin-top: 4px; overflow: hidden; text-overflow: ellipsis; font-size: .85rem; }
-  .trend { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; height: 150px; padding-top: 12px; border-bottom: 1px solid rgba(64,55,83,.14); }
-  .trend-year { display: flex; flex-direction: column; justify-content: end; align-items: center; gap: 7px; }
-  .bars { width: 100%; height: 112px; display: flex; align-items: end; justify-content: center; gap: 4px; }
-  .bars i { display: block; width: min(17px, 37%); min-height: 4px; border-radius: 5px 5px 1px 1px; }
-  .reserve-bar { background: #a7c7b0; }
-  .fcf-bar { background: #b8a5c7; }
-  .negative-bar { background: #d1a1a5; }
-  .trend-year > span { color: #807984; font-size: .65rem; }
-  .legend { display: flex; gap: 14px; margin-top: 10px; color: #77717b; font-size: .65rem; }
-  .legend span { display: flex; align-items: center; gap: 5px; }
-  .legend i { width: 8px; height: 8px; border-radius: 50%; }
-  .reserve-dot { background: #a7c7b0; }
-  .fcf-dot { background: #b8a5c7; }
-  .company-card footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(64,55,83,.1); color: #77717a; font-size: .68rem; }
-  .method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .method-grid p { margin: 0; padding: 20px; border-radius: 18px; background: rgba(239,235,242,.55); color: #625d66; line-height: 1.75; font-size: .82rem; }
-  .method-grid strong { color: #343039; }
-  .provenance { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; margin-top: 20px; padding: 18px; border-radius: 14px; background: #2e2b34; color: #dcd7e0; font-size: .68rem; }
-  .provenance code { overflow-wrap: anywhere; color: #fff; }
+  table { width: 100%; border-collapse: collapse; }
+  .research-table { min-width: 1320px; }
+  th, td { padding: 14px 12px; border-bottom: 1px solid rgba(64,55,83,.1); text-align: right; white-space: nowrap; font-size: .74rem; }
+  th { color: #746e78; font-size: .64rem; letter-spacing: .04em; }
+  th button { padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; font-weight: 850; }
+  th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: rgba(251,250,247,.97); z-index: 1; }
+  td strong, td span { display: block; } td span { margin-top: 3px; color: #817984; font-size: .64rem; }
+  .positive { color: #3f7255; } .negative { color: #9a565d; } .neutral { color: #6e6972; }
+  .classification { display: inline-block; padding: 6px 9px; border-radius: 999px; font-size: .64rem; font-weight: 900; }
+  .classification-resilient { background: #dfeee4; color: #3d6c50; }
+  .classification-watch { background: #f1ead7; color: #806c34; }
+  .classification-vulnerable { background: #f2dddd; color: #925158; }
+  .classification-incomplete { background: #e8e5ec; color: #6c6374; }
+  .empty-state { padding: 30px; text-align: center; color: #77717a; }
+  .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .scenario-grid article { min-height: 240px; padding: 25px; border: 1px solid rgba(64,55,83,.12); border-radius: 24px; background: rgba(255,255,255,.62); }
+  .scenario-grid article:nth-child(1) { background: rgba(225,239,230,.64); } .scenario-grid article:nth-child(2) { background: rgba(239,229,240,.64); } .scenario-grid article:nth-child(3) { background: rgba(245,226,221,.66); }
+  .scenario-grid article > span { font-size: .67rem; letter-spacing: .13em; font-weight: 900; color: #756e7b; }
+  .scenario-grid h3 { margin: 18px 0 14px; font-family: Georgia, serif; font-size: 1.9rem; font-weight: 500; }
+  .scenario-grid article div { display: flex; flex-wrap: wrap; gap: 7px; }
+  .scenario-grid article div strong { padding: 7px 9px; border-radius: 9px; background: rgba(255,255,255,.58); font-size: .75rem; }
+  .scenario-grid p { color: #68626c; line-height: 1.7; font-size: .8rem; }
+  .classification-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  .classification-summary article { padding: 18px; border: 1px solid rgba(64,55,83,.12); border-radius: 18px; background: rgba(255,255,255,.62); }
+  .classification-summary span { color: #746e78; font-size: .67rem; font-weight: 900; } .classification-summary strong { display: block; margin: 7px 0; font-size: 1.6rem; } .classification-summary strong small { font-size: .7rem; } .classification-summary p { margin: 0; color: #77717a; font-size: .68rem; line-height: 1.55; }
+  .ranking-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .ranking-card { padding: 24px; border: 1px solid rgba(64,55,83,.13); border-radius: 24px; background: rgba(255,255,255,.62); }
+  .ranking-card header { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; }
+  .rank { color: #aa9db0; font-family: Georgia, serif; font-size: 2rem; }
+  .ranking-card small { color: #806f8b; font-size: .65rem; letter-spacing: .12em; font-weight: 900; }
+  .ranking-card h3 { margin: 3px 0 0; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 500; }
+  .ranking-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0; }
+  .ranking-metrics div { padding: 11px; border-radius: 13px; background: #f4f1f4; }
+  .ranking-metrics span { display: block; color: #77717a; font-size: .63rem; } .ranking-metrics strong { display: block; margin-top: 5px; font-size: .84rem; }
+  .ranking-card ul { margin: 0 0 16px; padding-left: 18px; color: #66616a; font-size: .72rem; line-height: 1.7; }
+  .evaluation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .evaluation { display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; border-radius: 10px; font-size: .65rem; }
+  .evaluation-pass { background: #e4f0e7; color: #416d50; } .evaluation-fail { background: #f3e5dc; color: #8b5e43; } .evaluation-unknown { background: #ece9ef; color: #6f6775; }
+  .company-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .company-card { min-width: 0; padding: 24px; border: 1px solid rgba(64,55,83,.13); border-radius: 24px; background: rgba(255,255,255,.62); }
+  .company-card header { display: flex; justify-content: space-between; gap: 18px; align-items: start; }
+  .company-card header span { color: #806f8b; font-size: .66rem; letter-spacing: .1em; font-weight: 900; }
+  .company-card h3 { margin: 4px 0 0; font-family: Georgia, serif; font-size: 1.7rem; font-weight: 500; }
+  .company-card header a { font-size: .7rem; font-weight: 850; }
+  .company-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin: 18px 0; }
+  .company-kpis div { padding: 10px; border-radius: 12px; background: #f3f0f3; }
+  .company-kpis span { display: block; color: #77717a; font-size: .6rem; } .company-kpis strong { display: block; margin-top: 4px; font-size: .8rem; }
+  .history-table { overflow-x: auto; border: 1px solid rgba(64,55,83,.1); border-radius: 14px; }
+  .history-table table { min-width: 620px; } .history-table th, .history-table td { padding: 9px; font-size: .64rem; } .history-table th:first-child, .history-table td:first-child { position: static; }
+  .source-line { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 13px; color: #77717a; font-size: .65rem; }
+  .source-line a { color: #665675; font-weight: 850; }
+  .company-card details { margin-top: 14px; } .company-card summary { cursor: pointer; color: #6f6874; font-size: .7rem; font-weight: 850; }
+  .tag-list { margin: 10px 0 0; } .tag-list div { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(64,55,83,.08); font-size: .62rem; } .tag-list dt { color: #77717a; } .tag-list dd { margin: 0; overflow-wrap: anywhere; }
+  .database-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 14px; }
+  .database-strip div { padding: 16px; border-radius: 16px; background: #302c35; color: #fff; }
+  .database-strip span { color: #c7c0ca; } .database-strip strong { display: block; margin-top: 7px; font-size: 1.45rem; }
+  .ontology-layout { display: grid; grid-template-columns: 1fr 1.1fr 1.4fr; gap: 14px; }
+  .ontology-layout > article { min-height: 330px; padding: 22px; border: 1px solid rgba(64,55,83,.12); border-radius: 22px; background: rgba(255,255,255,.62); }
+  .ontology-layout > article > span, .evidence-example > span, .implemented-grid article > span { color: #776f7c; font-size: .67rem; letter-spacing: .12em; font-weight: 900; }
+  .ontology-layout h3 { margin: 12px 0 18px; font-family: Georgia, serif; font-size: 2rem; font-weight: 500; }
+  .chip-cloud { display: flex; flex-wrap: wrap; gap: 7px; } .chip-cloud span { padding: 7px 9px; border-radius: 999px; background: #e8efe9; font-size: .68rem; }
+  .relation-list { display: grid; gap: 7px; } .relation-list code { padding: 8px; border-radius: 9px; background: #f1edf2; font-size: .62rem; overflow-wrap: anywhere; }
+  .metric-catalog { max-height: 250px; overflow: auto; } .metric-catalog details { padding: 8px 0; border-bottom: 1px solid rgba(64,55,83,.08); } .metric-catalog summary { cursor: pointer; font-size: .72rem; font-weight: 850; } .metric-catalog code { display: block; margin-top: 8px; font-size: .62rem; overflow-wrap: anywhere; } .metric-catalog p { margin: 6px 0 0; color: #716b74; font-size: .67rem; line-height: 1.55; }
+  .evidence-example { display: grid; gap: 7px; margin-top: 14px; padding: 20px; border-radius: 18px; background: #2f2b34; color: #fff; } .evidence-example > span { color: #cbc4ce; } .evidence-example code { font-size: .61rem; overflow-wrap: anywhere; color: #e7e2e9; }
+  .implemented-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .implemented-grid article { padding: 22px; border-radius: 22px; border: 1px solid rgba(64,55,83,.12); background: rgba(255,255,255,.62); }
+  .implemented-grid article:first-child { background: rgba(225,239,230,.65); } .implemented-grid article:last-child { background: rgba(245,226,221,.58); }
+  .implemented-grid ul { margin: 14px 0 0; padding-left: 18px; columns: 2; color: #625d67; font-size: .73rem; line-height: 1.8; }
+  .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .platform-grid article { padding: 20px; border: 1px solid rgba(64,55,83,.12); border-radius: 20px; background: rgba(255,255,255,.58); }
+  .platform-grid header span { color: #806f8b; font-size: .62rem; letter-spacing: .1em; font-weight: 900; } .platform-grid h3 { margin: 5px 0 0; font-family: Georgia, serif; font-size: 1.45rem; font-weight: 500; }
+  .platform-grid p { min-height: 58px; color: #68626c; line-height: 1.6; font-size: .72rem; }
+  .capabilities { display: flex; flex-wrap: wrap; gap: 5px; } .capabilities span { padding: 5px 7px; border-radius: 999px; background: #f0edf1; font-size: .59rem; }
+  .platform-grid footer { display: flex; gap: 10px; margin-top: 14px; } .platform-grid footer a { font-size: .65rem; font-weight: 850; }
+  .unsupported-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .unsupported-grid article { min-height: 170px; padding: 20px; border-radius: 20px; background: rgba(245,226,221,.55); border: 1px solid rgba(64,55,83,.11); }
+  .unsupported-grid article > span { color: #8a666b; font-size: .62rem; letter-spacing: .1em; font-weight: 900; } .unsupported-grid h3 { margin: 14px 0 8px; font-family: Georgia, serif; font-size: 1.2rem; font-weight: 500; } .unsupported-grid p { margin: 0; color: #6f6669; font-size: .72rem; line-height: 1.65; }
+  .boundary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; } .boundary-grid p { margin: 0; padding: 18px; border: 1px solid rgba(64,55,83,.11); border-radius: 17px; background: rgba(255,255,255,.6); color: #67616b; line-height: 1.7; font-size: .76rem; }
+  .provenance { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; margin-top: 16px; padding: 18px; border-radius: 16px; background: #2f2b34; color: #fff; font-size: .65rem; } .provenance span { color: #c8c1ca; font-weight: 900; } .provenance code { overflow-wrap: anywhere; }
   [hidden] { display: none !important; }
-  @media (max-width: 900px) {
-    nav { display: none; }
-    .resilience-hero { grid-template-columns: 1fr; min-height: auto; gap: 30px; padding: 56px 0; }
-    .definition-grid, .scenario-grid, .company-grid { grid-template-columns: 1fr; }
-    .band-summary { grid-template-columns: repeat(2, 1fr); }
-    .section-heading { align-items: start; flex-direction: column; }
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; } .hero-audit { max-width: 600px; }
+    .logic-flow { grid-template-columns: repeat(2, 1fr); } .quality-grid, .platform-grid { grid-template-columns: repeat(2, 1fr); }
+    .ontology-layout { grid-template-columns: 1fr; } .ranking-grid, .company-grid { grid-template-columns: 1fr; }
   }
-  @media (max-width: 600px) {
-    .resilience-page { width: min(100% - 20px, 1240px); }
-    h1 { font-size: 2.85rem; }
-    .formula-strip, .company-card footer { flex-direction: column; }
-    .metric-row { grid-template-columns: 1fr; }
-    .method-grid { grid-template-columns: 1fr; }
-    .provenance { grid-template-columns: 1fr; }
+  @media (max-width: 760px) {
+    .workbench-page { width: min(100% - 20px, 1380px); } .topbar { align-items: flex-start; padding: 16px 0; } nav { display: none; }
+    .hero { padding: 55px 0; } h1 { font-size: clamp(2.7rem, 14vw, 4.5rem); }
+    .section-block { padding: 56px 0; } .section-heading { display: block; } .section-note { margin-top: 18px; }
+    .logic-flow, .quality-summary, .actuals-summary, .benchmark-summary, .quality-grid, .peer-group-grid, .scenario-grid, .classification-summary, .platform-grid, .unsupported-grid, .boundary-grid, .implemented-grid { grid-template-columns: 1fr; }
+    .database-strip { grid-template-columns: repeat(2, 1fr); } .company-kpis, .ranking-metrics { grid-template-columns: repeat(2, 1fr); }
+    .formula-strip { display: grid; } .implemented-grid ul { columns: 1; }
   }
 </style>
