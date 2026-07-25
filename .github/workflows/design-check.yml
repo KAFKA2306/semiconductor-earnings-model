@@ -43,14 +43,18 @@ jobs:
           done
           grep -F 'data-aggregation-status="computed"' site/dist/earnings/index.html
           grep -F 'data-aggregation-status="computed"' site/dist/model/index.html
-          grep -F 'RESEARCH WORKBENCH' site/dist/resilience/index.html
-          grep -F 'data-research-api-hash="build-time-placeholder"' site/dist/resilience/index.html
-          grep -F '企業検索' site/dist/resilience/index.html
-          grep -F 'DATABASE &amp; ONTOLOGY' site/dist/resilience/index.html
-          grep -F 'MARKET BENCHMARK' site/dist/resilience/index.html
           python - <<'PY'
+          from html import unescape
           from pathlib import Path
+          import re
+
           html = Path('site/dist/resilience/index.html').read_text(encoding='utf-8')
+          text = unescape(html)
+          assert 'RESEARCH WORKBENCH' in text
+          assert '企業検索' in text
+          assert 'DATABASE & ONTOLOGY' in text
+          assert 'MARKET BENCHMARK' in text
+          assert re.search(r'data-research-api-hash=["\']build-time-placeholder["\']', html)
           markers = [
               'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
               'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
