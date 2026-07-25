@@ -1,0 +1,34 @@
+{
+  "schema_version": "semiconductor-research-workbench.v2",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "source_api_hashes": {
+    "resilience": "build-time-placeholder",
+    "profit": "build-time-placeholder"
+  },
+  "summary": {
+    "company_count": 0,
+    "reported_fact_count": 0,
+    "derived_metric_count": 0,
+    "evaluation_count": 0,
+    "evidence_edge_count": 0,
+    "classification_counts": {
+      "resilient": 0,
+      "watch": 0,
+      "vulnerable": 0,
+      "incomplete": 0
+    },
+    "benchmark_platform_count": 0,
+    "implemented_capability_count": 0,
+    "remaining_capability_count": 0
+  },
+  "peer_groups": [],
+  "companies": [],
+  "database": {
+    "entities": [],
+    "reported_facts": [],
+    "derived_metrics": [],
+    "evaluations": [],
+    "evidence_edges": []
+  },
+  "content_hash": "build-time-placeholder"
+}

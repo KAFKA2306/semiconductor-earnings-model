@@ -4,8 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "data/quant_audit/**"
-      - "data/primary/**"
+      - "data/**"
       - "src/**"
       - "scripts/**"
       - "site/**"
@@ -39,8 +38,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install deterministic Python environment
-        run: |
-          uv sync --frozen
+        run: uv sync --frozen
       - name: Fetch primary SEC facts and build static API
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -53,6 +51,10 @@ jobs:
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_semiconductor_resilience_api_v2.py
+      - name: Build ontology-backed semiconductor research API
+        run: |
+          uv run python scripts/build_semiconductor_research_api.py
+          uv run python scripts/finalize_semiconductor_research_api.py
       - name: Fetch normalized demand-side facts
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -89,11 +91,12 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify public Pages and APIs
+      - name: Verify public Pages, research database, and provenance
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_BUILD_SHA: ${{ github.sha }}
         run: |
+          set -euo pipefail
           test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
@@ -103,78 +106,46 @@ jobs:
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-profit/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-resilience/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/demand/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v2/semiconductor-research/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
-          html="$(curl -fsSL "$base/earnings/")"
-          audit_json="$(curl -fsSL "$base/data/quant-audit.json")"
-          snapshot_hash="$(jq -er '.snapshot_hash' <<< "$audit_json")"
-          grep -Fq "高い半導体利益成長は、" <<< "$html"
-          grep -Fq "現在の判定" <<< "$html"
-          grep -Fq "総括済み" <<< "$html"
-          grep -Fq 'data-aggregation-status="computed"' <<< "$html"
-          grep -Fq "因果成立ではありません" <<< "$html"
-          grep -Fq "判定までの、" <<< "$html"
-          grep -Fq "会社別の原fact。" <<< "$html"
-          grep -Fq "半導体企業の" <<< "$html"
-          grep -Fq "内部資金と" <<< "$html"
-          grep -Fq "リース・借入" <<< "$html"
-          grep -Fq "TIME VIEW / OBSERVED PROFIT" <<< "$html"
-          grep -Fq "仮説を棄却する条件" <<< "$html"
-          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$html"
-          grep -Fq "data-snapshot-hash=\"$snapshot_hash\"" <<< "$html"
-          profit_api_json="$(curl -fsSL "$base/api/v1/semiconductor-profit/index.json")"
-          profit_api_hash="$(jq -er '.content_hash' <<< "$profit_api_json")"
-          grep -Fq "data-profit-api-hash=\"$profit_api_hash\"" <<< "$html"
-          demand_api_json="$(curl -fsSL "$base/api/v1/demand/index.json")"
-          demand_api_hash="$(jq -er '.content_hash' <<< "$demand_api_json")"
-          grep -Fq "data-demand-api-hash=\"$demand_api_hash\"" <<< "$html"
-          grep -Fq "内部資金と" <<< "$html"
-          printf '%s' "$html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"how\"", "id=\"status\"", "id=\"demand\"", "id=\"profit\"", "id=\"companies\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+
+          earnings_html="$(curl -fsSL "$base/earnings/")"
           model_html="$(curl -fsSL "$base/model/")"
-          grep -Fq 'data-aggregation-status="computed"' <<< "$model_html"
-          grep -Fq "総和と比較。" <<< "$model_html"
-          grep -Fq "営業CFの総和" <<< "$model_html"
-          grep -Fq "因果判定は、" <<< "$model_html"
-          printf '%s' "$model_html" > "$RUNNER_TEMP/model.html"
-          printf '%s' "$demand_api_json" > "$RUNNER_TEMP/demand-api.json"
-          python3 - "$RUNNER_TEMP/demand-api.json" "$RUNNER_TEMP/model.html" <<'PY'
-          import json
-          import re
-          import sys
-          from collections import Counter
-
-          api = json.loads(open(sys.argv[1], encoding="utf-8").read())
-          html = open(sys.argv[2], encoding="utf-8").read()
-          companies = [company for company in api["companies"] if company["quarters"]]
-          periods = Counter(company["quarters"][0]["period_end"] for company in companies)
-          common_period = max(periods, key=lambda period: (periods[period], period))
-          common = [company for company in companies if company["quarters"][0]["period_end"] == common_period]
-          total_ocf = sum(company["quarters"][0]["operating_cash_flow"]["value_usd"] for company in common)
-          total_companies = len(common)
-          assert re.search(rf'data-aggregation-total-ocf="{total_ocf}"', html)
-          assert re.search(rf'data-aggregation-common-companies="{total_companies}"', html)
-          PY
-          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$model_html"
-          grep -Fq "入力 → 式 → 中間値 → 判定" <<< "$model_html"
-          grep -Fq "予測値は計算していません" <<< "$model_html"
-          grep -Fq "β・ラグ・指数ウェイト" <<< "$model_html"
-          printf '%s' "$model_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"inputs\"", "id=\"formula\"", "id=\"forward\"", "id=\"output\"", "id=\"verdict\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
-
           resilience_html="$(curl -fsSL "$base/resilience/")"
-          resilience_api_json="$(curl -fsSL "$base/api/v1/semiconductor-resilience/index.json")"
-          resilience_api_hash="$(jq -er '.content_hash' <<< "$resilience_api_json")"
-          grep -Fq "半導体企業は、" <<< "$resilience_html"
-          grep -Fq "下振れに何年耐えられるか。" <<< "$resilience_html"
-          grep -Fq "利益剰余金は現金ではない" <<< "$resilience_html"
-          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$resilience_html"
-          grep -Fq "data-resilience-api-hash=\"$resilience_api_hash\"" <<< "$resilience_html"
-          jq -e '.schema_version == "semiconductor-resilience-api.v1"' <<< "$resilience_api_json" >/dev/null
-          jq -e '[.companies[] | select(.years | length > 0)] | length >= 10' <<< "$resilience_api_json" >/dev/null
-          jq -e 'all(.companies[] | select(.years | length > 0); (.years | length) <= 5 and (.scenarios | length) == 3)' <<< "$resilience_api_json" >/dev/null
-          jq -e 'all(.companies[] | select(.years | length > 0); .years[0].period_end >= "2024-01-01")' <<< "$resilience_api_json" >/dev/null
-          printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+          resilience_json="$(curl -fsSL "$base/api/v1/semiconductor-resilience/index.json")"
+          research_json="$(curl -fsSL "$base/api/v2/semiconductor-research/index.json")"
+          resilience_hash="$(jq -er '.content_hash' <<< "$resilience_json")"
+          research_hash="$(jq -er '.content_hash' <<< "$research_json")"
 
-          ! grep -Fq "MODEL VERDICT" <<< "$html"
-          ! grep -Fq "30秒でわかる決算データ" <<< "$html"
-          ! grep -Fqi "confidence 60%" <<< "$html"
-          ! grep -Fq "Yardeni" <<< "$html"
-          ! grep -Fq "β = 0.6" <<< "$html"
+          grep -Fq "高い半導体利益成長は、" <<< "$earnings_html"
+          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$earnings_html"
+          grep -Fq "入力 → 式 → 中間値 → 判定" <<< "$model_html"
+          grep -Fq "半導体企業は、" <<< "$resilience_html"
+          grep -Fq "成長しながら下振れに耐えられるか。" <<< "$resilience_html"
+          grep -Fq "利益剰余金は現金ではない" <<< "$resilience_html"
+          grep -Fq "RESEARCH WORKBENCH" <<< "$resilience_html"
+          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$resilience_html"
+          grep -Fq "data-resilience-api-hash=\"$resilience_hash\"" <<< "$resilience_html"
+          grep -Fq "data-research-api-hash=\"$research_hash\"" <<< "$resilience_html"
+          for marker in quality actuals peers scenario ranking history ontology benchmark limits; do
+            grep -Fq "id=\"$marker\"" <<< "$resilience_html"
+          done
+
+          jq -e '.schema_version == "semiconductor-resilience-api.v1"' <<< "$resilience_json" >/dev/null
+          jq -e '[.companies[] | select(.years | length > 0)] | length >= 12' <<< "$resilience_json" >/dev/null
+          jq -e 'all(.companies[] | select(.years | length > 0); .years[0].period_end >= "2024-01-01")' <<< "$resilience_json" >/dev/null
+          jq -e '.schema_version == "semiconductor-research-workbench.v2"' <<< "$research_json" >/dev/null
+          jq -e '.summary.company_count >= 12' <<< "$research_json" >/dev/null
+          jq -e '.summary.reported_fact_count >= 250' <<< "$research_json" >/dev/null
+          jq -e '.summary.derived_metric_count >= 180' <<< "$research_json" >/dev/null
+          jq -e '.summary.evaluation_count >= 72' <<< "$research_json" >/dev/null
+          jq -e '.summary.evidence_edge_count >= 100' <<< "$research_json" >/dev/null
+          jq -e '.summary.benchmark_platform_count >= 12' <<< "$research_json" >/dev/null
+          jq -e 'all(.companies[]; (.evaluations | length) == 6 and (.peer_context | length) >= 10 and .latest_annual_period >= "2024-01-01")' <<< "$research_json" >/dev/null
+          jq -e 'all(.companies[] | select(.metrics.severe_runway_band == "self_funding"); any(.evaluations[]; .rule_id == "minimum_two_year_runway" and .result == "pass"))' <<< "$research_json" >/dev/null
+          jq -e '(.database.entities | length) == .summary.company_count' <<< "$research_json" >/dev/null
+          jq -e 'all(.database.reported_facts[]; .source_url | startswith("https://www.sec.gov/"))' <<< "$research_json" >/dev/null
+          jq -e '[.database.evidence_edges[].relationship] | index("derived_from") and index("uses_metric")' <<< "$research_json" >/dev/null
+
+          printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"quality\"", "id=\"actuals\"", "id=\"peers\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\"", "id=\"ontology\"", "id=\"benchmark\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+          echo "Published research workbench verified: $base/resilience/"

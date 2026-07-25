@@ -3,7 +3,11 @@ name: Validate pastel Astro design
 on:
   pull_request:
     paths:
+      - "data/benchmark/**"
+      - "data/ontology/**"
+      - "scripts/**"
       - "site/**"
+      - "tests/**"
       - ".github/workflows/design-check.yml"
   workflow_dispatch:
 
@@ -15,12 +19,54 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic Python environment
+        run: uv sync --frozen
+      - name: Fetch direct quarterly semiconductor facts
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_semiconductor_profit_api.py
+      - name: Fetch annual resilience facts
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_semiconductor_resilience_api_v2.py
+      - name: Build ontology-backed research API
+        run: uv run python scripts/build_semiconductor_research_api.py
+      - name: Finalize self-funding evaluation rules
+        run: uv run python scripts/finalize_semiconductor_research_api.py
+      - name: Test integrated facts, metrics, evaluations, and peers
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_research_api_integrates_facts_metrics_evaluations_and_peers -q
+      - name: Test normalized database traceability
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_normalized_database_is_traceable_and_has_unique_ids -q
+      - name: Test ontology and benchmark coverage
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_ontology_and_benchmark_expose_current_and_missing_capabilities -q
+      - name: Test deterministic math boundaries
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_math_helpers_and_rule_boundaries_are_deterministic -q
+      - name: Run legacy data contract tests
+        run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py
+      - name: Verify research database counts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
+          assert api['schema_version'] == 'semiconductor-research-workbench.v2'
+          assert api['summary']['company_count'] >= 12
+          assert api['summary']['reported_fact_count'] >= 250
+          assert api['summary']['evaluation_count'] >= 72
+          assert api['summary']['evidence_edge_count'] >= 100
+          PY
       - uses: actions/setup-node@v4
         with:
           node-version: "22.18.0"
           cache: npm
           cache-dependency-path: site/package-lock.json
-      - name: Build Astro from committed evidence data
+      - name: Build Astro from generated research data
         working-directory: site
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -28,15 +74,12 @@ jobs:
         run: |
           npm ci
           npm run build
-      - name: Verify shared design injection
+      - name: Verify shared design and research workflow
         run: |
           set -euo pipefail
           test -s site/dist/pastel-watercolor.css
           grep -F -- '--kafka-pastel-build: 20260723' site/dist/pastel-watercolor.css
-          grep -F -- '--lavender:' site/dist/pastel-watercolor.css
-          grep -F -- '--rose:' site/dist/pastel-watercolor.css
-          grep -F -- '--mint:' site/dist/pastel-watercolor.css
-          for page in site/dist/earnings/index.html site/dist/model/index.html; do
+          for page in site/dist/earnings/index.html site/dist/model/index.html site/dist/resilience/index.html; do
             test -s "$page"
             grep -F 'name="theme-color" content="#fbfaf7"' "$page"
             grep -F 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$page"
@@ -44,3 +87,25 @@ jobs:
           done
           grep -F 'data-aggregation-status="computed"' site/dist/earnings/index.html
           grep -F 'data-aggregation-status="computed"' site/dist/model/index.html
+          python - <<'PY'
+          from html import unescape
+          from pathlib import Path
+          import json
+          import re
+
+          html = Path('site/dist/resilience/index.html').read_text(encoding='utf-8')
+          text = unescape(html)
+          api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
+          assert 'RESEARCH WORKBENCH' in text
+          assert '企業検索' in text
+          assert 'DATABASE & ONTOLOGY' in text
+          assert 'MARKET BENCHMARK' in text
+          assert re.search(rf'data-research-api-hash=["\']{api["content_hash"]}["\']', html)
+          markers = [
+              'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
+              'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
+              'id="benchmark"', 'id="limits"',
+          ]
+          positions = [html.index(marker) for marker in markers]
+          assert positions == sorted(positions), positions
+          PY

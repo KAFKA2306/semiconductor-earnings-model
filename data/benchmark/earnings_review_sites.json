@@ -1,0 +1,126 @@
+{
+  "schema_version": "earnings-review-benchmark.v1",
+  "generated_on": "2026-07-25",
+  "method": "Official product, help, and feature pages were reviewed. Capabilities list only functions explicitly described by the cited official pages.",
+  "capability_catalog": [
+    {"id":"primary_source_traceability","label_ja":"一次資料への追跡"},
+    {"id":"longitudinal_financials","label_ja":"長期財務推移"},
+    {"id":"quarterly_actuals","label_ja":"四半期実績"},
+    {"id":"analyst_estimates","label_ja":"アナリスト予想"},
+    {"id":"earnings_surprise","label_ja":"予想対実績・サプライズ"},
+    {"id":"estimate_revisions","label_ja":"予想改定履歴"},
+    {"id":"transcripts_and_slides","label_ja":"トランスクリプト・スライド"},
+    {"id":"document_search","label_ja":"文書横断検索"},
+    {"id":"document_diff","label_ja":"資料差分比較"},
+    {"id":"peer_comparison","label_ja":"同業比較"},
+    {"id":"screening","label_ja":"スクリーニング"},
+    {"id":"custom_dashboards","label_ja":"カスタムダッシュボード"},
+    {"id":"metric_definitions","label_ja":"指標定義・計算式"},
+    {"id":"export_or_api","label_ja":"エクスポート・API"},
+    {"id":"alerts","label_ja":"更新・キーワード通知"},
+    {"id":"scenario_analysis","label_ja":"シナリオ分析"},
+    {"id":"machine_readable_ontology","label_ja":"機械可読オントロジー"},
+    {"id":"data_quality_rules","label_ja":"データ品質ルール"}
+  ],
+  "platforms": [
+    {
+      "id":"quartr","name":"Quartr","category":"first_party_ir",
+      "capabilities":["primary_source_traceability","transcripts_and_slides","document_search","document_diff","export_or_api","alerts"],
+      "no_public_evidence":["analyst_estimates","earnings_surprise","estimate_revisions","scenario_analysis"],
+      "sources":["https://quartr.com/features","https://quartr.com/products/quartr-pro"],
+      "notable_strength":"話者付きトランスクリプト、スライド・提出資料検索、スライド履歴比較。"
+    },
+    {
+      "id":"bamsec","name":"BamSEC","category":"filing_workflow",
+      "capabilities":["primary_source_traceability","document_search","document_diff","screening","alerts","export_or_api"],
+      "no_public_evidence":["analyst_estimates","earnings_surprise","estimate_revisions","scenario_analysis"],
+      "sources":["https://help.bamsec.com/hc/en-us/articles/45645740053011-Getting-Started-Guide","https://help.bamsec.com/docs/compare-filings","https://help.bamsec.com/docs/similar-tables"],
+      "notable_strength":"提出資料検索、表の履歴照合、文書差分、テキスト・表への直接リンク。"
+    },
+    {
+      "id":"alphasense","name":"AlphaSense","category":"institutional_research",
+      "capabilities":["primary_source_traceability","longitudinal_financials","quarterly_actuals","analyst_estimates","transcripts_and_slides","document_search","peer_comparison","screening","custom_dashboards","export_or_api","alerts"],
+      "no_public_evidence":["machine_readable_ontology","data_quality_rules"],
+      "sources":["https://www.alpha-sense.com/platform/","https://www.alpha-sense.com/platform/generative-search/","https://prod.alpha-sense.com/platform/financial-data/"],
+      "notable_strength":"定量・定性・社内文書、標準化財務、業界KPI、コンセンサス、検索エージェントを統合。"
+    },
+    {
+      "id":"fiscal_ai","name":"Fiscal.ai / FinChat","category":"modern_terminal",
+      "capabilities":["longitudinal_financials","quarterly_actuals","analyst_estimates","estimate_revisions","transcripts_and_slides","peer_comparison","screening","custom_dashboards","export_or_api"],
+      "no_public_evidence":["document_diff","machine_readable_ontology"],
+      "sources":["https://finchat.io/","https://fiscal.ai/pricing/","https://marketing.finchat.io/pricing/"],
+      "notable_strength":"企業固有KPI、長期財務、推定値改定、可視化、比較、ダッシュボード。"
+    },
+    {
+      "id":"tikr","name":"TIKR","category":"fundamental_terminal",
+      "capabilities":["longitudinal_financials","quarterly_actuals","analyst_estimates","earnings_surprise","estimate_revisions","transcripts_and_slides","peer_comparison","screening","export_or_api","scenario_analysis"],
+      "no_public_evidence":["document_diff","machine_readable_ontology"],
+      "sources":["https://support.tikr.com/hc/en-us/sections/5636384240027-How-to-best-use-TIKR-features-and-tools","https://support.tikr.com/hc/en-us/articles/39071375390235-How-do-I-use-TIKR-s-Estimates-feature"],
+      "notable_strength":"実績・コンセンサス・サプライズ・改定履歴、グローバルスクリーナー、バリュエーションモデル。"
+    },
+    {
+      "id":"koyfin","name":"Koyfin","category":"market_terminal",
+      "capabilities":["longitudinal_financials","quarterly_actuals","analyst_estimates","transcripts_and_slides","peer_comparison","screening","custom_dashboards","export_or_api","alerts"],
+      "no_public_evidence":["document_diff","machine_readable_ontology"],
+      "sources":["https://www.koyfin.com/features/","https://www.koyfin.com/help/topic/functionality/"],
+      "notable_strength":"長期財務、自由度の高いグラフ・式・ダッシュボード、5,900超のフィルタ、相対比較。"
+    },
+    {
+      "id":"tradingview","name":"TradingView","category":"market_and_fundamentals",
+      "capabilities":["longitudinal_financials","quarterly_actuals","analyst_estimates","earnings_surprise","peer_comparison","screening","custom_dashboards","metric_definitions","alerts"],
+      "no_public_evidence":["document_diff","machine_readable_ontology"],
+      "sources":["https://www.tradingview.com/support/solutions/43000760059-how-to-read-financial-statements/","https://www.tradingview.com/support/solutions/43000785292-estimates/","https://www.tradingview.com/support/solutions/43000629790-earnings/"],
+      "notable_strength":"株価・イベント・財務を同一ビューで扱い、実績・予想・サプライズの定義を明示。"
+    },
+    {
+      "id":"simply_wall_st","name":"Simply Wall St","category":"visual_company_report",
+      "capabilities":["longitudinal_financials","analyst_estimates","peer_comparison","screening","metric_definitions","alerts"],
+      "no_public_evidence":["transcripts_and_slides","document_search","document_diff","machine_readable_ontology"],
+      "sources":["https://simplywall.st/features/stock-research","https://support.simplywall.st/hc/en-us/categories/360000146555-Company-Analysis-Report"],
+      "notable_strength":"評価・将来成長・過去実績・財務健全性・配当・経営・所有を視覚レポートへ分解。"
+    },
+    {
+      "id":"marketscreener","name":"MarketScreener","category":"consensus_portal",
+      "capabilities":["longitudinal_financials","quarterly_actuals","analyst_estimates","earnings_surprise","estimate_revisions","transcripts_and_slides","peer_comparison","screening","alerts"],
+      "no_public_evidence":["document_diff","machine_readable_ontology"],
+      "sources":["https://www.marketscreener.com/quote/stock/RENESAS-ELECTRONICS-CORPO-50914114/consensus/","https://www.marketscreener.com/quote/stock/EN-JAPAN-INC-11551516/finances/"],
+      "notable_strength":"財務3表、セグメント、コンセンサス、目標株価、予想改定、業種比較。"
+    },
+    {
+      "id":"kabutan","name":"株探","category":"japan_earnings_portal",
+      "capabilities":["primary_source_traceability","longitudinal_financials","quarterly_actuals","estimate_revisions","screening","metric_definitions","alerts"],
+      "no_public_evidence":["transcripts_and_slides","document_diff","scenario_analysis","machine_readable_ontology"],
+      "sources":["https://info.kabutan.jp/about/","https://support.kabutan.jp/hc/ja/articles/16131484892441-%E6%B1%BA%E7%AE%97-%E6%A5%AD%E7%B8%BE%E6%8E%A8%E7%A7%BB-%E9%80%9A%E6%9C%9F-3%E3%83%B5%E6%9C%88%E6%B1%BA%E7%AE%97-%E4%BB%96","https://support.kabutan.jp/hc/ja/articles/16130892613273-%E6%B1%BA%E7%AE%97-%E6%A5%AD%E7%B8%BE%E4%BF%AE%E6%AD%A3%E5%B1%A5%E6%AD%B4"],
+      "notable_strength":"決算速報、3か月実績、最大25期推移、会社予想修正履歴、進捗率、決算短信導線。"
+    },
+    {
+      "id":"irbank","name":"IRBANK","category":"japan_company_database",
+      "capabilities":["primary_source_traceability","longitudinal_financials","quarterly_actuals","document_search","peer_comparison","screening","export_or_api"],
+      "no_public_evidence":["earnings_surprise","document_diff","machine_readable_ontology"],
+      "sources":["https://corp.irbank.net/","https://corp.irbank.net/business/web/"],
+      "notable_strength":"2008年以降の国内財務・開示・イベント、自然言語スクリーニング、ノート、MCP。"
+    },
+    {
+      "id":"buffett_code","name":"バフェット・コードBusiness","category":"japan_company_database",
+      "capabilities":["longitudinal_financials","quarterly_actuals","document_search","peer_comparison","screening","export_or_api"],
+      "no_public_evidence":["earnings_surprise","document_diff","machine_readable_ontology"],
+      "sources":["https://business.buffett-code.com/"],
+      "notable_strength":"235項目のコンプス比較、2,393業種分類、IR全スライド検索、Excel・データ連携。"
+    },
+    {
+      "id":"xbrl_us","name":"XBRL US DQC","category":"data_quality_standard",
+      "capabilities":["primary_source_traceability","metric_definitions","export_or_api","machine_readable_ontology","data_quality_rules"],
+      "no_public_evidence":["analyst_estimates","transcripts_and_slides","scenario_analysis"],
+      "sources":["https://xbrl.us/home/priorities/data-quality/rules-guidance/","https://xbrl.us/home/priorities/data-quality/rules-guidance/principles/"],
+      "notable_strength":"期間・単位・ディメンション・計算関係・要素選択の機械的品質検証。"
+    }
+  ],
+  "current_product_before": {
+    "strengths":["SEC 10-K factへの直接リンク","最大5年の流動性・FCF","透明な3シナリオ","公開APIとbuild SHA","欠損値を推定しない"],
+    "material_gaps":["四半期利益と年次流動性が別ページ・別API","同業中央値・パーセンタイルなし","企業別データ品質が見えない","評価規則が構造化されていない","XBRLタグと正規化概念の関係がコードに埋没","正規化fact・metric・evaluation・evidence DBなし","検索・役割・判定フィルタなし","予想・サプライズ・改定・ガイダンス・トランスクリプト・セグメントKPI未接続","競合比の対応範囲が不透明"]
+  },
+  "implementation_target": {
+    "implemented":["年次流動性と四半期利益の統合","同業中央値とパーセンタイル","企業別データ品質フラグ","分解可能な評価規則","機械可読オントロジーと指標カタログ","正規化fact・派生指標・評価・根拠edge","企業検索とフィルタ","競合ベンチマークと未対応領域の明示"],
+    "remaining":["アナリスト予想・サプライズ・推定値改定","企業ガイダンス履歴","話者付きトランスクリプトと資料差分","株価・バリュエーション時系列","半導体固有セグメント・出荷・設備KPI","アラートとユーザー保存ビュー"]
+  }
+}
