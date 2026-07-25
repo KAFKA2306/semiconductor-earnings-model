@@ -25,12 +25,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build and validate ontology-backed research API
+      - name: Install deterministic Python environment
+        run: uv sync --frozen
+      - name: Build ontology-backed research API
+        run: uv run python scripts/build_semiconductor_research_api.py
+      - name: Finalize self-funding evaluation rules
+        run: uv run python scripts/finalize_semiconductor_research_api.py
+      - name: Run all Python contract tests
+        run: uv run python -m pytest -q
+      - name: Verify research database counts
         run: |
-          uv sync --frozen
-          uv run python scripts/build_semiconductor_research_api.py
-          uv run python scripts/finalize_semiconductor_research_api.py
-          uv run python -m pytest -q
           python - <<'PY'
           import json
           from pathlib import Path
