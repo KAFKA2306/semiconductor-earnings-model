@@ -31,8 +31,10 @@ jobs:
         run: uv run python scripts/build_semiconductor_research_api.py
       - name: Finalize self-funding evaluation rules
         run: uv run python scripts/finalize_semiconductor_research_api.py
-      - name: Run all Python contract tests
-        run: uv run python -m pytest -q
+      - name: Run research workbench contract tests
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py -q
+      - name: Run legacy data contract tests
+        run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py
       - name: Verify research database counts
         run: |
           python - <<'PY'
