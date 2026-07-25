@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Audit deployed semiconductor resilience Pages and emit compact evidence."""
+"""Audit deployed semiconductor research workbench and emit compact evidence."""
 
 from __future__ import annotations
 
+from html import unescape
 import json
 import os
+import re
 import time
 import urllib.request
 
 
 def fetch(url: str, token: str | None = None) -> bytes:
-    headers = {"Accept": "application/json", "User-Agent": "semiconductor-resilience-live-audit"}
+    headers = {"Accept": "application/json", "User-Agent": "semiconductor-research-live-audit"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
         headers["X-GitHub-Api-Version"] = "2022-11-28"
@@ -30,59 +32,121 @@ def main() -> None:
 
     html = ""
     resilience: dict = {}
+    research: dict = {}
     for attempt in range(1, 43):
         nonce = f"{audit_sha}-{attempt}-{time.time_ns()}"
         html = fetch(f"{base}/resilience/?proof={nonce}").decode("utf-8")
         resilience = json.loads(fetch(f"{base}/api/v1/semiconductor-resilience/index.json?proof={nonce}"))
-        content_hash = resilience.get("content_hash", "")
-        if f'data-build-sha="{main_sha}"' in html and content_hash and f'data-resilience-api-hash="{content_hash}"' in html:
+        research = json.loads(fetch(f"{base}/api/v2/semiconductor-research/index.json?proof={nonce}"))
+        resilience_hash = resilience.get("content_hash", "")
+        research_hash = research.get("content_hash", "")
+        if (
+            f'data-build-sha="{main_sha}"' in html
+            and resilience_hash
+            and research_hash
+            and f'data-resilience-api-hash="{resilience_hash}"' in html
+            and f'data-research-api-hash="{research_hash}"' in html
+        ):
             break
+        print(f"PROPAGATION attempt={attempt} expected_main={main_sha}")
         time.sleep(10)
     else:
         raise AssertionError(f"Live Pages never reached main SHA {main_sha}")
 
-    companies = [company for company in resilience["companies"] if company["years"]]
+    companies = research["companies"]
+    database = research["database"]
+    summary = research["summary"]
     assert resilience["schema_version"] == "semiconductor-resilience-api.v1"
-    assert len(companies) == 12, len(companies)
-    assert all(1 <= len(company["years"]) <= 5 for company in companies)
-    assert all(len(company["scenarios"]) == 3 for company in companies)
-    assert all(company["years"][0]["period_end"] >= "2024-01-01" for company in companies)
-    assert all(company["years"][0]["operating_cash_flow"]["source_url"].startswith("https://www.sec.gov/") for company in companies)
-    for marker in ("半導体企業は、", "下振れに何年耐えられるか。", "利益剰余金は現金ではない"):
-        assert marker in html
+    assert research["schema_version"] == "semiconductor-research-workbench.v2"
+    assert len(companies) == 12 == summary["company_count"]
+    assert summary["reported_fact_count"] >= 250
+    assert summary["derived_metric_count"] >= 180
+    assert summary["evaluation_count"] >= 72
+    assert summary["evidence_edge_count"] >= 100
+    assert summary["benchmark_platform_count"] >= 12
+    assert all(company["latest_annual_period"] >= "2024-01-01" for company in companies)
+    assert all(len(company["evaluations"]) == 6 for company in companies)
+    assert all(len(company["peer_context"]) >= 10 for company in companies)
+    assert all(fact["source_url"].startswith("https://www.sec.gov/") for fact in database["reported_facts"])
+    assert {edge["relationship"] for edge in database["evidence_edges"]} >= {"derived_from", "uses_metric"}
+    assert all(
+        next(item for item in company["evaluations"] if item["rule_id"] == "minimum_two_year_runway")["result"] == "pass"
+        for company in companies
+        if company["metrics"]["severe_runway_band"] == "self_funding"
+    )
 
-    bands: dict[str, int] = {}
-    results = []
+    markers = [
+        'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
+        'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
+        'id="benchmark"', 'id="limits"',
+    ]
+    positions = [html.index(marker) for marker in markers]
+    assert positions == sorted(positions)
+    visible_text = unescape(html)
+    phrases = (
+        "RESEARCH WORKBENCH",
+        "成長しながら下振れに耐えられるか。",
+        "企業検索",
+        "DATABASE & ONTOLOGY",
+        "MARKET BENCHMARK",
+        "利益剰余金は現金ではない",
+    )
+    missing_phrases = [phrase for phrase in phrases if phrase not in visible_text]
+    assert not missing_phrases, missing_phrases
+    company_row_count = len(re.findall(r"<tr[^>]*data-company-row", html))
+    company_card_count = len(re.findall(r"<article[^>]*data-company-card", html))
+    assert company_row_count == 12, company_row_count
+    assert company_card_count == 12, company_card_count
+    assert 'id="company-search"' in html
+    assert 'id="role-filter"' in html
+    assert 'id="classification-filter"' in html
+
+    classifications: dict[str, int] = {}
+    company_results = []
     for company in sorted(companies, key=lambda item: item["ticker"]):
-        latest = company["years"][0]
-        severe = next(item for item in company["scenarios"] if item["scenario_id"] == "severe")
-        bands[severe["runway_band"]] = bands.get(severe["runway_band"], 0) + 1
-        results.append({
+        classifications[company["classification"]] = classifications.get(company["classification"], 0) + 1
+        company_results.append({
             "ticker": company["ticker"],
-            "period_end": latest["period_end"],
-            "history_years": len(company["years"]),
-            "liquid_reserve_usd": latest["liquid_reserve"]["reported_value"],
-            "retained_earnings_usd": latest["retained_earnings"]["reported_value"] if latest["retained_earnings"] else None,
-            "base_fcf_usd": latest["free_cash_flow"]["reported_value"],
-            "severe_stressed_fcf_usd": severe["stressed_free_cash_flow_usd"],
-            "runway_years": severe["liquid_reserve_runway_years"],
-            "runway_band": severe["runway_band"],
-            "capex_tag": company["selected_tags"]["capital_expenditures"],
-            "sec_source": latest["operating_cash_flow"]["source_url"],
+            "classification": company["classification"],
+            "quality": company["metrics"]["data_completeness"],
+            "revenue_yoy": company["metrics"]["revenue_yoy"],
+            "operating_margin": company["metrics"]["operating_margin"],
+            "fcf_margin": company["metrics"]["free_cash_flow_margin"],
+            "severe_runway_band": company["metrics"]["severe_runway_band"],
+            "severe_runway_years": company["metrics"]["severe_runway_years"],
+            "annual_period": company["latest_annual_period"],
+            "quarter_period": company["latest_quarter_period"],
         })
 
     proof = {
         "status": "PASS",
         "pages_url": f"{base}/resilience/",
-        "api_url": f"{base}/api/v1/semiconductor-resilience/index.json",
+        "research_api_url": f"{base}/api/v2/semiconductor-research/index.json",
         "main_sha": main_sha,
-        "generated_at": resilience["generated_at"],
-        "content_hash": resilience["content_hash"],
+        "generated_at": research["generated_at"],
+        "resilience_hash": resilience["content_hash"],
+        "research_hash": research["content_hash"],
         "companies": len(companies),
-        "severe_bands": bands,
-        "results": results,
+        "reported_facts": len(database["reported_facts"]),
+        "derived_metrics": len(database["derived_metrics"]),
+        "evaluations": len(database["evaluations"]),
+        "evidence_edges": len(database["evidence_edges"]),
+        "ontology_entity_types": len(research["ontology"]["entity_types"]),
+        "ontology_relationship_types": len(research["ontology"]["relationship_types"]),
+        "benchmark_platforms": len(research["benchmark"]["platforms"]),
+        "classification_counts": classifications,
+        "view_contract": {
+            "ordered_sections": [marker.split('"')[1] for marker in markers],
+            "company_rows": company_row_count,
+            "company_cards": company_card_count,
+            "search": True,
+            "role_filter": True,
+            "classification_filter": True,
+            "sortable_peer_columns": html.count("data-sort=") >= 5,
+        },
+        "company_results": company_results,
     }
-    print("LIVE_RESILIENCE_PROOF=" + json.dumps(proof, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+    print("LIVE_RESEARCH_WORKBENCH_PROOF=" + json.dumps(proof, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
 
 
 if __name__ == "__main__":
