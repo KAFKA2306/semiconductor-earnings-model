@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+from html import unescape
 import json
 import os
+import re
 import time
 import urllib.request
 
@@ -80,17 +82,21 @@ def main() -> None:
     ]
     positions = [html.index(marker) for marker in markers]
     assert positions == sorted(positions)
-    for phrase in (
+    visible_text = unescape(html)
+    phrases = (
         "RESEARCH WORKBENCH",
         "成長しながら下振れに耐えられるか。",
         "企業検索",
-        "DATABASE &amp; ONTOLOGY",
+        "DATABASE & ONTOLOGY",
         "MARKET BENCHMARK",
         "利益剰余金は現金ではない",
-    ):
-        assert phrase in html
-    assert html.count("data-company-row") == 12
-    assert html.count("data-company-card") == 12
+    )
+    missing_phrases = [phrase for phrase in phrases if phrase not in visible_text]
+    assert not missing_phrases, missing_phrases
+    company_row_count = len(re.findall(r"<tr[^>]*data-company-row", html))
+    company_card_count = len(re.findall(r"<article[^>]*data-company-card", html))
+    assert company_row_count == 12, company_row_count
+    assert company_card_count == 12, company_card_count
     assert 'id="company-search"' in html
     assert 'id="role-filter"' in html
     assert 'id="classification-filter"' in html
@@ -130,9 +136,9 @@ def main() -> None:
         "benchmark_platforms": len(research["benchmark"]["platforms"]),
         "classification_counts": classifications,
         "view_contract": {
-            "ordered_sections": [marker[4:-1] for marker in markers],
-            "company_rows": html.count("data-company-row"),
-            "company_cards": html.count("data-company-card"),
+            "ordered_sections": [marker.split('"')[1] for marker in markers],
+            "company_rows": company_row_count,
+            "company_cards": company_card_count,
             "search": True,
             "role_filter": True,
             "classification_filter": True,
