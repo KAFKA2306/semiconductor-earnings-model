@@ -3,6 +3,8 @@ name: Validate pastel Astro design
 on:
   pull_request:
     paths:
+      - "data/benchmark/**"
+      - "data/ontology/**"
       - "site/**"
       - ".github/workflows/design-check.yml"
   workflow_dispatch:
@@ -20,7 +22,7 @@ jobs:
           node-version: "22.18.0"
           cache: npm
           cache-dependency-path: site/package-lock.json
-      - name: Build Astro from committed evidence data
+      - name: Build Astro from committed contract snapshots
         working-directory: site
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -28,15 +30,12 @@ jobs:
         run: |
           npm ci
           npm run build
-      - name: Verify shared design injection
+      - name: Verify shared design and research workflow
         run: |
           set -euo pipefail
           test -s site/dist/pastel-watercolor.css
           grep -F -- '--kafka-pastel-build: 20260723' site/dist/pastel-watercolor.css
-          grep -F -- '--lavender:' site/dist/pastel-watercolor.css
-          grep -F -- '--rose:' site/dist/pastel-watercolor.css
-          grep -F -- '--mint:' site/dist/pastel-watercolor.css
-          for page in site/dist/earnings/index.html site/dist/model/index.html; do
+          for page in site/dist/earnings/index.html site/dist/model/index.html site/dist/resilience/index.html; do
             test -s "$page"
             grep -F 'name="theme-color" content="#fbfaf7"' "$page"
             grep -F 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$page"
@@ -44,3 +43,19 @@ jobs:
           done
           grep -F 'data-aggregation-status="computed"' site/dist/earnings/index.html
           grep -F 'data-aggregation-status="computed"' site/dist/model/index.html
+          grep -F 'RESEARCH WORKBENCH' site/dist/resilience/index.html
+          grep -F 'data-research-api-hash="build-time-placeholder"' site/dist/resilience/index.html
+          grep -F '企業検索' site/dist/resilience/index.html
+          grep -F 'DATABASE &amp; ONTOLOGY' site/dist/resilience/index.html
+          grep -F 'MARKET BENCHMARK' site/dist/resilience/index.html
+          python - <<'PY'
+          from pathlib import Path
+          html = Path('site/dist/resilience/index.html').read_text(encoding='utf-8')
+          markers = [
+              'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
+              'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
+              'id="benchmark"', 'id="limits"',
+          ]
+          positions = [html.index(marker) for marker in markers]
+          assert positions == sorted(positions), positions
+          PY
