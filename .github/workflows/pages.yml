@@ -52,7 +52,9 @@ jobs:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_semiconductor_resilience_api_v2.py
       - name: Build ontology-backed semiconductor research API
-        run: uv run python scripts/build_semiconductor_research_api.py
+        run: |
+          uv run python scripts/build_semiconductor_research_api.py
+          uv run python scripts/finalize_semiconductor_research_api.py
       - name: Fetch normalized demand-side facts
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -97,9 +99,15 @@ jobs:
           set -euo pipefail
           test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
-          for route in earnings model resilience api/v1/index.json api/v1/semiconductor-profit/index.json api/v1/semiconductor-resilience/index.json api/v1/demand/index.json api/v2/semiconductor-research/index.json data/quant-audit.json; do
-            test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/$route${route##*.}" | head -c 3)" = "200" || test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/$route/")" = "200"
-          done
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/model/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/resilience/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-profit/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-resilience/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/demand/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v2/semiconductor-research/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
 
           earnings_html="$(curl -fsSL "$base/earnings/")"
           model_html="$(curl -fsSL "$base/model/")"
@@ -134,6 +142,7 @@ jobs:
           jq -e '.summary.evidence_edge_count >= 100' <<< "$research_json" >/dev/null
           jq -e '.summary.benchmark_platform_count >= 12' <<< "$research_json" >/dev/null
           jq -e 'all(.companies[]; (.evaluations | length) == 6 and (.peer_context | length) >= 10 and .latest_annual_period >= "2024-01-01")' <<< "$research_json" >/dev/null
+          jq -e 'all(.companies[] | select(.metrics.severe_runway_band == "self_funding"); any(.evaluations[]; .rule_id == "minimum_two_year_runway" and .result == "pass"))' <<< "$research_json" >/dev/null
           jq -e '(.database.entities | length) == .summary.company_count' <<< "$research_json" >/dev/null
           jq -e 'all(.database.reported_facts[]; .source_url | startswith("https://www.sec.gov/"))' <<< "$research_json" >/dev/null
           jq -e '[.database.evidence_edges[].relationship] | index("derived_from") and index("uses_metric")' <<< "$research_json" >/dev/null
