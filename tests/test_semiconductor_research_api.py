@@ -5,11 +5,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 API_PATH = ROOT / "site/public/api/v2/semiconductor-research/index.json"
-MODULE_PATH = ROOT / "scripts/build_semiconductor_research_api.py"
-spec = importlib.util.spec_from_file_location("research_builder", MODULE_PATH)
-module = importlib.util.module_from_spec(spec)
-assert spec.loader
-spec.loader.exec_module(module)
+BUILDER_PATH = ROOT / "scripts/build_semiconductor_research_api.py"
+FINALIZER_PATH = ROOT / "scripts/finalize_semiconductor_research_api.py"
+
+builder_spec = importlib.util.spec_from_file_location("research_builder", BUILDER_PATH)
+builder = importlib.util.module_from_spec(builder_spec)
+assert builder_spec.loader
+builder_spec.loader.exec_module(builder)
+
+finalizer_spec = importlib.util.spec_from_file_location("research_finalizer", FINALIZER_PATH)
+finalizer = importlib.util.module_from_spec(finalizer_spec)
+assert finalizer_spec.loader
+finalizer_spec.loader.exec_module(finalizer)
 
 
 def load_api() -> dict:
@@ -34,6 +41,11 @@ def test_research_api_integrates_facts_metrics_evaluations_and_peers():
     assert all(len(company["peer_context"]) >= 10 for company in companies)
     assert all(company["metrics"]["data_completeness"] >= 0.0 for company in companies)
     assert all(company["classification"] in {"resilient", "watch", "vulnerable", "incomplete"} for company in companies)
+    assert all(
+        next(item for item in company["evaluations"] if item["rule_id"] == "minimum_two_year_runway")["result"] == "pass"
+        for company in companies
+        if company["metrics"]["severe_runway_band"] == "self_funding"
+    )
 
 
 def test_normalized_database_is_traceable_and_has_unique_ids():
@@ -65,11 +77,12 @@ def test_ontology_and_benchmark_expose_current_and_missing_capabilities():
 
 
 def test_math_helpers_and_rule_boundaries_are_deterministic():
-    assert module.safe_divide(10, 2) == 5
-    assert module.safe_divide(10, 0) is None
-    assert round(module.cagr(121, 100, 2), 6) == 0.1
-    assert module.percentile([1.0, 2.0, 3.0], 2.0) == 0.5
-    assert module.evaluation_result("minimum_two_year_runway", 1.99) == "fail"
-    assert module.evaluation_result("minimum_two_year_runway", 2.0) == "pass"
-    assert module.evaluation_result("minimum_two_year_runway", None, self_funding=True) == "unknown"
-    assert module.evaluation_result("severe_self_funding", 0) == "pass"
+    assert builder.safe_divide(10, 2) == 5
+    assert builder.safe_divide(10, 0) is None
+    assert round(builder.cagr(121, 100, 2), 6) == 0.1
+    assert builder.percentile([1.0, 2.0, 3.0], 2.0) == 0.5
+    assert builder.evaluation_result("minimum_two_year_runway", 1.99) == "fail"
+    assert builder.evaluation_result("minimum_two_year_runway", 2.0) == "pass"
+    assert finalizer.corrected_minimum_runway_result(self_funding=True, runway_years=None) == "pass"
+    assert finalizer.corrected_minimum_runway_result(self_funding=False, runway_years=None) == "unknown"
+    assert finalizer.corrected_minimum_runway_result(self_funding=False, runway_years=1.99) == "fail"
