@@ -31,8 +31,14 @@ jobs:
         run: uv run python scripts/build_semiconductor_research_api.py
       - name: Finalize self-funding evaluation rules
         run: uv run python scripts/finalize_semiconductor_research_api.py
-      - name: Run research workbench contract tests
-        run: uv run python -m pytest tests/test_semiconductor_research_api.py -q
+      - name: Test integrated facts, metrics, evaluations, and peers
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_research_api_integrates_facts_metrics_evaluations_and_peers -q
+      - name: Test normalized database traceability
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_normalized_database_is_traceable_and_has_unique_ids -q
+      - name: Test ontology and benchmark coverage
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_ontology_and_benchmark_expose_current_and_missing_capabilities -q
+      - name: Test deterministic math boundaries
+        run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_math_helpers_and_rule_boundaries_are_deterministic -q
       - name: Run legacy data contract tests
         run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py
       - name: Verify research database counts
