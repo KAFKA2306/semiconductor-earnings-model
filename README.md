@@ -1,62 +1,72 @@
-# Primary Facts / Semiconductor Infrastructure Ledger
+# Primary Facts / Semiconductor Research Workbench
 
-SEC primary facts API → exact quarterly and annual selection → deterministic fact audit → GitHub Pages.
+SEC primary facts → exact quarterly and annual selection → normalized concepts → transparent metrics and evaluations → peer context → GitHub Pages.
 
-Public evidence:
+## Public evidence
 
-- GitHub Pages: [https://kafka2306.github.io/semiconductor-earnings-model/earnings/](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
-- [Evidence ledger](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
-- [Downside resilience / liquid-reserve runway](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
+- [Research workbench / integrated earnings and resilience view](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
+- [Research API v2 / facts, metrics, evaluations, peers, ontology, benchmark](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
+- [Primary-facts earnings ledger](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
 - [Calculation model / input → formula → intermediate value → verdict](https://kafka2306.github.io/semiconductor-earnings-model/model/)
 - [Primary API index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
-- [All primary facts](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/facts.json)
-- [Semiconductor profit API / 5-year time series](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-profit/index.json)
-- [Semiconductor resilience API / annual liquidity and downside scenarios](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-resilience/index.json)
-- [Demand-side API / normalized 5-year time series](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/demand/index.json)
-- [Quant audit JSON](https://kafka2306.github.io/semiconductor-earnings-model/data/quant-audit.json)
-- [Semiconductor issuer registry](data/primary/semiconductor_entities.json)
-- [GitHub Actions workflow](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/pages.yml)
-- [Main branch history](https://github.com/KAFKA2306/semiconductor-earnings-model/commits/main)
+- [Semiconductor profit API / up to 20 quarters](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-profit/index.json)
+- [Semiconductor resilience API / up to five annual periods](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-resilience/index.json)
+- [Demand-side API / normalized five-year time series](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/demand/index.json)
+- [Machine-readable financial research ontology](data/ontology/financial_research_ontology.json)
+- [Audited earnings-platform benchmark](data/benchmark/earnings_review_sites.json)
+- [GitHub Actions deployment contract](.github/workflows/pages.yml)
 
-The Pages site has three deliberately separate analytical routes:
+## Analytical routes
 
-- `/earnings/` is the primary-facts ledger. It shows reported revenue, operating income, operating cash flow, CapEx, periods, XBRL tags, and directly derived values such as FCF. It does not forecast earnings or invent an index total.
-- `/resilience/` is the balance-sheet and downside-sensitivity ledger. It separates retained earnings from spendable liquidity, tracks up to five annual 10-K periods, and divides liquid reserves by mechanically stressed annual cash burn. The result is a sensitivity runway, not a forecast, credit rating, default probability, or bankruptcy prediction.
-- `/model/` is the calculation boundary. It places inputs, aggregate sums, cohort comparisons, formulas, intermediate values, unknown variables, and the verdict in that order. The current state is `総括済み`: same-period OCF is summed, CapEx is stacked by reported XBRL tag, and comparable cohort burden rates are calculated. The causal customer-funding → semiconductor-profit verdict remains unestablished because external funding, semiconductor allocation, investment lag, index weights, and future margin inputs are not registered as primary facts.
+- `/earnings/` is the primary-facts ledger. It preserves reported revenue, operating income, OCF, CapEx, periods, XBRL tags, source filings, and directly derived values.
+- `/resilience/` is the integrated research workbench. It combines quarterly growth and profitability with annual FCF, liquidity, debt, peer medians and percentiles, data-quality flags, deterministic downside scenarios, explainable evaluations, source evidence, ontology, and a benchmark against other research products.
+- `/model/` is the demand-to-profit calculation boundary. It separates known inputs, formulas, intermediate values, unknown variables, and verdicts.
+
+## Research data model
+
+The v2 API deliberately separates five layers:
+
+1. **Reported fact** — direct SEC XBRL value with tag, unit, period, accession, and filing URL.
+2. **Normalized concept** — analysis concept such as revenue, operating cash flow, CapEx, cash, or retained earnings. Equivalent XBRL concepts are selected by recency and history coverage.
+3. **Derived metric** — formula-backed values including FCF, margins, YoY, CAGR, volatility, liquidity ratios, and downside runway.
+4. **Evaluation** — rule ID, input value, PASS/WATCH/UNKNOWN result, and threshold. A single opaque score is not used.
+5. **Evidence edge** — machine-readable `derived_from` and `uses_metric` relationships that connect calculations and evaluations back to evidence.
+
+The ontology also models analyst estimates, earnings surprises, guidance revisions, transcript statements, market-price observations, and segment KPIs as unsupported entity types. They remain explicitly unpopulated until reliable data sources are connected; the application does not fabricate them.
 
 ## Update contract
 
-The weekday schedule and changes to main mechanically re-fetch SEC primary facts, rebuild the static JSON APIs, validate raw values, and republish the evidence ledger.
+The weekday schedule and changes to `main` mechanically rebuild and validate the evidence chain.
 
-1. [SEC EDGAR Companyfacts](https://www.sec.gov/edgar/sec-api-documentation) is fetched for the registered public entities listed in [`data/primary/entities.json`](data/primary/entities.json).
-2. [`site/public/api/v1/index.json`](site/public/api/v1/index.json), [`site/public/api/v1/facts.json`](site/public/api/v1/facts.json), and the [company JSON endpoints](site/public/api/v1/companies/) are rebuilt.
-3. Only companies with both exact registry-mapped quarterly facts in one unique largest common period enter the cohort.
-4. [`semiconductor-profit/index.json`](site/public/api/v1/semiconductor-profit/index.json) stores up to 20 quarters of directly reported SEC revenue and operating income for the registered semiconductor issuers in [`data/primary/semiconductor_entities.json`](data/primary/semiconductor_entities.json).
-5. The profit API preserves `ambiguous` or `no_common_period` cohorts. It never invents an index-level profit total when fiscal periods do not line up, and it does not infer SOX weights.
-6. [`semiconductor-resilience/index.json`](site/public/api/v1/semiconductor-resilience/index.json) stores up to five annual 10-K periods of cash, separately reported short-term investments, retained earnings, debt, revenue, OCF, CapEx, and directly derived FCF for the same issuer registry.
-7. Resilience runway uses liquid reserve = cash plus separately reported short-term investments. Retained earnings is displayed as an accounting balance but is never treated as cash. Three common sensitivities reduce OCF and CapEx by disclosed fixed percentages; missing facts are not estimated.
-8. [`demand/index.json`](site/public/api/v1/demand/index.json) stores up to 20 quarters of hyper-scaler and data-center OCF/CapEx facts. Direct quarterly values are preferred; when only same-tag YTD or annual facts exist, the API exposes their reported-period difference as `derived_from_reported_periods` with both source facts retained.
-9. Demand bars use a within-company shared absolute maximum normalization. Raw USD values, source tags, and source filings remain available; normalization is display-only and is not a cross-company aggregate.
-10. [LangGraph](src/quant_audit_graph.py) validates and summarizes [`data/quant_audit/semiconductor_latest.json`](data/quant_audit/semiconductor_latest.json). It does not forecast semiconductor earnings.
-11. [Astro](site/src/pages/earnings.astro) builds the analytical routes and [GitHub Pages](.github/workflows/pages.yml) deploys them.
-
-Missing data is never estimated: private xAI/OpenAI/Anthropic remain excluded, and newly public SpaceX remains listed as public but has no 10-Q XBRL facts until it files them. Companies with no exact quarterly or annual fact are not forced into a cohort or chart. Capex concepts are kept by reported XBRL tag and are not combined when definitions differ. The central test is funding capacity → data-center investment → semiconductor revenue → semiconductor operating income. Unstarted leases, debt capacity, purchase commitments, AI revenue, guidance, and financing terms are not inferred by the current API. The SOX target is a reference index; the displayed time view is a bottom-up issuer ledger, not a reconstructed index earnings series. This repository currently covers the SEC registry only; it is not a global semiconductor-company database.
+1. SEC EDGAR Companyfacts is fetched for registered issuers.
+2. Quarterly semiconductor revenue and operating income are selected without forcing incompatible fiscal periods into an index total.
+3. Annual revenue, OCF, CapEx, cash, short-term investments, retained earnings, and debt are selected for up to five 10-K periods.
+4. Tag migrations such as `PaymentsToAcquireProductiveAssets` are handled through explicit equivalent-concept sets and recency-aware selection.
+5. The research builder merges annual and quarterly data without treating the two period types as additive.
+6. Peer medians and percentiles are calculated only within the registered semiconductor or semiconductor-equipment group.
+7. Company classifications are derived from disclosed evaluation rules; missing data remains `unknown`.
+8. The normalized database publishes issuers, reported facts, derived metrics, evaluations, and evidence edges.
+9. Tests validate IDs, source URLs, rules, ontology coverage, benchmark references, latest reporting periods, and self-funding runway semantics.
+10. Astro builds the static views, GitHub Pages deploys them, and the deployment job checks the live HTML SHA against both v1 and v2 API hashes.
 
 ## Local verification
 
 ```sh
 uv sync
-uv run python -m pytest -q
 : "${SEC_USER_AGENT:?set SEC_USER_AGENT to identify the real operator/contact}"
+uv run python scripts/build_primary_api.py
+uv run python scripts/build_semiconductor_profit_api.py
+uv run python scripts/build_semiconductor_resilience_api_v2.py
+uv run python scripts/build_semiconductor_research_api.py
+uv run python scripts/finalize_semiconductor_research_api.py
+uv run python scripts/build_demand_api.py
 uv run python scripts/build_model_snapshot.py
 uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
-uv run python scripts/build_semiconductor_profit_api.py
-uv run python scripts/build_semiconductor_resilience_api.py
-uv run python scripts/build_demand_api.py
+uv run python -m pytest -q
 npm --prefix site ci
 GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local npm --prefix site run build
 ```
 
-`SEC_USER_AGENT` is required and must identify the real operator/contact. A failed fetch, ambiguous fact selection, failed contract test, invalid snapshot, failed Astro build, or failed public smoke test stops deployment.
+`SEC_USER_AGENT` must identify the real operator/contact. A failed fetch, stale period, invalid ontology, broken evidence edge, failed test, invalid Astro build, or failed public smoke test stops deployment.
 
 This is not investment advice.
