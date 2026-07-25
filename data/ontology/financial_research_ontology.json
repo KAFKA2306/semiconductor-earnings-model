@@ -1,0 +1,82 @@
+{
+  "schema_version": "financial-research-ontology.v1",
+  "title": "Semiconductor Financial Research Ontology",
+  "design_principles": [
+    "Separate reported facts, normalized concepts, derived metrics, scenarios, evaluations, and narrative claims.",
+    "Preserve the original XBRL tag, reporting period, unit, filing accession, and source URL for every reported fact.",
+    "Treat annual, quarterly, instant, duration, actual, estimate, guidance, and scenario values as different semantic classes.",
+    "Never silently replace missing facts with peer averages or model estimates.",
+    "Every derived metric must declare its formula and evidence dependencies.",
+    "Every evaluation must expose its rule, threshold, result, and supporting metrics."
+  ],
+  "entity_types": [
+    {"id":"issuer","label_ja":"発行体","description":"法的な報告主体。CIK、名称、事業分類を持つ。"},
+    {"id":"security","label_ja":"証券","description":"ティッカーや市場に紐づく投資対象。発行体とは分離する。"},
+    {"id":"peer_group","label_ja":"同業群","description":"比較目的と分類根拠を明示した企業集合。"},
+    {"id":"reporting_period","label_ja":"報告期間","description":"開始日・終了日・期間型・会計年度を持つ。"},
+    {"id":"reported_fact","label_ja":"報告fact","description":"SEC提出資料に直接記載されたXBRL値。"},
+    {"id":"normalized_concept","label_ja":"正規化概念","description":"複数のXBRLタグを比較可能な分析概念へ束ねる。"},
+    {"id":"derived_metric","label_ja":"派生指標","description":"報告factから透明な式で計算した値。"},
+    {"id":"scenario","label_ja":"シナリオ","description":"入力変化率と計算境界を持つ機械的感応度。"},
+    {"id":"evaluation","label_ja":"評価規則","description":"閾値・結果・根拠を分解した判定。"},
+    {"id":"evidence","label_ja":"根拠","description":"提出資料、API、計算式、品質検証への参照。"},
+    {"id":"document","label_ja":"文書","description":"10-K、10-Q、8-K、決算資料、トランスクリプト等。"},
+    {"id":"claim","label_ja":"分析主張","description":"根拠と反証条件を持つ説明文。"}
+  ],
+  "relationship_types": [
+    {"id":"issued_by","from":"security","to":"issuer"},
+    {"id":"member_of","from":"issuer","to":"peer_group"},
+    {"id":"reported_for","from":"reported_fact","to":"reporting_period"},
+    {"id":"maps_to","from":"reported_fact","to":"normalized_concept"},
+    {"id":"derived_from","from":"derived_metric","to":"reported_fact"},
+    {"id":"evaluates","from":"evaluation","to":"issuer"},
+    {"id":"uses_metric","from":"evaluation","to":"derived_metric"},
+    {"id":"supported_by","from":"claim","to":"evidence"},
+    {"id":"disclosed_in","from":"reported_fact","to":"document"},
+    {"id":"compared_with","from":"derived_metric","to":"peer_group"}
+  ],
+  "normalized_concepts": [
+    {"id":"revenue","statement":"income_statement","period_type":"duration","unit":"USD","direction":"higher_contextual","label_ja":"売上高"},
+    {"id":"operating_income","statement":"income_statement","period_type":"duration","unit":"USD","direction":"higher_better","label_ja":"営業利益"},
+    {"id":"operating_cash_flow","statement":"cash_flow","period_type":"duration","unit":"USD","direction":"higher_better","label_ja":"営業キャッシュフロー"},
+    {"id":"capital_expenditures","statement":"cash_flow","period_type":"duration","unit":"USD","direction":"contextual","label_ja":"設備投資"},
+    {"id":"cash","statement":"balance_sheet","period_type":"instant","unit":"USD","direction":"higher_contextual","label_ja":"現金・現金同等物"},
+    {"id":"short_term_investments","statement":"balance_sheet","period_type":"instant","unit":"USD","direction":"higher_contextual","label_ja":"短期運用資産"},
+    {"id":"retained_earnings","statement":"balance_sheet","period_type":"instant","unit":"USD","direction":"contextual","label_ja":"利益剰余金"},
+    {"id":"total_debt","statement":"balance_sheet","period_type":"instant","unit":"USD","direction":"lower_contextual","label_ja":"有利子負債"}
+  ],
+  "metric_catalog": [
+    {"id":"free_cash_flow","label_ja":"FCF","formula":"operating_cash_flow - abs(capital_expenditures)","unit":"USD","scope":"annual","interpretation":"投資後の内部資金創出額。"},
+    {"id":"free_cash_flow_margin","label_ja":"FCFマージン","formula":"free_cash_flow / revenue","unit":"ratio","scope":"annual_latest","interpretation":"売上から投資後キャッシュへ転換する効率。"},
+    {"id":"operating_margin","label_ja":"営業利益率","formula":"operating_income / revenue","unit":"ratio","scope":"quarter_latest","interpretation":"直近四半期の本業利益率。"},
+    {"id":"revenue_yoy","label_ja":"売上高YoY","formula":"latest_quarter_revenue / prior_year_same_fiscal_period_revenue - 1","unit":"ratio","scope":"quarter_latest","interpretation":"季節性を考慮した成長率。"},
+    {"id":"operating_income_yoy","label_ja":"営業利益YoY","formula":"latest_quarter_operating_income / prior_year_same_fiscal_period_operating_income - 1","unit":"ratio","scope":"quarter_latest","interpretation":"利益成長。ただし前年がゼロ近傍の場合は非表示。"},
+    {"id":"operating_margin_delta_bps","label_ja":"営業利益率前年差","formula":"(latest_operating_margin - prior_year_operating_margin) * 10000","unit":"basis_points","scope":"quarter_latest","interpretation":"収益性の改善・悪化。"},
+    {"id":"liquid_reserve","label_ja":"流動性準備","formula":"cash + separately_reported_short_term_investments","unit":"USD","scope":"annual","interpretation":"ストレス時に使用可能とみなす流動資産。"},
+    {"id":"net_liquidity","label_ja":"純流動性","formula":"liquid_reserve - total_debt","unit":"USD","scope":"annual_latest","interpretation":"流動性から有利子負債を控除した余裕。"},
+    {"id":"liquidity_to_revenue","label_ja":"流動性売上比","formula":"liquid_reserve / revenue","unit":"ratio","scope":"annual_latest","interpretation":"事業規模に対する流動性。"},
+    {"id":"capex_intensity","label_ja":"設備投資負担率","formula":"abs(capital_expenditures) / revenue","unit":"ratio","scope":"annual_latest","interpretation":"売上に対する設備投資負担。"},
+    {"id":"positive_fcf_ratio","label_ja":"FCF黒字年比率","formula":"positive_free_cash_flow_years / available_history_years","unit":"ratio","scope":"annual_history","interpretation":"数年間の自己資金創出の一貫性。"},
+    {"id":"revenue_cagr","label_ja":"売上高CAGR","formula":"(latest_revenue / oldest_revenue) ** (1 / elapsed_years) - 1","unit":"ratio","scope":"annual_history","interpretation":"利用可能期間の年率成長。"},
+    {"id":"liquidity_cagr","label_ja":"流動性CAGR","formula":"(latest_liquid_reserve / oldest_liquid_reserve) ** (1 / elapsed_years) - 1","unit":"ratio","scope":"annual_history","interpretation":"流動性蓄積または減少の方向。"},
+    {"id":"fcf_margin_volatility","label_ja":"FCFマージン変動","formula":"population_standard_deviation(annual_fcf_margins)","unit":"ratio","scope":"annual_history","interpretation":"キャッシュ創出力の循環性。"},
+    {"id":"severe_runway","label_ja":"深い下振れ耐久年数","formula":"liquid_reserve / max(-severe_stressed_fcf, 0)","unit":"years_or_self_funding","scope":"scenario","interpretation":"共通ストレス条件下の機械的耐久力。"},
+    {"id":"data_completeness","label_ja":"データ充足率","formula":"available_required_fields / required_fields","unit":"ratio","scope":"quality","interpretation":"判定に必要な一次factの充足度。"}
+  ],
+  "evaluation_rules": [
+    {"id":"severe_self_funding","label_ja":"深い下振れ後もFCF黒字","metric":"severe_stressed_fcf","operator":">=","threshold":0},
+    {"id":"minimum_two_year_runway","label_ja":"最低2年の流動性耐久","metric":"severe_runway","operator":">=","threshold":2,"self_funding_passes":true},
+    {"id":"fcf_consistency","label_ja":"利用可能年の60%以上でFCF黒字","metric":"positive_fcf_ratio","operator":">=","threshold":0.6},
+    {"id":"net_liquidity_nonnegative","label_ja":"純流動性が非負","metric":"net_liquidity","operator":">=","threshold":0,"unknown_when_missing":true},
+    {"id":"operating_profitability","label_ja":"直近四半期の営業利益率が正","metric":"operating_margin","operator":">","threshold":0,"unknown_when_missing":true},
+    {"id":"minimum_data_quality","label_ja":"一次データ充足率80%以上","metric":"data_completeness","operator":">=","threshold":0.8}
+  ],
+  "unsupported_but_modeled_entity_types": [
+    {"id":"analyst_estimate","reason":"一次データ提供元が未接続。実績と混在させない。"},
+    {"id":"guidance_revision","reason":"企業ガイダンス履歴の構造化取得が未実装。"},
+    {"id":"earnings_surprise","reason":"コンセンサス推定値が未接続。"},
+    {"id":"transcript_statement","reason":"話者付きトランスクリプトが未接続。"},
+    {"id":"market_price_observation","reason":"価格・バリュエーション時系列が未接続。"},
+    {"id":"segment_kpi","reason":"半導体固有KPIのタグ・資料抽出が未実装。"}
+  ]
+}
