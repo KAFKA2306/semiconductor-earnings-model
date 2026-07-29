@@ -59,6 +59,8 @@ jobs:
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_demand_api.py
+      - name: Build repository-wide financial database
+        run: uv run python scripts/build_financial_database.py
       - name: Build same-period model snapshot
         run: uv run python scripts/build_model_snapshot.py
       - name: Run generated data contract tests
@@ -107,6 +109,8 @@ jobs:
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-resilience/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/demand/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v2/semiconductor-research/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v3/financial-database/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v3/financial-database/financial.db")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
 
           earnings_html="$(curl -fsSL "$base/earnings/")"
@@ -114,6 +118,7 @@ jobs:
           resilience_html="$(curl -fsSL "$base/resilience/")"
           resilience_json="$(curl -fsSL "$base/api/v1/semiconductor-resilience/index.json")"
           research_json="$(curl -fsSL "$base/api/v2/semiconductor-research/index.json")"
+          financial_json="$(curl -fsSL "$base/api/v3/financial-database/index.json")"
           resilience_hash="$(jq -er '.content_hash' <<< "$resilience_json")"
           research_hash="$(jq -er '.content_hash' <<< "$research_json")"
 
@@ -147,5 +152,14 @@ jobs:
           jq -e 'all(.database.reported_facts[]; .source_url | startswith("https://www.sec.gov/"))' <<< "$research_json" >/dev/null
           jq -e '[.database.evidence_edges[].relationship] | index("derived_from") and index("uses_metric")' <<< "$research_json" >/dev/null
 
+          jq -e '.schema_version == "financial-database.v3"' <<< "$financial_json" >/dev/null
+          jq -e '.audit.status == "PASS"' <<< "$financial_json" >/dev/null
+          jq -e '.audit.counts.entities == (.entities | length)' <<< "$financial_json" >/dev/null
+          jq -e '.audit.counts.observations == (.observations | length)' <<< "$financial_json" >/dev/null
+          jq -e '.audit.counts.actual_observations > 0' <<< "$financial_json" >/dev/null
+          jq -e 'all(.observations[]; (.source_url | startswith("https://")) and (.value_type | IN("actual","company_guidance","analyst_consensus","internal_estimate","scenario","market_observation")))' <<< "$financial_json" >/dev/null
+          jq -e '[.observations[].id] | length == (unique | length)' <<< "$financial_json" >/dev/null
+
           printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"quality\"", "id=\"actuals\"", "id=\"peers\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\"", "id=\"ontology\"", "id=\"benchmark\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
           echo "Published research workbench verified: $base/resilience/"
+          echo "Published financial database verified: $base/api/v3/financial-database/index.json"
