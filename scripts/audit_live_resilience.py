@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
-"""Audit deployed semiconductor research workbench and emit compact evidence."""
+"""Audit the deployed research workbench and financial database."""
 
 from __future__ import annotations
 
 from html import unescape
 import json
 import os
+from pathlib import Path
 import re
+import sqlite3
+import tempfile
 import time
 import urllib.request
 
 
 def fetch(url: str, token: str | None = None) -> bytes:
-    headers = {"Accept": "application/json", "User-Agent": "semiconductor-research-live-audit"}
+    headers = {"Accept": "application/json", "User-Agent": "financial-research-live-audit"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
         headers["X-GitHub-Api-Version"] = "2022-11-28"
@@ -33,17 +36,21 @@ def main() -> None:
     html = ""
     resilience: dict = {}
     research: dict = {}
+    financial: dict = {}
     for attempt in range(1, 43):
         nonce = f"{audit_sha}-{attempt}-{time.time_ns()}"
         html = fetch(f"{base}/resilience/?proof={nonce}").decode("utf-8")
         resilience = json.loads(fetch(f"{base}/api/v1/semiconductor-resilience/index.json?proof={nonce}"))
         research = json.loads(fetch(f"{base}/api/v2/semiconductor-research/index.json?proof={nonce}"))
+        financial = json.loads(fetch(f"{base}/api/v3/financial-database/index.json?proof={nonce}"))
         resilience_hash = resilience.get("content_hash", "")
         research_hash = research.get("content_hash", "")
+        financial_hash = financial.get("content_hash", "")
         if (
             f'data-build-sha="{main_sha}"' in html
             and resilience_hash
             and research_hash
+            and financial_hash
             and f'data-resilience-api-hash="{resilience_hash}"' in html
             and f'data-research-api-hash="{research_hash}"' in html
         ):
@@ -74,6 +81,53 @@ def main() -> None:
         for company in companies
         if company["metrics"]["severe_runway_band"] == "self_funding"
     )
+
+    allowed_value_types = {
+        "actual",
+        "company_guidance",
+        "analyst_consensus",
+        "internal_estimate",
+        "scenario",
+        "market_observation",
+    }
+    financial_counts = financial["audit"]["counts"]
+    observations = financial["observations"]
+    assert financial["schema_version"] == "financial-database.v3"
+    assert financial["audit"]["status"] == "PASS"
+    assert financial_counts["entities"] == len(financial["entities"])
+    assert financial_counts["observations"] == len(observations)
+    assert financial_counts["metrics"] == len(financial["derived_metrics"])
+    assert financial_counts["actual_observations"] > 0
+    assert financial_counts["concepts_catalogued"] >= 40
+    assert len({row["id"] for row in observations}) == len(observations)
+    assert all(row["value_type"] in allowed_value_types for row in observations)
+    assert all(row["source_url"].startswith("https://") for row in observations)
+    assert all(row["period_type"] in {"annual", "quarter", "duration", "instant", "point_in_time", "unknown"} for row in observations)
+    latest_actual_pairs = [(row["entity_id"], row["concept_id"]) for row in financial["views"]["latest_actuals"]]
+    latest_metric_pairs = [(row.get("issuer_id"), row.get("metric_id")) for row in financial["views"]["latest_metrics"]]
+    assert len(latest_actual_pairs) == len(set(latest_actual_pairs))
+    assert len(latest_metric_pairs) == len(set(latest_metric_pairs))
+
+    db_bytes = fetch(f"{base}/api/v3/financial-database/financial.db?proof={time.time_ns()}")
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        db_path = Path(temporary_directory) / "financial.db"
+        db_path.write_bytes(db_bytes)
+        connection = sqlite3.connect(db_path)
+        assert connection.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
+        table_counts = {
+            "entities": len(financial["entities"]),
+            "concepts": len(financial["catalog"]["concepts"]),
+            "sources": len(financial["sources"]),
+            "observations": len(observations),
+            "metrics": len(financial["derived_metrics"]),
+            "evaluations": len(financial["evaluations"]),
+            "evidence_edges": len(financial["evidence_edges"]),
+            "audit_issues": len(financial["audit"]["issues"]),
+        }
+        for table, expected in table_counts.items():
+            actual = connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            assert actual == expected, (table, actual, expected)
+        connection.close()
 
     markers = [
         'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
@@ -122,15 +176,22 @@ def main() -> None:
         "status": "PASS",
         "pages_url": f"{base}/resilience/",
         "research_api_url": f"{base}/api/v2/semiconductor-research/index.json",
+        "financial_api_url": f"{base}/api/v3/financial-database/index.json",
+        "financial_sqlite_url": f"{base}/api/v3/financial-database/financial.db",
         "main_sha": main_sha,
         "generated_at": research["generated_at"],
+        "financial_generated_at": financial["generated_at"],
         "resilience_hash": resilience["content_hash"],
         "research_hash": research["content_hash"],
+        "financial_hash": financial["content_hash"],
         "companies": len(companies),
         "reported_facts": len(database["reported_facts"]),
         "derived_metrics": len(database["derived_metrics"]),
         "evaluations": len(database["evaluations"]),
         "evidence_edges": len(database["evidence_edges"]),
+        "financial_counts": financial_counts,
+        "financial_sqlite_bytes": len(db_bytes),
+        "financial_sqlite_tables": table_counts,
         "ontology_entity_types": len(research["ontology"]["entity_types"]),
         "ontology_relationship_types": len(research["ontology"]["relationship_types"]),
         "benchmark_platforms": len(research["benchmark"]["platforms"]),
@@ -146,7 +207,7 @@ def main() -> None:
         },
         "company_results": company_results,
     }
-    print("LIVE_RESEARCH_WORKBENCH_PROOF=" + json.dumps(proof, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+    print("LIVE_FINANCIAL_RESEARCH_PROOF=" + json.dumps(proof, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
 
 
 if __name__ == "__main__":
