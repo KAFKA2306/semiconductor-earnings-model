@@ -5,6 +5,7 @@ on:
     paths:
       - "data/benchmark/**"
       - "data/ontology/**"
+      - "data/financial_db/**"
       - "scripts/**"
       - "site/**"
       - "tests/**"
@@ -27,6 +28,10 @@ jobs:
           python-version: "3.12"
       - name: Install deterministic Python environment
         run: uv sync --frozen
+      - name: Fetch primary SEC facts
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/build_primary_api.py
       - name: Fetch direct quarterly semiconductor facts
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -39,27 +44,42 @@ jobs:
         run: uv run python scripts/build_semiconductor_research_api.py
       - name: Finalize self-funding evaluation rules
         run: uv run python scripts/finalize_semiconductor_research_api.py
+      - name: Build normalized financial database
+        run: uv run python scripts/build_financial_database.py
       - name: Test integrated facts, metrics, evaluations, and peers
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_research_api_integrates_facts_metrics_evaluations_and_peers -q
-      - name: Test normalized database traceability
+      - name: Test normalized research database traceability
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_normalized_database_is_traceable_and_has_unique_ids -q
       - name: Test ontology and benchmark coverage
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_ontology_and_benchmark_expose_current_and_missing_capabilities -q
       - name: Test deterministic math boundaries
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_math_helpers_and_rule_boundaries_are_deterministic -q
+      - name: Test financial database JSON and SQLite contracts
+        run: uv run python -m pytest tests/test_financial_database.py -q
       - name: Run legacy data contract tests
-        run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py
-      - name: Verify research database counts
+        run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py --ignore=tests/test_financial_database.py
+      - name: Verify research and financial database counts
         run: |
           python - <<'PY'
           import json
+          import sqlite3
           from pathlib import Path
-          api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
-          assert api['schema_version'] == 'semiconductor-research-workbench.v2'
-          assert api['summary']['company_count'] >= 12
-          assert api['summary']['reported_fact_count'] >= 250
-          assert api['summary']['evaluation_count'] >= 72
-          assert api['summary']['evidence_edge_count'] >= 100
+
+          research = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
+          financial = json.loads(Path('site/public/api/v3/financial-database/index.json').read_text(encoding='utf-8'))
+          assert research['schema_version'] == 'semiconductor-research-workbench.v2'
+          assert research['summary']['company_count'] >= 12
+          assert research['summary']['reported_fact_count'] >= 250
+          assert research['summary']['evaluation_count'] >= 72
+          assert research['summary']['evidence_edge_count'] >= 100
+          assert financial['schema_version'] == 'financial-database.v3'
+          assert financial['audit']['status'] == 'PASS'
+          assert financial['audit']['counts']['entities'] == len(financial['entities'])
+          assert financial['audit']['counts']['observations'] == len(financial['observations'])
+          db = sqlite3.connect('site/public/api/v3/financial-database/financial.db')
+          assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
+          assert db.execute('SELECT COUNT(*) FROM observations').fetchone()[0] == len(financial['observations'])
+          db.close()
           PY
       - uses: actions/setup-node@v4
         with:
@@ -78,6 +98,8 @@ jobs:
         run: |
           set -euo pipefail
           test -s site/dist/pastel-watercolor.css
+          test -s site/dist/api/v3/financial-database/index.json
+          test -s site/dist/api/v3/financial-database/financial.db
           grep -F -- '--kafka-pastel-build: 20260723' site/dist/pastel-watercolor.css
           for page in site/dist/earnings/index.html site/dist/model/index.html site/dist/resilience/index.html; do
             test -s "$page"
@@ -96,11 +118,13 @@ jobs:
           html = Path('site/dist/resilience/index.html').read_text(encoding='utf-8')
           text = unescape(html)
           api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
+          financial = json.loads(Path('site/public/api/v3/financial-database/index.json').read_text(encoding='utf-8'))
           assert 'RESEARCH WORKBENCH' in text
           assert '企業検索' in text
           assert 'DATABASE & ONTOLOGY' in text
           assert 'MARKET BENCHMARK' in text
           assert re.search(rf'data-research-api-hash=["\']{api["content_hash"]}["\']', html)
+          assert financial['audit']['status'] == 'PASS'
           markers = [
               'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
               'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
