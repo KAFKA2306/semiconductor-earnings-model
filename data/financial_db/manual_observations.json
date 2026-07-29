@@ -7,7 +7,6 @@
       "entity_id",
       "concept_id",
       "value_type",
-      "value",
       "unit",
       "period_end",
       "as_of",
@@ -24,6 +23,7 @@
     "rules": [
       "Do not enter a value from memory or from an uncited secondary summary.",
       "Use one record per value, period, scope, source, and revision.",
+      "Each record requires value or at least one of value_low and value_high.",
       "Guidance ranges use value_low and value_high; do not replace a range with an undocumented midpoint.",
       "Consensus values must identify the provider and observation timestamp.",
       "Internal estimates and scenarios must include model_id, formula or assumptions, and evidence_ids.",
