@@ -1,0 +1,34 @@
+{
+  "schema_version": "financial-manual-observations.v1",
+  "policy": {
+    "purpose": "Store reviewed observations that cannot yet be obtained from an automated primary-source adapter.",
+    "required_fields": [
+      "id",
+      "entity_id",
+      "concept_id",
+      "value_type",
+      "value",
+      "unit",
+      "period_end",
+      "as_of",
+      "source_tier",
+      "source_url"
+    ],
+    "allowed_source_tiers": [
+      "primary_regulatory",
+      "primary_company",
+      "licensed_consensus",
+      "market_data",
+      "model"
+    ],
+    "rules": [
+      "Do not enter a value from memory or from an uncited secondary summary.",
+      "Use one record per value, period, scope, source, and revision.",
+      "Guidance ranges use value_low and value_high; do not replace a range with an undocumented midpoint.",
+      "Consensus values must identify the provider and observation timestamp.",
+      "Internal estimates and scenarios must include model_id, formula or assumptions, and evidence_ids.",
+      "A correction supersedes an earlier record through supersedes_id; history is never deleted silently."
+    ]
+  },
+  "observations": []
+}
