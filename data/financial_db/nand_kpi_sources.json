@@ -7,6 +7,7 @@
     "rules": [
       "Only official company domains are allowed.",
       "Preserve the reported text before converting qualitative bands to numeric intervals.",
+      "Preserve a separate official period source when the KPI document does not state an exact quarter-end date.",
       "Company guidance must match the same company, KPI, scope and reporting period as the actual before comparison.",
       "Missing or non-disclosed guidance remains missing."
     ]
@@ -24,7 +25,8 @@
           "fiscal_period": "Q4",
           "as_of": "2025-09-23",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63"
+          "source_url": "https://investors.micron.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63",
+          "period_source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8"
         },
         {
           "period_end": "2025-11-27",
@@ -32,7 +34,8 @@
           "fiscal_period": "Q1",
           "as_of": "2025-12-17",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/088991c5-a249-4f66-a0a6-258d9b66f3f9"
+          "source_url": "https://investors.micron.com/static-files/088991c5-a249-4f66-a0a6-258d9b66f3f9",
+          "period_source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-first-quarter-fiscal-2026"
         },
         {
           "period_end": "2026-02-26",
@@ -40,7 +43,8 @@
           "fiscal_period": "Q2",
           "as_of": "2026-03-18",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/e089f8c0-065d-47b8-9d02-bfa863cdb357"
+          "source_url": "https://investors.micron.com/static-files/e089f8c0-065d-47b8-9d02-bfa863cdb357",
+          "period_source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2026"
         },
         {
           "period_end": "2026-05-28",
@@ -48,7 +52,8 @@
           "fiscal_period": "Q3",
           "as_of": "2026-06-24",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe"
+          "source_url": "https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe",
+          "period_source_url": "https://investors.micron.com/node/50671"
         }
       ]
     },
