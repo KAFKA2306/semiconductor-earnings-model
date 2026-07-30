@@ -20,6 +20,7 @@ Primary filings and company disclosures → exact period selection → normalize
 - [Semiconductor resilience API / up to five annual periods](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-resilience/index.json)
 - [Demand-side API / normalized five-year time series](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/demand/index.json)
 - [Machine-readable financial research ontology](data/ontology/financial_research_ontology.json)
+- [Cross-project causal-evidence mapping](ontology/project.yaml)
 - [Financial metric and KPI catalog](data/financial_db/metric_catalog.json)
 - [Reviewed non-adapter observation ledger](data/financial_db/manual_observations.json)
 - [NAND industry entity registry](data/financial_db/industry_entities.json)
@@ -56,6 +57,22 @@ The metric catalog includes current financial statements and repeated operating 
 ### NAND operating-KPI contract
 
 NAND ASP and bit shipments are stored as explicit concepts for QoQ actuals, derived YoY, and versus comparable company guidance. Qualitative company wording is preserved in `reported_text`; numeric ranges use the versioned `qualitative-percentage-band.v1` policy. YoY is compounded from four consecutive QoQ intervals rather than summed. When a company does not disclose the same KPI for the same period as guidance, `views.nand_kpi_comparisons` reports `not_disclosed_or_not_comparable` and does not fabricate a variance.
+
+## Cross-project causal-evidence mapping
+
+[`ontology/project.yaml`](ontology/project.yaml) maps the financial domain model onto the shared sequence:
+
+```text
+SemiconductorIssuerAndIndustrySystem
+  -> filings, disclosures, production and capital-allocation processes
+  -> reported observations
+  -> normalized facts, calculated metrics, estimates and forecasts
+  -> financial and operating claims
+  -> source and formula evidence
+  -> PASS / WATCH / UNKNOWN or hypothesis decisions
+```
+
+This mapping is an upper ontology; it does not replace `data/ontology/financial_research_ontology.json`. The financial ontology remains the detailed domain vocabulary, while the project manifest defines cross-repository meanings for state, observation, model, claim, evidence, uncertainty, and decision.
 
 ## Existing semiconductor research model
 
