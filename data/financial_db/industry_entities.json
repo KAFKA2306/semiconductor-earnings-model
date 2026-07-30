@@ -1,0 +1,54 @@
+{
+  "schema_version": "financial-industry-entities.v1",
+  "source_policy": "Entity identity and IR URLs must be verified from official company or exchange pages.",
+  "entities": [
+    {
+      "id": "kioxia-holdings",
+      "type": "issuer",
+      "name": "KIOXIA Holdings Corporation",
+      "ticker": "285A",
+      "exchange": "TSE Prime",
+      "class": "public",
+      "role": "memory-manufacturer",
+      "peer_group_id": "nand-manufacturers",
+      "availability": "primary_company",
+      "official_ir_url": "https://www.kioxia-holdings.com/en-jp/ir.html"
+    },
+    {
+      "id": "sandisk",
+      "type": "issuer",
+      "name": "Sandisk Corporation",
+      "ticker": "SNDK",
+      "exchange": "Nasdaq",
+      "class": "public",
+      "role": "memory-manufacturer",
+      "peer_group_id": "nand-manufacturers",
+      "availability": "primary_company",
+      "official_ir_url": "https://investor.sandisk.com/"
+    },
+    {
+      "id": "samsung-electronics",
+      "type": "issuer",
+      "name": "Samsung Electronics Co., Ltd.",
+      "ticker": "005930",
+      "exchange": "Korea Exchange",
+      "class": "public",
+      "role": "memory-manufacturer",
+      "peer_group_id": "nand-manufacturers",
+      "availability": "primary_company",
+      "official_ir_url": "https://www.samsung.com/global/ir/"
+    },
+    {
+      "id": "sk-hynix",
+      "type": "issuer",
+      "name": "SK hynix Inc.",
+      "ticker": "000660",
+      "exchange": "Korea Exchange",
+      "class": "public",
+      "role": "memory-manufacturer",
+      "peer_group_id": "nand-manufacturers",
+      "availability": "primary_company",
+      "official_ir_url": "https://news.skhynix.com/category/ir/"
+    }
+  ]
+}
