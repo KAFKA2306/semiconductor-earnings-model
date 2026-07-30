@@ -1,0 +1,84 @@
+project:
+  id: kafka:semiconductor-earnings-model
+  name: Primary Facts / Financial Research Workbench
+  repository: https://github.com/KAFKA2306/semiconductor-earnings-model
+  pages: https://kafka2306.github.io/semiconductor-earnings-model/
+  version: 0.1.0
+  updated: 2026-07-30
+  core_ontology: https://raw.githubusercontent.com/KAFKA2306/know/main/ontology/causal-evidence-core.yaml
+  schema: https://raw.githubusercontent.com/KAFKA2306/know/main/ontology/project.schema.json
+
+purpose:
+  problem: Transform primary filings and company disclosures into period-correct, source-traceable semiconductor facts, metrics, forecasts, and evaluations.
+  intended_decisions: [PASS, WATCH, UNKNOWN, hypothesis_supported, hypothesis_rejected, update_required]
+  success_conditions:
+    - Reported facts retain issuer, period, unit, concept, filing, and source URL.
+    - Actual, guidance, consensus, internal estimate, scenario, and market observations remain distinct.
+    - Derived metrics expose formulas and upstream evidence edges.
+    - NAND ASP and bit-shipment comparisons preserve comparability and non-disclosure states.
+  falsification_conditions:
+    - Incompatible periods or semantic value classes are silently mixed.
+    - A derived metric lacks upstream facts or formula identity.
+    - Missing company disclosure is converted into a fabricated numeric value.
+    - Live Pages or API artifacts differ from the validated build.
+
+scope:
+  included: [issuer identity, filings, company disclosures, financial observations, operating KPIs, derived metrics, scenarios, evaluations, evidence edges, audit issues]
+  excluded: [unsupported estimates, unlicensed consensus redistribution, opaque composite scores, investment recommendations]
+  temporal: Annual, quarterly, duration, instant, as-of, revision, and publication times are explicit.
+  abstraction_level: Evidence-first financial research database and deterministic analytical workbench.
+
+competency_questions:
+  - What was directly reported, by whom, for which period, unit, scope, and filing?
+  - Which values are calculated, estimated, guided, forecast, scenario-based, or market-observed?
+  - Which upstream observations and formulas produced each metric and evaluation?
+  - Are NAND ASP and bit-shipment QoQ, YoY, and guidance comparisons semantically comparable?
+  - Which records are missing, stale, conflicting, malformed, or unsupported?
+
+domain_mapping:
+  System: SemiconductorIssuerAndIndustrySystem
+  State: [financial position, production capacity, utilization, inventory, demand state, contract state, market state]
+  Action: [capital expenditure, production adjustment, pricing, contracting, financing, model update]
+  Process: [filing, disclosure, data acquisition, normalization, metric calculation, scenario simulation, peer comparison, publication]
+  Observation: [reported financial fact, operating KPI, company guidance, analyst consensus, market observation]
+  Model: [concept normalization, NAND KPI normalization, earnings model, downside scenario, peer benchmark]
+  Requirement: [source traceability, period correctness, unit correctness, value-class separation, formula transparency, live-build integrity]
+  Claim: [reported performance, growth, capacity expansion, self-funding ability, downside resilience, valuation hypothesis]
+  Evidence: [SEC filing, official IR disclosure, normalized observation, formula edge, audit record, content hash]
+  Decision: [PASS, WATCH, UNKNOWN, hypothesis_supported, hypothesis_rejected, update_required]
+
+aims_and_evidence: null
+claims_and_evidence:
+  assertion_types: [ObservedFact, ReportedFact, CalculatedValue, ModelEstimate, Forecast, Assumption, Hypothesis, DecisionAssertion]
+  required_evidence:
+    ReportedFact: [source URL, issuer, period, unit, scope, source concept or wording]
+    CalculatedValue: [formula, upstream observation IDs, calculation version]
+    ModelEstimate: [model version, inputs, as-of date, uncertainty status]
+    Evaluation: [rule ID, threshold, supporting metrics, result]
+  unknown_policy: Non-disclosure, missing comparability, stale periods, or absent evidence remains UNKNOWN or not_disclosed_or_not_comparable.
+
+decision_rules:
+  - id: source-backed-fact
+    when: A value has an allowed source, exact period, unit, scope, and concept or wording.
+    result: accepted_observation
+  - id: unsupported-or-incomparable
+    when: Required provenance is absent or periods and value classes are not comparable.
+    result: UNKNOWN
+  - id: deterministic-evaluation
+    when: A versioned rule and all required supporting metrics are present.
+    result: PASS_or_WATCH_or_UNKNOWN
+  - id: publication-gate
+    when: Tests, ontology checks, database integrity, build, and live content-hash checks pass.
+    result: PASS
+
+provenance:
+  sources: [SEC EDGAR, official company IR disclosures, reviewed source registries, explicit models]
+  generated_artifacts: [JSON APIs, SQLite database, Pages views, calculation snapshots, audit reports]
+  agents: [data adapters, Python builders, pytest, Astro, GitHub Actions, human reviewer]
+  lineage: Evidence edges connect calculations and evaluations to exact observations, sources, periods, and versions.
+
+validation:
+  structural: JSON schema, database row and key checks, SQLite integrity, source URL and ID validation.
+  semantic: Period type, value class, unit, concept, scope, revision, and NAND comparability checks.
+  evidence: Formula lineage, source wording, filing links, evaluation inputs, and audit-issue generation.
+  publication: README Pages URL, Astro build, deployed HTML SHA, and all v1/v2/v3 API outputs are verified.
