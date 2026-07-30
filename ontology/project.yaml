@@ -47,7 +47,6 @@ domain_mapping:
   Evidence: [SEC filing, official IR disclosure, normalized observation, formula edge, audit record, content hash]
   Decision: [PASS, WATCH, UNKNOWN, hypothesis_supported, hypothesis_rejected, update_required]
 
-aims_and_evidence: null
 claims_and_evidence:
   assertion_types: [ObservedFact, ReportedFact, CalculatedValue, ModelEstimate, Forecast, Assumption, Hypothesis, DecisionAssertion]
   required_evidence:
