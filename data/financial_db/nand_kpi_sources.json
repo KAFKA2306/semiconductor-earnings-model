@@ -1,0 +1,94 @@
+{
+  "schema_version": "nand-kpi-source-registry.v1",
+  "policy": {
+    "purpose": "Discover and parse NAND ASP and bit-shipment disclosures from official company investor-relations materials.",
+    "allowed_source_tiers": ["primary_company"],
+    "allowed_document_types": ["earnings_prepared_remarks", "earnings_presentation", "earnings_release"],
+    "rules": [
+      "Only official company domains are allowed.",
+      "Preserve the reported text before converting qualitative bands to numeric intervals.",
+      "Company guidance must match the same company, KPI, scope and reporting period as the actual before comparison.",
+      "Missing or non-disclosed guidance remains missing."
+    ]
+  },
+  "sources": [
+    {
+      "entity_id": "micron",
+      "adapter": "micron_prepared_remarks",
+      "official_domains": ["investors.micron.com"],
+      "discovery_urls": ["https://investors.micron.com/quarterly-results"],
+      "documents": [
+        {
+          "period_end": "2025-08-28",
+          "fiscal_year": 2025,
+          "fiscal_period": "Q4",
+          "as_of": "2025-09-23",
+          "document_type": "earnings_prepared_remarks",
+          "source_url": "https://investors.micron.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63"
+        },
+        {
+          "period_end": "2025-11-27",
+          "fiscal_year": 2026,
+          "fiscal_period": "Q1",
+          "as_of": "2025-12-17",
+          "document_type": "earnings_prepared_remarks",
+          "source_url": "https://investors.micron.com/static-files/088991c5-a249-4f66-a0a6-258d9b66f3f9"
+        },
+        {
+          "period_end": "2026-02-26",
+          "fiscal_year": 2026,
+          "fiscal_period": "Q2",
+          "as_of": "2026-03-18",
+          "document_type": "earnings_prepared_remarks",
+          "source_url": "https://investors.micron.com/static-files/e089f8c0-065d-47b8-9d02-bfa863cdb357"
+        },
+        {
+          "period_end": "2026-05-28",
+          "fiscal_year": 2026,
+          "fiscal_period": "Q3",
+          "as_of": "2026-06-24",
+          "document_type": "earnings_prepared_remarks",
+          "source_url": "https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe"
+        }
+      ]
+    },
+    {
+      "entity_id": "kioxia-holdings",
+      "adapter": "generic_nand_disclosure",
+      "official_domains": ["www.kioxia-holdings.com", "ssl4.eir-parts.net"],
+      "discovery_urls": [
+        "https://www.kioxia-holdings.com/en-jp/ir/library/presentation.html",
+        "https://www.kioxia-holdings.com/en-jp/ir/library/data.html",
+        "https://www.kioxia-holdings.com/en-jp/ir/news.html"
+      ],
+      "documents": []
+    },
+    {
+      "entity_id": "sandisk",
+      "adapter": "generic_nand_disclosure",
+      "official_domains": ["investor.sandisk.com"],
+      "discovery_urls": [
+        "https://investor.sandisk.com/",
+        "https://investor.sandisk.com/financial-information/quarterly-results"
+      ],
+      "documents": []
+    },
+    {
+      "entity_id": "samsung-electronics",
+      "adapter": "generic_nand_disclosure",
+      "official_domains": ["www.samsung.com", "news.samsung.com"],
+      "discovery_urls": [
+        "https://www.samsung.com/global/ir/financial-information/earnings-release/",
+        "https://news.samsung.com/global/tag/earnings"
+      ],
+      "documents": []
+    },
+    {
+      "entity_id": "sk-hynix",
+      "adapter": "generic_nand_disclosure",
+      "official_domains": ["news.skhynix.com", "www.skhynix.com"],
+      "discovery_urls": ["https://news.skhynix.com/category/ir/"],
+      "documents": []
+    }
+  ]
+}
