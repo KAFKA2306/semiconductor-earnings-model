@@ -9,7 +9,10 @@ on:
       - "scripts/**"
       - "site/**"
       - "tests/**"
+      - "docs/**"
+      - "README.md"
       - ".github/workflows/design-check.yml"
+      - ".github/workflows/nand-kpi-update.yml"
   workflow_dispatch:
 
 permissions:
@@ -28,6 +31,10 @@ jobs:
           python-version: "3.12"
       - name: Install deterministic Python environment
         run: uv sync --frozen
+      - name: Verify README exposes the live GitHub Pages URL
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: uv run python scripts/check_readme_pages_link.py
       - name: Fetch primary SEC facts
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -44,8 +51,8 @@ jobs:
         run: uv run python scripts/build_semiconductor_research_api.py
       - name: Finalize self-funding evaluation rules
         run: uv run python scripts/finalize_semiconductor_research_api.py
-      - name: Build normalized financial database
-        run: uv run python scripts/build_financial_database.py
+      - name: Build Financial Database v3 with NAND operating KPIs
+        run: uv run python scripts/build_financial_database_with_nand.py
       - name: Test integrated facts, metrics, evaluations, and peers
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_research_api_integrates_facts_metrics_evaluations_and_peers -q
       - name: Test normalized research database traceability
@@ -54,11 +61,13 @@ jobs:
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_ontology_and_benchmark_expose_current_and_missing_capabilities -q
       - name: Test deterministic math boundaries
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_math_helpers_and_rule_boundaries_are_deterministic -q
+      - name: Test NAND KPI parsing, comparison, JSON, and SQLite contracts
+        run: uv run python -m pytest tests/test_nand_kpi_pipeline.py -q
       - name: Test financial database JSON and SQLite contracts
         run: uv run python -m pytest tests/test_financial_database.py -q
       - name: Run legacy data contract tests
-        run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py --ignore=tests/test_financial_database.py
-      - name: Verify research and financial database counts
+        run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py --ignore=tests/test_financial_database.py --ignore=tests/test_nand_kpi_pipeline.py
+      - name: Verify research, NAND, and financial database counts
         run: |
           python - <<'PY'
           import json
@@ -73,12 +82,17 @@ jobs:
           assert research['summary']['evaluation_count'] >= 72
           assert research['summary']['evidence_edge_count'] >= 100
           assert financial['schema_version'] == 'financial-database.v3'
+          assert 'nand-operating-kpis.v1' in financial['extensions']
           assert financial['audit']['status'] == 'PASS'
           assert financial['audit']['counts']['entities'] == len(financial['entities'])
           assert financial['audit']['counts']['observations'] == len(financial['observations'])
+          assert financial['audit']['counts']['nand_actual_observations'] >= 8
+          assert financial['audit']['counts']['nand_derived_observations'] >= 2
+          assert len(financial['views']['nand_kpi_comparisons']) >= 4
           db = sqlite3.connect('site/public/api/v3/financial-database/financial.db')
           assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
           assert db.execute('SELECT COUNT(*) FROM observations').fetchone()[0] == len(financial['observations'])
+          assert db.execute("SELECT COUNT(*) FROM observations WHERE concept_id LIKE 'nand_%'").fetchone()[0] >= 10
           db.close()
           PY
       - uses: actions/setup-node@v4
@@ -125,6 +139,8 @@ jobs:
           assert 'MARKET BENCHMARK' in text
           assert re.search(rf'data-research-api-hash=["\']{api["content_hash"]}["\']', html)
           assert financial['audit']['status'] == 'PASS'
+          assert 'nand-operating-kpis.v1' in financial['extensions']
+          assert financial['audit']['counts']['nand_actual_observations'] >= 8
           markers = [
               'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
               'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
