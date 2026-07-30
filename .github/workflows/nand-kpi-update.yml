@@ -1,0 +1,69 @@
+name: Update NAND industry KPIs
+
+on:
+  schedule:
+    # 07:00 JST Monday-Friday (22:00 UTC Sunday-Thursday)
+    - cron: "0 22 * * 0-4"
+    # 16:00 JST Monday-Friday (07:00 UTC Monday-Friday)
+    - cron: "0 7 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nand-kpi-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic environment and PDF text extractor
+        run: |
+          uv sync --frozen
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+      - name: Check official company disclosures and update NAND ledger
+        env:
+          NAND_KPI_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: uv run python scripts/update_nand_kpis.py
+      - name: Rebuild source financial APIs
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: |
+          uv run python scripts/build_primary_api.py
+          uv run python scripts/build_semiconductor_profit_api.py
+          uv run python scripts/build_semiconductor_resilience_api_v2.py
+          uv run python scripts/build_semiconductor_research_api.py
+          uv run python scripts/finalize_semiconductor_research_api.py
+      - name: Build Financial Database v3 with NAND KPIs
+        run: uv run python scripts/build_financial_database_with_nand.py
+      - name: Validate NAND data contract and README publication rule
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          uv run python -m pytest tests/test_nand_kpi_pipeline.py tests/test_financial_database.py -q
+          uv run python scripts/check_readme_pages_link.py
+      - name: Commit reviewed ledger changes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/financial_db/nand_kpi_observations.json data/financial_db/nand_kpi_collection_state.json
+          if git diff --cached --quiet; then
+            echo "No NAND KPI ledger changes"
+            exit 0
+          fi
+          git commit -m "data: update NAND industry KPIs"
+          git pull --rebase origin main
+          git push origin HEAD:main
