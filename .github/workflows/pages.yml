@@ -9,10 +9,12 @@ on:
       - "scripts/**"
       - "site/**"
       - "tests/**"
+      - "docs/**"
       - "README.md"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/pages.yml"
+      - ".github/workflows/nand-kpi-update.yml"
   schedule:
     - cron: "15 1 * * 1-5"
   workflow_dispatch:
@@ -39,6 +41,10 @@ jobs:
           python-version: "3.12"
       - name: Install deterministic Python environment
         run: uv sync --frozen
+      - name: Verify README exposes the live GitHub Pages URL
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: uv run python scripts/check_readme_pages_link.py
       - name: Fetch primary SEC facts and build static API
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -59,8 +65,8 @@ jobs:
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: uv run python scripts/build_demand_api.py
-      - name: Build repository-wide financial database
-        run: uv run python scripts/build_financial_database.py
+      - name: Build Financial Database v3 with NAND operating KPIs
+        run: uv run python scripts/build_financial_database_with_nand.py
       - name: Build same-period model snapshot
         run: uv run python scripts/build_model_snapshot.py
       - name: Run generated data contract tests
@@ -93,7 +99,7 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify public Pages, research database, and provenance
+      - name: Verify public Pages, research database, NAND extension, and provenance
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_BUILD_SHA: ${{ github.sha }}
@@ -153,13 +159,17 @@ jobs:
           jq -e '[.database.evidence_edges[].relationship] | index("derived_from") and index("uses_metric")' <<< "$research_json" >/dev/null
 
           jq -e '.schema_version == "financial-database.v3"' <<< "$financial_json" >/dev/null
+          jq -e '.extensions | index("nand-operating-kpis.v1")' <<< "$financial_json" >/dev/null
           jq -e '.audit.status == "PASS"' <<< "$financial_json" >/dev/null
           jq -e '.audit.counts.entities == (.entities | length)' <<< "$financial_json" >/dev/null
           jq -e '.audit.counts.observations == (.observations | length)' <<< "$financial_json" >/dev/null
           jq -e '.audit.counts.actual_observations > 0' <<< "$financial_json" >/dev/null
+          jq -e '.audit.counts.nand_actual_observations >= 8' <<< "$financial_json" >/dev/null
+          jq -e '.audit.counts.nand_derived_observations >= 2' <<< "$financial_json" >/dev/null
+          jq -e '(.views.nand_kpi_comparisons | length) >= 4' <<< "$financial_json" >/dev/null
           jq -e 'all(.observations[]; (.source_url | startswith("https://")) and (.value_type | IN("actual","company_guidance","analyst_consensus","internal_estimate","scenario","market_observation")))' <<< "$financial_json" >/dev/null
           jq -e '[.observations[].id] | length == (unique | length)' <<< "$financial_json" >/dev/null
 
           printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"quality\"", "id=\"actuals\"", "id=\"peers\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\"", "id=\"ontology\"", "id=\"benchmark\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
           echo "Published research workbench verified: $base/resilience/"
-          echo "Published financial database verified: $base/api/v3/financial-database/index.json"
+          echo "Published NAND financial database verified: $base/api/v3/financial-database/index.json"
