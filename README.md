@@ -6,6 +6,7 @@ Primary filings and company disclosures → exact period selection → normalize
 
 - [Research workbench / integrated earnings and resilience view](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
 - [Financial Database v3 / normalized observations, metrics, provenance, audit, and query views](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/index.json)
+- [Kioxia / NAND sector CapEx pre-earnings audit (2026-07-30)](docs/reports/semiconductor/2026-07-30-kioxia-nand-sector-capex.md)
 - [Financial Database v3 / SQLite](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/financial.db)
 - [Research API v2 / facts, metrics, evaluations, peers, ontology, benchmark](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
 - [Primary-facts earnings ledger](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
