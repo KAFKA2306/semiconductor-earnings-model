@@ -3,9 +3,12 @@ from __future__ import annotations
 import importlib.util
 import json
 import sqlite3
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
 CORE_PATH = ROOT / "scripts/nand_kpi_core.py"
 BUILDER_PATH = ROOT / "scripts/build_financial_database_with_nand.py"
 LEDGER_PATH = ROOT / "data/financial_db/nand_kpi_observations.json"
@@ -32,8 +35,12 @@ def test_qualitative_percentage_policy_is_deterministic() -> None:
     assert core.percentage_interval("mid-80s", direction="increase") == (0.84, 0.86)
 
 
-def test_micron_parser_preserves_reported_text() -> None:
+def test_micron_parser_is_anchored_to_nand_and_preserves_text() -> None:
     text = """
+    DRAM
+    Fiscal Q3 DRAM revenue was a record. Bit shipments were up in the low-single-digit
+    percentage range. Prices increased in the low-60s percentage range.
+
     NAND
     Fiscal Q3 NAND revenue was a record. Bit shipments increased in the mid-single-digit
     percentage range. Prices increased in the mid-80s percentage range, driven by conditions.
@@ -41,8 +48,18 @@ def test_micron_parser_preserves_reported_text() -> None:
     result = core.extract_micron_nand_kpis(text)
     assert (result["bit_shipments"]["value_low"], result["bit_shipments"]["value_high"]) == (0.04, 0.06)
     assert (result["asp"]["value_low"], result["asp"]["value_high"]) == (0.84, 0.86)
-    assert "increased" in result["bit_shipments"]["reported_text"]
-    assert "increased" in result["asp"]["reported_text"]
+    assert "mid-single-digit" in result["bit_shipments"]["reported_text"]
+    assert "mid-80s" in result["asp"]["reported_text"]
+
+
+def test_micron_parser_normalizes_line_break_hyphenation() -> None:
+    text = """
+    NAND Fiscal Q1 NAND revenue increased. Bit shipments increased in the mid- to-high-single-digit
+    percentage range, and Prices increased in the mid-teens percentage range.
+    """
+    result = core.extract_micron_nand_kpis(text)
+    assert (result["bit_shipments"]["value_low"], result["bit_shipments"]["value_high"]) == (0.04, 0.09)
+    assert (result["asp"]["value_low"], result["asp"]["value_high"]) == (0.14, 0.16)
 
 
 def test_four_quarter_yoy_range_is_compounded_not_summed() -> None:
