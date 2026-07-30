@@ -5,7 +5,8 @@
     "Every populated observation must preserve an as-of date, reporting period, unit, source tier, and source URL.",
     "Missing values remain missing. Peer medians and model outputs never overwrite reported values.",
     "Quarterly, annual, duration, instant, segment, consolidated, and point-in-time observations are not silently mixed.",
-    "A derived metric must expose its formula and upstream observation identifiers."
+    "A derived metric must expose its formula and upstream observation identifiers.",
+    "Qualitative NAND disclosures preserve the company wording; numeric intervals are versioned normalizations rather than exact reported point values."
   ],
   "value_types": [
     "actual",
@@ -68,6 +69,12 @@
     {"id":"energy_capacity_mw","statement":"operating_kpi","default_unit":"MW","aggregation":"instant_or_pipeline","status":"catalogued"},
     {"id":"memory_asp_change","statement":"operating_kpi","default_unit":"ratio","aggregation":"duration_change","status":"catalogued"},
     {"id":"bit_shipments_change","statement":"operating_kpi","default_unit":"ratio","aggregation":"duration_change","status":"catalogued"},
+    {"id":"nand_asp_change_qoq","statement":"operating_kpi","default_unit":"ratio","aggregation":"reported_interval","status":"implemented"},
+    {"id":"nand_asp_change_yoy","statement":"derived","default_unit":"ratio","aggregation":"formula","formula":"product(1 + four consecutive nand_asp_change_qoq intervals) - 1","status":"implemented"},
+    {"id":"nand_asp_vs_company_guidance","statement":"derived","default_unit":"percentage_points","aggregation":"formula","formula":"actual NAND ASP interval - comparable company-guidance interval","status":"implemented"},
+    {"id":"nand_bit_shipments_change_qoq","statement":"operating_kpi","default_unit":"ratio","aggregation":"reported_interval","status":"implemented"},
+    {"id":"nand_bit_shipments_change_yoy","statement":"derived","default_unit":"ratio","aggregation":"formula","formula":"product(1 + four consecutive nand_bit_shipments_change_qoq intervals) - 1","status":"implemented"},
+    {"id":"nand_bit_shipments_vs_company_guidance","statement":"derived","default_unit":"percentage_points","aggregation":"formula","formula":"actual NAND bit-shipment interval - comparable company-guidance interval","status":"implemented"},
     {"id":"inventory_days","statement":"operating_kpi","default_unit":"days","aggregation":"formula_or_reported","status":"catalogued"},
     {"id":"fab_utilization","statement":"operating_kpi","default_unit":"ratio","aggregation":"period_average","status":"catalogued"},
     {"id":"wafer_capacity","statement":"operating_kpi","default_unit":"wafers_per_month","aggregation":"instant","status":"catalogued"},
