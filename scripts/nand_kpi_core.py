@@ -74,9 +74,16 @@ def compare_intervals(actual: tuple[float, float], guidance: tuple[float, float]
 
 
 def extract_micron_nand_kpis(text: str) -> dict[str, Any]:
-    normalized = re.sub(r"\s+", " ", text)
+    """Extract only the NAND paragraph and reject an earlier DRAM paragraph."""
+    normalized = re.sub(r"\s+", " ", text.replace("–", "-").replace("—", "-"))
+    normalized = re.sub(r"(?i)\b(low|mid|high)-\s*to-", r"\1-to-", normalized)
     match = re.search(
-        r"NAND.*?Bit shipments\s+(?P<bits>(?:increased|were up|declined|decreased).*?percentage range)\.\s+Prices\s+(?P<prices>(?:increased|were up|declined|decreased).*?percentage range)",
+        r"\bNAND\b\s+Fiscal\s+Q[1-4]\s+NAND\s+revenue.{0,700}?"
+        r"(?:NAND\s+)?Bit shipments\s+"
+        r"(?P<bits>(?:increased|were up|declined|decreased).*?percentage range)"
+        r"(?:\.\s+|,\s+and\s+)"
+        r"Prices\s+"
+        r"(?P<prices>(?:increased|were up|declined|decreased).*?percentage range)",
         normalized,
         flags=re.IGNORECASE,
     )
@@ -98,6 +105,16 @@ def extract_micron_nand_kpis(text: str) -> dict[str, Any]:
     bits, bits_phrase = parse(match.group("bits"))
     prices, price_phrase = parse(match.group("prices"))
     return {
-        "bit_shipments": {"value_low": bits[0], "value_high": bits[1], "reported_text": match.group("bits").strip(), "reported_phrase": bits_phrase},
-        "asp": {"value_low": prices[0], "value_high": prices[1], "reported_text": match.group("prices").strip(), "reported_phrase": price_phrase},
+        "bit_shipments": {
+            "value_low": bits[0],
+            "value_high": bits[1],
+            "reported_text": match.group("bits").strip(),
+            "reported_phrase": bits_phrase,
+        },
+        "asp": {
+            "value_low": prices[0],
+            "value_high": prices[1],
+            "reported_text": match.group("prices").strip(),
+            "reported_phrase": price_phrase,
+        },
     }
