@@ -49,11 +49,11 @@ jobs:
           uv run python scripts/finalize_semiconductor_research_api.py
       - name: Build Financial Database v3 with NAND KPIs
         run: uv run python scripts/build_financial_database_with_nand.py
-      - name: Validate NAND data contract and README publication rule
+      - name: Validate NAND data contract, source registry, and README publication rule
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          uv run python -m pytest tests/test_nand_kpi_pipeline.py tests/test_financial_database.py -q
+          uv run python -m pytest tests/test_nand_kpi_pipeline.py tests/test_nand_source_registry.py tests/test_financial_database.py -q
           uv run python scripts/check_readme_pages_link.py
       - name: Commit reviewed ledger changes
         run: |
