@@ -13,7 +13,7 @@ ROOT = Path(__file__).parents[1]
 SOURCE = ROOT / "data/financial_db/nand_kpi_sources.json"
 LEDGER = ROOT / "data/financial_db/nand_kpi_observations.json"
 STATE = ROOT / "data/financial_db/nand_kpi_collection_state.json"
-UA = os.getenv("NAND_KPI_USER_AGENT", "KAFKA2306 NAND KPI collector")
+UA = os.getenv("NAND_KPI_USER_AGENT") or "KAFKA2306 NAND KPI collector"
 MONTHS = {m.lower(): i for i, m in enumerate("January February March April May June July August September October November December".split(), 1)}
 
 class Links(HTMLParser):
@@ -63,14 +63,18 @@ def infer(text,fallback):
     result.setdefault("as_of",result["period_end"]); result.setdefault("document_type","earnings_presentation"); return result
 
 def generic(text):
-    flat=re.sub(r"\s+"," ",text)
-    for m in re.finditer(r"(?i)NAND.{0,700}",flat):
+    flat=re.sub(r"\s+"," ",text.replace("–","-").replace("—","-"))
+    flat=re.sub(r"(?i)\b(low|mid|high)-\s*to-",r"\1-to-",flat)
+    for m in re.finditer(r"(?i)\bNAND\b.{0,700}",flat):
         window=m.group(0); output={}
         patterns={
-          "bit_shipments":r"(?i)(?:bit shipments?|bit output|bit sales)\s+(?:were\s+)?(?P<dir>up|down|increased|declined|decreased)\s+(?:in\s+)?(?:the\s+)?(?P<phrase>(?:low|mid|high)(?:-to-(?:low|mid|high))?[- ]?(?:single[- ]digit|double[- ]digit|teens|\d{2}s)|(?:approximately|about|around)?\s*\d+(?:\.\d+)?\s*%)",
-          "asp":r"(?i)(?:ASP|average selling price|prices?)\s+(?:were\s+)?(?P<dir>up|down|increased|declined|decreased)\s+(?:in\s+)?(?:the\s+)?(?P<phrase>(?:low|mid|high)(?:-to-(?:low|mid|high))?[- ]?(?:single[- ]digit|double[- ]digit|teens|\d{2}s)|(?:approximately|about|around)?\s*\d+(?:\.\d+)?\s*%)"}
-        for name,pattern in patterns.items():
-            hit=re.search(pattern,window)
+          "bit_shipments":r"(?i)(?:NAND\s+)?(?:bit shipments?|bit output|bit sales)\s+(?:were\s+)?(?P<dir>up|down|increased|declined|decreased)\s+(?:in\s+)?(?:the\s+)?(?P<phrase>(?:low|mid|high)(?:-to-(?:low|mid|high))?[- ]?(?:single[- ]digit|double[- ]digit|teens|\d{2}s)|(?:approximately|about|around)?\s*\d+(?:\.\d+)?\s*%)",
+          "asp":r"(?i)(?:NAND\s+)?(?:ASP|average selling price|prices?)\s+(?:were\s+)?(?P<dir>up|down|increased|declined|decreased)\s+(?:in\s+)?(?:the\s+)?(?P<phrase>(?:low|mid|high)(?:-to-(?:low|mid|high))?[- ]?(?:single[- ]digit|double[- ]digit|teens|\d{2}s)|(?:approximately|about|around)?\s*\d+(?:\.\d+)?\s*%)"}
+        hits={name:re.search(pattern,window) for name,pattern in patterns.items()}
+        positions=[hit.start() for hit in hits.values() if hit]
+        if positions and re.search(r"(?i)\bDRAM\b",window[:min(positions)]):
+            continue
+        for name,hit in hits.items():
             if hit:
                 direction="decline" if hit.group("dir").lower() in {"down","declined","decreased"} else "increase"
                 lo,hi=percentage_interval(hit.group("phrase"),direction=direction)
