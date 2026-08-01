@@ -1,115 +1,104 @@
-# Primary Facts / Financial Research Workbench
+# 半導体決算・財務データ研究基盤
 
-**Live GitHub Pages:** https://kafka2306.github.io/semiconductor-earnings-model/
+**公開サイト:** https://kafka2306.github.io/semiconductor-earnings-model/
 
-Primary filings and company disclosures → exact period selection → normalized concepts → transparent metrics and evaluations → peer context → GitHub Pages and reusable financial database.
+企業の決算資料、規制開示、業界KPIを、期間・単位・情報種別・出典を保ったまま収集し、半導体企業の利益、財務耐久力、設備投資、需要、NAND市況を検証するための研究基盤です。
 
-## Public evidence
+実績、会社予想、アナリスト予想、独自推計、シナリオ、株価観測を混ぜず、すべての計算を元データまで追跡できる形で公開します。
 
-- [Research workbench / integrated earnings and resilience view](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
-- [Financial Database v3 / normalized observations, metrics, provenance, audit, and query views](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/index.json)
-- [Financial Database v3 / SQLite](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/financial.db)
-- [Kioxia / NAND sector CapEx pre-earnings audit (2026-07-30)](docs/reports/semiconductor/2026-07-30-kioxia-nand-sector-capex.md)
+## 最初に見るページ
+
+- [統合リサーチ画面・財務耐久力比較](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
+- [決算の一次事実台帳](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
+- [需要から利益までの計算モデル](https://kafka2306.github.io/semiconductor-earnings-model/model/)
+- [Financial Database v3 JSON](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/index.json)
+- [Financial Database v3 SQLite](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/financial.db)
+- [Research API v2](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
+- [API v1 index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
+
+## このプロジェクトで扱う内容
+
+- 売上高、営業利益、営業CF、設備投資、FCF、現金、負債、利益剰余金
+- 四半期成長率、利益率、年次推移、CAGR、変動性
+- 流動性、負債負担、下振れ時の資金耐久力
+- データセンター設備投資、減価償却、電力容量、受注残
+- NANDのASP、ビット出荷量、在庫日数、稼働率、製造能力
+- HBM、先端パッケージ、ウェハ能力などの業界KPI
+- 市場価格、時価総額、企業価値、予想PER、コンセンサス
+- 会社予想と実績、予想と独自シナリオの差分
+
+## 主要な分析経路
+
+### `/earnings/`
+
+開示された売上高、営業利益、営業CF、設備投資、期間、XBRLタグ、提出書類URLを保存する一次事実台帳です。
+
+### `/resilience/`
+
+四半期の成長性と収益性、年次のFCF・流動性・負債、同業中央値、下振れシナリオ、データ品質フラグを統合した比較画面です。
+
+### `/model/`
+
+既知の入力、計算式、中間値、未知の変数、最終判断を分離し、需要から利益までの計算境界を示します。
+
+### `/api/v3/financial-database/`
+
+実績、ガイダンス、コンセンサス、市場観測、推計、シナリオ、NAND KPIを別の値種別として保持する再利用可能な分析DBです。
+
+## データモデル
+
+1. **Entity** — 企業、証券、ティッカー、CIK、同業グループ
+2. **Concept** — 財務項目、業界KPI、会社予想、市場観測、計算指標
+3. **Observation** — 値、単位、対象期間、観測日、改訂、出典
+4. **Source** — 規制開示、会社IR、許諾された予想、市場データ、モデル
+5. **Derived metric** — 計算式と入力証拠を持つ派生値
+6. **Evaluation** — 判定ルール、閾値、結果、根拠指標
+7. **Evidence edge** — 計算・判定から元データへの系譜
+8. **Audit issue** — 欠損、古さ、競合、形式不良、根拠不足
+
+年次と四半期、期間値と時点値、連結とセグメントを暗黙に混ぜません。
+
+## NAND KPIの扱い
+
+NAND ASPとビット出荷量は、次を明示して保存します。
+
+- 前四半期比の実績
+- 4四半期を複利計算した前年同期比
+- 比較可能な会社想定との差
+- 会社が使用した原文表現
+- 数値非開示または比較不能の状態
+
+比較可能な開示がない場合は、差分を推測せず`not_disclosed_or_not_comparable`として残します。
+
+関連資料:
+
 - [NAND KPI recurring pipeline](docs/nand-kpi-pipeline.md)
-- [Project-wide GitHub Pages publication standard](docs/project-publication-standard.md)
-- [Research API v2 / facts, metrics, evaluations, peers, ontology, benchmark](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
-- [Primary-facts earnings ledger](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
-- [Calculation model / input → formula → intermediate value → verdict](https://kafka2306.github.io/semiconductor-earnings-model/model/)
-- [Primary API index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
-- [Semiconductor profit API / up to 20 quarters](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-profit/index.json)
-- [Semiconductor resilience API / up to five annual periods](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-resilience/index.json)
-- [Demand-side API / normalized five-year time series](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/demand/index.json)
-- [Machine-readable financial research ontology](data/ontology/financial_research_ontology.json)
-- [Cross-project causal-evidence mapping](ontology/project.yaml)
-- [Financial metric and KPI catalog](data/financial_db/metric_catalog.json)
-- [Reviewed non-adapter observation ledger](data/financial_db/manual_observations.json)
-- [NAND industry entity registry](data/financial_db/industry_entities.json)
-- [NAND KPI source registry](data/financial_db/nand_kpi_sources.json)
-- [NAND KPI observation ledger](data/financial_db/nand_kpi_observations.json)
+- [Kioxia / NAND sector CapEx audit](docs/reports/semiconductor/2026-07-30-kioxia-nand-sector-capex.md)
 - [Financial database operating contract](docs/financial-database.md)
-- [Audited earnings-platform benchmark](data/benchmark/earnings_review_sites.json)
-- [GitHub Actions deployment contract](.github/workflows/pages.yml)
+- [Metric catalog](data/financial_db/metric_catalog.json)
 
-## Analytical routes
-
-- `/earnings/` is the primary-facts ledger. It preserves reported revenue, operating income, OCF, CapEx, periods, XBRL tags, source filings, and directly derived values.
-- `/resilience/` is the integrated research workbench. It combines quarterly growth and profitability with annual FCF, liquidity, debt, peer medians and percentiles, data-quality flags, deterministic downside scenarios, explainable evaluations, source evidence, ontology, and a benchmark against other research products.
-- `/model/` is the demand-to-profit calculation boundary. It separates known inputs, formulas, intermediate values, unknown variables, and verdicts.
-- `/api/v3/financial-database/` is the reusable analytical store. It combines current v1/v2 evidence with reviewed guidance, consensus, market, estimate, scenario, and NAND operating-KPI observations while keeping those value classes separate.
-
-## Financial database model
-
-The v3 database separates:
-
-1. **Entity** — issuer, security identity, ticker, CIK, role, and peer group.
-2. **Concept** — financial-statement item, operating KPI, guidance item, consensus item, market observation, or derived metric.
-3. **Observation** — a point or range with value type, unit, period, scope, as-of date, revision, source tier, and source URL.
-4. **Source** — regulatory filing, company disclosure, licensed consensus, market feed, or explicit model.
-5. **Derived metric** — formula-backed values with upstream evidence.
-6. **Evaluation** — rule ID, threshold, result, and supporting metrics rather than one opaque score.
-7. **Evidence edge** — machine-readable lineage from calculations and evaluations back to evidence.
-8. **Audit issue** — missing, stale, conflicting, malformed, or unsupported records.
-
-Actual, company guidance, analyst consensus, internal estimate, scenario, and market observation are different semantic classes. Annual, quarterly, duration, instant, segment, consolidated, and point-in-time values are not silently mixed.
-
-The metric catalog includes current financial statements and repeated operating analyses: cloud revenue and growth, RPO, backlog, data-center CapEx, CapEx and depreciation guidance, energy capacity, memory ASP, bit shipments, inventory days, fab utilization, wafer capacity, HBM, advanced packaging capacity, share price, market capitalization, enterprise value, forward P/E, and consensus revenue and EPS.
-
-### NAND operating-KPI contract
-
-NAND ASP and bit shipments are stored as explicit concepts for QoQ actuals, derived YoY, and versus comparable company guidance. Qualitative company wording is preserved in `reported_text`; numeric ranges use the versioned `qualitative-percentage-band.v1` policy. YoY is compounded from four consecutive QoQ intervals rather than summed. When a company does not disclose the same KPI for the same period as guidance, `views.nand_kpi_comparisons` reports `not_disclosed_or_not_comparable` and does not fabricate a variance.
-
-## Cross-project causal-evidence mapping
-
-[`ontology/project.yaml`](ontology/project.yaml) maps the financial domain model onto the shared sequence:
+## 更新と公開の流れ
 
 ```text
-SemiconductorIssuerAndIndustrySystem
-  -> filings, disclosures, production and capital-allocation processes
-  -> reported observations
-  -> normalized facts, calculated metrics, estimates and forecasts
-  -> financial and operating claims
-  -> source and formula evidence
-  -> PASS / WATCH / UNKNOWN or hypothesis decisions
+一次資料を取得
+  → 期間・タグ・単位を正規化
+  → 派生指標を計算
+  → 同業比較・シナリオ評価
+  → 出典・計算系譜を監査
+  → JSON / SQLite / Web画面を生成
+  → GitHub Pages公開後に実URLを再検証
 ```
 
-This mapping is an upper ontology; it does not replace `data/ontology/financial_research_ontology.json`. The financial ontology remains the detailed domain vocabulary, while the project manifest defines cross-repository meanings for state, observation, model, claim, evidence, uncertainty, and decision.
+取得失敗、期間の古さ、根拠のない値、壊れた証拠リンク、DB監査エラー、SQLite不整合、テスト失敗、公開後検証失敗がある場合はデプロイを停止します。
 
-## Existing semiconductor research model
+機械可読な定義:
 
-The v2 research API deliberately separates five layers:
+- [Financial research ontology](data/ontology/financial_research_ontology.json)
+- [Cross-project ontology](ontology/project.yaml)
 
-1. **Reported fact** — direct SEC XBRL value with tag, unit, period, accession, and filing URL.
-2. **Normalized concept** — analysis concept such as revenue, operating cash flow, CapEx, cash, or retained earnings. Equivalent XBRL concepts are selected by recency and history coverage.
-3. **Derived metric** — formula-backed values including FCF, margins, YoY, CAGR, volatility, liquidity ratios, and downside runway.
-4. **Evaluation** — rule ID, input value, PASS/WATCH/UNKNOWN result, and threshold. A single opaque score is not used.
-5. **Evidence edge** — machine-readable `derived_from` and `uses_metric` relationships that connect calculations and evaluations back to evidence.
+## ローカル検証
 
-The ontology also models analyst estimates, earnings surprises, guidance revisions, transcript statements, market-price observations, and segment KPIs. They remain unpopulated until an automated adapter or a reviewed source-backed observation is connected; the application does not fabricate them.
-
-## Update contract
-
-The weekday schedules and changes to `main` mechanically rebuild and validate the evidence chain.
-
-1. SEC EDGAR Companyfacts is fetched for registered issuers.
-2. Quarterly semiconductor revenue and operating income are selected without forcing incompatible fiscal periods into an index total.
-3. Annual revenue, OCF, CapEx, cash, short-term investments, retained earnings, and debt are selected for up to five 10-K periods.
-4. Tag migrations such as `PaymentsToAcquireProductiveAssets` are handled through explicit equivalent-concept sets and recency-aware selection.
-5. Official NAND IR pages are checked twice each weekday; new source documents are discovered only on allowlisted company domains.
-6. NAND disclosures preserve original wording, normalize qualitative bands, derive compounded YoY, and calculate guidance variance only when a comparable company target exists.
-7. The research builder merges annual and quarterly data without treating the two period types as additive.
-8. The financial database builder imports v1/v2 evidence and NAND KPI evidence, validates reviewed observations, deduplicates semantically equivalent records, and generates JSON and SQLite.
-9. Peer medians and percentiles are calculated only within registered comparison groups.
-10. Company classifications are derived from disclosed evaluation rules; missing data remains `unknown`.
-11. Tests validate IDs, source URLs, value classes, periods, rules, NAND comparison semantics, ontology coverage, database row counts, SQLite integrity, latest-value views, and self-funding runway semantics.
-12. Astro builds the static views, GitHub Pages deploys them, and the deployment job checks the live HTML SHA and all v1/v2/v3 outputs.
-
-## Shared publication rule
-
-Every delivered KAFKA2306 project must show its fully qualified live GitHub Pages URL near the top of `README.md`. `scripts/check_readme_pages_link.py` enforces this repository’s expected URL in CI. A source-code push without a documented and verified public endpoint is not considered complete.
-
-## Local verification
-
-```sh
+```bash
 uv sync
 : "${SEC_USER_AGENT:?set SEC_USER_AGENT to identify the real operator/contact}"
 uv run python scripts/build_primary_api.py
@@ -128,6 +117,10 @@ npm --prefix site ci
 GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local npm --prefix site run build
 ```
 
-`SEC_USER_AGENT` must identify the real operator/contact. A failed fetch, stale period, invalid ontology, malformed NAND or manual observation, missing source wording, broken evidence edge, database audit error, SQLite integrity error, missing README Pages link, failed test, invalid Astro build, or failed public smoke test stops deployment.
+`SEC_USER_AGENT`には実際の運用者を識別できる連絡情報を設定してください。
 
-This is not investment advice.
+## 注意
+
+このプロジェクトは財務・業界研究用です。投資助言、売買推奨、将来利益の保証ではありません。
+
+**README最終監査:** 2026-08-01
