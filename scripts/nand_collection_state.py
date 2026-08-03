@@ -2,17 +2,13 @@ from __future__ import annotations
 
 import hashlib
 import re
-from datetime import date, datetime, timezone
+from datetime import date
 from typing import Any, Iterable
 
 _DATE_PATTERNS = (
     re.compile(r"(?P<year>20\d{2})[-_/](?P<month>0?[1-9]|1[0-2])[-_/](?P<day>0?[1-9]|[12]\d|3[01])"),
     re.compile(r"(?<!\d)(?P<year>20\d{2})(?P<month>0[1-9]|1[0-2])(?P<day>0[1-9]|[12]\d|3[01])(?!\d)"),
 )
-
-
-def utc_now_text() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
 def content_sha256(content: bytes) -> str:
@@ -65,16 +61,38 @@ def previous_document_map(previous_source_state: dict[str, Any] | None) -> dict[
     }
 
 
+def _discovery_rank(candidate: dict[str, Any]) -> int:
+    value = candidate.get("discovery_rank")
+    return value if isinstance(value, int) and value >= 0 else 10**9
+
+
+def _prefer_candidate(
+    candidate: dict[str, Any],
+    existing: dict[str, Any],
+) -> bool:
+    candidate_observed = candidate_date(candidate)
+    existing_observed = candidate_date(existing)
+    if candidate_observed is not None and existing_observed is None:
+        return True
+    if candidate_observed is None and existing_observed is not None:
+        return False
+    if candidate_observed is not None and existing_observed is not None:
+        if candidate_observed != existing_observed:
+            return candidate_observed > existing_observed
+    return _discovery_rank(candidate) < _discovery_rank(existing)
+
+
 def prioritize_candidates(
     candidates: Iterable[dict[str, Any]],
     previous_documents: dict[str, dict[str, Any]],
 ) -> list[dict[str, Any]]:
     """Return unique candidates with unprocessed and recent documents first.
 
-    Ordering never depends on dictionary insertion order. A document absent from
-    the persisted collection state is always considered before a previously
-    checked document. Within each group, explicit reporting dates and dates in
-    URLs are sorted newest first.
+    Ordering never depends on dictionary insertion order or URL lexical order.
+    A document absent from the persisted collection state is always considered
+    before a previously checked document. Within each group, explicit reporting
+    dates and dates embedded in URLs are sorted newest first. If dates are not
+    available, the source page's discovery order is used.
     """
     unique: dict[str, dict[str, Any]] = {}
     for raw in candidates:
@@ -84,16 +102,24 @@ def prioritize_candidates(
         candidate = dict(raw)
         candidate["source_url"] = url
         existing = unique.get(url)
-        if existing is None or candidate_date(candidate) > candidate_date(existing):
+        if existing is None or _prefer_candidate(candidate, existing):
             unique[url] = candidate
 
-    def key(candidate: dict[str, Any]) -> tuple[int, int, str]:
+    def key(candidate: dict[str, Any]) -> tuple[int, int, int, str]:
         url = candidate["source_url"]
         previous = previous_documents.get(url)
-        processed = bool(previous and previous.get("parse_status") in {"parsed", "no_kpi", "unchanged"})
+        processed = bool(
+            previous
+            and previous.get("parse_status") in {"parsed", "no_kpi", "unchanged"}
+        )
         observed_date = candidate_date(candidate)
         ordinal = observed_date.toordinal() if observed_date else 0
-        return (1 if processed else 0, -ordinal, url)
+        return (
+            1 if processed else 0,
+            -ordinal,
+            _discovery_rank(candidate),
+            url,
+        )
 
     return sorted(unique.values(), key=key)
 
@@ -112,7 +138,9 @@ def select_candidates(
         {
             "source_url": item["source_url"],
             "reason": "candidate_limit",
-            "candidate_date": candidate_date(item).isoformat() if candidate_date(item) else None,
+            "candidate_date": (
+                candidate_date(item).isoformat() if candidate_date(item) else None
+            ),
             "previously_processed": item["source_url"] in previous_documents,
         }
         for item in ordered[limit:]
@@ -185,7 +213,12 @@ def freshness_audit(
     status = "not_enforced"
     if required and latest is None:
         status = "missing"
-    elif required and isinstance(max_age_days, int) and age_days is not None and age_days > max_age_days:
+    elif (
+        required
+        and isinstance(max_age_days, int)
+        and age_days is not None
+        and age_days > max_age_days
+    ):
         status = "stale"
     elif required:
         status = "fresh"
