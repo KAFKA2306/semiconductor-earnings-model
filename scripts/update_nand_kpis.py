@@ -499,10 +499,18 @@ def collect_source(
                 fatal=previous is None,
             )
 
-    selected_urls = {item["source_url"] for item in selected_documents}
+    current_document_urls = {
+        item["source_url"] for item in information["documents"]
+    }
     for url, previous in previous_documents.items():
-        if url not in selected_urls and url not in documents:
+        if url not in current_document_urls:
             information["documents"].append(previous)
+
+    current_page_urls = {item["source_url"] for item in information["pages"]}
+    for url, previous in previous_pages.items():
+        if url not in current_page_urls:
+            information["pages"].append(previous)
+
     information["documents"].sort(key=lambda item: item["source_url"])
     information["pages"].sort(key=lambda item: item["source_url"])
     information["discovered_urls"] = list(dict.fromkeys(information["discovered_urls"]))
