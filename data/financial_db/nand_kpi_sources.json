@@ -9,7 +9,9 @@
       "Preserve the reported text before converting qualitative bands to numeric intervals.",
       "Preserve a separate official period source when the KPI document does not state an exact quarter-end date.",
       "Company guidance must match the same company, KPI, scope and reporting period as the actual before comparison.",
-      "Missing or non-disclosed guidance remains missing."
+      "Missing or non-disclosed guidance remains missing.",
+      "Unprocessed and newly discovered documents are selected before previously processed documents.",
+      "Candidate limits and skipped URLs must remain visible in the collection state."
     ]
   },
   "sources": [
@@ -18,6 +20,8 @@
       "adapter": "micron_prepared_remarks",
       "official_domains": ["investors.micron.com"],
       "discovery_urls": ["https://investors.micron.com/quarterly-results"],
+      "require_current_observation": true,
+      "max_observation_age_days": 180,
       "documents": [
         {
           "period_end": "2025-08-28",
