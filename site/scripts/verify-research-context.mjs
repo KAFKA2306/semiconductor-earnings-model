@@ -46,11 +46,13 @@ for (const marker of [
   "params.set('valueType'",
   'function applyContextHighlight()',
   'function openEvidence(',
-  'research-value-actual',
-  'research-value-guidance',
-  'research-value-consensus',
-  'research-value-estimate',
-  'research-value-scenario',
+  "actual: { label: '実績'",
+  "guidance: { label: '会社予想'",
+  "consensus: { label: 'コンセンサス'",
+  "market: { label: '市場観測'",
+  "estimate: { label: '独自推計'",
+  "scenario: { label: 'シナリオ'",
+  'research-value-${state.valueType}',
 ]) {
   if (!js.includes(marker)) throw new Error(`Research context JS is missing ${marker}`);
 }
@@ -62,6 +64,7 @@ for (const marker of [
   '.research-value-actual',
   '.research-value-guidance',
   '.research-value-consensus',
+  '.research-value-market',
   '.research-value-estimate',
   '.research-value-scenario',
   'min-height: 40px',
