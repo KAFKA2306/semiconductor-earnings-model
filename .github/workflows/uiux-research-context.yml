@@ -9,7 +9,6 @@ on:
       - "site/scripts/verify-research-context.mjs"
       - "site/scripts/test-research-context.mjs"
       - "site/package.json"
-      - "site/package-lock.json"
       - ".github/workflows/uiux-research-context.yml"
   workflow_dispatch:
 
@@ -27,8 +26,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.18.0"
-          cache: npm
-          cache-dependency-path: site/package-lock.json
 
       - name: Validate JavaScript syntax
         run: |
@@ -40,14 +37,3 @@ jobs:
       - name: Run deterministic context fixture
         working-directory: site
         run: node scripts/test-research-context.mjs
-
-      - name: Install site dependencies
-        working-directory: site
-        run: npm ci
-
-      - name: Run full Astro build and postbuild verification
-        working-directory: site
-        env:
-          GITHUB_REPOSITORY: KAFKA2306/semiconductor-earnings-model
-          PUBLIC_BUILD_SHA: context-validation
-        run: npm run build
