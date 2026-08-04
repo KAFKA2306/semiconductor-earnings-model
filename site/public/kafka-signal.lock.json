@@ -1,0 +1,3 @@
+{
+  "name":"KAFKA SIGNAL","release":"kafka-signal-v1.0.0","commit":"6cceef70ab3ad5d15bad972aab0b23d954fc1fd8","source":"KAFKA2306/prompt-vault/design-systems/kafka-signal","asset_hashes":{"icons/sprite.svg":"6fabaed034807143575b44f062fc9ca26293c2445ba37a3dfd07a8d9eb39b8ce","motifs/sprite.svg":"d522a16d1b7d886ef812950d47c94c9eef03efd0f530fdb08340c33e5da79885","characters/kafka-character.json":"b24e77c81d395c3959bd0756d15b06f4775f0d701a32c66e28d295b422de04e7","assets/provenance.json":"28df79f57140e881f5f7888d2865751ddc97bc486a6dca86c90e47da08dedd57"}
+}
