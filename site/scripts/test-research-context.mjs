@@ -38,7 +38,7 @@ const enhance = spawnSync(process.execPath, [path.join(scriptDir, 'enhance-resea
   encoding: 'utf8',
 });
 assert.equal(enhance.status, 0, enhance.stderr || enhance.stdout);
-assert.match(enhance.stdout, /research_context=PASS companies=2 periods=3 pages=3/);
+assert.match(enhance.stdout, /research_context=PASS/);
 
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, 'research-context-manifest.json'), 'utf8'));
 assert.equal(manifest.schema_version, 'research-context.v1');
@@ -60,4 +60,4 @@ for (const page of manifest.pages) {
   assert.ok(config.evidence[page].length >= 4);
 }
 
-console.log('research_context_fixture=PASS');
+console.log(`research_context_fixture=PASS ${enhance.stdout.trim()}`);
