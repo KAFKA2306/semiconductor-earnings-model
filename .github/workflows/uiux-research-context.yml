@@ -1,0 +1,39 @@
+name: Validate shared research context
+
+on:
+  pull_request:
+    paths:
+      - "site/public/assets/research-context.css"
+      - "site/public/assets/research-context.js"
+      - "site/scripts/enhance-research-context.mjs"
+      - "site/scripts/verify-research-context.mjs"
+      - "site/scripts/test-research-context.mjs"
+      - "site/package.json"
+      - ".github/workflows/uiux-research-context.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.18.0"
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check site/public/assets/research-context.js
+          node --check site/scripts/enhance-research-context.mjs
+          node --check site/scripts/verify-research-context.mjs
+          node --check site/scripts/test-research-context.mjs
+
+      - name: Run deterministic context fixture
+        working-directory: site
+        run: node scripts/test-research-context.mjs
