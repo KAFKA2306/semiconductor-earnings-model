@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "astro build",
-    "postbuild": "node scripts/verify-build.mjs",
+    "postbuild": "node scripts/enhance-research-context.mjs && node scripts/verify-research-context.mjs && node scripts/verify-build.mjs",
+    "test:research-context": "node scripts/test-research-context.mjs",
     "dev": "astro dev",
     "preview": "astro preview"
   },
