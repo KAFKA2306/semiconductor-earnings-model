@@ -23,5 +23,5 @@ def test_api_keeps_reported_values_and_source_provenance():
 def test_space_x_is_visible_without_estimation():
     spacex = next(company for company in load_api()["companies"] if company["id"] == "spacex")
     assert spacex["class"] == "public"
-    assert spacex["quantitative_status"] == "public_no_10q_facts_yet"
+    assert spacex["quantitative_status"] == "public_no_quarterly_10q_facts"
     assert spacex["facts"] == []
