@@ -1,7 +1,26 @@
 {
-  "generated_at": null,
-  "new_observations": 0,
+  "generated_at": "2026-08-06T03:36:34+00:00",
+  "new_observations": 11,
   "schema_version": "1.0.0",
-  "sources": [],
-  "total_observations": 0
+  "sources": [
+    {
+      "secret": "JQUANTS_API_KEY",
+      "source": "jquants_v2",
+      "status": "disabled_missing_secret"
+    },
+    {
+      "secret": "DATA_GO_KR_SERVICE_KEY",
+      "source": "data_go_kr_kofia",
+      "status": "disabled_missing_secret"
+    },
+    {
+      "archive_errors": [],
+      "observations": 11,
+      "release_errors": [],
+      "release_links": 11,
+      "source": "sia_wsts",
+      "status": "ok"
+    }
+  ],
+  "total_observations": 21
 }
