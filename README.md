@@ -11,6 +11,7 @@
 - [統合リサーチ画面・財務耐久力比較](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
 - [決算の一次事実台帳](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
 - [需要から利益までの計算モデル](https://kafka2306.github.io/semiconductor-earnings-model/model/)
+- [信用需給・デレバレッジAPI](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/market-positioning/index.json)
 - [Financial Database v3 JSON](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/index.json)
 - [Financial Database v3 SQLite](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/financial.db)
 - [Research API v2](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
@@ -24,6 +25,7 @@
 - データセンター設備投資、減価償却、電力容量、受注残
 - NANDのASP、ビット出荷量、在庫日数、稼働率、製造能力
 - HBM、先端パッケージ、ウェハ能力などの業界KPI
+- 日本の個別信用倍率、韓国の信用融資・反対売買、世界半導体月次売上
 - 市場価格、時価総額、企業価値、予想PER、コンセンサス
 - 会社予想と実績、予想と独自シナリオの差分
 
@@ -40,6 +42,10 @@
 ### `/model/`
 
 既知の入力、計算式、中間値、未知の変数、最終判断を分離し、需要から利益までの計算境界を示します。
+
+### `/api/v1/market-positioning/`
+
+J-Quants、韓国の公共データポータル、SIA公式リリースから、信用需給、強制デレバレッジ、世界半導体売上を定期取得します。J-Quantsの生データは公開せず、信用倍率などの派生分析値だけを保存します。
 
 ### `/api/v3/financial-database/`
 
@@ -72,6 +78,7 @@ NAND ASPとビット出荷量は、次を明示して保存します。
 
 関連資料:
 
+- [信用需給・強制デレバレッジ取得パイプライン](docs/market-positioning-pipeline.md)
 - [NAND KPI recurring pipeline](docs/nand-kpi-pipeline.md)
 - [Kioxia / NAND sector CapEx audit](docs/reports/semiconductor/2026-07-30-kioxia-nand-sector-capex.md)
 - [Financial database operating contract](docs/financial-database.md)
@@ -108,6 +115,7 @@ uv run python scripts/build_semiconductor_research_api.py
 uv run python scripts/finalize_semiconductor_research_api.py
 uv run python scripts/build_demand_api.py
 uv run python scripts/update_nand_kpis.py --offline
+uv run python scripts/update_market_positioning.py
 uv run python scripts/build_financial_database_with_nand.py
 uv run python scripts/check_readme_pages_link.py
 uv run python scripts/build_model_snapshot.py
@@ -117,10 +125,10 @@ npm --prefix site ci
 GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local npm --prefix site run build
 ```
 
-`SEC_USER_AGENT`には実際の運用者を識別できる連絡情報を設定してください。
+`SEC_USER_AGENT`には実際の運用者を識別できる連絡情報を設定してください。信用需給の認証済み取得には、`JQUANTS_API_KEY`と`DATA_GO_KR_SERVICE_KEY`も設定します。
 
 ## 注意
 
 このプロジェクトは財務・業界研究用です。投資助言、売買推奨、将来利益の保証ではありません。
 
-**README最終監査:** 2026-08-01
+**README最終監査:** 2026-08-06

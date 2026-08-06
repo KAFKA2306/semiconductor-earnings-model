@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "sources": [
+    {
+      "source_id": "jquants_v2_margin_interest",
+      "publisher": "JPX Market Innovation & Research, Inc.",
+      "authority": "primary_exchange_data",
+      "access_mode": "authenticated_rest_api",
+      "base_url": "https://api.jquants.com/v2",
+      "documentation_url": "https://jpx-jquants.com/",
+      "secret": "JQUANTS_API_KEY",
+      "endpoints": [
+        "/markets/margin-interest",
+        "/equities/bars/daily"
+      ],
+      "metrics": [
+        "margin_buy_to_sell_ratio",
+        "margin_long_wow_pct",
+        "margin_long_to_20_observation_volume_days",
+        "calendar_year_close_index_base100"
+      ],
+      "persistence_policy": "Raw price, volume and margin records are processed only in GitHub Actions memory. This public repository persists derived analytical metrics and source hashes, not J-Quants raw observations.",
+      "redistribution_policy": "Follow the active J-Quants subscription terms; do not redistribute raw API data."
+    },
+    {
+      "source_id": "data_go_kr_kofia",
+      "publisher": "Financial Services Commission / Korea Financial Investment Association via data.go.kr",
+      "authority": "primary_official_statistics",
+      "access_mode": "authenticated_public_rest_api",
+      "base_url": "https://apis.data.go.kr/1160100/service/GetKofiaStatisticsInfoService",
+      "documentation_url": "https://www.data.go.kr/data/15094808/openapi.do",
+      "secret": "DATA_GO_KR_SERVICE_KEY",
+      "endpoints": [
+        "/getGrantingOfCreditBalanceInfo",
+        "/getSecuritiesMarketTotalCapitalInfo"
+      ],
+      "metrics": [
+        "credit_financing_total_won",
+        "credit_financing_kospi_won",
+        "credit_financing_kosdaq_won",
+        "investor_deposits_won",
+        "forced_liquidation_amount_won",
+        "forced_liquidation_ratio_pct"
+      ]
+    },
+    {
+      "source_id": "sia_wsts_monthly_sales",
+      "publisher": "Semiconductor Industry Association using WSTS data",
+      "authority": "official_industry_release",
+      "access_mode": "public_html_release",
+      "base_url": "https://www.semiconductors.org/policies/market-data/",
+      "documentation_url": "https://www.semiconductors.org/data-resources/market-data/",
+      "metrics": [
+        "monthly_sales_usd_bn_3mma"
+      ],
+      "parser_policy": "Accept only a release sentence containing an explicit month, year and USD billion value."
+    },
+    {
+      "source_id": "krx_data_marketplace",
+      "publisher": "Korea Exchange",
+      "authority": "primary_exchange_data",
+      "access_mode": "manual_export_only",
+      "base_url": "https://data.krx.co.kr/",
+      "automation_status": "disabled_until_documented_public_api",
+      "policy": "Do not automate undocumented OTP or internal browser endpoints."
+    }
+  ]
+}
