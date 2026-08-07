@@ -1,0 +1,41 @@
+name: Audit earnings units
+
+on:
+  pull_request:
+    paths:
+      - "scripts/build_primary_api.py"
+      - "scripts/build_semiconductor_profit_api.py"
+      - "scripts/build_demand_api.py"
+      - "site/src/lib/unit-audit.js"
+      - "site/scripts/audit-units.mjs"
+      - "site/scripts/test-unit-audit.mjs"
+      - "site/package.json"
+      - ".github/workflows/unit-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_primary_api.py"
+      - "scripts/build_semiconductor_profit_api.py"
+      - "scripts/build_demand_api.py"
+      - "site/src/lib/unit-audit.js"
+      - "site/scripts/audit-units.mjs"
+      - "site/scripts/test-unit-audit.mjs"
+      - "site/package.json"
+      - ".github/workflows/unit-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  unit-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.18.0"
+      - name: Test monetary unit conversion and mismatch rejection
+        working-directory: site
+        run: npm run test:unit-audit
+      - name: Compile demand API generator
+        run: python -m py_compile scripts/build_demand_api.py
