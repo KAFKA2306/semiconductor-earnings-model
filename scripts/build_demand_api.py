@@ -86,6 +86,7 @@ def quarter_value(
     source_facts = [raw_record(entity, component, api_url, retrieved_at) for component in components]
     return {
         "value_usd": row["val"] if value is None else value,
+        "unit": row["unit"],
         "value_type": "reported_quarter" if len(components) == 1 else "derived_from_reported_periods",
         "period_start": row["start"],
         "period_end": row["end"],
