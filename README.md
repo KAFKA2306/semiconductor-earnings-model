@@ -64,6 +64,18 @@ J-Quants、韓国の公共データポータル、SIA公式リリースから、
 
 年次と四半期、期間値と時点値、連結とセグメントを暗黙に混ぜません。
 
+## 金額単位の契約
+
+`/earnings/` が読む金額factと派生四半期値は、すべて明示的な `unit` を持ちます。HTML生成へ渡す正準単位は **base USD (`unit: "USD"`)** です。`USD_million`、`USD_billion`、`JPY`、`JPY_million`、`JPY_billion` は入力・fixtureで識別可能ですが、そのままHTMLへ流しません。
+
+- `USD_million` は `value × 1,000,000`、`USD_billion` は `value × 1,000,000,000` でbase USDへ正規化します。
+- JPYをUSDへ換算する場合は、観測日・出典を持つ明示的な `JPY_per_USD` を入力し、`JPY / JPY_per_USD` で換算します。暗黙の為替レートや固定レートは使いません。
+- SEC Companyfacts由来の金額はAPIのunit配列から `USD` のfactだけを採用し、表示時に `$...B` へ縮尺する処理とデータ単位を分離します。
+- `site/scripts/audit-units.mjs` はAstro buildの前に一次API、半導体利益API、需要APIの比較対象を監査し、欠損unit、未対応unit、million/billionの未正規化、JPYの未換算を検出したら非0終了します。
+- 単位換算の純関数とfail-closed動作は `npm --prefix site run test:unit-audit` で検証します。
+
+SECのEDGAR XBRL GuideはUSD金額のunitを `iso4217:USD` とし、「thousands/millions of USD」のようなunit自体を定義しないよう要求しています。そのため本リポジトリでも、SEC由来データはbase USDを正準形とし、million/billionは表示・外部入力側のscaleとしてのみ扱います。
+
 ## NAND KPIの扱い
 
 NAND ASPとビット出荷量は、次を明示して保存します。
@@ -122,6 +134,7 @@ uv run python scripts/build_model_snapshot.py
 uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
 uv run python -m pytest -q
 npm --prefix site ci
+npm --prefix site run test:unit-audit
 GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local npm --prefix site run build
 ```
 
@@ -131,4 +144,4 @@ GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local 
 
 このプロジェクトは財務・業界研究用です。投資助言、売買推奨、将来利益の保証ではありません。
 
-**README最終監査:** 2026-08-06
+**README最終監査:** 2026-08-07
