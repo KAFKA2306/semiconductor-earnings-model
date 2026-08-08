@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-08T05:17:48.337622Z",
+  "run_at": "2026-08-08T07:17:01.968744Z",
   "accepted_events_total": 1,
   "rejected_events_total": 13,
   "source_status": [
@@ -116,7 +116,7 @@
       "source_id": "tdnet-japan-priority",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 0
     },
     {
       "source_id": "sk-hynix",
