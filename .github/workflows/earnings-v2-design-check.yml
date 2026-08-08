@@ -1,0 +1,31 @@
+name: Earnings v2 Design Contract
+
+on:
+  pull_request:
+    paths:
+      - "docs/earnings-evidence-ledger-v2.md"
+      - "data/earnings_ledger/schema/*-v2.schema.json"
+      - "tests/test_earnings_v2_design_contract.py"
+      - ".github/workflows/earnings-v2-design-check.yml"
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Parse v2 schemas
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for path in Path("data/earnings_ledger/schema").glob("*-v2.schema.json"):
+              json.loads(path.read_text(encoding="utf-8"))
+              print(path)
+          PY
+      - name: Run design contract tests
+        run: |
+          python -m pip install --disable-pip-version-check pytest
+          python -m pytest -q tests/test_earnings_v2_design_contract.py
