@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-08T18:59:36.802612Z",
+  "run_at": "2026-08-08T20:48:41.570590Z",
   "accepted_events_total": 1,
   "rejected_events_total": 14,
   "source_status": [
@@ -8,7 +8,7 @@
       "source_id": "nvidia",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "amd",
@@ -43,14 +43,14 @@
     {
       "source_id": "lam-research",
       "status": "success",
-      "accepted": 1,
+      "accepted": 0,
       "rejected": 0
     },
     {
       "source_id": "kla",
       "status": "success",
       "accepted": 0,
-      "rejected": 8
+      "rejected": 2
     },
     {
       "source_id": "micron",
@@ -68,7 +68,7 @@
       "source_id": "seagate",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "arm",
@@ -98,7 +98,7 @@
       "source_id": "alphabet",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "amazon",

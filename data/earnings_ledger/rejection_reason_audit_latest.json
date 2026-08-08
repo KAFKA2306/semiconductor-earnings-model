@@ -11,7 +11,7 @@
     "424B2": 1,
     "TDNET_DISCLOSURE": 2
   },
-  "generated_at": "2026-08-08T18:59:36.855239Z",
+  "generated_at": "2026-08-08T20:48:41.623459Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
