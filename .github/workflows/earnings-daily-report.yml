@@ -1,0 +1,19 @@
+name: Earnings Evidence Daily Report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 7 * * *"
+      timezone: "Asia/Tokyo"
+
+concurrency:
+  group: earnings-evidence-ledger
+  cancel-in-progress: false
+
+jobs:
+  report:
+    permissions:
+      contents: write
+    uses: ./.github/workflows/reusable-earnings-ledger.yml
+    with:
+      mode: report
