@@ -1,0 +1,27 @@
+{
+  "schema_version": "earnings-consensus-separation-audit.v1",
+  "checked_artifacts": [
+    "data/earnings_ledger/events.ndjson",
+    "data/earnings_ledger/verified_revenue_latest.json",
+    "data/earnings_ledger/verified_revenue_growth_latest.json",
+    "data/earnings_ledger/publication_latest.json",
+    "site/public/api/v1/earnings-ledger/index.json"
+  ],
+  "checked_artifacts_total": 5,
+  "checked_keys_total": 120,
+  "forbidden_key_tokens": [
+    "consensus",
+    "estimate",
+    "estimated",
+    "expected",
+    "forecast",
+    "analyst",
+    "street",
+    "beat",
+    "miss",
+    "surprise"
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "Actual-only earnings ledger, verified metrics, derived growth and public API must not contain consensus or estimate fields. Consensus data requires a separate source contract and audit before publication."
+}
