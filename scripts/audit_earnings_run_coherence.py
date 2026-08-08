@@ -40,8 +40,8 @@ def audit(ledger: Path = LEDGER) -> dict:
             issues.append(f"INVALID_JSON:{name}:{type(exc).__name__}")
             continue
 
-        status = payload.get("status")
-        artifact_issues = payload.get("issues")
+        status = payload.get("status", payload.get("audit_status"))
+        artifact_issues = payload.get("issues", [])
         schema_version = payload.get("schema_version")
         if status != "PASS":
             issues.append(f"NON_PASS_STATUS:{name}:{status}")
