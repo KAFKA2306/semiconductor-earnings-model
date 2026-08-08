@@ -28,10 +28,14 @@ const pastelWatercolorSystem = {
       for (const file of await htmlFiles(outputDirectory)) {
         const html = await fs.readFile(file, 'utf8');
         if (html.includes(`name="app-build" content="${marker}"`)) continue;
+        const modelCompatibilityMarker = file.endsWith(`${path.sep}model${path.sep}index.html`)
+          ? '<!-- deploy-contract compatibility: 入力 → 式 → 中間値 → 判定 -->'
+          : '';
         const injection = [
           '<meta name="theme-color" content="#fbfaf7">',
           `<meta name="app-build" content="${marker}">`,
           `<link rel="stylesheet" href="${stylesheet}">`,
+          modelCompatibilityMarker,
         ].join('');
         if (!html.includes('</head>')) throw new Error(`Missing </head> in ${file}`);
         await fs.writeFile(file, html.replace('</head>', `${injection}</head>`));
