@@ -46,10 +46,14 @@ jobs:
 
       - name: Collect with retry
         env:
-          SEC_USER_AGENT: "KAFKA2306 semiconductor-earnings-model https://github.com/KAFKA2306/semiconductor-earnings-model"
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         shell: bash
         run: |
           set -u
+          if [ -z "${SEC_USER_AGENT:-}" ]; then
+            echo "Repository variable SEC_USER_AGENT is required."
+            exit 1
+          fi
           ok=0
           for attempt in 1 2 3; do
             echo "collector attempt ${attempt}/3"
