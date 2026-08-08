@@ -1,0 +1,31 @@
+{
+  "schema_version": "verified-sec-revenue.v1",
+  "run_at": "2026-08-08T19:03:53.591488Z",
+  "eligible_events_total": 1,
+  "verified_metrics_total": 1,
+  "metrics": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "ticker": "LRCX",
+      "accession_number": "0000707549-26-000037",
+      "period_end": "2026-06-28",
+      "document_type": "10-K",
+      "metric": "revenue",
+      "value": 23232690000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "frame": "CY2025",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "filed": "2026-08-07",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000707549.json",
+      "verification": "exact accession + exact form + exact period end + USD + standard us-gaap taxonomy"
+    }
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "Only standard SEC us-gaap Company Facts revenue facts matching exact accession, form, period end and USD are persisted; missing or conflicting values fail closed."
+}
