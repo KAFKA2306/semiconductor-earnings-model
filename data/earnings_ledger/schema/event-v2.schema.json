@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KAFKA2306/semiconductor-earnings-model/blob/main/data/earnings_ledger/schema/event-v2.schema.json",
+  "title": "Canonical earnings event v2",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "event_id", "company_id", "company", "fiscal_year", "fiscal_quarter",
+    "fiscal_period", "period_end", "event_type", "document_type",
+    "published_at", "retrieved_at", "source_id", "source_type", "source_url",
+    "content_sha256", "freshness", "actuals", "consensus"
+  ],
+  "properties": {
+    "event_id": {"type": "string", "minLength": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "company": {"type": "string", "minLength": 1},
+    "fiscal_year": {"type": "integer", "minimum": 2000},
+    "fiscal_quarter": {"type": "integer", "minimum": 1, "maximum": 4},
+    "fiscal_period": {"type": "string", "pattern": "^FY[0-9]{4}Q[1-4]$"},
+    "period_end": {"type": "string", "format": "date"},
+    "event_type": {"const": "earnings_release"},
+    "document_type": {"type": "string", "minLength": 1},
+    "published_at": {"type": "string", "format": "date-time"},
+    "retrieved_at": {"type": "string", "format": "date-time"},
+    "validated_at": {"type": "string", "format": "date-time"},
+    "source_id": {"type": "string", "minLength": 1},
+    "source_type": {"type": "string", "enum": ["SEC", "COMPANY_IR", "TDNET"]},
+    "source_url": {"type": "string", "format": "uri"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+    "freshness": {"const": "PASS"},
+    "actuals": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/metric"}},
+    "guidance": {"type": ["array", "null"], "items": {"$ref": "#/$defs/metric"}},
+    "consensus": {
+      "type": ["array", "null"],
+      "items": {
+        "allOf": [
+          {"$ref": "#/$defs/metric"},
+          {"type": "object", "required": ["provider", "as_of"]}
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "metric": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["metric_id", "value", "unit", "basis"],
+      "properties": {
+        "metric_id": {"type": "string", "minLength": 1},
+        "value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "basis": {"type": "string", "minLength": 1},
+        "provider": {"type": "string"},
+        "as_of": {"type": "string", "format": "date-time"}
+      }
+    }
+  }
+}

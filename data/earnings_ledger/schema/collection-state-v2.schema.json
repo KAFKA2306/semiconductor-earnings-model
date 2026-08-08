@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KAFKA2306/semiconductor-earnings-model/blob/main/data/earnings_ledger/schema/collection-state-v2.schema.json",
+  "title": "Earnings source collection state v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "updated_at", "sources"],
+  "properties": {
+    "schema_version": {"const": "earnings-collection-state.v2"},
+    "updated_at": {"type": ["string", "null"], "format": "date-time"},
+    "sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "last_seen_id", "last_seen_published_at", "last_attempt_at",
+          "last_success_at", "last_content_sha256"
+        ],
+        "properties": {
+          "last_seen_id": {"type": ["string", "null"]},
+          "last_seen_published_at": {"type": ["string", "null"], "format": "date-time"},
+          "last_attempt_at": {"type": ["string", "null"], "format": "date-time"},
+          "last_success_at": {"type": ["string", "null"], "format": "date-time"},
+          "last_content_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-fA-F]{64}$"}
+        }
+      }
+    }
+  }
+}
