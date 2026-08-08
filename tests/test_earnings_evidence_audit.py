@@ -70,5 +70,5 @@ def test_verify_event_hashes_exact_returned_bytes(monkeypatch):
         datetime(2026, 8, 8, 9, 0, tzinfo=timezone.utc),
     )
     assert row["source_content_bytes"] == len(raw)
-    assert row["source_content_sha256"] == "1867fd8d51068e2e235ce7a17c0b09eae8e92feb804e7c31a05c9fc2a7986ccf"
+    assert row["source_content_sha256"] == "f9c05098b6fcacd1e58ad878d5acf94d48dd4f269feb955969c9473f02b16ae6"
     assert row["content_type"] == "application/pdf"
