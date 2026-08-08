@@ -37,15 +37,15 @@ def test_6k_gate_is_strict():
     assert not ledger.looks_like_earnings_6k(bad)
 
 
-def test_tdnet_parser_extracts_time_code_company_title_and_href():
+def test_tdnet_parser_extracts_real_multi_class_cells():
     sample = """
-    <table>
+    <table id="main-list-table">
       <tr>
-        <td class="kjTime">15:30</td>
-        <td class="kjCode">80350</td>
-        <td class="kjName">東京エレクトロン</td>
-        <td class="kjTitle"><a href="140120260808000001.pdf">2027年3月期 第1四半期決算短信</a></td>
-        <td>東証</td>
+        <td class="oddnew-L kjTime" nowrap>15:30</td>
+        <td class="oddnew-M kjCode" nowrap>80350</td>
+        <td class="oddnew-M kjName" nowrap>東京エレクトロン</td>
+        <td class="oddnew-M kjTitle"><a href="140120260808000001.pdf">2027年3月期 第1四半期決算短信</a></td>
+        <td class="oddnew-M kjPlace">東証</td>
       </tr>
     </table>
     """
@@ -90,3 +90,21 @@ def test_disabled_source_is_a_gap_not_a_collection_failure():
     )
     assert audit["status"] == "PASS"
     assert audit["unsupported_or_disabled_sources"] == ["kr"]
+
+
+def test_enabled_sec_source_requires_verified_cik():
+    now = datetime(2026, 8, 8, 4, 0, tzinfo=timezone.utc)
+    registry = {
+        "sources": [
+            {"id": "example", "enabled": True, "adapter": "sec_edgar", "ticker": "EX"}
+        ]
+    }
+    audit = ledger.audit_ledger(
+        registry,
+        [],
+        [],
+        now,
+        [{"source_id": "example", "status": "success", "accepted": 0, "rejected": 0}],
+    )
+    assert audit["status"] == "FAIL"
+    assert {issue["code"] for issue in audit["issues"]} == {"MISSING_VERIFIED_CIK"}

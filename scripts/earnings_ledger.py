@@ -28,7 +28,6 @@ AUDIT_PATH = LEDGER_DIR / "audit_latest.json"
 REPORTS_DIR = LEDGER_DIR / "reports"
 
 JST = ZoneInfo("Asia/Tokyo")
-SEC_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 TDNET_BASE = "https://www.release.tdnet.info/inbs/"
 EARNINGS_FORMS = {"10-Q", "10-K", "20-F"}
@@ -104,6 +103,8 @@ def write_ndjson(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def request_bytes(url: str, user_agent: str, retries: int = 3, timeout: int = 30) -> bytes:
+    if not user_agent.strip():
+        raise RuntimeError("SEC_USER_AGENT must not be empty")
     last: Exception | None = None
     for attempt in range(retries):
         req = urllib.request.Request(
@@ -129,13 +130,13 @@ def request_json(url: str, user_agent: str) -> Any:
     return json.loads(request_bytes(url, user_agent).decode("utf-8"))
 
 
-def sec_company_tickers(user_agent: str) -> dict[str, int]:
-    payload = request_json(SEC_TICKERS_URL, user_agent)
-    return {
-        item["ticker"].upper(): int(item["cik_str"])
-        for item in payload.values()
-        if item.get("ticker") and item.get("cik_str") is not None
-    }
+def decode_html(raw: bytes) -> str:
+    for encoding in ("utf-8", "cp932", "shift_jis"):
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            pass
+    return raw.decode("utf-8", errors="replace")
 
 
 def sec_filing_url(cik: int, accession: str) -> str:
@@ -160,11 +161,12 @@ def collect_sec(
     source: dict[str, Any],
     window: Window,
     user_agent: str,
-    ticker_map: dict[str, int],
     retrieved_at: datetime,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     ticker = source["ticker"].upper()
-    cik = int(source.get("cik") or ticker_map[ticker])
+    if source.get("cik") is None:
+        raise RuntimeError(f"verified CIK missing for enabled SEC source: {source['id']}")
+    cik = int(source["cik"])
     payload = request_json(SEC_SUBMISSIONS_URL.format(cik=cik), user_agent)
     recent = payload.get("filings", {}).get("recent", {})
     if not recent:
@@ -206,7 +208,7 @@ def collect_sec(
             else:
                 doc_url = sec_document_url(cik, accession, primary_document)
                 try:
-                    text = request_bytes(doc_url, user_agent).decode("utf-8", errors="replace")[:500_000]
+                    text = decode_html(request_bytes(doc_url, user_agent))[:500_000]
                 except Exception:
                     reason = "SOURCE_FETCH_FAILED"
                 else:
@@ -222,6 +224,7 @@ def collect_sec(
             "company_id": source["id"],
             "company_name": source["name"],
             "ticker": ticker,
+            "cik": cik,
             "source_adapter": "sec_edgar",
             "document_type": form,
             "published_at": iso(published),
@@ -254,11 +257,18 @@ class TDNetParser(HTMLParser):
         if tag == "tr":
             self.current = {}
         if tag == "td" and self.current is not None:
-            cls = attrs_d.get("class") or ""
-            mapping = {"kjTime": "time", "kjCode": "code", "kjName": "company", "kjTitle": "title"}
-            if cls in mapping:
-                self.capture_key = mapping[cls]
-                self.buf = []
+            classes = set((attrs_d.get("class") or "").split())
+            mapping = {
+                "kjTime": "time",
+                "kjCode": "code",
+                "kjName": "company",
+                "kjTitle": "title",
+            }
+            for marker, key in mapping.items():
+                if marker in classes:
+                    self.capture_key = key
+                    self.buf = []
+                    break
         if tag == "a" and self.capture_key == "title":
             href = attrs_d.get("href")
             if href:
@@ -315,14 +325,17 @@ def collect_tdnet(
                 if exc.code == 404:
                     break
                 raise
-            text = raw.decode("utf-8", errors="replace")
+            text = decode_html(raw)
             rows = parse_tdnet(text)
             if not rows:
-                if "開示された情報はありません" in text:
+                if "開示された情報はありません" in text or "開示情報はありません" in text:
                     found_any_page = True
                     break
                 if page == 1:
-                    raise RuntimeError(f"TDnet parse failure or unexpected empty page: {url}")
+                    sample = re.sub(r"\s+", " ", text[:600])
+                    raise RuntimeError(
+                        f"TDnet parse failure or unexpected empty page: {url}; sample={sample!r}"
+                    )
                 break
             found_any_page = True
             for row in rows:
@@ -407,6 +420,9 @@ def audit_ledger(
             issues.append(
                 {"code": "NON_PRIMARY_DOMAIN", "event_id": row["event_id"], "domain": domain}
             )
+    for source in registry.get("sources", []):
+        if source.get("enabled", True) and source.get("adapter") == "sec_edgar" and source.get("cik") is None:
+            issues.append({"code": "MISSING_VERIFIED_CIK", "source_id": source.get("id")})
     unsupported = [s["id"] for s in registry["sources"] if not s.get("enabled", True)]
     failures = [s for s in source_status if s["status"] == "error"]
     return {
@@ -456,11 +472,9 @@ def run(now: datetime | None = None, audit_only: bool = False) -> int:
     rejected = load_ndjson(REJECTED_PATH)
     source_status: list[dict[str, Any]] = []
     if not audit_only:
-        user_agent = os.environ.get(
-            "SEC_USER_AGENT",
-            "KAFKA2306 semiconductor-earnings-model https://github.com/KAFKA2306/semiconductor-earnings-model",
-        )
-        ticker_map: dict[str, int] | None = None
+        user_agent = os.environ.get("SEC_USER_AGENT", "").strip()
+        if not user_agent:
+            raise RuntimeError("SEC_USER_AGENT is required for primary-source collection")
         new_events: list[dict[str, Any]] = []
         new_rejected: list[dict[str, Any]] = []
         for source in registry.get("sources", []):
@@ -475,9 +489,7 @@ def run(now: datetime | None = None, audit_only: bool = False) -> int:
                 continue
             try:
                 if source["adapter"] == "sec_edgar":
-                    if ticker_map is None:
-                        ticker_map = sec_company_tickers(user_agent)
-                    a, r = collect_sec(source, window, user_agent, ticker_map, now)
+                    a, r = collect_sec(source, window, user_agent, now)
                 elif source["adapter"] == "tdnet_public":
                     a, r = collect_tdnet(source, window, user_agent, now)
                 else:

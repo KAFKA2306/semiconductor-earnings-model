@@ -4,13 +4,26 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 */2 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/earnings-ledger-update.yml"
+      - "scripts/earnings_ledger.py"
+      - "tests/test_earnings_ledger.py"
+      - "data/earnings_ledger/source_registry.json"
+  pull_request:
+    paths:
+      - ".github/workflows/earnings-ledger-update.yml"
+      - "scripts/earnings_ledger.py"
+      - "tests/test_earnings_ledger.py"
+      - "data/earnings_ledger/source_registry.json"
 
 permissions:
   contents: write
 
 concurrency:
-  group: earnings-ledger-update
-  cancel-in-progress: false
+  group: earnings-ledger-update-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   collect-audit-persist:
@@ -33,10 +46,14 @@ jobs:
 
       - name: Collect with retry
         env:
-          SEC_USER_AGENT: "KAFKA2306 semiconductor-earnings-model https://github.com/KAFKA2306/semiconductor-earnings-model"
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         shell: bash
         run: |
           set -u
+          if [ -z "${SEC_USER_AGENT:-}" ]; then
+            echo "Repository variable SEC_USER_AGENT is required."
+            exit 1
+          fi
           ok=0
           for attempt in 1 2 3; do
             echo "collector attempt ${attempt}/3"
@@ -57,6 +74,7 @@ jobs:
         run: python scripts/earnings_ledger.py --audit-only
 
       - name: Commit validated ledger changes
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           if git diff --quiet -- data/earnings_ledger; then
