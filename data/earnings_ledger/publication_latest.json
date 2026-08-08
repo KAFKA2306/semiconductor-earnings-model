@@ -1,0 +1,35 @@
+{
+  "schema_version": "earnings-ledger-publication.v1",
+  "generated_from_run_at": "2026-08-08T15:01:10.954394Z",
+  "audit_status": "PASS",
+  "accepted_events_total": 1,
+  "rejected_events_total": 14,
+  "unsupported_or_disabled_sources": [
+    "sk-hynix",
+    "samsung-electronics"
+  ],
+  "events": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "company_name": "Lam Research",
+      "document_type": "10-K",
+      "published_at": "2026-08-07T20:06:32Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/707549/000070754926000037/0000707549-26-000037-index.html",
+      "freshness": "PASS"
+    }
+  ],
+  "audit_artifacts": {
+    "ledger": "audit_latest.json",
+    "semantic_duplicates": "semantic_duplicate_audit_latest.json",
+    "period_normalization": "period_normalization_latest.json",
+    "accounting_basis": "accounting_basis_audit_latest.json",
+    "evidence": "evidence_latest.json"
+  },
+  "contract": {
+    "primary_sources_only": true,
+    "freshness_gate_hours": 24,
+    "fail_closed": true,
+    "unverified_values_published": false
+  }
+}
