@@ -11,9 +11,11 @@ on:
       - "scripts/earnings_ledger.py"
       - "scripts/audit_earnings_evidence.py"
       - "scripts/audit_earnings_semantic_duplicates.py"
+      - "scripts/normalize_earnings_periods.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
       - "tests/test_earnings_semantic_duplicates.py"
+      - "tests/test_earnings_period_normalization.py"
       - "data/earnings_ledger/source_registry.json"
   pull_request:
     paths:
@@ -21,9 +23,11 @@ on:
       - "scripts/earnings_ledger.py"
       - "scripts/audit_earnings_evidence.py"
       - "scripts/audit_earnings_semantic_duplicates.py"
+      - "scripts/normalize_earnings_periods.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
       - "tests/test_earnings_semantic_duplicates.py"
+      - "tests/test_earnings_period_normalization.py"
       - "data/earnings_ledger/source_registry.json"
 
 permissions:
@@ -50,7 +54,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check pytest
 
       - name: Run ledger unit tests
-        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py
+        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py tests/test_earnings_period_normalization.py
 
       - name: Collect with retry
         env:
@@ -83,6 +87,9 @@ jobs:
 
       - name: Reject semantic duplicate earnings events
         run: python scripts/audit_earnings_semantic_duplicates.py
+
+      - name: Normalize primary reporting periods
+        run: python scripts/normalize_earnings_periods.py
 
       - name: Verify primary evidence content with retry
         env:
