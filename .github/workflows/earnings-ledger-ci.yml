@@ -1,0 +1,39 @@
+name: Earnings Evidence Ledger CI
+
+on:
+  pull_request:
+    paths:
+      - "data/earnings/**"
+      - "docs/earnings-evidence-ledger.md"
+      - "scripts/earnings_*.py"
+      - "tests/test_earnings_*.py"
+      - ".github/workflows/*earnings*.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/earnings/**"
+      - "scripts/earnings_*.py"
+      - "tests/test_earnings_*.py"
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate JSON contracts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for path in Path("data/earnings").rglob("*.json"):
+              json.loads(path.read_text(encoding="utf-8"))
+              print(path)
+          PY
+      - name: Run earnings regression suite
+        run: |
+          python -m pip install --disable-pip-version-check pytest
+          python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_source_discovery.py
+          python -m compileall -q scripts/earnings_ledger.py scripts/earnings_source_discovery.py
