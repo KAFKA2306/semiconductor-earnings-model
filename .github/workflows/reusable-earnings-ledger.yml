@@ -1,0 +1,84 @@
+name: Reusable Earnings Evidence Ledger
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        description: collect or report
+        required: true
+        type: string
+      report_date:
+        description: Optional YYYY-MM-DD in Asia/Tokyo
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  ledger:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Contract tests
+        run: |
+          python -m pip install --disable-pip-version-check pytest
+          python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_source_discovery.py
+          python -m compileall -q scripts/earnings_ledger.py scripts/earnings_source_discovery.py
+
+      - name: Discover official-source candidates
+        if: inputs.mode == 'collect'
+        env:
+          SEC_USER_AGENT: KAFKA2306 semiconductor-earnings-model https://github.com/KAFKA2306/semiconductor-earnings-model
+        run: python scripts/earnings_source_discovery.py
+
+      - name: Validate normalized inbox when present
+        if: inputs.mode == 'collect'
+        shell: bash
+        run: |
+          if [ -s data/earnings/inbox/events.ndjson ]; then
+            python - <<'PY'
+          from datetime import datetime, timedelta, timezone
+          import subprocess
+          now = datetime.now(timezone.utc)
+          start = now - timedelta(hours=72)
+          subprocess.run([
+              "python", "scripts/earnings_ledger.py", "validate",
+              "--window-start", start.isoformat(),
+              "--window-end", now.isoformat(),
+          ], check=True)
+          PY
+          fi
+
+      - name: Build deterministic 07:00 JST report
+        if: inputs.mode == 'report'
+        shell: bash
+        env:
+          REQUESTED_DATE: ${{ inputs.report_date }}
+        run: |
+          REPORT_DATE="$REQUESTED_DATE"
+          if [ -z "$REPORT_DATE" ]; then
+            REPORT_DATE="$(TZ=Asia/Tokyo date +%F)"
+          fi
+          python scripts/earnings_ledger.py report --date "$REPORT_DATE"
+
+      - name: Commit evidence changes only
+        shell: bash
+        run: |
+          if git diff --quiet -- data/earnings; then
+            echo "No earnings evidence changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/earnings
+          git commit -m "data: update earnings evidence ledger"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
