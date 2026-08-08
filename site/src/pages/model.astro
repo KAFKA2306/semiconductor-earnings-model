@@ -10,44 +10,50 @@ const base = import.meta.env.BASE_URL;
 const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
 if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
 
-const usd = (value) => `$${(Number(value) / 1_000_000_000).toFixed(3)}B`;
-const exactUsd = (value) => `$${Number(value).toLocaleString('en-US')} USD`;
+const usd = (value) => `$${(Number(value) / 1_000_000_000).toFixed(1)}B`;
 const dateJP = (value) => {
+  if (!value) return '期間未確定';
   const [year, month, day] = value.slice(0, 10).split('-').map(Number);
-  return `${year}年${month}月${day}日`;
+  return `${year}/${month}/${day}`;
 };
 const roleJP = {
-  hyperscaler: 'ハイパースケーラー',
-  'ai-cloud': 'AIクラウド',
-  'data-center-operator': 'データセンター運営',
-  'cloud-provider': 'クラウドプロバイダー',
+  hyperscaler: 'Hyperscaler',
+  'ai-cloud': 'AI cloud',
+  'data-center-operator': 'Data center',
+  'cloud-provider': 'Cloud',
 };
 const demandCompanies = demandApi.companies.filter((company) => company.quarters.length > 0);
 const latestDemand = (company) => company.quarters[0];
-const profitHistoryQuarters = profitApi.companies.filter((company) => company.quarters.length > 0).length
-  ? Math.min(...profitApi.companies.filter((company) => company.quarters.length > 0).map((company) => company.quarters.length))
-  : 0;
 const demandAggregation = buildDemandAggregation(demandApi);
 const commonDemandPeriod = demandAggregation.commonPeriod;
 const commonDemandCompanies = demandAggregation.commonCompanies;
 const profitCompanies = profitApi.companies.filter((company) => company.quarters.length > 0);
-const currentStatus = demandAggregation.ready ? '総括済み' : '集計待ち';
+const profitHistoryQuarters = profitCompanies.length
+  ? Math.min(...profitCompanies.map((company) => company.quarters.length))
+  : 0;
 const fcf = (company) => latestDemand(company).operating_cash_flow.value_usd - latestDemand(company).capital_expenditures.value_usd;
 const burden = (company) => {
-  const ocf = latestDemand(company).operating_cash_flow.value_usd;
-  return ocf ? latestDemand(company).capital_expenditures.value_usd / ocf * 100 : null;
+  const ocf = Number(latestDemand(company).operating_cash_flow.value_usd);
+  return ocf ? Number(latestDemand(company).capital_expenditures.value_usd) / ocf * 100 : null;
 };
-const pct = (value) => value == null ? '計算不可' : `${value.toFixed(1)}%`;
-const barWidth = (value) => `${Math.max(2, Number(value) / demandAggregation.scale * 100).toFixed(1)}%`;
-const burdenLabel = (cohort) => cohort.comparableBurden == null ? 'タグ別に表示' : pct(cohort.comparableBurden * 100);
-const cohorts = DEMAND_COHORTS;
-const cohortRows = cohorts.map((cohort) => {
+const pct = (value) => value == null ? '—' : `${value.toFixed(1)}%`;
+const comparableCohorts = demandAggregation.cohorts.filter((cohort) => cohort.comparableBurden != null);
+const maxCompanyCash = Math.max(...demandCompanies.map((company) => Math.abs(Number(latestDemand(company).operating_cash_flow.value_usd))), 1);
+const cashBar = (value) => `${Math.max(3, Math.min(100, Math.abs(Number(value)) / maxCompanyCash * 100)).toFixed(1)}%`;
+const aggregateBar = (value) => `${Math.max(3, Math.min(100, Math.abs(Number(value)) / demandAggregation.scale * 100)).toFixed(1)}%`;
+const cohortRows = DEMAND_COHORTS.map((cohort) => {
   const rows = demandCompanies.filter((company) => cohort.roles.includes(company.role));
   const periods = [...new Set(rows.map((company) => latestDemand(company).period_end))];
   return { ...cohort, rows, periods, comparable: periods.length === 1 };
 });
-const sample = demandCompanies[0];
-const sampleQ = latestDemand(sample);
+const modelState = demandAggregation.ready ? 'computed' : 'insufficient';
+const verdict = demandAggregation.ready ? '観測済み / 因果は未接続' : '観測不足';
+const blockers = [
+  ['β', '顧客投資 → 半導体売上の変換係数'],
+  ['LAG', '投資から売上認識までの時間差'],
+  ['MARGIN', '将来の半導体利益率'],
+  ['WEIGHT', '指数・企業別の寄与ウェイト'],
+];
 ---
 
 <!doctype html>
@@ -55,123 +61,577 @@ const sampleQ = latestDemand(sample);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="半導体利益成長を、顧客の資金余力から入力・式・中間値・判定の順に検証する計算モデル台帳。" />
-    <title>計算モデル / 半導体利益の持続可能性</title>
+    <meta name="description" content="AI・クラウド顧客の資金余力から半導体利益の持続性を検証する、一次情報ベースのリサーチダッシュボード。" />
+    <title>Semiconductor Earnings Model / Research Terminal</title>
   </head>
-  <body>
-    <main class="page">
-      <header class="topbar">
-        <a class="brand" href={`${base}earnings/`}><span class="brand-mark">＋</span><span>一次情報台帳<span class="brand-sub"> / MODEL ROOM</span></span></a>
-        <nav aria-label="サイトナビゲーション"><a href={`${base}earnings/`}>一次台帳</a><a class="active" href={`${base}model/`}>計算モデル</a></nav>
-      </header>
-
-      <section class="hero" aria-labelledby="page-title">
-        <div>
-          <p class="kicker"><span class="status-dot"></span>MODEL / DETERMINISTIC BOUNDARY</p>
-          <h1 id="page-title">計算を、入力から<br /><em>判定まで一本にする。</em></h1>
-          <p class="hero-lede">半導体の高い利益成長が、顧客の資金余力で支えられるかを検証します。入力・式・中間値・未知変数を分け、データがない場所では予測を出しません。</p>
-          <div class="hero-actions"><a class="button button-primary" href="#inputs">入力から見る ↓</a><a class="button button-quiet" href={`${base}earnings/`}>一次台帳へ →</a></div>
+  <body class="model-terminal">
+    <div class="app-shell">
+      <aside class="rail" aria-label="モデル内ナビゲーション">
+        <a class="rail-brand" href={`${base}earnings/`} aria-label="一次情報台帳へ">
+          <span class="rail-mark">K</span>
+          <span>SEMIS</span>
+        </a>
+        <nav class="rail-nav">
+          <a class="active" href="#summary"><span>01</span>Summary</a>
+          <a href="#funding"><span>02</span>Funding</a>
+          <a href="#companies"><span>03</span>Companies</a>
+          <a href="#model"><span>04</span>Model</a>
+          <a href="#evidence"><span>05</span>Evidence</a>
+        </nav>
+        <div class="rail-meta">
+          <span>DATA</span>
+          <strong>SEC EDGAR</strong>
+          <small>deterministic</small>
         </div>
-        <aside class="hero-card"><p class="card-kicker">MODEL RESULT</p><strong data-aggregation-status={demandAggregation.ready ? 'computed' : 'insufficient'}>{currentStatus}</strong><p>総和・比較を計算済み</p><div class="hero-card-rule"></div><span>顧客投資から半導体利益への因果は、β・ラグ・指数ウェイトが未登録のため未成立です。</span></aside>
-      </section>
+      </aside>
 
-      <section class="flow section-block" aria-labelledby="flow-title">
-        <div class="section-label">LOGIC / INPUT → FORMULA → INTERMEDIATE → VERDICT</div>
-        <h2 id="flow-title">計算の順番を、<em>飛ばさない。</em></h2>
-        <div class="flow-grid">
-          <article><b>01</b><strong>入力</strong><span>OCF・CapEx・売上・営業利益</span></article>
-          <i>→</i><article><b>02</b><strong>式</strong><span>FCF・投資負担率・利益率</span></article>
-          <i>→</i><article><b>03</b><strong>中間値</strong><span>投資余力・売上転換・ラグ</span></article>
-          <i>→</i><article><b>04</b><strong>判定</strong><span>レンジ内／強気のみ／未確定</span></article>
-        </div>
-      </section>
+      <main class="workspace">
+        <header class="commandbar">
+          <div class="crumbs">
+            <a href={`${base}earnings/`}>Ledger</a>
+            <span>/</span>
+            <strong>Model</strong>
+          </div>
+          <div class="command-actions">
+            <span class="live-pill"><i></i>PRIMARY FACTS</span>
+            <a href={`${base}api/v1/demand/index.json`}>API</a>
+          </div>
+        </header>
 
-      <section id="inputs" class="section-block" aria-labelledby="inputs-title">
-        <div class="section-heading"><div><div class="section-label">01 / OBSERVED INPUTS</div><h2 id="inputs-title">まず、<em>観測値。</em></h2></div><span class="date-chip">SEC primary facts</span></div>
-        <p class="section-lede">会社ごとに最新の同一四半期factを置きます。FCFと投資負担率はこのページでの派生値です。期間とコホートが違う値を先に合算しません。</p>
-        <div class="cohort-grid">
-          {cohortRows.map((cohort) => (
-            <article class="cohort-card">
-              <header><div><span>{cohort.label}</span><h3>{cohort.rows.length}社</h3></div><strong class:list={{'unknown-text': !cohort.comparable}}>{cohort.comparable ? '同一期間' : '期間不一致'}</strong></header>
-              <p class="cohort-note">{cohort.periods.map(dateJP).join(' / ') || 'factなし'}</p>
-              {cohort.rows.length ? <div class="input-table"><div class="input-row input-head"><span>会社</span><span>OCF</span><span>CapEx</span><span>FCF</span><span>負担率</span></div>{cohort.rows.map((company) => <div class="input-row"><span><b>{company.name}</b><small>{roleJP[company.role] || company.role}</small></span><span>{usd(latestDemand(company).operating_cash_flow.value_usd)}</span><span>{usd(latestDemand(company).capital_expenditures.value_usd)}</span><span>{usd(fcf(company))}</span><span>{pct(burden(company))}</span></div>)}</div> : <p class="empty-note">公開四半期factなし。推定しません。</p>}
-              {cohort.rows.length ? <a class="source-link" href={`${base}api/v1/demand/index.json`}>元fact APIを見る ↗</a> : null}
+        <section id="summary" class="summary">
+          <div class="title-row">
+            <div>
+              <p class="eyebrow">SEMICONDUCTOR EARNINGS / DEMAND-SIDE FUNDING</p>
+              <h1>AI投資は、<br /><span>半導体利益を支え続けられるか。</span></h1>
+              <p class="intro">
+                顧客の営業CFとCapExを先に確認し、その資金余力が半導体売上・利益へ接続できるかを判定する画面です。
+                観測値・派生値・未入力を分離し、係数がない区間は予測しません。
+              </p>
+            </div>
+            <aside class="decision-card" data-aggregation-status={modelState}>
+              <div class="decision-head">
+                <span>CURRENT VERDICT</span>
+                <b class:list={{ ready: demandAggregation.ready }}>{demandAggregation.ready ? 'DATA READY' : 'WAIT'}</b>
+              </div>
+              <strong>{verdict}</strong>
+              <p>
+                顧客資金は比較できます。ただし顧客投資から半導体利益へ渡す係数が未登録のため、
+                2027年利益成長率はまだ出しません。
+              </p>
+              <a href="#model">不足している入力を見る →</a>
+            </aside>
+          </div>
+
+          <div class="kpi-strip" aria-label="主要指標">
+            <article>
+              <span>COMMON PERIOD</span>
+              <strong>{commonDemandCompanies.length}<small>社</small></strong>
+              <p>{dateJP(commonDemandPeriod)}</p>
             </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="aggregate" class="aggregate section-block" aria-labelledby="aggregate-title" data-aggregation-status={demandAggregation.ready ? 'computed' : 'insufficient'} data-aggregation-total-ocf={demandAggregation.totalOcf} data-aggregation-common-companies={commonDemandCompanies.length}>
-        <div class="section-heading"><div><div class="section-label">02 / AGGREGATE & COMPARE</div><h2 id="aggregate-title">まず、<em>総和と比較。</em></h2></div><span class="date-chip">{commonDemandPeriod ? dateJP(commonDemandPeriod) : '期間未確定'}</span></div>
-        <p class="section-lede">同じ最新期間の{commonDemandCompanies.length}社をコホート別に集計します。営業CFは合計し、CapExはXBRLタグごとに積み上げます。タグの違うCapExを一つの意味に合算しないため、比較できる負担率だけを数値化します。</p>
-        <div class="aggregate-summary"><article><span>同一期間の対象</span><strong>{commonDemandCompanies.length}社</strong><p>{commonDemandPeriod ? dateJP(commonDemandPeriod) : '期間未確定'}</p></article><article><span>営業CFの総和</span><strong>{usd(demandAggregation.totalOcf)}</strong><p>全対象のNetCashProvidedByUsedInOperatingActivities</p></article><article><span>CapEx構成</span><strong>{demandAggregation.tagTotals.length}種類</strong><p>タグ別に積み上げ、全タグ総額は作らない</p></article></div>
-        <div class="aggregate-legend"><span><i class="aggregate-ocf-swatch"></i>営業CF総和</span>{demandAggregation.tagTotals.map((tag, index) => <span><i class:list={['aggregate-capex-swatch', `tag-${index % 3}`]}></i>{tag.label}</span>)}</div>
-        <div class="aggregate-chart">
-          {demandAggregation.cohorts.map((cohort) => (
-            <article class="aggregate-row">
-              <header><div><strong>{cohort.label}</strong><span>{cohort.rows.length}社</span></div><b>{burdenLabel(cohort)}</b></header>
-              <div class="aggregate-line"><label>OCF</label><div class="aggregate-track"><div class="aggregate-bar aggregate-ocf" style={`width:${barWidth(cohort.ocf)}`}></div></div><strong>{usd(cohort.ocf)}</strong></div>
-              <div class="aggregate-line"><label>CapEx</label><div class="aggregate-track aggregate-stack">{cohort.tags.map((tag) => <div class:list={['aggregate-bar', 'aggregate-capex', `tag-${tag.colorIndex % 3}`]} style={`width:${barWidth(tag.total)}`} title={`${tag.label}: ${usd(tag.total)}`}></div>)}</div><strong>{cohort.tags.length === 1 ? usd(cohort.tags[0].total) : 'タグ別'}</strong></div>
-              <p>{cohort.tags.map((tag) => `${tag.label} ${usd(tag.total)} / FCF ${usd(tag.fcf)}`).join('　·　')}</p>
+            <article>
+              <span>OPERATING CF</span>
+              <strong>{usd(demandAggregation.totalOcf)}</strong>
+              <p>同一期間の総和</p>
             </article>
-          ))}
-        </div>
-        <div class="aggregate-total">{demandAggregation.tagTotals.map((tag) => <div><span>CapEx / {tag.label}</span><strong>{usd(tag.total)}</strong><small>{tag.companies.join('・')}</small></div>)}</div>
-        <p class="aggregate-note"><strong>計算の境界：</strong>営業CF総和、タグ別CapEx、コホート別負担率、タグ別FCFを計算しました。タグ混在のHyperscalersには単一のCapEx/OCF負担率を置いていません。ここから半導体売上・指数利益へ接続する係数はまだ計算していません。</p>
-      </section>
+            <article>
+              <span>CAPEX DEFINITIONS</span>
+              <strong>{demandAggregation.tagTotals.length}<small>種</small></strong>
+              <p>タグ混在は合算しない</p>
+            </article>
+            <article>
+              <span>COMPARABLE COHORTS</span>
+              <strong>{comparableCohorts.length}<small>群</small></strong>
+              <p>負担率を比較可能</p>
+            </article>
+            <article>
+              <span>SEMICONDUCTOR HISTORY</span>
+              <strong>{profitHistoryQuarters}<small>Q</small></strong>
+              <p>{profitCompanies.length}社を収録</p>
+            </article>
+          </div>
 
-      <section id="formula" class="formula section-block" aria-labelledby="formula-title">
-        <div class="section-heading"><div><div class="section-label">02 / DERIVED VALUES</div><h2 id="formula-title">次に、<em>式。</em></h2></div></div>
-        <div class="formula-grid">
-          <article><span>会社別 FCF</span><code>FCFᵢ = OCFᵢ − CapExᵢ</code><p>営業CFから設備投資を引きます。会社別・同一期間のみ計算します。</p></article>
-          <article><span>投資負担率</span><code>burdenᵢ = CapExᵢ ÷ OCFᵢ</code><p>100%を超える場合、CapExが営業CFを上回っています。</p></article>
-          <article class="example"><span>実データ例 / {sample.name}</span><code>{exactUsd(sampleQ.operating_cash_flow.value_usd)} − {exactUsd(sampleQ.capital_expenditures.value_usd)} = {exactUsd(fcf(sample))}</code><p>取得期間 {dateJP(sampleQ.period_end)}。これは予測ではなく、一次factからの差分です。</p></article>
-        </div>
-      </section>
+          <div class="reading-guide">
+            <span>この画面の読み方</span>
+            <ol>
+              <li><b>1</b> 顧客に投資余力があるか</li>
+              <li><b>2</b> その投資が半導体需要へ何割流れるか</li>
+              <li><b>3</b> 売上が利益へ何割残るか</li>
+            </ol>
+            <p>現在は <strong>1まで実測</strong>。2と3は入力待ちです。</p>
+          </div>
+        </section>
 
-      <section id="forward" class="forward section-block" aria-labelledby="forward-title">
-        <div class="section-heading"><div><div class="section-label">03 / UNKNOWN VARIABLES</div><h2 id="forward-title">将来計算は、<em>まだ止まる。</em></h2></div></div>
-        <p class="section-lede">ここから先は、入力が登録されるまで結果を出しません。式だけを先に固定し、仮定をハードコードしない設計です。</p>
-        <div class="unknown-grid">
-          <article><b>投資余力</b><code>I₁ᵢ = OCF₀ᵢ × (1 + gOCFᵢ) × (1 − mFCFᵢ + fᵢ)</code><p><strong>未計算：</strong>営業CF成長率、確保FCF、借入・リース余力が未登録。</p></article>
-          <article><b>半導体売上</b><code>gR,t = Σ βℓ × gI,t−ℓ</code><p><strong>未計算：</strong>半導体配分率、指数帰属率、売上認識係数、投資ラグが未登録。</p></article>
-          <article><b>営業利益</b><code>gE = (1 + gR) × M₁ ÷ M₀ − 1</code><p><strong>未計算：</strong>将来売上成長と将来利益率が未登録。</p></article>
-        </div>
-      </section>
+        <section id="funding" class="panel-section">
+          <div class="section-head">
+            <div>
+              <span class="section-index">02 / FUNDING CAPACITY</span>
+              <h2>顧客の資金余力</h2>
+              <p>同じ期間の営業CFとCapExをコホート別に比較。まず「投資を続ける現金があるか」を見ます。</p>
+            </div>
+            <div class="legend">
+              <span><i class="ocf-dot"></i>Operating CF</span>
+              <span><i class="capex-dot"></i>CapEx</span>
+            </div>
+          </div>
 
-      <section id="output" class="output section-block" aria-labelledby="output-title">
-        <div class="section-heading"><div><div class="section-label">04 / INTERMEDIATE OUTPUT</div><h2 id="output-title">利益への、<em>接続。</em></h2></div><a class="source-link" href={`${base}earnings/#profit`}>利益時系列を見る ↗</a></div>
-        <div class="output-grid">
-              <article><span>半導体企業</span><strong>{profitCompanies.length}社</strong><p>売上高・営業利益を{profitHistoryQuarters}四半期以上取得</p></article>
-          <article><span>共通期間</span><strong>{profitApi.cohort.status === 'unique' ? '成立' : '期間未確定'}</strong><p>会計期間が揃わないため指数合算なし</p></article>
-          <article><span>コンセンサス</span><strong>未登録</strong><p>2027年予測はこのAPIに含めていません</p></article>
-        </div>
-      </section>
+          <div class="funding-grid">
+            <div class="chart-panel">
+              <div class="panel-title">
+                <div><span>COHORT VIEW</span><strong>Funding capacity</strong></div>
+                <small>{dateJP(commonDemandPeriod)}</small>
+              </div>
+              <div class="cohort-bars">
+                {demandAggregation.cohorts.map((cohort) => (
+                  <article class="cohort-line">
+                    <header>
+                      <div><strong>{cohort.label}</strong><span>{cohort.rows.length} companies</span></div>
+                      <b>{cohort.comparableBurden == null ? 'mixed tag' : `${(cohort.comparableBurden * 100).toFixed(1)}% burden`}</b>
+                    </header>
+                    <div class="bar-line">
+                      <label>OCF</label>
+                      <div class="track"><i class="bar ocf" style={`width:${aggregateBar(cohort.ocf)}`}></i></div>
+                      <span>{usd(cohort.ocf)}</span>
+                    </div>
+                    <div class="bar-line">
+                      <label>CapEx</label>
+                      <div class="track stacked">
+                        {cohort.tags.map((tag) => <i class:list={['bar', 'capex', `tag-${tag.colorIndex % 3}`]} style={`width:${aggregateBar(tag.total)}`}></i>)}
+                      </div>
+                      <span>{cohort.tags.length === 1 ? usd(cohort.tags[0].total) : 'tag split'}</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
 
-      <section id="verdict" class="verdict section-block" aria-labelledby="verdict-title">
-        <div class="verdict-box"><div><div class="section-label">05 / VERDICT BOUNDARY</div><h2 id="verdict-title">因果判定は、<em>未成立。</em></h2></div><p>顧客{commonDemandCompanies.length}社の同一期間OCF・CapExについて、営業CF総和、タグ別CapEx、コホート別負担率、タグ別FCFを計算しました。しかし、外部資金の継続能力、半導体への配分率、ラグ、利益率の将来値、指数ウェイトが揃うまで、顧客投資から半導体利益への因果と2027年利益成長率は計算しません。</p></div>
-        <div class="watch-grid"><div><span>支持に必要</span><p>営業CFが継続的に増加し、CapEx負担率が安定する。</p></div><div><span>反証条件</span><p>FCF悪化、外部資金だけの投資拡大、利益率低下。</p></div><div><span>次の入力</span><p>リース、社債、購入契約、AI売上、指数ウェイト。</p></div></div>
-      </section>
+            <aside class="interpretation-panel">
+              <div class="panel-title">
+                <div><span>INTERPRETATION</span><strong>何が分かったか</strong></div>
+              </div>
+              <div class="signal-list">
+                <article>
+                  <span class="state observed">A</span>
+                  <div><strong>営業CFは観測済み</strong><p>{commonDemandCompanies.length}社を共通期間で合算できます。</p></div>
+                </article>
+                <article>
+                  <span class="state derived">D</span>
+                  <div><strong>FCF・負担率は派生可能</strong><p>会社単位、同一タグのコホート単位でのみ計算します。</p></div>
+                </article>
+                <article>
+                  <span class="state missing">?</span>
+                  <div><strong>半導体への配分率は不明</strong><p>CapExの全額を半導体需要とみなすことはしません。</p></div>
+                </article>
+              </div>
+              <div class="definition-note">
+                <span>WHY TAGS MATTER</span>
+                <p>CapExはXBRL定義が企業で異なります。異なるタグを一つの「設備投資」に潰さず、比較可能性を優先しています。</p>
+              </div>
+            </aside>
+          </div>
+        </section>
 
-      <section class="technical section-block"><details><summary><span><span class="section-label">PROVENANCE</span><strong>モデルの出典とbuild情報</strong></span><span class="open-mark">＋</span></summary><div class="technical-grid"><div><span>利益API hash</span><strong>{profitApi.content_hash}</strong></div><div><span>需要API hash</span><strong>{demandApi.content_hash}</strong></div><div><span>画面build SHA</span><strong data-build-sha={buildSha}>{buildSha}</strong></div><div><span>API</span><a href={`${base}api/v1/demand/index.json`}>需要API ↗</a><a href={`${base}api/v1/semiconductor-profit/index.json`}>利益API ↗</a></div></div></details></section>
-      <footer><span>入力 → 式 → 中間値 → 判定</span><span>予測値は計算していません · SEC EDGAR</span></footer>
-    </main>
+        <section id="companies" class="panel-section">
+          <div class="section-head">
+            <div>
+              <span class="section-index">03 / COMPANY ACTUALS</span>
+              <h2>会社別 Actuals</h2>
+              <p>Koyfin型の「まず一覧、必要なら一次資料へ」の導線。A=一次fact、D=この画面での派生値です。</p>
+            </div>
+            <div class="table-key"><span class="state observed">A</span> actual <span class="state derived">D</span> derived</div>
+          </div>
+
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role</th>
+                  <th>Period</th>
+                  <th>OCF <em>A</em></th>
+                  <th>CapEx <em>A</em></th>
+                  <th>FCF <em>D</em></th>
+                  <th>Burden <em>D</em></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {demandCompanies.map((company) => (
+                  <tr>
+                    <td>
+                      <strong>{company.name}</strong>
+                      <div class="mini-bar"><i style={`width:${cashBar(latestDemand(company).operating_cash_flow.value_usd)}`}></i></div>
+                    </td>
+                    <td><span class="role-pill">{roleJP[company.role] || company.role}</span></td>
+                    <td>{dateJP(latestDemand(company).period_end)}</td>
+                    <td>{usd(latestDemand(company).operating_cash_flow.value_usd)}</td>
+                    <td>{usd(latestDemand(company).capital_expenditures.value_usd)}</td>
+                    <td class:list={{ negative: fcf(company) < 0 }}>{usd(fcf(company))}</td>
+                    <td class:list={{ hot: (burden(company) ?? 0) > 100 }}>{pct(burden(company))}</td>
+                    <td><a class="row-link" href={latestDemand(company).operating_cash_flow.source_url} target="_blank" rel="noreferrer">SEC ↗</a></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cohort-notes">
+            {cohortRows.map((cohort) => (
+              <article>
+                <span>{cohort.label}</span>
+                <strong>{cohort.rows.length}社</strong>
+                <p>{cohort.periods.map(dateJP).join(' · ') || 'factなし'}</p>
+                <b class:list={{ mismatch: !cohort.comparable }}>{cohort.comparable ? 'period aligned' : 'period mismatch'}</b>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="model" class="panel-section">
+          <div class="section-head">
+            <div>
+              <span class="section-index">04 / MODEL PIPELINE</span>
+              <h2>どこまで計算できるか</h2>
+              <p>説明文ではなく、モデルの「通っている区間」と「止まっている区間」を一目で示します。</p>
+            </div>
+          </div>
+
+          <div class="pipeline">
+            <article class="stage complete">
+              <header><span>01</span><b>OBSERVED</b></header>
+              <strong>顧客の資金余力</strong>
+              <p>OCF / CapEx / 会社別FCF</p>
+              <footer><i></i>ready</footer>
+            </article>
+            <div class="connector complete"><span>→</span></div>
+            <article class="stage blocked">
+              <header><span>02</span><b>ALLOCATION</b></header>
+              <strong>半導体への配分</strong>
+              <p>β × 顧客投資 × ラグ</p>
+              <footer><i></i>missing inputs</footer>
+            </article>
+            <div class="connector blocked"><span>→</span></div>
+            <article class="stage blocked">
+              <header><span>03</span><b>PROFIT</b></header>
+              <strong>売上から利益へ</strong>
+              <p>売上 × 将来利益率</p>
+              <footer><i></i>missing margin</footer>
+            </article>
+            <div class="connector blocked"><span>→</span></div>
+            <article class="stage blocked">
+              <header><span>04</span><b>INDEX</b></header>
+              <strong>指数利益成長</strong>
+              <p>企業利益 × ウェイト</p>
+              <footer><i></i>not calculated</footer>
+            </article>
+          </div>
+
+          <div class="blocker-grid">
+            <div class="blocker-head">
+              <span>REQUIRED INPUTS</span>
+              <strong>あと4種類の入力でモデルが接続</strong>
+              <p>仮定をコードへ埋め込まず、登録された入力だけで前進します。</p>
+            </div>
+            <div class="blocker-list">
+              {blockers.map(([code, text]) => (
+                <article><b>{code}</b><span>{text}</span><i>missing</i></article>
+              ))}
+            </div>
+          </div>
+
+          <details class="formula-drawer">
+            <summary>
+              <span><small>FORMULAS</small><strong>計算式を確認</strong></span>
+              <b>＋</b>
+            </summary>
+            <div class="formula-grid">
+              <article><span>会社別 FCF</span><code>FCFᵢ = OCFᵢ − CapExᵢ</code><p>同一会社・同一期間のみ。</p></article>
+              <article><span>投資負担率</span><code>burdenᵢ = CapExᵢ ÷ OCFᵢ</code><p>異なるCapExタグは統合しない。</p></article>
+              <article><span>将来投資余力</span><code>I₁ᵢ = OCF₀ᵢ × (1 + gOCFᵢ) × (1 − mFCFᵢ + fᵢ)</code><p>gOCF / mFCF / f が未登録。</p></article>
+              <article><span>半導体利益</span><code>Profit₁ = Σ(I₁ᵢ × βᵢ × lagᵢ) × margin₁</code><p>β / lag / margin が未登録。</p></article>
+            </div>
+          </details>
+        </section>
+
+        <section id="evidence" class="panel-section evidence-section">
+          <div class="section-head">
+            <div>
+              <span class="section-index">05 / EVIDENCE & PROVENANCE</span>
+              <h2>数字の出所</h2>
+              <p>ページ内の実測値はSEC EDGAR Companyfactsを起点にし、派生計算とbuildを追跡できます。</p>
+            </div>
+          </div>
+
+          <div class="evidence-grid">
+            <article>
+              <span>DEMAND API</span>
+              <strong>{demandCompanies.length} companies</strong>
+              <code>{demandApi.content_hash}</code>
+              <a href={`${base}api/v1/demand/index.json`}>JSONを開く ↗</a>
+            </article>
+            <article>
+              <span>SEMICONDUCTOR PROFIT API</span>
+              <strong>{profitCompanies.length} companies</strong>
+              <code>{profitApi.content_hash}</code>
+              <a href={`${base}api/v1/semiconductor-profit/index.json`}>JSONを開く ↗</a>
+            </article>
+            <article>
+              <span>BUILD</span>
+              <strong>GitHub Pages</strong>
+              <code data-build-sha={buildSha}>{buildSha}</code>
+              <a href="https://www.sec.gov/edgar/sec-api-documentation" target="_blank" rel="noreferrer">SEC API仕様 ↗</a>
+            </article>
+          </div>
+
+          <div class="boundary">
+            <span>MODEL BOUNDARY</span>
+            <p>
+              この画面が答えるのは「顧客の資金余力がどこまで観測できているか」です。
+              「その資金が半導体利益を何%押し上げるか」は、β・ラグ・将来利益率・ウェイトが登録されるまで答えません。
+            </p>
+          </div>
+        </section>
+
+        <footer class="workspace-footer">
+          <span>SEMICONDUCTOR EARNINGS MODEL</span>
+          <span>Actual → Derived → Missing → Verdict</span>
+        </footer>
+      </main>
+    </div>
   </body>
 </html>
 
 <style>
-  :global(*) { box-sizing: border-box; } :global(html) { width: 100%; overflow-x: hidden; background: #f2eee5; } :global(body) { margin: 0; color: #17241d; background: #f2eee5; font-family: "Hiragino Sans", "Yu Gothic", sans-serif; } :global(a) { color: inherit; }
-  .page { width: calc(100% - 44px); max-width: 1160px; margin: auto; padding-bottom: 54px; } .topbar { display: flex; justify-content: space-between; align-items: center; min-height: 74px; border-bottom: 1px solid #c9c6bc; } .brand { display: flex; align-items: center; gap: 10px; color: #17241d; font: 700 .78rem "IBM Plex Mono", monospace; text-decoration: none; } .brand-sub { color: #778077; font-weight: 400; } .brand-mark { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid #17241d; } nav { display: flex; gap: 20px; } nav a { color: #667168; font: .66rem "IBM Plex Mono", monospace; text-decoration: none; } nav .active, nav a:hover, .source-link:hover { color: #758f00; }
-  .hero { display: grid; grid-template-columns: minmax(0, 1fr) 285px; gap: 65px; align-items: end; padding: clamp(65px, 9vw, 115px) 0 82px; } .kicker, .section-label, .card-kicker, .date-chip, .cohort-card header > div > span, .cohort-note, .input-row, .formula-card span, .output-grid span, .watch-grid span, footer { font-family: "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 25px; color: #68766c; font-size: .63rem; } .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #c68f50; box-shadow: 0 0 0 4px #f1e5d0; } h1, h2, h3 { margin: 0; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 600; letter-spacing: -.07em; } h1 > em, h2 > em { color: #738d00; font-style: normal; } h1 { max-width: 820px; font-size: clamp(3rem, 7vw, 6.8rem); line-height: .99; } .hero-lede { max-width: 700px; margin: 30px 0 0; color: #55645a; font-size: 1rem; line-height: 1.9; } .hero-actions { display: flex; gap: 10px; margin-top: 30px; } .button { display: inline-flex; padding: 13px 17px; color: #4d5c51; border: 1px solid #b7b9ac; font: .68rem "IBM Plex Mono", monospace; text-decoration: none; } .button-primary { color: #eff6e8; background: #172d23; border-color: #172d23; }
-  .hero-card { padding: 24px; color: #eef4e8; background: #172d23; box-shadow: 12px 12px 0 #d7ddbd; } .card-kicker { margin: 0 0 25px; color: #b5c5a6; font-size: .58rem; } .hero-card strong { display: block; color: #f0c878; font: 600 3.5rem "IBM Plex Mono", monospace; letter-spacing: -.08em; } .hero-card p:not(.card-kicker) { margin: 19px 0 0; color: #d8e2d3; font: .72rem "IBM Plex Mono", monospace; } .hero-card-rule { margin: 26px 0 13px; border-top: 1px solid #4e6c52; } .hero-card > span { color: #9eb09e; font-size: .72rem; line-height: 1.6; }
-  .section-block { margin-bottom: 95px; } .section-label { margin-bottom: 13px; color: #859086; font-size: .6rem; } .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 25px; } h2 { font-size: clamp(2.5rem, 5vw, 4.8rem); line-height: .98; } .section-lede { max-width: 760px; margin: 22px 0 28px; color: #67746a; font-size: .86rem; line-height: 1.8; } .date-chip { padding: 8px 11px; color: #607000; border: 1px solid #bdcb85; font-size: .58rem; }
-  .flow { padding-top: 30px; border-top: 1px solid #c9c6bc; } .flow-grid { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 8px; align-items: stretch; } .flow-grid article { display: grid; gap: 14px; min-height: 140px; padding: 18px; background: #e4e3d8; } .flow-grid article:nth-of-type(2) { background: #d7fa67; } .flow-grid article:nth-of-type(3) { color: #eef4e8; background: #172d23; } .flow-grid article:nth-of-type(4) { color: #654d2f; background: #f1e5d0; } .flow-grid b { color: #758077; font: .7rem "IBM Plex Mono", monospace; } .flow-grid strong { font: 1.25rem "Hiragino Mincho ProN", serif; } .flow-grid span { align-self: end; color: #627066; font-size: .72rem; line-height: 1.5; } .flow-grid article:nth-of-type(3) span { color: #c5d2c2; } .flow-grid i { align-self: center; color: #8a958a; font: 1.2rem "IBM Plex Mono", monospace; }
-  .verdict-box { display: grid; grid-template-columns: 1fr 1.2fr; gap: 35px; padding: 27px; color: #eef4e8; background: #172d23; } .verdict-box h2 { color: #eef4e8; } .verdict-box h2 em { color: #f0c878; } .verdict-box > p { margin: 0; color: #c8d6c2; font-size: .84rem; line-height: 1.9; } .watch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 12px; background: #c9c6bc; } .watch-grid > div { min-height: 125px; padding: 18px; background: #f8f6ef; } .watch-grid span { color: #7a867d; font-size: .56rem; } .watch-grid p { margin: 16px 0 0; color: #5c6b60; font-size: .74rem; line-height: 1.7; }
-  .cohort-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .cohort-card { padding: 20px; border: 1px solid #cbcabe; background: #f8f6ef; } .cohort-card header { display: flex; justify-content: space-between; align-items: start; gap: 15px; } .cohort-card header > div > span { color: #68766c; font-size: .55rem; } .cohort-card h3 { margin-top: 9px; font-size: 1.5rem; } .cohort-card header strong { color: #637900; font: .6rem "IBM Plex Mono", monospace; } .unknown-text { color: #a16625 !important; } .cohort-note { margin: 13px 0; color: #929b91; font-size: .5rem; } .input-table { display: grid; border-top: 1px solid #d3d2c9; } .input-row { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid #e1dfd6; color: #56645a; font-size: .56rem; letter-spacing: 0; text-transform: none; } .input-row span:not(:first-child) { text-align: right; } .input-row b { display: block; color: #26372b; font: .7rem "Hiragino Sans", sans-serif; } .input-row small { display: block; margin-top: 3px; color: #929b91; font-size: .5rem; } .input-head { color: #8b948d; font-size: .48rem; text-transform: uppercase; } .input-head span:not(:first-child) { text-align: right; } .source-link { display: inline-block; margin-top: 14px; color: #687d00; font: .6rem "IBM Plex Mono", monospace; text-decoration: none; } .empty-note { color: #a16625; font-size: .75rem; }
-  .aggregate-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-bottom: 16px; background: #c9c6bc; } .aggregate-summary article { min-height: 122px; padding: 20px; background: #172d23; } .aggregate-summary span, .aggregate-total span, .aggregate-legend, .aggregate-row header span, .aggregate-line label { color: #a9bca7; font: .55rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .aggregate-summary strong { display: block; margin-top: 18px; color: #d7fa67; font: 600 1.7rem "IBM Plex Mono", monospace; letter-spacing: -.06em; } .aggregate-summary p { margin: 7px 0 0; color: #c0d0bb; font-size: .68rem; line-height: 1.5; } .aggregate-legend { display: flex; flex-wrap: wrap; gap: 15px; margin: 18px 0 10px; color: #69766d; } .aggregate-legend i { display: inline-block; width: 9px; height: 9px; margin-right: 5px; background: #172d23; } .aggregate-legend .aggregate-capex-swatch { background: #a6b850; } .aggregate-legend .tag-1 { background: #d59a64; } .aggregate-legend .tag-2 { background: #8e9bb8; } .aggregate-chart { display: grid; gap: 1px; background: #c9c6bc; } .aggregate-row { padding: 19px 20px; background: #f8f6ef; } .aggregate-row header { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; margin-bottom: 15px; } .aggregate-row header strong { color: #26372b; font: 1.15rem "Hiragino Mincho ProN", serif; } .aggregate-row header span { margin-left: 10px; color: #879188; letter-spacing: 0; text-transform: none; } .aggregate-row header b { color: #687d00; font: .65rem "IBM Plex Mono", monospace; } .aggregate-line { display: grid; grid-template-columns: 55px minmax(0, 1fr) 95px; gap: 10px; align-items: center; margin-top: 8px; } .aggregate-line label { color: #78857b; letter-spacing: .02em; } .aggregate-track { display: flex; height: 14px; background: #e3e3d9; overflow: hidden; } .aggregate-bar { min-width: 2px; height: 100%; } .aggregate-ocf { background: #172d23; } .aggregate-capex { background: #a6b850; } .aggregate-capex.tag-1 { background: #d59a64; } .aggregate-capex.tag-2 { background: #8e9bb8; } .aggregate-line > strong { color: #56645a; font: .64rem "IBM Plex Mono", monospace; text-align: right; } .aggregate-row > p { margin: 15px 0 0 65px; color: #778178; font-size: .68rem; line-height: 1.7; } .aggregate-total { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 12px; background: #c9c6bc; } .aggregate-total > div { display: grid; gap: 9px; padding: 18px; background: #f1e5d0; } .aggregate-total span { color: #806b51; } .aggregate-total strong { color: #684b28; font: 1.15rem "IBM Plex Mono", monospace; } .aggregate-total small { color: #806b51; font-size: .68rem; } .aggregate-note { margin: 18px 0 0; padding: 16px 18px; color: #6a786e; border-left: 3px solid #c5745f; background: #f1e5d0; font-size: .73rem; line-height: 1.75; } .aggregate-note strong { color: #684b28; }
-  .formula-grid, .unknown-grid, .output-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; } .formula-grid article, .unknown-grid article { min-height: 170px; padding: 21px; border: 1px solid #cbcabe; background: #f8f6ef; } .formula-grid article span, .unknown-grid article b { color: #68766c; font: .58rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } code { display: block; margin: 20px 0 13px; color: #25372a; font: .9rem "IBM Plex Mono", monospace; line-height: 1.55; overflow-wrap: anywhere; } .formula-grid p, .unknown-grid p { margin: 0; color: #6a786e; font-size: .73rem; line-height: 1.7; } .formula-grid .example { color: #654d2f; background: #f1e5d0; } .formula-grid .example code { color: #684b28; font-size: .72rem; }
-  .unknown-grid { grid-template-columns: repeat(3, 1fr); } .unknown-grid article { border-top: 3px solid #c5745f; } .unknown-grid p strong { color: #a16625; } .output-grid { grid-template-columns: repeat(3, 1fr); } .output-grid article { padding: 21px; background: #172d23; } .output-grid span { color: #b1c3ae; font-size: .55rem; } .output-grid strong { display: block; margin-top: 19px; color: #d7fa67; font: 600 1.8rem "IBM Plex Mono", monospace; } .output-grid p { margin: 8px 0 0; color: #b7c9b3; font-size: .7rem; line-height: 1.6; }
-  .technical details { border-top: 1px solid #c9c6bc; border-bottom: 1px solid #c9c6bc; } .technical summary { display: flex; justify-content: space-between; gap: 20px; padding: 23px 0; cursor: pointer; list-style: none; } .technical summary::-webkit-details-marker { display: none; } .technical summary strong { display: block; color: #25372a; font: 1.45rem "Hiragino Mincho ProN", serif; } .open-mark { color: #728b00; font: 1.1rem "IBM Plex Mono", monospace; } .technical-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding-bottom: 24px; background: #d3d2c9; } .technical-grid > div { display: grid; gap: 10px; padding: 15px; background: #e9e7dd; } .technical-grid span { color: #818b82; font: .54rem "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; } .technical-grid strong, .technical-grid a { color: #52625a; font: .62rem "IBM Plex Mono", monospace; overflow-wrap: anywhere; } .technical-grid a { color: #687d00; text-decoration: none; } footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; color: #879087; border-top: 1px solid #c9c6bc; font-size: .55rem; }
-  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 38px; } .hero-card { max-width: 340px; } .flow-grid { grid-template-columns: repeat(2, 1fr); } .flow-grid i { display: none; } .verdict-box { grid-template-columns: 1fr; gap: 18px; } .cohort-grid, .aggregate-summary, .formula-grid, .unknown-grid, .output-grid, .watch-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) { .page { width: calc(100% - 28px); } .topbar { min-height: 64px; } .brand-sub { display: none; } nav { gap: 12px; } nav a { font-size: .54rem; } .hero { padding: 60px 0 70px; } h1 { max-width: 100%; font-size: clamp(1.65rem, 8.5vw, 3.5rem); line-height: 1.12; } .hero-lede { font-size: .82rem; } .hero-actions { flex-wrap: wrap; } .section-block { margin-bottom: 75px; } .section-heading { align-items: start; flex-direction: column; gap: 14px; } h2 { font-size: clamp(2.3rem, 12vw, 4rem); } .flow-grid, .cohort-grid, .aggregate-summary, .formula-grid, .unknown-grid, .output-grid, .watch-grid { grid-template-columns: 1fr; } .aggregate-line { grid-template-columns: 45px minmax(0, 1fr) 75px; gap: 6px; } .aggregate-row > p { margin-left: 0; } .aggregate-total { grid-template-columns: 1fr; } .input-row { grid-template-columns: 1.25fr repeat(4, minmax(0, 1fr)); font-size: .48rem; } .input-row b { font-size: .62rem; } .verdict-box { padding: 20px; } .technical-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
+  :global(*) { box-sizing: border-box; }
+  :global(html) { scroll-behavior: smooth; }
+  :global(body.model-terminal) {
+    margin: 0 !important;
+    color: #14171b !important;
+    background: #eef0f2 !important;
+    background-image: none !important;
+    font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif !important;
+    letter-spacing: 0 !important;
+  }
+  :global(body.model-terminal::before) { display: none !important; }
+  :global(.model-terminal a) { color: inherit; }
+
+  .app-shell { min-height: 100vh; display: grid; grid-template-columns: 176px minmax(0, 1fr); }
+  .rail {
+    position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
+    padding: 20px 14px; color: #eef2f5; background: #101318; border-right: 1px solid #242a31;
+  }
+  .rail-brand { display: flex; align-items: center; gap: 10px; padding: 5px 8px 24px; font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-decoration: none; }
+  .rail-mark { display: grid; place-items: center; width: 28px; height: 28px; color: #0b1711; background: #63e6a2; border-radius: 4px; font-size: .75rem; font-weight: 900; }
+  .rail-nav { display: grid; gap: 4px; }
+  .rail-nav a { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: center; min-height: 38px; padding: 0 9px; color: #8f9aa6; border-radius: 5px; font-size: .72rem; font-weight: 650; text-decoration: none; }
+  .rail-nav a span { color: #59636e; font: 600 .55rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .rail-nav a:hover, .rail-nav a.active { color: #f5f7f8; background: #1a1f25; }
+  .rail-nav a.active span { color: #63e6a2; }
+  .rail-meta { margin-top: auto; padding: 14px 9px 4px; border-top: 1px solid #252a31; }
+  .rail-meta span { display: block; color: #59636e; font: 700 .52rem ui-monospace, monospace; letter-spacing: .12em; }
+  .rail-meta strong { display: block; margin-top: 6px; color: #c9d0d6; font-size: .66rem; }
+  .rail-meta small { display: block; margin-top: 4px; color: #68727c; font-size: .58rem; }
+
+  .workspace { min-width: 0; background: #f5f6f7; }
+  .commandbar {
+    position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between;
+    min-height: 52px; padding: 0 clamp(18px, 3vw, 42px); background: rgba(245,246,247,.94);
+    border-bottom: 1px solid #d8dde1; backdrop-filter: blur(12px);
+  }
+  .crumbs, .command-actions { display: flex; align-items: center; gap: 9px; color: #77818b; font-size: .68rem; }
+  .crumbs a, .command-actions a { text-decoration: none; }
+  .crumbs strong { color: #22272d; }
+  .command-actions a { padding-left: 10px; border-left: 1px solid #d3d7db; color: #37414a; font-weight: 700; }
+  .live-pill { display: inline-flex; align-items: center; gap: 7px; color: #3d4a43; font: 700 .55rem ui-monospace, monospace; letter-spacing: .06em; }
+  .live-pill i { width: 7px; height: 7px; border-radius: 50%; background: #36c77b; box-shadow: 0 0 0 3px rgba(54,199,123,.13); }
+
+  .summary, .panel-section, .workspace-footer { width: min(1440px, calc(100% - 56px)); margin-inline: auto; }
+  .summary { padding: 54px 0 34px; }
+  .title-row { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, .75fr); gap: clamp(24px, 4vw, 56px); align-items: end; }
+  .eyebrow, .section-index, .decision-head, .kpi-strip span, .panel-title span, .definition-note span, .blocker-head > span, .evidence-grid > article > span, .boundary > span {
+    color: #7f8993; font: 700 .56rem ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase;
+  }
+  h1, h2 { margin: 0; color: #111419 !important; font-family: inherit !important; letter-spacing: -.045em !important; }
+  h1 { max-width: 900px; font-size: clamp(2.6rem, 5.4vw, 5.45rem); line-height: .98; font-weight: 760; }
+  h1 span { color: #59636c; font-weight: 600; }
+  .intro { max-width: 760px; margin: 24px 0 0; color: #56616b; font-size: .93rem; line-height: 1.85; }
+  .decision-card { padding: 22px; color: #e8edf1; background: #14181d; border: 1px solid #242b32; border-radius: 8px; box-shadow: 0 18px 45px rgba(20,24,29,.12); }
+  .decision-head { display: flex; justify-content: space-between; gap: 16px; color: #7f8a95; }
+  .decision-head b { color: #d9a95f; font-size: .52rem; letter-spacing: .06em; }
+  .decision-head b.ready { color: #63e6a2; }
+  .decision-card > strong { display: block; margin-top: 28px; color: #fff; font-size: 1.45rem; letter-spacing: -.03em; }
+  .decision-card p { margin: 12px 0 20px; color: #aeb7bf; font-size: .76rem; line-height: 1.7; }
+  .decision-card a { color: #72e8aa; font-size: .68rem; font-weight: 750; text-decoration: none; }
+
+  .kpi-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 38px; border: 1px solid #d7dce0; border-radius: 7px; background: #fff; overflow: hidden; }
+  .kpi-strip article { min-height: 114px; padding: 16px 18px; border-right: 1px solid #e0e4e7; }
+  .kpi-strip article:last-child { border-right: 0; }
+  .kpi-strip strong { display: block; margin-top: 18px; color: #181c21; font-size: 1.45rem; line-height: 1; letter-spacing: -.04em; }
+  .kpi-strip strong small { margin-left: 4px; color: #7e8891; font-size: .68rem; font-weight: 600; }
+  .kpi-strip p { margin: 9px 0 0; color: #7a848d; font-size: .64rem; }
+  .reading-guide { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto; gap: 24px; align-items: center; margin-top: 12px; padding: 13px 16px; color: #5d6871; border: 1px solid #dde1e4; border-radius: 6px; background: #eceff1; font-size: .68rem; }
+  .reading-guide > span { font-weight: 750; color: #2f373f; }
+  .reading-guide ol { display: flex; gap: 18px; margin: 0; padding: 0; list-style: none; }
+  .reading-guide li { white-space: nowrap; }
+  .reading-guide li b { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 6px; color: #3a454e; border: 1px solid #c4cbd0; border-radius: 50%; font-size: .55rem; }
+  .reading-guide p { margin: 0; }
+  .reading-guide p strong { color: #168455; }
+
+  .panel-section { padding: 44px 0; border-top: 1px solid #d9dde1; }
+  .section-head { display: flex; justify-content: space-between; gap: 26px; align-items: end; margin-bottom: 22px; }
+  h2 { margin-top: 7px; font-size: clamp(1.7rem, 3vw, 2.55rem); line-height: 1.08; font-weight: 740; }
+  .section-head p { max-width: 760px; margin: 10px 0 0; color: #6a747d; font-size: .75rem; line-height: 1.65; }
+  .legend, .table-key { display: flex; gap: 14px; align-items: center; color: #6f7881; font-size: .61rem; white-space: nowrap; }
+  .legend i { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 2px; }
+  .ocf-dot { background: #282f36; } .capex-dot { background: #65c995; }
+
+  .funding-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, .7fr); gap: 12px; }
+  .chart-panel, .interpretation-panel, .data-table-wrap, .pipeline, .blocker-grid, .formula-drawer, .evidence-grid > article, .boundary {
+    border: 1px solid #d9dde1; border-radius: 7px; background: #fff;
+  }
+  .chart-panel, .interpretation-panel { overflow: hidden; }
+  .panel-title { display: flex; justify-content: space-between; align-items: center; min-height: 58px; padding: 0 18px; border-bottom: 1px solid #e1e4e7; }
+  .panel-title strong { display: block; margin-top: 3px; color: #252b31; font-size: .8rem; }
+  .panel-title small { color: #7a858f; font: .6rem ui-monospace, monospace; }
+  .cohort-bars { display: grid; }
+  .cohort-line { padding: 17px 18px; border-bottom: 1px solid #e8eaec; }
+  .cohort-line:last-child { border-bottom: 0; }
+  .cohort-line header { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 12px; }
+  .cohort-line header strong { color: #1d2227; font-size: .78rem; }
+  .cohort-line header span { margin-left: 7px; color: #89929a; font-size: .58rem; }
+  .cohort-line header b { color: #54616a; font: 650 .58rem ui-monospace, monospace; }
+  .bar-line { display: grid; grid-template-columns: 42px minmax(0, 1fr) 76px; gap: 10px; align-items: center; margin-top: 7px; }
+  .bar-line label, .bar-line > span { color: #79838c; font: .56rem ui-monospace, monospace; }
+  .bar-line > span { text-align: right; }
+  .track { display: flex; height: 9px; overflow: hidden; background: #edf0f2; border-radius: 2px; }
+  .bar { display: block; min-width: 3px; height: 100%; }
+  .bar.ocf { background: #303840; } .bar.capex { background: #63c792; } .bar.capex.tag-1 { background: #8ca9e6; } .bar.capex.tag-2 { background: #d4a867; }
+  .signal-list { display: grid; }
+  .signal-list article { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 16px 18px; border-bottom: 1px solid #e8eaec; }
+  .state { display: inline-grid; place-items: center; width: 21px; height: 21px; border-radius: 4px; font: 800 .55rem ui-monospace, monospace; }
+  .state.observed { color: #0f6840; background: #daf5e7; } .state.derived { color: #355e9b; background: #e4edfb; } .state.missing { color: #8a5b18; background: #f7ead5; }
+  .signal-list strong { color: #2a3036; font-size: .73rem; }
+  .signal-list p { margin: 5px 0 0; color: #75808a; font-size: .65rem; line-height: 1.55; }
+  .definition-note { margin: 16px; padding: 14px; background: #f3f5f6; border-radius: 5px; }
+  .definition-note p { margin: 7px 0 0; color: #69747d; font-size: .65rem; line-height: 1.6; }
+
+  .data-table-wrap { overflow-x: auto; }
+  .data-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: .67rem; }
+  .data-table th { padding: 11px 13px; color: #7d8790; background: #f3f5f6; border-bottom: 1px solid #dce0e3; font: 700 .55rem ui-monospace, monospace; text-align: right; text-transform: uppercase; }
+  .data-table th:first-child, .data-table th:nth-child(2) { text-align: left; }
+  .data-table th em { color: #239866; font-style: normal; }
+  .data-table td { padding: 12px 13px; color: #4f5962; border-bottom: 1px solid #eaedef; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .data-table tr:last-child td { border-bottom: 0; }
+  .data-table td:first-child, .data-table td:nth-child(2) { text-align: left; }
+  .data-table td strong { color: #1d2227; font-size: .72rem; }
+  .data-table td.negative { color: #aa4955; } .data-table td.hot { color: #aa6d22; font-weight: 750; }
+  .role-pill { color: #53606a; background: #eef1f3; border-radius: 4px; padding: 4px 6px; font-size: .56rem; }
+  .mini-bar { width: 74px; height: 3px; margin-top: 6px; overflow: hidden; background: #edf0f2; }
+  .mini-bar i { display: block; height: 100%; background: #58636d; }
+  .row-link { color: #227557 !important; font-weight: 750; text-decoration: none; }
+  .cohort-notes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+  .cohort-notes article { padding: 13px 14px; border: 1px solid #dce0e3; border-radius: 6px; background: #f7f8f9; }
+  .cohort-notes span { display: block; color: #7b858f; font: 700 .52rem ui-monospace, monospace; text-transform: uppercase; }
+  .cohort-notes strong { display: block; margin-top: 8px; color: #2b3137; font-size: .82rem; }
+  .cohort-notes p { margin: 5px 0; color: #7a838c; font-size: .58rem; }
+  .cohort-notes b { color: #2a855b; font: 650 .53rem ui-monospace, monospace; } .cohort-notes b.mismatch { color: #a06a23; }
+
+  .pipeline { display: grid; grid-template-columns: 1fr 44px 1fr 44px 1fr 44px 1fr; overflow: hidden; }
+  .stage { min-height: 168px; padding: 17px; }
+  .stage header { display: flex; justify-content: space-between; gap: 10px; color: #8a939c; font: 700 .54rem ui-monospace, monospace; }
+  .stage > strong { display: block; margin-top: 28px; color: #23292f; font-size: .86rem; }
+  .stage p { margin: 7px 0 20px; color: #7a848e; font-size: .65rem; }
+  .stage footer { display: flex; align-items: center; gap: 7px; color: #75808a; font: 650 .54rem ui-monospace, monospace; }
+  .stage footer i { width: 7px; height: 7px; border-radius: 50%; background: #c69a52; }
+  .stage.complete { background: #f7fcf9; } .stage.complete footer { color: #1d8055; } .stage.complete footer i { background: #42c982; }
+  .stage.blocked { background: #fbfbfc; }
+  .connector { display: grid; place-items: center; color: #9aa2a9; border-left: 1px solid #eaedef; border-right: 1px solid #eaedef; background: #f2f4f5; font-size: 1rem; }
+  .connector.complete { color: #37a86d; } .connector.blocked { color: #b5bbc1; }
+
+  .blocker-grid { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.4fr); margin-top: 12px; overflow: hidden; }
+  .blocker-head { padding: 20px; background: #15191e; }
+  .blocker-head > strong { display: block; margin-top: 22px; color: #f1f3f5; font-size: 1rem; }
+  .blocker-head p { margin: 8px 0 0; color: #9ca7b0; font-size: .65rem; line-height: 1.6; }
+  .blocker-list { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .blocker-list article { display: grid; grid-template-columns: 64px 1fr auto; gap: 10px; align-items: center; min-height: 76px; padding: 13px 16px; border-left: 1px solid #e1e4e7; border-bottom: 1px solid #e1e4e7; }
+  .blocker-list article:nth-last-child(-n+2) { border-bottom: 0; }
+  .blocker-list b { color: #3e4851; font: 800 .6rem ui-monospace, monospace; }
+  .blocker-list span { color: #5f6972; font-size: .65rem; }
+  .blocker-list i { color: #a66f28; background: #f7ecd9; border-radius: 4px; padding: 4px 6px; font: 700 .5rem ui-monospace, monospace; font-style: normal; }
+
+  .formula-drawer { margin-top: 12px; overflow: hidden; }
+  .formula-drawer summary { display: flex; justify-content: space-between; align-items: center; min-height: 58px; padding: 0 18px; cursor: pointer; list-style: none; }
+  .formula-drawer summary::-webkit-details-marker { display: none; }
+  .formula-drawer summary small { display: block; color: #8a949d; font: 700 .52rem ui-monospace, monospace; letter-spacing: .1em; }
+  .formula-drawer summary strong { display: block; margin-top: 3px; color: #30363c; font-size: .75rem; }
+  .formula-drawer summary > b { color: #78828b; font-size: 1rem; }
+  .formula-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid #e1e4e7; }
+  .formula-grid article { padding: 18px; border-right: 1px solid #e8eaec; border-bottom: 1px solid #e8eaec; }
+  .formula-grid article:nth-child(even) { border-right: 0; }
+  .formula-grid article:nth-last-child(-n+2) { border-bottom: 0; }
+  .formula-grid span { color: #707b84; font-size: .61rem; font-weight: 750; }
+  .formula-grid code { display: block; margin-top: 10px; color: #1f6045; font: 650 .68rem ui-monospace, monospace; white-space: normal; }
+  .formula-grid p { margin: 8px 0 0; color: #7b858e; font-size: .61rem; }
+
+  .evidence-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .evidence-grid > article { padding: 17px; }
+  .evidence-grid strong { display: block; margin-top: 18px; color: #2a3036; font-size: .86rem; }
+  .evidence-grid code { display: block; margin-top: 8px; max-width: 100%; color: #818a92; font: .54rem ui-monospace, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .evidence-grid a { display: inline-block; margin-top: 17px; color: #267455 !important; font-size: .62rem; font-weight: 750; text-decoration: none; }
+  .boundary { display: grid; grid-template-columns: 150px 1fr; gap: 18px; margin-top: 10px; padding: 16px 18px; background: #f0f3f4; }
+  .boundary p { margin: 0; color: #626e77; font-size: .68rem; line-height: 1.7; }
+
+  .workspace-footer { display: flex; justify-content: space-between; gap: 18px; padding: 24px 0 34px; color: #8a949c; border-top: 1px solid #d9dde1; font: 700 .52rem ui-monospace, monospace; letter-spacing: .08em; }
+  @media (max-width: 1100px) {
+    .app-shell { grid-template-columns: 62px minmax(0, 1fr); }
+    .rail { padding-inline: 9px; }
+    .rail-brand { justify-content: center; padding-inline: 0; }
+    .rail-brand > span:last-child, .rail-nav a:not(.active)::after, .rail-nav a { font-size: 0; }
+    .rail-nav a { grid-template-columns: 1fr; justify-items: center; padding: 0; }
+    .rail-nav a span { font-size: .55rem; }
+    .rail-meta { display: none; }
+    .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+    .kpi-strip article { border-bottom: 1px solid #e0e4e7; }
+    .funding-grid { grid-template-columns: 1fr; }
+    .cohort-notes { grid-template-columns: repeat(2, 1fr); }
+    .pipeline { grid-template-columns: 1fr; }
+    .connector { min-height: 28px; border: 0; border-top: 1px solid #eaedef; border-bottom: 1px solid #eaedef; }
+    .connector span { transform: rotate(90deg); }
+  }
+  @media (max-width: 760px) {
+    .app-shell { display: block; }
+    .rail { position: static; width: 100%; height: auto; flex-direction: row; align-items: center; gap: 10px; padding: 9px 12px; overflow-x: auto; }
+    .rail-brand { padding: 0 6px 0 0; }
+    .rail-nav { display: flex; gap: 4px; }
+    .rail-nav a { min-width: 40px; min-height: 32px; }
+    .commandbar { position: sticky; padding-inline: 14px; }
+    .summary, .panel-section, .workspace-footer { width: min(100% - 28px, 1440px); }
+    .summary { padding-top: 34px; }
+    .title-row { grid-template-columns: 1fr; align-items: start; }
+    h1 { font-size: clamp(2.35rem, 12vw, 4rem); }
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .kpi-strip article:nth-child(even) { border-right: 0; }
+    .reading-guide { grid-template-columns: 1fr; gap: 10px; }
+    .reading-guide ol { display: grid; gap: 8px; }
+    .reading-guide li { white-space: normal; }
+    .section-head { display: block; }
+    .legend, .table-key { margin-top: 14px; }
+    .cohort-notes { grid-template-columns: 1fr 1fr; }
+    .blocker-grid { grid-template-columns: 1fr; }
+    .blocker-list { grid-template-columns: 1fr; }
+    .blocker-list article { border-left: 0; border-bottom: 1px solid #e1e4e7 !important; }
+    .blocker-list article:last-child { border-bottom: 0 !important; }
+    .formula-grid, .evidence-grid { grid-template-columns: 1fr; }
+    .formula-grid article { border-right: 0; }
+    .formula-grid article:nth-last-child(2) { border-bottom: 1px solid #e8eaec; }
+    .boundary { grid-template-columns: 1fr; gap: 8px; }
+  }
+  @media (max-width: 520px) {
+    .kpi-strip { grid-template-columns: 1fr; }
+    .kpi-strip article { border-right: 0; }
+    .cohort-notes { grid-template-columns: 1fr; }
+    .cohort-line header { display: block; }
+    .cohort-line header b { display: block; margin-top: 5px; }
+    .bar-line { grid-template-columns: 36px minmax(0, 1fr) 66px; }
+    .workspace-footer { display: grid; }
+  }
 </style>
