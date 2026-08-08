@@ -14,6 +14,7 @@ on:
       - "scripts/normalize_earnings_periods.py"
       - "scripts/audit_earnings_accounting_basis.py"
       - "scripts/audit_earnings_rejection_reasons.py"
+      - "scripts/audit_earnings_published_at.py"
       - "scripts/build_earnings_ledger_publication.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
@@ -21,6 +22,7 @@ on:
       - "tests/test_earnings_period_normalization.py"
       - "tests/test_earnings_accounting_basis.py"
       - "tests/test_earnings_rejection_reasons.py"
+      - "tests/test_earnings_published_at_audit.py"
       - "tests/test_earnings_ledger_publication.py"
       - "data/earnings_ledger/source_registry.json"
   pull_request:
@@ -32,6 +34,7 @@ on:
       - "scripts/normalize_earnings_periods.py"
       - "scripts/audit_earnings_accounting_basis.py"
       - "scripts/audit_earnings_rejection_reasons.py"
+      - "scripts/audit_earnings_published_at.py"
       - "scripts/build_earnings_ledger_publication.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
@@ -39,6 +42,7 @@ on:
       - "tests/test_earnings_period_normalization.py"
       - "tests/test_earnings_accounting_basis.py"
       - "tests/test_earnings_rejection_reasons.py"
+      - "tests/test_earnings_published_at_audit.py"
       - "tests/test_earnings_ledger_publication.py"
       - "data/earnings_ledger/source_registry.json"
 
@@ -66,7 +70,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check pytest
 
       - name: Run ledger unit tests
-        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py tests/test_earnings_period_normalization.py tests/test_earnings_accounting_basis.py tests/test_earnings_rejection_reasons.py tests/test_earnings_ledger_publication.py
+        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py tests/test_earnings_period_normalization.py tests/test_earnings_accounting_basis.py tests/test_earnings_rejection_reasons.py tests/test_earnings_published_at_audit.py tests/test_earnings_ledger_publication.py
 
       - name: Collect with retry
         env:
@@ -108,6 +112,28 @@ jobs:
 
       - name: Audit GAAP/non-GAAP accounting basis
         run: python scripts/audit_earnings_accounting_basis.py
+
+      - name: Verify SEC publication timestamps with retry
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        shell: bash
+        run: |
+          set -u
+          ok=0
+          for attempt in 1 2 3; do
+            echo "published_at verification attempt ${attempt}/3"
+            if python scripts/audit_earnings_published_at.py; then
+              ok=1
+              break
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 30))
+            fi
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "SEC publication timestamp verification failed after 3 attempts"
+            exit 1
+          fi
 
       - name: Verify primary evidence content with retry
         env:
