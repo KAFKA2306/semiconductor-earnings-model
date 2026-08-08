@@ -67,6 +67,6 @@ def test_design_forbids_llm_freshness_and_separates_daily_report():
     assert "AIは最後の要約だけ" in text
     assert "一般Web検索" in text
     assert "07:07 JST" in text
-    assert "daily reportでは新規collectionはしない" in text
+    assert "新規collectionはしない" in text
     assert "event_id = company_id|fiscal_period|document_type" in text
     assert "2025-08-27公表のNVIDIA FY2026Q2" in text
