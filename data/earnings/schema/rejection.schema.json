@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KAFKA2306/semiconductor-earnings-model/blob/main/data/earnings/schema/rejection.schema.json",
+  "title": "Rejected earnings candidate",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["rejected_at", "reason", "source_url"],
+  "properties": {
+    "rejected_at": {"type": "string", "format": "date-time"},
+    "reason": {
+      "type": "string",
+      "enum": [
+        "OUTSIDE_TIME_WINDOW",
+        "UNKNOWN_PUBLISHED_TIME",
+        "STALE_FISCAL_PERIOD",
+        "DUPLICATE",
+        "NOT_PRIMARY_SOURCE",
+        "FUTURE_EARNINGS_EVENT",
+        "REPOST",
+        "MISMATCHED_COMPANY",
+        "UNVERIFIED_NUMBER"
+      ]
+    },
+    "company_id": {"type": ["string", "null"]},
+    "event_id": {"type": ["string", "null"]},
+    "published_at": {"type": ["string", "null"], "format": "date-time"},
+    "source_url": {"type": "string", "format": "uri"},
+    "detail": {"type": ["string", "null"]}
+  }
+}
