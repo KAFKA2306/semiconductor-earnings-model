@@ -1,0 +1,138 @@
+{
+  "schema_version": "earnings-ledger-audit.v1",
+  "run_at": "2026-08-08T05:17:48.337622Z",
+  "accepted_events_total": 1,
+  "rejected_events_total": 13,
+  "source_status": [
+    {
+      "source_id": "nvidia",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 1
+    },
+    {
+      "source_id": "amd",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "broadcom",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "tsmc",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "asml",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "applied-materials",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "lam-research",
+      "status": "success",
+      "accepted": 1,
+      "rejected": 1
+    },
+    {
+      "source_id": "kla",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 8
+    },
+    {
+      "source_id": "micron",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "arm",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "synopsys",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "cadence",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "microsoft",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "alphabet",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 1
+    },
+    {
+      "source_id": "amazon",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "meta",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "apple",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "oracle",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 0
+    },
+    {
+      "source_id": "tdnet-japan-priority",
+      "status": "success",
+      "accepted": 0,
+      "rejected": 2
+    },
+    {
+      "source_id": "sk-hynix",
+      "status": "disabled",
+      "reason": "OpenDART authenticated adapter not yet configured; fail-closed until exact filing timestamp retrieval is implemented."
+    },
+    {
+      "source_id": "samsung-electronics",
+      "status": "disabled",
+      "reason": "OpenDART authenticated adapter not yet configured; fail-closed until exact filing timestamp retrieval is implemented."
+    }
+  ],
+  "unsupported_or_disabled_sources": [
+    "sk-hynix",
+    "samsung-electronics"
+  ],
+  "issues": [],
+  "status": "PASS"
+}
