@@ -1,0 +1,24 @@
+{
+  "schema_version": "earnings-published-at-audit.v1",
+  "run_at": "2026-08-08T17:01:29.635415Z",
+  "events_total": 1,
+  "sec_events_total": 1,
+  "non_sec_events_not_independently_reverified": 0,
+  "items": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "accession_number": "0000707549-26-000037",
+      "ledger_published_at": "2026-08-07T20:06:32Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-07T20:06:32.000Z",
+      "ledger_published_at_utc": "2026-08-07T20:06:32Z",
+      "primary_acceptance_at_utc": "2026-08-07T20:06:32Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    }
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "SEC ledger published_at must exactly equal SEC submissions acceptanceDateTime; no date-only or crawl-time substitution"
+}
