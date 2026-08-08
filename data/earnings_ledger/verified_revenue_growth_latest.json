@@ -1,0 +1,33 @@
+{
+  "schema_version": "verified-revenue-growth.v1",
+  "run_at": "2026-08-08T22:00:08.309094Z",
+  "eligible_metrics_total": 1,
+  "calculated_yoy_total": 1,
+  "growth": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "ticker": "LRCX",
+      "metric": "revenue",
+      "growth_type": "YoY",
+      "current_value": 23232690000,
+      "prior_value": 18435591000,
+      "unit": "USD",
+      "current_period_start": "2025-06-30",
+      "current_period_end": "2026-06-28",
+      "prior_period_start": "2024-07-01",
+      "prior_period_end": "2025-06-29",
+      "yoy_percent": 26.0209,
+      "accession_number": "0000707549-26-000037",
+      "document_type": "10-K",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000707549.json",
+      "verification": "current and prior-year revenue are duration facts in the same SEC filing accession, same form/concept/unit, with period ends 350-380 days apart and durations within 7 days"
+    }
+  ],
+  "not_calculated": [],
+  "issues": [],
+  "status": "PASS",
+  "contract": "YoY is persisted only from comparable revenue duration facts contained in the same SEC filing accession; missing comparables produce no value, ambiguity fails closed, and QoQ remains uncomputed until an equally strict quarter-duration contract is implemented."
+}
