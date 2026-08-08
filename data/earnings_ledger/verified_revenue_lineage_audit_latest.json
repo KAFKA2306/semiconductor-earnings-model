@@ -1,0 +1,7 @@
+{
+  "schema_version": "verified-revenue-lineage-audit.v1",
+  "checked_metrics_total": 1,
+  "issues": [],
+  "status": "PASS",
+  "contract": "Every persisted SEC revenue metric must trace to the same fresh accepted 10-K/10-Q event and PASS primary-source evidence; mismatches fail closed."
+}
