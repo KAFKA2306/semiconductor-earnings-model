@@ -1,0 +1,153 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
+const revenuePath = path.join(root, 'data/earnings_ledger/verified_revenue_latest.json');
+const lineagePath = path.join(root, 'data/earnings_ledger/verified_revenue_lineage_audit_latest.json');
+const revenue = JSON.parse(fs.readFileSync(revenuePath, 'utf8'));
+const lineage = JSON.parse(fs.readFileSync(lineagePath, 'utf8'));
+
+if (revenue.status !== 'PASS' || revenue.issues?.length) {
+  throw new Error('Verified revenue artifact is not publishable');
+}
+if (lineage.status !== 'PASS' || lineage.issues?.length) {
+  throw new Error('Verified revenue lineage audit is not publishable');
+}
+if (lineage.checked_metrics_total !== revenue.verified_metrics_total) {
+  throw new Error('Verified revenue and lineage counts differ');
+}
+
+const base = import.meta.env.BASE_URL;
+const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
+if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
+
+const metrics = revenue.metrics || [];
+const usd = (value) => `$${(Number(value) / 1_000_000_000).toFixed(3)}B`;
+const dateJP = (value) => {
+  const [year, month, day] = String(value).slice(0, 10).split('-').map(Number);
+  return `${year}年${month}月${day}日`;
+};
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="24時間鮮度ゲートと一次情報監査を通過した決算指標だけを表示する監査済み決算台帳。" />
+    <title>監査済み決算台帳 / Verified Earnings Ledger</title>
+  </head>
+  <body data-build-sha={buildSha} data-ledger-status={revenue.status} data-lineage-status={lineage.status}>
+    <main>
+      <header class="topbar">
+        <a class="brand" href={base}>Financial Research Workbench</a>
+        <nav aria-label="主要ページ">
+          <a href={`${base}earnings/`}>Earnings</a>
+          <a href={`${base}ledger/`} aria-current="page">Ledger</a>
+          <a href={`${base}model/`}>Model</a>
+        </nav>
+      </header>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">PRIMARY SOURCE × 24H FRESHNESS × FAIL-CLOSED</p>
+          <h1>確認できた数字だけを、<em>決算台帳に残す。</em></h1>
+          <p class="lead">この画面は、一次情報・24時間鮮度・イベント同一性・データ系譜の監査をすべて通過した指標だけを表示します。未確認値、推測値、監査失敗値は表示しません。</p>
+        </div>
+        <aside>
+          <span>LEDGER STATUS</span>
+          <strong>{revenue.status}</strong>
+          <dl>
+            <div><dt>監査済み指標</dt><dd>{revenue.verified_metrics_total}</dd></div>
+            <div><dt>系譜監査済み</dt><dd>{lineage.checked_metrics_total}</dd></div>
+            <div><dt>監査issue</dt><dd>{revenue.issues.length + lineage.issues.length}</dd></div>
+          </dl>
+        </aside>
+      </section>
+
+      <section class="section" aria-labelledby="verified-title">
+        <div class="heading">
+          <div><p>01 / VERIFIED METRICS</p><h2 id="verified-title">監査済みの、<br /><em>決算指標。</em></h2></div>
+          <p>SEC Company Factsの標準us-gaap factを、同一accession・form・period end・USDで照合した値だけを掲載します。</p>
+        </div>
+
+        {metrics.length ? (
+          <div class="cards">
+            {metrics.map((metric) => (
+              <article class="metric-card" data-event-id={metric.event_id}>
+                <div class="metric-head"><span>{metric.ticker}</span><small>{metric.document_type}</small></div>
+                <h3>{metric.metric === 'revenue' ? '売上高' : metric.metric}</h3>
+                <strong>{metric.unit === 'USD' ? usd(metric.value) : `${metric.value} ${metric.unit}`}</strong>
+                <dl>
+                  <div><dt>対象期末</dt><dd>{dateJP(metric.period_end)}</dd></div>
+                  <div><dt>Taxonomy</dt><dd>{metric.taxonomy}</dd></div>
+                  <div><dt>Concept</dt><dd><code>{metric.concept}</code></dd></div>
+                  <div><dt>Accession</dt><dd><code>{metric.accession_number}</code></dd></div>
+                </dl>
+                <a href={metric.source_url} rel="noreferrer">SEC一次情報を開く ↗</a>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p class="empty">現在、監査条件を満たす公開可能な指標はありません。</p>
+        )}
+      </section>
+
+      <section class="section boundary" aria-labelledby="boundary-title">
+        <div class="heading"><div><p>02 / PUBLICATION BOUNDARY</p><h2 id="boundary-title">表示しないもの。</h2></div></div>
+        <ul>
+          <li>24時間鮮度ゲートを通過していない決算</li>
+          <li>一次情報と完全一致しない数値</li>
+          <li>GAAP / non-GAAPの根拠が未確認の指標</li>
+          <li>イベントと一次証拠へ系譜を辿れない指標</li>
+          <li>コンセンサスや会社予想と混同された値</li>
+        </ul>
+      </section>
+
+      <footer><span>BUILD SHA</span><code>{buildSha}</code><span>LEDGER RUN</span><code>{revenue.run_at}</code></footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(body) { margin: 0; color: #243653; background: #fbfaf7; font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
+  :global(a) { color: inherit; }
+  main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 64px; }
+  .topbar { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(76,91,125,.14); }
+  .brand { text-decoration: none; font-weight: 900; }
+  nav { display: flex; gap: 16px; font-size: .76rem; font-weight: 800; }
+  nav a { text-decoration: none; }
+  nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 5px; }
+  .hero { min-height: 470px; display: grid; grid-template-columns: 1.45fr .55fr; gap: 52px; align-items: center; padding: 64px 0 50px; }
+  .eyebrow, .heading p:first-child { margin: 0 0 14px; color: #69768b; font-size: .7rem; letter-spacing: .15em; font-weight: 900; }
+  h1, h2 { margin: 0; font-family: Georgia, "Noto Serif JP", serif; font-weight: 500; letter-spacing: -.04em; }
+  h1 { font-size: clamp(3rem, 6vw, 5.4rem); line-height: 1.02; }
+  h2 { font-size: clamp(2.2rem, 4vw, 3.8rem); line-height: 1.07; }
+  h1 em, h2 em { display: block; color: #8a6e98; font-style: normal; }
+  .lead { max-width: 760px; margin-top: 26px; color: #69768b; line-height: 1.9; }
+  aside { padding: 28px; border: 1px solid rgba(76,91,125,.13); border-radius: 24px; background: linear-gradient(145deg, rgba(183,219,200,.46), rgba(185,168,230,.32)); }
+  aside > span { color: #69768b; font-size: .67rem; letter-spacing: .14em; font-weight: 900; }
+  aside > strong { display: block; margin: 12px 0 18px; font-family: Georgia, serif; font-size: 3rem; }
+  aside dl, .metric-card dl { margin: 0; }
+  aside dl div, .metric-card dl div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid rgba(76,91,125,.12); font-size: .75rem; }
+  aside dd, .metric-card dd { margin: 0; text-align: right; font-weight: 800; }
+  .section { padding: 70px 0; border-top: 1px solid rgba(76,91,125,.13); }
+  .heading { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 30px; }
+  .heading > p { max-width: 490px; margin: 0; color: #69768b; line-height: 1.75; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+  .metric-card { padding: 24px; border: 1px solid rgba(76,91,125,.13); border-radius: 22px; background: rgba(255,255,255,.78); }
+  .metric-head { display: flex; justify-content: space-between; color: #69768b; font-size: .72rem; font-weight: 900; }
+  .metric-card h3 { margin: 28px 0 8px; font-family: Georgia, serif; font-size: 1.5rem; font-weight: 500; }
+  .metric-card > strong { display: block; margin-bottom: 22px; font-family: Georgia, serif; font-size: clamp(2.2rem, 4vw, 3.4rem); }
+  .metric-card code { overflow-wrap: anywhere; font-size: .68rem; }
+  .metric-card > a { display: inline-block; margin-top: 20px; font-size: .75rem; font-weight: 850; }
+  .empty { padding: 24px; border-radius: 18px; background: rgba(239,180,193,.22); }
+  .boundary ul { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; padding: 0; list-style: none; }
+  .boundary li { padding: 18px 20px; border-radius: 16px; background: rgba(243,207,170,.28); line-height: 1.6; }
+  footer { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; padding: 18px; border-radius: 16px; background: #243653; color: white; font-size: .65rem; }
+  footer span { color: #cbd4e2; font-weight: 900; }
+  footer code { overflow-wrap: anywhere; }
+  @media (max-width: 850px) { .hero { grid-template-columns: 1fr; min-height: auto; } .cards, .boundary ul { grid-template-columns: 1fr; } }
+  @media (max-width: 620px) { main { width: min(100% - 20px, 1180px); } nav { display: none; } .hero { padding: 50px 0; } .heading { display: block; } .heading > p { margin-top: 16px; } footer { grid-template-columns: 1fr; } }
+</style>
