@@ -17,7 +17,8 @@ LEDGER_DIR = ROOT / "data" / "earnings_ledger"
 EVENTS_PATH = LEDGER_DIR / "events.ndjson"
 STATE_PATH = LEDGER_DIR / "state.json"
 OUTPUT_PATH = LEDGER_DIR / "evidence_latest.json"
-ALLOWED_DOMAINS = {"www.sec.gov", "www.release.tdnet.info"}
+ALLOWED_DOMAINS = {"data.sec.gov", "www.release.tdnet.info"}
+SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 
 
 def parse_dt(value: str) -> datetime:
@@ -46,7 +47,7 @@ def load_ndjson(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def request_bytes(url: str, user_agent: str, retries: int = 3, timeout: int = 30) -> tuple[bytes, str | None]:
+def request_bytes(url: str, user_agent: str, retries: int = 1, timeout: int = 30) -> tuple[bytes, str | None]:
     if not user_agent.strip():
         raise RuntimeError("SEC_USER_AGENT is required for primary evidence verification")
     domain = urllib.parse.urlparse(url).netloc
@@ -59,7 +60,7 @@ def request_bytes(url: str, user_agent: str, retries: int = 3, timeout: int = 30
             headers={
                 "User-Agent": user_agent,
                 "Accept-Encoding": "identity",
-                "Accept": "application/json,text/html,application/xhtml+xml,application/pdf,*/*",
+                "Accept": "application/json,application/pdf,text/html,*/*",
             },
         )
         try:
@@ -88,16 +89,36 @@ def select_window_events(
     return sorted(selected, key=lambda e: (e["published_at"], e["event_id"]))
 
 
+def evidence_target(event: dict[str, Any]) -> tuple[str, str]:
+    adapter = event.get("source_adapter")
+    if adapter == "sec_edgar":
+        cik = event.get("cik")
+        if cik is None:
+            raise RuntimeError(f"SEC evidence event missing CIK: {event.get('event_id')}")
+        return SEC_SUBMISSIONS_URL.format(cik=int(cik)), "SEC_SUBMISSIONS_JSON"
+    if adapter == "tdnet_public":
+        return event["source_url"], "TDNET_DISCLOSURE_DOCUMENT"
+    raise RuntimeError(f"unsupported evidence adapter: {adapter}")
+
+
 def verify_event(event: dict[str, Any], user_agent: str, verified_at: datetime) -> dict[str, Any]:
-    raw, content_type = request_bytes(event["source_url"], user_agent)
+    evidence_url, evidence_scope = evidence_target(event)
+    raw, content_type = request_bytes(evidence_url, user_agent)
     if not raw:
         raise RuntimeError(f"empty primary evidence: {event['event_id']}")
+    if evidence_scope == "SEC_SUBMISSIONS_JSON":
+        payload = json.loads(raw.decode("utf-8"))
+        accessions = payload.get("filings", {}).get("recent", {}).get("accessionNumber", [])
+        if event.get("accession_number") not in accessions:
+            raise RuntimeError(f"SEC accession missing from submissions evidence: {event['event_id']}")
     return {
         "event_id": event["event_id"],
         "company_id": event["company_id"],
         "document_type": event["document_type"],
         "published_at": event["published_at"],
         "source_url": event["source_url"],
+        "evidence_url": evidence_url,
+        "evidence_scope": evidence_scope,
         "source_content_sha256": hashlib.sha256(raw).hexdigest(),
         "source_content_bytes": len(raw),
         "content_type": content_type,
@@ -122,9 +143,11 @@ def audit_evidence(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             issues.append({"code": "INVALID_SOURCE_SHA256", "event_id": event_id})
         if not isinstance(row.get("source_content_bytes"), int) or row["source_content_bytes"] <= 0:
             issues.append({"code": "EMPTY_SOURCE_CONTENT", "event_id": event_id})
-        domain = urllib.parse.urlparse(row.get("source_url", "")).netloc
+        domain = urllib.parse.urlparse(row.get("evidence_url", "")).netloc
         if domain not in ALLOWED_DOMAINS:
             issues.append({"code": "NON_PRIMARY_DOMAIN", "event_id": event_id, "domain": domain})
+        if row.get("evidence_scope") not in {"SEC_SUBMISSIONS_JSON", "TDNET_DISCLOSURE_DOCUMENT"}:
+            issues.append({"code": "INVALID_EVIDENCE_SCOPE", "event_id": event_id})
     return issues
 
 
