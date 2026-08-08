@@ -16,6 +16,7 @@ on:
       - "scripts/audit_earnings_rejection_reasons.py"
       - "scripts/audit_earnings_published_at.py"
       - "scripts/audit_earnings_source_registry.py"
+      - "scripts/audit_earnings_consensus_separation.py"
       - "scripts/build_earnings_ledger_publication.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
@@ -25,6 +26,7 @@ on:
       - "tests/test_earnings_rejection_reasons.py"
       - "tests/test_earnings_published_at_audit.py"
       - "tests/test_earnings_source_registry_audit.py"
+      - "tests/test_earnings_consensus_separation.py"
       - "tests/test_earnings_ledger_publication.py"
       - "data/earnings_ledger/source_registry.json"
   pull_request:
@@ -38,6 +40,7 @@ on:
       - "scripts/audit_earnings_rejection_reasons.py"
       - "scripts/audit_earnings_published_at.py"
       - "scripts/audit_earnings_source_registry.py"
+      - "scripts/audit_earnings_consensus_separation.py"
       - "scripts/build_earnings_ledger_publication.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
@@ -47,6 +50,7 @@ on:
       - "tests/test_earnings_rejection_reasons.py"
       - "tests/test_earnings_published_at_audit.py"
       - "tests/test_earnings_source_registry_audit.py"
+      - "tests/test_earnings_consensus_separation.py"
       - "tests/test_earnings_ledger_publication.py"
       - "data/earnings_ledger/source_registry.json"
 
@@ -74,7 +78,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check pytest
 
       - name: Run ledger unit tests
-        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py tests/test_earnings_period_normalization.py tests/test_earnings_accounting_basis.py tests/test_earnings_rejection_reasons.py tests/test_earnings_published_at_audit.py tests/test_earnings_source_registry_audit.py tests/test_earnings_ledger_publication.py
+        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py tests/test_earnings_period_normalization.py tests/test_earnings_accounting_basis.py tests/test_earnings_rejection_reasons.py tests/test_earnings_published_at_audit.py tests/test_earnings_source_registry_audit.py tests/test_earnings_consensus_separation.py tests/test_earnings_ledger_publication.py
 
       - name: Audit source registry contract
         run: python scripts/audit_earnings_source_registry.py
@@ -164,6 +168,9 @@ jobs:
             exit 1
           fi
 
+      - name: Audit actual versus consensus separation
+        run: python scripts/audit_earnings_consensus_separation.py
+
       - name: Build audited public earnings API
         run: python scripts/build_earnings_ledger_publication.py
 
@@ -171,7 +178,7 @@ jobs:
         if: github.event_name != 'pull_request'
         shell: bash
         run: |
-          if git diff --quiet -- data/earnings_ledger site/public/api/v1/earnings-ledger; then
+          if [ -z "$(git status --porcelain -- data/earnings_ledger site/public/api/v1/earnings-ledger)" ]; then
             echo "No ledger publication changes."
             exit 0
           fi
