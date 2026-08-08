@@ -1,0 +1,25 @@
+{
+  "schema_version": "earnings-accounting-basis-audit.v1",
+  "run_at": "2026-08-08T14:02:40.892780Z",
+  "events_total": 1,
+  "classified_events_total": 1,
+  "items": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "document_type": "10-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    }
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "Never infer GAAP/non-GAAP at metric level from filing type alone; explicit primary-source metric provenance is required.",
+  "primary_rules": [
+    "SEC Regulation G / non-GAAP financial measures",
+    "SEC Form 8-K Item 2.02 earnings materials"
+  ]
+}
