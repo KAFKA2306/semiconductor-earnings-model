@@ -1,0 +1,55 @@
+{
+  "schema_version": "earnings-source-registry.v1",
+  "policy": {
+    "primary_only": true,
+    "freshness_window_hours": 24,
+    "fail_closed": true,
+    "no_search_snippet_dates": true,
+    "dedupe_key": "event_id"
+  },
+  "sources": [
+    {"id":"nvidia","name":"NVIDIA","ticker":"NVDA","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"amd","name":"Advanced Micro Devices","ticker":"AMD","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"broadcom","name":"Broadcom","ticker":"AVGO","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"tsmc","name":"Taiwan Semiconductor Manufacturing Company","ticker":"TSM","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"asml","name":"ASML Holding","ticker":"ASML","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"applied-materials","name":"Applied Materials","ticker":"AMAT","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"lam-research","name":"Lam Research","ticker":"LRCX","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"kla","name":"KLA","ticker":"KLAC","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"micron","name":"Micron Technology","ticker":"MU","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"arm","name":"Arm Holdings","ticker":"ARM","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"synopsys","name":"Synopsys","ticker":"SNPS","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"cadence","name":"Cadence Design Systems","ticker":"CDNS","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"microsoft","name":"Microsoft","ticker":"MSFT","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"alphabet","name":"Alphabet","ticker":"GOOGL","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"amazon","name":"Amazon","ticker":"AMZN","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"meta","name":"Meta Platforms","ticker":"META","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"apple","name":"Apple","ticker":"AAPL","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {"id":"oracle","name":"Oracle","ticker":"ORCL","adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/search/"},
+    {
+      "id":"tdnet-japan-priority",
+      "name":"JPX TDnet priority issuers",
+      "adapter":"tdnet_public",
+      "enabled":true,
+      "official_source":"https://www.release.tdnet.info/inbs/I_main_00.html",
+      "codes":["8035","6857","6146","6920","6526"],
+      "companies":{
+        "8035":{"id":"tokyo-electron","name":"東京エレクトロン","ticker":"8035"},
+        "6857":{"id":"advantest","name":"アドバンテスト","ticker":"6857"},
+        "6146":{"id":"disco","name":"ディスコ","ticker":"6146"},
+        "6920":{"id":"lasertec","name":"レーザーテック","ticker":"6920"},
+        "6526":{"id":"socionext","name":"ソシオネクスト","ticker":"6526"}
+      }
+    },
+    {
+      "id":"sk-hynix","name":"SK hynix","ticker":"000660","adapter":"opendart","enabled":false,
+      "official_source":"https://englishdart.fss.or.kr/",
+      "disabled_reason":"OpenDART authenticated adapter not yet configured; fail-closed until exact filing timestamp retrieval is implemented."
+    },
+    {
+      "id":"samsung-electronics","name":"Samsung Electronics","ticker":"005930","adapter":"opendart","enabled":false,
+      "official_source":"https://englishdart.fss.or.kr/",
+      "disabled_reason":"OpenDART authenticated adapter not yet configured; fail-closed until exact filing timestamp retrieval is implemented."
+    }
+  ]
+}
