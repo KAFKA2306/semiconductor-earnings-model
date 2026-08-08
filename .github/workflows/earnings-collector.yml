@@ -1,0 +1,19 @@
+name: Earnings Evidence Collector
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */2 * * *"
+      timezone: "Asia/Tokyo"
+
+concurrency:
+  group: earnings-evidence-ledger
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    permissions:
+      contents: write
+    uses: ./.github/workflows/reusable-earnings-ledger.yml
+    with:
+      mode: collect
