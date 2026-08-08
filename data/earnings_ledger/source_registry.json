@@ -18,6 +18,8 @@
     {"id":"lam-research","name":"Lam Research","ticker":"LRCX","cik":707549,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=707549"},
     {"id":"kla","name":"KLA","ticker":"KLAC","cik":319201,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=319201"},
     {"id":"micron","name":"Micron Technology","ticker":"MU","cik":723125,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=723125"},
+    {"id":"western-digital","name":"Western Digital Corporation","ticker":"WDC","cik":106040,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=106040"},
+    {"id":"seagate","name":"Seagate Technology Holdings plc","ticker":"STX","cik":1137789,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=1137789"},
     {"id":"arm","name":"Arm Holdings","ticker":"ARM","cik":1973239,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=1973239"},
     {"id":"synopsys","name":"Synopsys","ticker":"SNPS","cik":883241,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=883241"},
     {"id":"cadence","name":"Cadence Design Systems","ticker":"CDNS","cik":813672,"adapter":"sec_edgar","enabled":true,"official_source":"https://www.sec.gov/edgar/browse/?CIK=813672"},
