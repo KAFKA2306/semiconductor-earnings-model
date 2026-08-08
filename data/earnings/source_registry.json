@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "policy": {
+    "canonical_sources_only": true,
+    "web_search_can_promote_event": false,
+    "published_at_is_freshness_clock": true,
+    "retrieved_at_is_ingestion_clock": true,
+    "consensus_missing_value": "null",
+    "canonical_event_key": "company_id|fiscal_period|document_type"
+  },
+  "providers": {
+    "SEC": {
+      "documentation_url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+      "api_root": "https://data.sec.gov",
+      "status": "enabled"
+    },
+    "TDNET": {
+      "documentation_url": "https://www.jpx.co.jp/markets/paid-info-listing/tdnet/02.html",
+      "status": "requires_contract_or_entitlement"
+    }
+  },
+  "companies": [
+    {
+      "company_id": "NVDA",
+      "legal_name": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "market": "NASDAQ",
+      "cik": "0001045810",
+      "sources": [
+        {
+          "source_id": "nvda-sec-submissions",
+          "source_type": "SEC",
+          "adapter": "sec_submissions",
+          "enabled": true,
+          "endpoint": "https://data.sec.gov/submissions/CIK0001045810.json",
+          "allowed_hosts": ["sec.gov"],
+          "document_types": ["8-K", "10-Q", "10-K"],
+          "priority": 1
+        },
+        {
+          "source_id": "nvda-investor-relations",
+          "source_type": "COMPANY_IR",
+          "adapter": "company_ir",
+          "enabled": false,
+          "endpoint": "https://investor.nvidia.com/",
+          "allowed_hosts": ["investor.nvidia.com"],
+          "activation_requirement": "deterministic NVIDIA fiscal-period normalizer",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "company_id": "AMD",
+      "legal_name": "Advanced Micro Devices, Inc.",
+      "ticker": "AMD",
+      "market": "NASDAQ",
+      "cik": "0000002488",
+      "sources": [
+        {
+          "source_id": "amd-sec-submissions",
+          "source_type": "SEC",
+          "adapter": "sec_submissions",
+          "enabled": true,
+          "endpoint": "https://data.sec.gov/submissions/CIK0000002488.json",
+          "allowed_hosts": ["sec.gov"],
+          "document_types": ["8-K", "10-Q", "10-K"],
+          "priority": 1
+        },
+        {
+          "source_id": "amd-investor-relations",
+          "source_type": "COMPANY_IR",
+          "adapter": "company_ir",
+          "enabled": false,
+          "endpoint": "https://ir.amd.com/financial-information/financial-results",
+          "allowed_hosts": ["ir.amd.com"],
+          "activation_requirement": "deterministic AMD fiscal-period normalizer",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "company_id": "MSFT",
+      "legal_name": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "market": "NASDAQ",
+      "cik": "0000789019",
+      "sources": [
+        {
+          "source_id": "msft-sec-submissions",
+          "source_type": "SEC",
+          "adapter": "sec_submissions",
+          "enabled": true,
+          "endpoint": "https://data.sec.gov/submissions/CIK0000789019.json",
+          "allowed_hosts": ["sec.gov"],
+          "document_types": ["8-K", "10-Q", "10-K"],
+          "priority": 1
+        },
+        {
+          "source_id": "msft-investor-relations",
+          "source_type": "COMPANY_IR",
+          "adapter": "company_ir",
+          "enabled": false,
+          "endpoint": "https://www.microsoft.com/en-us/Investor/",
+          "allowed_hosts": ["microsoft.com"],
+          "activation_requirement": "deterministic Microsoft fiscal-period normalizer",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "company_id": "285A",
+      "legal_name": "KIOXIA Holdings Corporation",
+      "ticker": "285A",
+      "market": "TSE Prime",
+      "sources": [
+        {
+          "source_id": "kioxia-investor-relations",
+          "source_type": "COMPANY_IR",
+          "adapter": "company_ir",
+          "enabled": false,
+          "endpoint": "https://www.kioxia-holdings.com/en-jp/ir.html",
+          "allowed_hosts": ["kioxia-holdings.com"],
+          "activation_requirement": "deterministic KIOXIA fiscal-period normalizer",
+          "priority": 1
+        },
+        {
+          "source_id": "kioxia-tdnet",
+          "source_type": "TDNET",
+          "adapter": "tdnet_api",
+          "enabled": false,
+          "endpoint": null,
+          "allowed_hosts": ["jpx.co.jp"],
+          "activation_requirement": "TDnet API contract/entitlement and endpoint configuration",
+          "priority": 2
+        }
+      ]
+    }
+  ]
+}
