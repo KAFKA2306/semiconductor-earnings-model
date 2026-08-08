@@ -10,16 +10,20 @@ on:
       - ".github/workflows/earnings-ledger-update.yml"
       - "scripts/earnings_ledger.py"
       - "scripts/audit_earnings_evidence.py"
+      - "scripts/audit_earnings_semantic_duplicates.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
+      - "tests/test_earnings_semantic_duplicates.py"
       - "data/earnings_ledger/source_registry.json"
   pull_request:
     paths:
       - ".github/workflows/earnings-ledger-update.yml"
       - "scripts/earnings_ledger.py"
       - "scripts/audit_earnings_evidence.py"
+      - "scripts/audit_earnings_semantic_duplicates.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
+      - "tests/test_earnings_semantic_duplicates.py"
       - "data/earnings_ledger/source_registry.json"
 
 permissions:
@@ -46,7 +50,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check pytest
 
       - name: Run ledger unit tests
-        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py
+        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py
 
       - name: Collect with retry
         env:
@@ -76,6 +80,9 @@ jobs:
 
       - name: Deterministic post-collection audit
         run: python scripts/earnings_ledger.py --audit-only
+
+      - name: Reject semantic duplicate earnings events
+        run: python scripts/audit_earnings_semantic_duplicates.py
 
       - name: Verify primary evidence content with retry
         env:
