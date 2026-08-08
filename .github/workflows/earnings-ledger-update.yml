@@ -13,12 +13,14 @@ on:
       - "scripts/audit_earnings_semantic_duplicates.py"
       - "scripts/normalize_earnings_periods.py"
       - "scripts/audit_earnings_accounting_basis.py"
+      - "scripts/audit_earnings_rejection_reasons.py"
       - "scripts/build_earnings_ledger_publication.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
       - "tests/test_earnings_semantic_duplicates.py"
       - "tests/test_earnings_period_normalization.py"
       - "tests/test_earnings_accounting_basis.py"
+      - "tests/test_earnings_rejection_reasons.py"
       - "tests/test_earnings_ledger_publication.py"
       - "data/earnings_ledger/source_registry.json"
   pull_request:
@@ -29,12 +31,14 @@ on:
       - "scripts/audit_earnings_semantic_duplicates.py"
       - "scripts/normalize_earnings_periods.py"
       - "scripts/audit_earnings_accounting_basis.py"
+      - "scripts/audit_earnings_rejection_reasons.py"
       - "scripts/build_earnings_ledger_publication.py"
       - "tests/test_earnings_ledger.py"
       - "tests/test_earnings_evidence_audit.py"
       - "tests/test_earnings_semantic_duplicates.py"
       - "tests/test_earnings_period_normalization.py"
       - "tests/test_earnings_accounting_basis.py"
+      - "tests/test_earnings_rejection_reasons.py"
       - "tests/test_earnings_ledger_publication.py"
       - "data/earnings_ledger/source_registry.json"
 
@@ -62,7 +66,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check pytest
 
       - name: Run ledger unit tests
-        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py tests/test_earnings_period_normalization.py tests/test_earnings_accounting_basis.py tests/test_earnings_ledger_publication.py
+        run: python -m pytest -q tests/test_earnings_ledger.py tests/test_earnings_evidence_audit.py tests/test_earnings_semantic_duplicates.py tests/test_earnings_period_normalization.py tests/test_earnings_accounting_basis.py tests/test_earnings_rejection_reasons.py tests/test_earnings_ledger_publication.py
 
       - name: Collect with retry
         env:
@@ -92,6 +96,9 @@ jobs:
 
       - name: Deterministic post-collection audit
         run: python scripts/earnings_ledger.py --audit-only
+
+      - name: Audit rejection reason taxonomy
+        run: python scripts/audit_earnings_rejection_reasons.py
 
       - name: Reject semantic duplicate earnings events
         run: python scripts/audit_earnings_semantic_duplicates.py
