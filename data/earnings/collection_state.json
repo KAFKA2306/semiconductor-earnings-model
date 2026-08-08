@@ -1,0 +1,14 @@
+{
+  "sources": {
+    "amd-investor-relations": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null},
+    "amd-sec-submissions": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null},
+    "kioxia-investor-relations": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null},
+    "kioxia-tdnet": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null},
+    "msft-investor-relations": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null},
+    "msft-sec-submissions": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null},
+    "nvda-investor-relations": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null},
+    "nvda-sec-submissions": {"last_attempt_at": null, "last_content_sha256": null, "last_seen_id": null, "last_seen_published_at": null, "last_success_at": null}
+  },
+  "updated_at": null,
+  "version": 1
+}
