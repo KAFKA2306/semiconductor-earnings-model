@@ -1,0 +1,23 @@
+{
+  "contract": {
+    "disabled_sources_require_reason": true,
+    "duplicate_source_and_company_identity_rejected": true,
+    "opendart_remains_fail_closed_without_authenticated_timestamp_contract": true,
+    "primary_domains_allow_listed": true,
+    "unsafe_policy_mutation_rejected": true
+  },
+  "issues": [],
+  "schema_version": "earnings-source-registry-audit.v1",
+  "status": "PASS",
+  "summary": {
+    "adapter_counts": {
+      "opendart": 2,
+      "sec_edgar": 20,
+      "tdnet_public": 1
+    },
+    "company_id_count": 25,
+    "disabled_source_count": 2,
+    "enabled_source_count": 21,
+    "source_count": 23
+  }
+}
