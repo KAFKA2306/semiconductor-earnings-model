@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -8,6 +9,7 @@ MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "earnings_ledger
 SPEC = importlib.util.spec_from_file_location("earnings_ledger", MODULE_PATH)
 assert SPEC and SPEC.loader
 ledger = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = ledger
 SPEC.loader.exec_module(ledger)
 
 
