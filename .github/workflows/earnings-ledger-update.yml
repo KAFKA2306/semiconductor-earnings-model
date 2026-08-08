@@ -4,12 +4,25 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 */2 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/earnings-ledger-update.yml"
+      - "scripts/earnings_ledger.py"
+      - "tests/test_earnings_ledger.py"
+      - "data/earnings_ledger/source_registry.json"
+  pull_request:
+    paths:
+      - ".github/workflows/earnings-ledger-update.yml"
+      - "scripts/earnings_ledger.py"
+      - "tests/test_earnings_ledger.py"
+      - "data/earnings_ledger/source_registry.json"
 
 permissions:
   contents: write
 
 concurrency:
-  group: earnings-ledger-update
+  group: earnings-ledger-update-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -57,6 +70,7 @@ jobs:
         run: python scripts/earnings_ledger.py --audit-only
 
       - name: Commit validated ledger changes
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           if git diff --quiet -- data/earnings_ledger; then
