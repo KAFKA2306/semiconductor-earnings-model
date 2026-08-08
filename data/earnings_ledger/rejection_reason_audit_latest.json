@@ -1,0 +1,31 @@
+{
+  "accepted_events_total": 1,
+  "allowed_rejection_reasons": [
+    "NOT_EARNINGS_RELATED",
+    "SOURCE_FETCH_FAILED",
+    "UNVERIFIED_6K"
+  ],
+  "document_type_counts": {
+    "144": 3,
+    "4": 8,
+    "424B2": 1,
+    "TDNET_DISCLOSURE": 2
+  },
+  "generated_at": "2026-08-08T16:00:20.005222Z",
+  "issues": [],
+  "policy": {
+    "accepted_rejected_collision_fails_closed": true,
+    "reason_form_consistency_required": true,
+    "unknown_reason_fails_closed": true
+  },
+  "reason_counts": {
+    "NOT_EARNINGS_RELATED": 14
+  },
+  "rejected_events_total": 14,
+  "schema_version": "earnings-rejection-reason-audit.v1",
+  "source_adapter_counts": {
+    "sec_edgar": 12,
+    "tdnet_public": 2
+  },
+  "status": "PASS"
+}
