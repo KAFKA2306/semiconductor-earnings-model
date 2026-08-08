@@ -72,7 +72,7 @@ jobs:
         if: github.event_name != 'pull_request'
         shell: bash
         run: |
-          if git diff --quiet -- data/earnings_ledger/verified_revenue_latest.json; then
+          if [ -z "$(git status --porcelain -- data/earnings_ledger/verified_revenue_latest.json)" ]; then
             echo "No verified revenue changes."
             exit 0
           fi
