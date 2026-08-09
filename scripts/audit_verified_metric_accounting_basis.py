@@ -13,7 +13,7 @@ OUTPUT_PATH = LEDGER_DIR / "metric_accounting_basis_audit_latest.json"
 RAW_ARTIFACTS = {
     "verified_revenue_latest.json": "revenue",
     "verified_capex_latest.json": "capital_expenditures",
-    "verified_inventory_latest.json": "inventory",
+    "verified_inventory_latest.json": "inventory_net",
 }
 DERIVED_ARTIFACTS = {"verified_fcf_latest.json": "free_cash_flow"}
 
@@ -118,7 +118,7 @@ def audit_artifacts(payloads: dict[str, dict[str, Any]]) -> dict[str, Any]:
                 issues.append(_artifact_issue(artifact, "DERIVED_METRIC_INPUT_PROVENANCE_INCOMPLETE", event_id=event_id))
                 continue
             invalid_input = False
-            for input_name, input_metric in inputs.items():
+            for input_metric in inputs.values():
                 if not isinstance(input_metric, dict):
                     invalid_input = True
                     break
