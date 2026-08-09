@@ -174,6 +174,12 @@ jobs:
       - name: Build audited public earnings API
         run: python scripts/build_earnings_ledger_publication.py
 
+      - name: Discard collector-generated report artifacts
+        shell: bash
+        run: |
+          git restore --worktree -- data/earnings_ledger/reports 2>/dev/null || true
+          git clean -f -- data/earnings_ledger/reports
+
       - name: Commit validated ledger changes
         if: github.event_name != 'pull_request'
         shell: bash
