@@ -1,0 +1,219 @@
+{
+  "schema_version": "earnings-source-state.v1",
+  "generated_from_run_at": "2026-08-09T07:17:19.240931Z",
+  "sources": [
+    {
+      "source_id": "nvidia",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": "f89b4cbb1979eac4a7e3c10b",
+      "last_seen_published_at": "2026-08-07T20:47:24Z",
+      "last_seen_disposition": "rejected"
+    },
+    {
+      "source_id": "amd",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "broadcom",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "tsmc",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "asml",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "applied-materials",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "lam-research",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": "eaf7cce59f6f7acaabe282cc",
+      "last_seen_published_at": "2026-08-07T20:06:32Z",
+      "last_seen_disposition": "accepted"
+    },
+    {
+      "source_id": "kla",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": "60e309b8960a49c295372ca6",
+      "last_seen_published_at": "2026-08-07T21:34:22Z",
+      "last_seen_disposition": "rejected"
+    },
+    {
+      "source_id": "micron",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "western-digital",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "seagate",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": "ba12fe4e496580f36d3c5277",
+      "last_seen_published_at": "2026-08-07T20:39:16Z",
+      "last_seen_disposition": "rejected"
+    },
+    {
+      "source_id": "arm",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "synopsys",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "cadence",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "microsoft",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "alphabet",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": "51b764bcb451f9562cd91231",
+      "last_seen_published_at": "2026-08-07T20:13:55Z",
+      "last_seen_disposition": "rejected"
+    },
+    {
+      "source_id": "amazon",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "meta",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "apple",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "oracle",
+      "adapter": "sec_edgar",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "tdnet-japan-priority",
+      "adapter": "tdnet_public",
+      "enabled": true,
+      "collection_status": "success",
+      "last_seen_id": "34fce53492be65023a954533",
+      "last_seen_published_at": "2026-08-07T07:00:00Z",
+      "last_seen_disposition": "rejected"
+    },
+    {
+      "source_id": "sk-hynix",
+      "adapter": "opendart",
+      "enabled": false,
+      "collection_status": "disabled",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    },
+    {
+      "source_id": "samsung-electronics",
+      "adapter": "opendart",
+      "enabled": false,
+      "collection_status": "disabled",
+      "last_seen_id": null,
+      "last_seen_published_at": null,
+      "last_seen_disposition": null
+    }
+  ],
+  "contract": {
+    "derived_from_persisted_ledgers_only": true,
+    "audit_state_run_binding_required": true,
+    "timezone_required": true,
+    "failed_source_persistence": "forbidden"
+  }
+}
