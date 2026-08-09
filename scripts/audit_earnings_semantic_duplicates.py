@@ -25,9 +25,9 @@ def load_ndjson(path: Path) -> list[dict[str, Any]]:
 def semantic_key(row: dict[str, Any]) -> str | None:
     """Return a deterministic SEC earnings identity when the reporting period is proven.
 
-    The SEC submissions feed supplies reportDate as primary-source metadata.  We do not
-    infer a fiscal quarter or fiscal year from calendar dates.  If reportDate is absent,
-    no semantic key is fabricated and the event remains outside this dedupe gate.
+    The SEC submissions feed supplies reportDate as primary-source metadata. We do not
+    infer a fiscal quarter or fiscal year from calendar dates. If any primary identity
+    component is absent, no semantic key is fabricated.
     """
 
     if row.get("source_adapter") != "sec_edgar":
@@ -43,12 +43,31 @@ def semantic_key(row: dict[str, Any]) -> str | None:
 def audit(events: list[dict[str, Any]]) -> dict[str, Any]:
     seen: dict[str, str] = {}
     duplicates: list[dict[str, str]] = []
+    unkeyable_sec_events: list[dict[str, Any]] = []
     keyed_events = 0
+    sec_events = 0
 
     for row in events:
+        if row.get("source_adapter") == "sec_edgar":
+            sec_events += 1
+
         key = semantic_key(row)
         if key is None:
+            if row.get("source_adapter") == "sec_edgar":
+                missing_fields = [
+                    field
+                    for field in ("company_id", "report_date", "document_type")
+                    if not row.get(field)
+                ]
+                unkeyable_sec_events.append(
+                    {
+                        "code": "UNKEYABLE_SEC_EARNINGS_EVENT",
+                        "event_id": str(row.get("event_id") or ""),
+                        "missing_fields": missing_fields,
+                    }
+                )
             continue
+
         keyed_events += 1
         event_id = str(row.get("event_id") or "")
         previous = seen.get(key)
@@ -64,15 +83,23 @@ def audit(events: list[dict[str, Any]]) -> dict[str, Any]:
         else:
             seen[key] = event_id
 
+    issues = [*unkeyable_sec_events, *duplicates]
     return {
-        "schema_version": "earnings-semantic-duplicate-audit.v1",
+        "schema_version": "earnings-semantic-duplicate-audit.v2",
         "run_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "events_total": len(events),
+        "sec_events_total": sec_events,
         "events_with_primary_period_key": keyed_events,
+        "unkeyable_sec_event_count": len(unkeyable_sec_events),
+        "unkeyable_sec_events": unkeyable_sec_events,
         "duplicate_count": len(duplicates),
         "duplicates": duplicates,
-        "status": "PASS" if not duplicates else "FAIL",
-        "key_contract": "SEC company_id + primary-source report_date + document_type; no fiscal-period inference",
+        "issues": issues,
+        "status": "PASS" if not issues else "FAIL",
+        "key_contract": (
+            "Every accepted SEC event must have company_id + primary-source report_date + "
+            "document_type; missing identity fields fail closed and no fiscal-period inference is allowed"
+        ),
     }
 
 
