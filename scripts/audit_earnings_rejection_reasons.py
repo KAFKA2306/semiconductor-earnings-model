@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import urllib.parse
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,11 +19,47 @@ ALLOWED_REJECTION_REASONS = {
     "SOURCE_FETCH_FAILED",
 }
 
+ADAPTER_CONTRACTS = {
+    "sec_edgar": {
+        "domains": {"www.sec.gov"},
+        "identity_fields": ("accession_number", "cik"),
+    },
+    "tdnet_public": {
+        "domains": {"www.release.tdnet.info"},
+        "identity_fields": ("security_code",),
+    },
+}
+
+REQUIRED_REJECTED_FIELDS = (
+    "schema_version",
+    "event_id",
+    "company_id",
+    "company_name",
+    "document_type",
+    "published_at",
+    "retrieved_at",
+    "source_adapter",
+    "source_url",
+)
+
 
 def load_ndjson(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         return []
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def parse_timestamp(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    candidate = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        parsed = datetime.fromisoformat(candidate)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return None
+    return parsed.astimezone(timezone.utc)
 
 
 def audit_rejections(
@@ -53,6 +90,63 @@ def audit_rejections(
         reason = row.get("rejection_reason")
         document_type = str(row.get("document_type") or "")
         source_adapter = str(row.get("source_adapter") or "")
+
+        missing_fields = [field for field in REQUIRED_REJECTED_FIELDS if not row.get(field)]
+        if missing_fields:
+            issues.append({
+                "code": "MISSING_REJECTION_PROVENANCE_FIELD",
+                "event_id": event_id,
+                "fields": missing_fields,
+            })
+
+        if row.get("schema_version") != "earnings-event.v1":
+            issues.append({
+                "code": "INVALID_REJECTED_SCHEMA_VERSION",
+                "event_id": event_id,
+                "schema_version": row.get("schema_version"),
+            })
+
+        published_at = parse_timestamp(row.get("published_at"))
+        retrieved_at = parse_timestamp(row.get("retrieved_at"))
+        if published_at is None:
+            issues.append({"code": "INVALID_REJECTED_PUBLISHED_AT", "event_id": event_id})
+        if retrieved_at is None:
+            issues.append({"code": "INVALID_REJECTED_RETRIEVED_AT", "event_id": event_id})
+        if published_at is not None and retrieved_at is not None and retrieved_at < published_at:
+            issues.append({
+                "code": "REJECTED_RETRIEVED_BEFORE_PUBLISHED",
+                "event_id": event_id,
+                "published_at": row.get("published_at"),
+                "retrieved_at": row.get("retrieved_at"),
+            })
+
+        adapter_contract = ADAPTER_CONTRACTS.get(source_adapter)
+        if adapter_contract is None:
+            issues.append({
+                "code": "UNKNOWN_REJECTION_SOURCE_ADAPTER",
+                "event_id": event_id,
+                "source_adapter": source_adapter,
+            })
+        else:
+            source_url = str(row.get("source_url") or "")
+            parsed_url = urllib.parse.urlparse(source_url)
+            if parsed_url.scheme != "https" or parsed_url.netloc not in adapter_contract["domains"]:
+                issues.append({
+                    "code": "REJECTION_SOURCE_DOMAIN_MISMATCH",
+                    "event_id": event_id,
+                    "source_adapter": source_adapter,
+                    "source_url": source_url,
+                })
+            missing_identity = [
+                field for field in adapter_contract["identity_fields"] if row.get(field) in (None, "")
+            ]
+            if missing_identity:
+                issues.append({
+                    "code": "MISSING_REJECTION_SOURCE_IDENTITY",
+                    "event_id": event_id,
+                    "source_adapter": source_adapter,
+                    "fields": missing_identity,
+                })
 
         if row.get("freshness") != "REJECTED":
             issues.append({
@@ -88,7 +182,6 @@ def audit_rejections(
                 "document_type": document_type,
             })
         if reason == "NOT_EARNINGS_RELATED" and document_type == "6-K":
-            # This is valid only after the 6-K document was fetched and content-tested.
             if source_adapter != "sec_edgar":
                 issues.append({
                     "code": "SIX_K_CONTENT_REJECTION_NON_SEC_SOURCE",
@@ -111,6 +204,9 @@ def audit_rejections(
             "unknown_reason_fails_closed": True,
             "accepted_rejected_collision_fails_closed": True,
             "reason_form_consistency_required": True,
+            "rejection_provenance_required": True,
+            "source_adapter_domain_binding_required": True,
+            "retrieved_at_not_before_published_at": True,
         },
     }
 
