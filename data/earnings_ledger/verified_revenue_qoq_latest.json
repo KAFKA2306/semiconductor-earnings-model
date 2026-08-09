@@ -1,0 +1,17 @@
+{
+  "schema_version": "verified-revenue-qoq.v1",
+  "run_at": "2026-08-09T23:09:29.508012Z",
+  "eligible_metrics_total": 1,
+  "calculated_qoq_total": 0,
+  "growth": [],
+  "not_calculated": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "growth_type": "QoQ",
+      "reason": "CURRENT_FACT_NOT_STANDALONE_QUARTER"
+    }
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "QoQ is persisted only for comparable standalone quarter-duration us-gaap revenue facts from the primary SEC Company Facts payload; missing comparables produce no value and ambiguity fails closed."
+}
