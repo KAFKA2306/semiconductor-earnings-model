@@ -11,11 +11,14 @@
     "424B2": 1,
     "TDNET_DISCLOSURE": 2
   },
-  "generated_at": "2026-08-09T12:00:17.056723Z",
+  "generated_at": "2026-08-09T13:02:36.828573Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
     "reason_form_consistency_required": true,
+    "rejection_provenance_required": true,
+    "retrieved_at_not_before_published_at": true,
+    "source_adapter_domain_binding_required": true,
     "unknown_reason_fails_closed": true
   },
   "reason_counts": {
