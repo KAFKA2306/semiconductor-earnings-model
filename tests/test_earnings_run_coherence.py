@@ -4,14 +4,19 @@ from pathlib import Path
 from scripts.audit_earnings_run_coherence import REQUIRED, audit
 
 
+RUN_AT = "2026-08-09T00:00:00Z"
+
+
 def write_artifact(root: Path, name: str, *, status: str = "PASS", issues=None, schema=True) -> None:
     payload = {"status": status, "issues": [] if issues is None else issues}
     if schema:
         payload["schema_version"] = f"test-{name}.v1"
     if name == "audit_latest.json":
         payload["accepted_events_total"] = 1
+        payload["run_at"] = RUN_AT
     if name == "publication_latest.json":
         payload["events_total"] = 1
+        payload["generated_from_run_at"] = RUN_AT
     (root / name).write_text(json.dumps(payload), encoding="utf-8")
 
 
@@ -68,3 +73,27 @@ def test_fails_when_publication_count_disagrees(tmp_path):
     result = audit(tmp_path)
     assert result["status"] == "FAIL"
     assert "PUBLICATION_COUNT_MISMATCH:1:2" in result["issues"]
+
+
+def test_fails_when_publication_is_from_a_different_ledger_run(tmp_path):
+    valid_ledger(tmp_path)
+    payload = json.loads((tmp_path / "publication_latest.json").read_text())
+    payload["generated_from_run_at"] = "2026-08-08T22:00:00Z"
+    (tmp_path / "publication_latest.json").write_text(json.dumps(payload))
+    result = audit(tmp_path)
+    assert result["status"] == "FAIL"
+    assert any(issue.startswith("STALE_PUBLICATION_RUN:") for issue in result["issues"])
+
+
+def test_fails_when_run_binding_metadata_is_missing(tmp_path):
+    valid_ledger(tmp_path)
+    ledger = json.loads((tmp_path / "audit_latest.json").read_text())
+    ledger.pop("run_at")
+    (tmp_path / "audit_latest.json").write_text(json.dumps(ledger))
+    publication = json.loads((tmp_path / "publication_latest.json").read_text())
+    publication.pop("generated_from_run_at")
+    (tmp_path / "publication_latest.json").write_text(json.dumps(publication))
+    result = audit(tmp_path)
+    assert result["status"] == "FAIL"
+    assert "MISSING_LEDGER_RUN_AT" in result["issues"]
+    assert "MISSING_PUBLICATION_SOURCE_RUN_AT" in result["issues"]

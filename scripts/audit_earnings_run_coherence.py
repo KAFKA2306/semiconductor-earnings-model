@@ -71,6 +71,23 @@ def audit(ledger: Path = LEDGER) -> dict:
             published = publication.get("events_total", publication.get("accepted_events_total"))
             if isinstance(accepted, int) and isinstance(published, int) and accepted != published:
                 issues.append(f"PUBLICATION_COUNT_MISMATCH:{accepted}:{published}")
+
+            ledger_run_at = ledger_audit.get("run_at")
+            publication_run_at = publication.get("generated_from_run_at")
+            if not isinstance(ledger_run_at, str) or not ledger_run_at:
+                issues.append("MISSING_LEDGER_RUN_AT")
+            if not isinstance(publication_run_at, str) or not publication_run_at:
+                issues.append("MISSING_PUBLICATION_SOURCE_RUN_AT")
+            if (
+                isinstance(ledger_run_at, str)
+                and ledger_run_at
+                and isinstance(publication_run_at, str)
+                and publication_run_at
+                and ledger_run_at != publication_run_at
+            ):
+                issues.append(
+                    f"STALE_PUBLICATION_RUN:{ledger_run_at}:{publication_run_at}"
+                )
         except (OSError, json.JSONDecodeError):
             pass
 
@@ -84,7 +101,8 @@ def audit(ledger: Path = LEDGER) -> dict:
         "status": "PASS" if not issues else "FAIL",
         "contract": (
             "A ledger run is publishable only when every required audit artifact exists, parses as JSON, "
-            "declares a schema version, reports PASS, and contains zero audit issues."
+            "declares a schema version, reports PASS, contains zero audit issues, and the publication is "
+            "bound to the exact same ledger run_at so a stale PASS publication cannot be reused."
         ),
     }
 
