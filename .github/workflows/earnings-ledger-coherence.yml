@@ -1,0 +1,40 @@
+name: Earnings ledger coherence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/earnings-ledger-coherence.yml"
+      - "scripts/audit_earnings_run_coherence.py"
+      - "tests/test_earnings_run_coherence.py"
+      - "data/earnings_ledger/**"
+  pull_request:
+    paths:
+      - ".github/workflows/earnings-ledger-coherence.yml"
+      - "scripts/audit_earnings_run_coherence.py"
+      - "tests/test_earnings_run_coherence.py"
+      - "data/earnings_ledger/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: earnings-ledger-coherence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependency
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Run coherence regression tests
+        run: python -m pytest -q tests/test_earnings_run_coherence.py
+      - name: Audit committed ledger coherence
+        run: python scripts/audit_earnings_run_coherence.py
