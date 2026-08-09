@@ -1,0 +1,49 @@
+{
+  "schema_version": "earnings-ledger-lineage.v1",
+  "generated_from_run_at": "2026-08-09T10:53:11.080314Z",
+  "status": "PASS",
+  "artifacts": [
+    {
+      "path": "data/earnings_ledger/events.ndjson",
+      "sha256": "27669f50c75e41d5e5e6de7aff36f448437fc68b28e10521e39fb0a84a5831fa",
+      "size_bytes": 580
+    },
+    {
+      "path": "data/earnings_ledger/rejected.ndjson",
+      "sha256": "06adc4c8cefdde6d2712e12a009ccdd3348e896c62fffbe20c2bdecc35cf20ec",
+      "size_bytes": 8584
+    },
+    {
+      "path": "data/earnings_ledger/source_registry.json",
+      "sha256": "3779c3c98b4165880a4f5cde568b95271f3a08012ffb9be83f53e7b72f4edec8",
+      "size_bytes": 5183
+    },
+    {
+      "path": "data/earnings_ledger/state.json",
+      "sha256": "1e8bb990b46daa5bacfdd151bfa7f3e027dcd8cfedeaad175a9b1f5ff07510ff",
+      "size_bytes": 268
+    },
+    {
+      "path": "data/earnings_ledger/audit_latest.json",
+      "sha256": "4c1558b93997d688ad153773b38b2ba8920060781af5c1b84fb34b4bae430570",
+      "size_bytes": 3074
+    },
+    {
+      "path": "data/earnings_ledger/publication_latest.json",
+      "sha256": "73a9dc7942b3b7e3179acb24dd9437c81e5be883086adef56916a3723f70a879",
+      "size_bytes": 862
+    },
+    {
+      "path": "data/earnings_ledger/source_state.json",
+      "sha256": "3499d4ac7dc87eb70d5b3c018d2e9b6a1b9217d766b42db59164084b26943a37",
+      "size_bytes": 6056
+    }
+  ],
+  "contract": {
+    "sha256_bound": true,
+    "single_run_binding_required": true,
+    "ledger_audit_pass_required": true,
+    "publication_audit_pass_required": true,
+    "fail_closed": true
+  }
+}
