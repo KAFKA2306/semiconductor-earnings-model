@@ -25,6 +25,7 @@ def test_current_registry_passes_fail_closed_contract() -> None:
     assert result["issues"] == []
     assert result["summary"]["enabled_source_count"] >= 1
     assert result["contract"]["primary_domains_allow_listed"] is True
+    assert result["contract"]["sec_registry_cik_bound_to_official_url"] is True
 
 
 def test_rejects_policy_relaxation() -> None:
@@ -41,6 +42,31 @@ def test_rejects_non_primary_sec_domain() -> None:
     sec_source["official_source"] = "https://example.com/company"
     result = audit_registry(registry)
     assert "NON_PRIMARY_OFFICIAL_SOURCE" in issue_codes(result)
+
+
+def test_rejects_missing_sec_url_cik() -> None:
+    registry = load_registry()
+    sec_source = next(source for source in registry["sources"] if source["adapter"] == "sec_edgar")
+    sec_source["official_source"] = "https://www.sec.gov/edgar/browse/"
+    result = audit_registry(registry)
+    assert "MISSING_SEC_URL_CIK" in issue_codes(result)
+
+
+def test_rejects_mismatched_sec_url_cik() -> None:
+    registry = load_registry()
+    sec_source = next(source for source in registry["sources"] if source["adapter"] == "sec_edgar")
+    sec_source["official_source"] = "https://www.sec.gov/edgar/browse/?CIK=1"
+    result = audit_registry(registry)
+    assert "SEC_URL_CIK_MISMATCH" in issue_codes(result)
+
+
+def test_rejects_ambiguous_sec_url_cik() -> None:
+    registry = load_registry()
+    sec_source = next(source for source in registry["sources"] if source["adapter"] == "sec_edgar")
+    cik = sec_source["cik"]
+    sec_source["official_source"] = f"https://www.sec.gov/edgar/browse/?CIK={cik}&CIK={cik}"
+    result = audit_registry(registry)
+    assert "MISSING_SEC_URL_CIK" in issue_codes(result)
 
 
 def test_rejects_duplicate_sec_identity() -> None:
