@@ -5,8 +5,10 @@ import path from 'node:path';
 const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
 const revenuePath = path.join(root, 'data/earnings_ledger/verified_revenue_latest.json');
 const lineagePath = path.join(root, 'data/earnings_ledger/verified_revenue_lineage_audit_latest.json');
+const publicationPath = path.join(root, 'data/earnings_ledger/publication_latest.json');
 const revenue = JSON.parse(fs.readFileSync(revenuePath, 'utf8'));
 const lineage = JSON.parse(fs.readFileSync(lineagePath, 'utf8'));
+const publication = JSON.parse(fs.readFileSync(publicationPath, 'utf8'));
 
 if (revenue.status !== 'PASS' || revenue.issues?.length) {
   throw new Error('Verified revenue artifact is not publishable');
@@ -17,12 +19,44 @@ if (lineage.status !== 'PASS' || lineage.issues?.length) {
 if (lineage.checked_metrics_total !== revenue.verified_metrics_total) {
   throw new Error('Verified revenue and lineage counts differ');
 }
+if (publication.schema_version !== 'earnings-ledger-publication.v1' || publication.audit_status !== 'PASS') {
+  throw new Error('Earnings publication artifact is not publishable');
+}
+if (
+  publication.contract?.primary_sources_only !== true ||
+  publication.contract?.freshness_gate_hours !== 24 ||
+  publication.contract?.publication_rechecks_freshness !== true ||
+  publication.contract?.fail_closed !== true ||
+  publication.contract?.unverified_values_published !== false
+) {
+  throw new Error('Earnings publication safety contract is incomplete');
+}
+if (!Array.isArray(publication.events) || publication.accepted_events_total !== publication.events.length) {
+  throw new Error('Earnings publication event count is inconsistent');
+}
+if (
+  !Number.isInteger(publication.ledger_accepted_events_total) ||
+  !Number.isInteger(publication.expired_events_total) ||
+  publication.ledger_accepted_events_total !== publication.accepted_events_total + publication.expired_events_total
+) {
+  throw new Error('Earnings publication freshness accounting is inconsistent');
+}
+
+const publishableEventIds = new Set(
+  publication.events.map((event) => {
+    if (!event?.event_id) throw new Error('Published earnings event is missing event_id');
+    return event.event_id;
+  }),
+);
+const rawMetrics = revenue.metrics || [];
+const metrics = rawMetrics.filter((metric) => publishableEventIds.has(metric.event_id));
+const hiddenByFreshness = rawMetrics.length - metrics.length;
+const disabledSources = publication.unsupported_or_disabled_sources || [];
 
 const base = import.meta.env.BASE_URL;
 const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
 if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
 
-const metrics = revenue.metrics || [];
 const usd = (value) => `$${(Number(value) / 1_000_000_000).toFixed(3)}B`;
 const dateJP = (value) => {
   const [year, month, day] = String(value).slice(0, 10).split('-').map(Number);
@@ -38,7 +72,16 @@ const dateJP = (value) => {
     <meta name="description" content="24時間鮮度ゲートと一次情報監査を通過した決算指標だけを表示する監査済み決算台帳。" />
     <title>監査済み決算台帳 / Verified Earnings Ledger</title>
   </head>
-  <body data-build-sha={buildSha} data-ledger-status={revenue.status} data-lineage-status={lineage.status}>
+  <body
+    data-build-sha={buildSha}
+    data-ledger-status={revenue.status}
+    data-lineage-status={lineage.status}
+    data-publication-status={publication.audit_status}
+    data-fresh-event-count={publication.accepted_events_total}
+    data-expired-event-count={publication.expired_events_total}
+    data-visible-metric-count={metrics.length}
+    data-hidden-by-freshness-count={hiddenByFreshness}
+  >
     <main>
       <header class="topbar">
         <a class="brand" href={base}>Financial Research Workbench</a>
@@ -51,25 +94,45 @@ const dateJP = (value) => {
 
       <section class="hero">
         <div>
-          <p class="eyebrow">PRIMARY SOURCE × 24H FRESHNESS × FAIL-CLOSED</p>
+          <p class="eyebrow">PRIMARY SOURCE × LIVE 24H FRESHNESS × FAIL-CLOSED</p>
           <h1>確認できた数字だけを、<em>決算台帳に残す。</em></h1>
-          <p class="lead">この画面は、一次情報・24時間鮮度・イベント同一性・データ系譜の監査をすべて通過した指標だけを表示します。未確認値、推測値、監査失敗値は表示しません。</p>
+          <p class="lead">この画面は、一次情報・24時間鮮度・イベント同一性・データ系譜の監査をすべて通過し、公開時点でも24時間以内にある指標だけを表示します。未確認値、推測値、期限切れ値、監査失敗値は表示しません。</p>
         </div>
         <aside>
-          <span>LEDGER STATUS</span>
-          <strong>{revenue.status}</strong>
+          <span>PUBLICATION STATUS</span>
+          <strong>{publication.audit_status}</strong>
           <dl>
-            <div><dt>監査済み指標</dt><dd>{revenue.verified_metrics_total}</dd></div>
-            <div><dt>系譜監査済み</dt><dd>{lineage.checked_metrics_total}</dd></div>
-            <div><dt>監査issue</dt><dd>{revenue.issues.length + lineage.issues.length}</dd></div>
+            <div><dt>24時間内イベント</dt><dd>{publication.accepted_events_total}</dd></div>
+            <div><dt>期限切れイベント</dt><dd>{publication.expired_events_total}</dd></div>
+            <div><dt>表示中の指標</dt><dd>{metrics.length}</dd></div>
+            <div><dt>鮮度で非表示</dt><dd>{hiddenByFreshness}</dd></div>
           </dl>
         </aside>
       </section>
 
+      <section class="section trust" aria-labelledby="trust-title">
+        <div class="heading">
+          <div><p>01 / LIVE PUBLICATION GATE</p><h2 id="trust-title">収集済みと、<br /><em>公開可能は別。</em></h2></div>
+          <p>履歴台帳に残る監査済みイベントでも、公開時点で24時間を超えたものは画面から除外します。表示対象は公開APIのfresh event IDと一致する指標だけです。</p>
+        </div>
+        <dl class="trust-grid">
+          <div><dt>履歴台帳 accepted</dt><dd>{publication.ledger_accepted_events_total}</dd></div>
+          <div><dt>現在 fresh</dt><dd>{publication.accepted_events_total}</dd></div>
+          <div><dt>現在 expired</dt><dd>{publication.expired_events_total}</dd></div>
+          <div><dt>rejected</dt><dd>{publication.rejected_events_total}</dd></div>
+        </dl>
+        {disabledSources.length > 0 && (
+          <div class="gap-box">
+            <strong>FAIL-CLOSED SOURCE GAPS</strong>
+            <p>安全に検証できないため公開対象にしないsource: {disabledSources.join(', ')}</p>
+          </div>
+        )}
+      </section>
+
       <section class="section" aria-labelledby="verified-title">
         <div class="heading">
-          <div><p>01 / VERIFIED METRICS</p><h2 id="verified-title">監査済みの、<br /><em>決算指標。</em></h2></div>
-          <p>SEC Company Factsの標準us-gaap factを、同一accession・form・period end・USDで照合した値だけを掲載します。</p>
+          <div><p>02 / VERIFIED METRICS</p><h2 id="verified-title">監査済みの、<br /><em>決算指標。</em></h2></div>
+          <p>SEC Company Factsの標準us-gaap factを、同一accession・form・period end・USDで照合し、さらに公開時点の24時間鮮度ゲートを通過した値だけを掲載します。</p>
         </div>
 
         {metrics.length ? (
@@ -90,14 +153,14 @@ const dateJP = (value) => {
             ))}
           </div>
         ) : (
-          <p class="empty">現在、監査条件を満たす公開可能な指標はありません。</p>
+          <p class="empty">現在、公開時点の24時間鮮度ゲートまで満たす決算指標はありません。履歴値を古いまま表示することはしません。</p>
         )}
       </section>
 
       <section class="section boundary" aria-labelledby="boundary-title">
-        <div class="heading"><div><p>02 / PUBLICATION BOUNDARY</p><h2 id="boundary-title">表示しないもの。</h2></div></div>
+        <div class="heading"><div><p>03 / PUBLICATION BOUNDARY</p><h2 id="boundary-title">表示しないもの。</h2></div></div>
         <ul>
-          <li>24時間鮮度ゲートを通過していない決算</li>
+          <li>公開時点で24時間鮮度ゲートを通過していない決算</li>
           <li>一次情報と完全一致しない数値</li>
           <li>GAAP / non-GAAPの根拠が未確認の指標</li>
           <li>イベントと一次証拠へ系譜を辿れない指標</li>
@@ -105,7 +168,11 @@ const dateJP = (value) => {
         </ul>
       </section>
 
-      <footer><span>BUILD SHA</span><code>{buildSha}</code><span>LEDGER RUN</span><code>{revenue.run_at}</code></footer>
+      <footer>
+        <span>BUILD SHA</span><code>{buildSha}</code>
+        <span>METRIC RUN</span><code>{revenue.run_at}</code>
+        <span>PUBLICATION RUN</span><code>{publication.generated_from_run_at}</code>
+      </footer>
     </main>
   </body>
 </html>
@@ -129,12 +196,19 @@ const dateJP = (value) => {
   aside { padding: 28px; border: 1px solid rgba(76,91,125,.13); border-radius: 24px; background: linear-gradient(145deg, rgba(183,219,200,.46), rgba(185,168,230,.32)); }
   aside > span { color: #69768b; font-size: .67rem; letter-spacing: .14em; font-weight: 900; }
   aside > strong { display: block; margin: 12px 0 18px; font-family: Georgia, serif; font-size: 3rem; }
-  aside dl, .metric-card dl { margin: 0; }
+  aside dl, .metric-card dl, .trust-grid { margin: 0; }
   aside dl div, .metric-card dl div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid rgba(76,91,125,.12); font-size: .75rem; }
-  aside dd, .metric-card dd { margin: 0; text-align: right; font-weight: 800; }
+  aside dd, .metric-card dd, .trust-grid dd { margin: 0; text-align: right; font-weight: 800; }
   .section { padding: 70px 0; border-top: 1px solid rgba(76,91,125,.13); }
   .heading { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 30px; }
   .heading > p { max-width: 490px; margin: 0; color: #69768b; line-height: 1.75; }
+  .trust-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+  .trust-grid > div { padding: 20px; border: 1px solid rgba(76,91,125,.13); border-radius: 18px; background: rgba(255,255,255,.76); }
+  .trust-grid dt { color: #69768b; font-size: .72rem; font-weight: 800; }
+  .trust-grid dd { margin-top: 12px; font-family: Georgia, serif; font-size: 2rem; }
+  .gap-box { margin-top: 14px; padding: 18px 20px; border-radius: 16px; background: rgba(243,207,170,.28); }
+  .gap-box strong { font-size: .7rem; letter-spacing: .1em; }
+  .gap-box p { margin: 8px 0 0; color: #69768b; line-height: 1.65; }
   .cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
   .metric-card { padding: 24px; border: 1px solid rgba(76,91,125,.13); border-radius: 22px; background: rgba(255,255,255,.78); }
   .metric-head { display: flex; justify-content: space-between; color: #69768b; font-size: .72rem; font-weight: 900; }
@@ -142,12 +216,12 @@ const dateJP = (value) => {
   .metric-card > strong { display: block; margin-bottom: 22px; font-family: Georgia, serif; font-size: clamp(2.2rem, 4vw, 3.4rem); }
   .metric-card code { overflow-wrap: anywhere; font-size: .68rem; }
   .metric-card > a { display: inline-block; margin-top: 20px; font-size: .75rem; font-weight: 850; }
-  .empty { padding: 24px; border-radius: 18px; background: rgba(239,180,193,.22); }
+  .empty { padding: 24px; border-radius: 18px; background: rgba(239,180,193,.22); line-height: 1.7; }
   .boundary ul { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; padding: 0; list-style: none; }
   .boundary li { padding: 18px 20px; border-radius: 16px; background: rgba(243,207,170,.28); line-height: 1.6; }
   footer { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; padding: 18px; border-radius: 16px; background: #243653; color: white; font-size: .65rem; }
   footer span { color: #cbd4e2; font-weight: 900; }
   footer code { overflow-wrap: anywhere; }
-  @media (max-width: 850px) { .hero { grid-template-columns: 1fr; min-height: auto; } .cards, .boundary ul { grid-template-columns: 1fr; } }
-  @media (max-width: 620px) { main { width: min(100% - 20px, 1180px); } nav { display: none; } .hero { padding: 50px 0; } .heading { display: block; } .heading > p { margin-top: 16px; } footer { grid-template-columns: 1fr; } }
+  @media (max-width: 850px) { .hero { grid-template-columns: 1fr; min-height: auto; } .cards, .boundary ul { grid-template-columns: 1fr; } .trust-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  @media (max-width: 620px) { main { width: min(100% - 20px, 1180px); } nav { display: none; } .hero { padding: 50px 0; } .heading { display: block; } .heading > p { margin-top: 16px; } .trust-grid { grid-template-columns: 1fr; } footer { grid-template-columns: 1fr; } }
 </style>
