@@ -1,10 +1,14 @@
 {
-  "schema_version": "earnings-semantic-duplicate-audit.v1",
-  "run_at": "2026-08-09T16:55:08.482603Z",
+  "schema_version": "earnings-semantic-duplicate-audit.v2",
+  "run_at": "2026-08-09T18:59:24.425041Z",
   "events_total": 1,
+  "sec_events_total": 1,
   "events_with_primary_period_key": 1,
+  "unkeyable_sec_event_count": 0,
+  "unkeyable_sec_events": [],
   "duplicate_count": 0,
   "duplicates": [],
+  "issues": [],
   "status": "PASS",
-  "key_contract": "SEC company_id + primary-source report_date + document_type; no fiscal-period inference"
+  "key_contract": "Every accepted SEC event must have company_id + primary-source report_date + document_type; missing identity fields fail closed and no fiscal-period inference is allowed"
 }
