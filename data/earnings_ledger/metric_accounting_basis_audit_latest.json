@@ -1,0 +1,27 @@
+{
+  "schema_version": "verified-metric-accounting-basis-audit.v1",
+  "run_at": "2026-08-09T23:04:08.210409Z",
+  "artifacts_expected_total": 4,
+  "metrics_audited_total": 2,
+  "items": [
+    {
+      "artifact": "verified_inventory_latest.json",
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "metric": "inventory_net",
+      "accounting_basis": "us-gaap-xbrl-fact",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet"
+    },
+    {
+      "artifact": "verified_revenue_latest.json",
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "metric": "revenue",
+      "accounting_basis": "us-gaap-xbrl-fact",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    }
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "Persisted raw metrics may be classified as GAAP only when bound to a standard us-gaap XBRL concept; derived FCF must remain explicitly derived-non-gaap with both us-gaap input provenances and an explicit derivation."
+}
