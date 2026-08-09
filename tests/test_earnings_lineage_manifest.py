@@ -33,6 +33,8 @@ def make_ledger(tmp_path: Path, run_at: str = "2026-08-09T10:53:11Z") -> Path:
         {"generated_from_run_at": run_at, "audit_status": "PASS"},
     )
     write(ledger / "source_state.json", {"generated_from_run_at": run_at})
+    for name in lineage.DERIVED_AUDIT_ARTIFACTS:
+        write(ledger / name, {"status": "PASS", "issues": []})
     return ledger
 
 
@@ -41,7 +43,7 @@ def test_manifest_binds_all_core_artifacts_with_sha256(tmp_path: Path):
     manifest = lineage.build_manifest(ledger)
     assert manifest["status"] == "PASS"
     assert manifest["generated_from_run_at"] == "2026-08-09T10:53:11Z"
-    assert len(manifest["artifacts"]) == len(lineage.CORE_ARTIFACTS)
+    assert len(manifest["artifacts"]) == len(lineage.LINEAGE_ARTIFACTS)
     assert all(len(item["sha256"]) == 64 for item in manifest["artifacts"])
     assert all(item["size_bytes"] > 0 for item in manifest["artifacts"])
 
