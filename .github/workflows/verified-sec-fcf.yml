@@ -1,0 +1,85 @@
+name: Verified SEC FCF extraction
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "57 */2 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verified-sec-fcf.yml"
+      - "scripts/extract_verified_sec_fcf.py"
+      - "tests/test_verified_sec_fcf.py"
+      - "data/earnings_ledger/events.ndjson"
+  pull_request:
+    paths:
+      - ".github/workflows/verified-sec-fcf.yml"
+      - "scripts/extract_verified_sec_fcf.py"
+      - "tests/test_verified_sec_fcf.py"
+      - "data/earnings_ledger/events.ndjson"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: verified-sec-fcf-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extract-verified-fcf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependency
+        run: python -m pip install --disable-pip-version-check pytest
+
+      - name: Run FCF regression tests
+        run: python -m pytest -q tests/test_verified_sec_fcf.py
+
+      - name: Extract verified live SEC XBRL FCF with retry
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        shell: bash
+        run: |
+          set -u
+          if [ -z "${SEC_USER_AGENT:-}" ]; then
+            echo "Repository variable SEC_USER_AGENT is required."
+            exit 1
+          fi
+          ok=0
+          for attempt in 1 2 3; do
+            echo "Company Facts FCF extraction attempt ${attempt}/3"
+            if python scripts/extract_verified_sec_fcf.py; then
+              ok=1
+              break
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 30))
+            fi
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "verified SEC FCF extraction failed after 3 attempts"
+            exit 1
+          fi
+
+      - name: Commit verified FCF artifact
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          if [ -z "$(git status --porcelain -- data/earnings_ledger/verified_fcf_latest.json)" ]; then
+            echo "No verified FCF changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/earnings_ledger/verified_fcf_latest.json
+          git commit -m "data: update verified SEC FCF"
+          git push
