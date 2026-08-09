@@ -4,6 +4,7 @@
     "duplicate_source_and_company_identity_rejected": true,
     "opendart_remains_fail_closed_without_authenticated_timestamp_contract": true,
     "primary_domains_allow_listed": true,
+    "sec_registry_cik_bound_to_official_url": true,
     "unsafe_policy_mutation_rejected": true
   },
   "issues": [],
