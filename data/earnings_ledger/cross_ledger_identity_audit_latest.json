@@ -1,0 +1,12 @@
+{
+  "schema_version": "earnings-cross-ledger-identity-audit.v1",
+  "run_at": "2026-08-09T04:00:10.541471Z",
+  "accepted_events_total": 1,
+  "rejected_events_total": 14,
+  "accepted_identity_keys_total": 3,
+  "rejected_identity_keys_total": 40,
+  "collision_count": 0,
+  "issues": [],
+  "status": "PASS",
+  "contract": "an event identity may exist in exactly one ledger state; event_id, SEC accession, and normalized primary-source URL are checked without inventing missing identifiers"
+}
