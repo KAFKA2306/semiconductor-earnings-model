@@ -1,0 +1,12 @@
+{
+  "schema_version": "verified-sec-capex.v1",
+  "run_at": "2026-08-09T15:03:21.326519Z",
+  "freshness_gate_hours": 24,
+  "eligible_events_total": 0,
+  "stale_events_skipped_total": 1,
+  "verified_metrics_total": 0,
+  "metrics": [],
+  "issues": [],
+  "status": "PASS",
+  "contract": "Only live <=24h SEC 10-K/10-Q us-gaap PaymentsToAcquirePropertyPlantAndEquipment facts matching exact accession, form, period end, one unambiguous duration and USD are persisted. Missing, stale, future, malformed or conflicting values never become metrics."
+}
