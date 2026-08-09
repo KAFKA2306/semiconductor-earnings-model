@@ -1,6 +1,6 @@
 {
-  "schema_version": "earnings-ledger-lineage.v1",
-  "generated_from_run_at": "2026-08-09T10:53:11.080314Z",
+  "schema_version": "earnings-ledger-lineage.v2",
+  "generated_from_run_at": "2026-08-09T20:52:09.102747Z",
   "status": "PASS",
   "artifacts": [
     {
@@ -20,23 +20,58 @@
     },
     {
       "path": "data/earnings_ledger/state.json",
-      "sha256": "1e8bb990b46daa5bacfdd151bfa7f3e027dcd8cfedeaad175a9b1f5ff07510ff",
+      "sha256": "a9ce9299f5d1894d95cd871e13580791a6b821868c3d487686e0af87c193cc6d",
       "size_bytes": 268
     },
     {
       "path": "data/earnings_ledger/audit_latest.json",
-      "sha256": "4c1558b93997d688ad153773b38b2ba8920060781af5c1b84fb34b4bae430570",
+      "sha256": "b4dd11dbb89a7e5132908bccdd3466766e85ad003357e5ded8c2a5ae684b18f0",
       "size_bytes": 3074
     },
     {
       "path": "data/earnings_ledger/publication_latest.json",
-      "sha256": "73a9dc7942b3b7e3179acb24dd9437c81e5be883086adef56916a3723f70a879",
+      "sha256": "dfee6e65dc3928f2642671dd875731ad53d19e087fc0b8325cc969d86eac3454",
       "size_bytes": 862
     },
     {
       "path": "data/earnings_ledger/source_state.json",
-      "sha256": "3499d4ac7dc87eb70d5b3c018d2e9b6a1b9217d766b42db59164084b26943a37",
+      "sha256": "9947b84626531c3f45c332efedc95144aa360b06a07eea25f8613392a31c067e",
       "size_bytes": 6056
+    },
+    {
+      "path": "data/earnings_ledger/semantic_duplicate_audit_latest.json",
+      "sha256": "439f0a8b18b9aa154eb2588c3bd680aa31da8adc9189113ffb818e60a0c3379d",
+      "size_bytes": 526
+    },
+    {
+      "path": "data/earnings_ledger/period_normalization_latest.json",
+      "sha256": "8a0805092ad6ec24e94aaa4d5d321f434e23ef07a0e1b51aa1a1a826337560de",
+      "size_bytes": 776
+    },
+    {
+      "path": "data/earnings_ledger/accounting_basis_audit_latest.json",
+      "sha256": "e4bef3f5360a3d2cf68bb2c820cbec8d9133a12b7897f628589de597f1cbbce3",
+      "size_bytes": 982
+    },
+    {
+      "path": "data/earnings_ledger/rejection_reason_audit_latest.json",
+      "sha256": "d35e7ed9108764ee58cdcf054d509a9b59118a9e6d8fe9ab14def3ba19a0620d",
+      "size_bytes": 859
+    },
+    {
+      "path": "data/earnings_ledger/published_at_audit_latest.json",
+      "sha256": "16dca63ccccee6f82bdfb734fd0ba32684da8fe25bb40f29e514544028d2ad5d",
+      "size_bytes": 878
+    },
+    {
+      "path": "data/earnings_ledger/source_registry_audit_latest.json",
+      "sha256": "5c523244f230e055a581c6fd299092a6b2a0ccaf9e9c54652ee04c6e2f9e490e",
+      "size_bytes": 677
+    },
+    {
+      "path": "data/earnings_ledger/consensus_separation_audit_latest.json",
+      "sha256": "6e8f4af544f7c478f5ac5beab30c574ed7c63c15be1d7250b4ea0933827f2f7d",
+      "size_bytes": 864
     }
   ],
   "contract": {
@@ -44,6 +79,7 @@
     "single_run_binding_required": true,
     "ledger_audit_pass_required": true,
     "publication_audit_pass_required": true,
+    "derived_audit_clean_pass_required": true,
     "fail_closed": true
   }
 }
