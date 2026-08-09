@@ -18,6 +18,18 @@ CORE_ARTIFACTS = (
     "source_state.json",
 )
 
+DERIVED_AUDIT_ARTIFACTS = (
+    "semantic_duplicate_audit_latest.json",
+    "period_normalization_latest.json",
+    "accounting_basis_audit_latest.json",
+    "rejection_reason_audit_latest.json",
+    "published_at_audit_latest.json",
+    "source_registry_audit_latest.json",
+    "consensus_separation_audit_latest.json",
+)
+
+LINEAGE_ARTIFACTS = CORE_ARTIFACTS + DERIVED_AUDIT_ARTIFACTS
+
 
 def read_json(path: Path) -> dict:
     try:
@@ -37,8 +49,15 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def require_clean_audit(name: str, value: dict) -> None:
+    if value.get("status") != "PASS":
+        raise RuntimeError(f"derived audit is not PASS: {name}")
+    if value.get("issues") != []:
+        raise RuntimeError(f"derived audit has issues: {name}")
+
+
 def build_manifest(ledger_dir: Path = LEDGER_DIR) -> dict:
-    missing = [name for name in CORE_ARTIFACTS if not (ledger_dir / name).is_file()]
+    missing = [name for name in LINEAGE_ARTIFACTS if not (ledger_dir / name).is_file()]
     if missing:
         raise RuntimeError(f"missing required lineage artifacts: {', '.join(missing)}")
 
@@ -66,8 +85,11 @@ def build_manifest(ledger_dir: Path = LEDGER_DIR) -> dict:
     if publication.get("audit_status") != "PASS":
         raise RuntimeError("publication audit_status is not PASS")
 
+    for name in DERIVED_AUDIT_ARTIFACTS:
+        require_clean_audit(name, read_json(ledger_dir / name))
+
     artifacts = []
-    for name in CORE_ARTIFACTS:
+    for name in LINEAGE_ARTIFACTS:
         path = ledger_dir / name
         artifacts.append(
             {
@@ -78,7 +100,7 @@ def build_manifest(ledger_dir: Path = LEDGER_DIR) -> dict:
         )
 
     return {
-        "schema_version": "earnings-ledger-lineage.v1",
+        "schema_version": "earnings-ledger-lineage.v2",
         "generated_from_run_at": run_at,
         "status": "PASS",
         "artifacts": artifacts,
@@ -87,6 +109,7 @@ def build_manifest(ledger_dir: Path = LEDGER_DIR) -> dict:
             "single_run_binding_required": True,
             "ledger_audit_pass_required": True,
             "publication_audit_pass_required": True,
+            "derived_audit_clean_pass_required": True,
             "fail_closed": True,
         },
     }
