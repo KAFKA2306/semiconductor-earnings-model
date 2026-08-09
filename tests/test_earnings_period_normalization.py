@@ -10,17 +10,26 @@ periods = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(periods)
 
 
-def test_sec_report_date_becomes_period_end_without_quarter_inference():
+def sec_row(**overrides):
     row = {
         "event_id": "e1",
         "company_id": "lam-research",
         "source_adapter": "sec_edgar",
         "document_type": "10-K",
+        "freshness": "PASS",
         "report_date": "2026-06-28",
+        "published_at": "2026-08-07T20:06:32Z",
+        "accession_number": "0000707549-26-000037",
     }
-    item = periods.normalize_period(row)
+    row.update(overrides)
+    return row
+
+
+def test_sec_report_date_becomes_period_end_without_quarter_inference():
+    item = periods.normalize_period(sec_row())
     assert item is not None
     assert item["period_end"] == "2026-06-28"
+    assert item["accession_number"] == "0000707549-26-000037"
     assert item["fiscal_year"] is None
     assert item["fiscal_quarter"] is None
     assert item["normalization_status"] == "PRIMARY_PERIOD_END_ONLY"
@@ -37,39 +46,50 @@ def test_non_sec_period_is_not_guessed():
     assert periods.normalize_period(row) is None
 
 
-def test_missing_sec_report_date_stays_missing():
-    row = {
-        "event_id": "e3",
-        "company_id": "amd",
-        "source_adapter": "sec_edgar",
-        "document_type": "8-K",
-        "report_date": None,
-    }
-    assert periods.normalize_period(row) is None
+def test_non_10k_10q_sec_form_is_not_normalized():
+    assert periods.normalize_period(sec_row(document_type="8-K")) is None
 
 
-def test_invalid_primary_period_fails_closed():
-    result = periods.audit([
-        {
-            "event_id": "e4",
-            "company_id": "nvidia",
-            "source_adapter": "sec_edgar",
-            "document_type": "10-Q",
-            "report_date": "2026-02-30",
-        }
-    ])
+def test_missing_sec_report_date_fails_closed_for_eligible_form():
+    result = periods.audit([sec_row(event_id="e3", report_date=None)])
     assert result["status"] == "FAIL"
     assert result["issues"][0]["code"] == "INVALID_PRIMARY_PERIOD"
 
 
+def test_invalid_primary_period_fails_closed():
+    result = periods.audit([sec_row(event_id="e4", report_date="2026-02-30")])
+    assert result["status"] == "FAIL"
+    assert result["issues"][0]["code"] == "INVALID_PRIMARY_PERIOD"
+
+
+def test_non_pass_freshness_fails_closed():
+    result = periods.audit([sec_row(event_id="e5", freshness="FAIL")])
+    assert result["status"] == "FAIL"
+    assert "freshness is not PASS" in result["issues"][0]["detail"]
+
+
+def test_missing_accession_fails_closed():
+    result = periods.audit([sec_row(event_id="e6", accession_number=None)])
+    assert result["status"] == "FAIL"
+    assert "missing SEC accession_number" in result["issues"][0]["detail"]
+
+
+def test_period_end_after_publication_fails_closed():
+    result = periods.audit([
+        sec_row(event_id="e7", report_date="2026-08-08", published_at="2026-08-07T23:59:59Z")
+    ])
+    assert result["status"] == "FAIL"
+    assert "report_date is after published_at" in result["issues"][0]["detail"]
+
+
+def test_timezone_naive_publication_fails_closed():
+    result = periods.audit([sec_row(event_id="e8", published_at="2026-08-07T20:06:32")])
+    assert result["status"] == "FAIL"
+    assert "timezone-naive" in result["issues"][0]["detail"]
+
+
 def test_duplicate_normalized_event_fails_closed():
-    row = {
-        "event_id": "e5",
-        "company_id": "micron",
-        "source_adapter": "sec_edgar",
-        "document_type": "10-Q",
-        "report_date": "2026-05-28",
-    }
+    row = sec_row(event_id="e9")
     result = periods.audit([row, row])
     assert result["status"] == "FAIL"
     assert any(issue["code"] == "DUPLICATE_NORMALIZED_EVENT" for issue in result["issues"])
