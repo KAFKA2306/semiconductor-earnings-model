@@ -5,7 +5,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "build_daily_earnings_report.py"
+ROOT = Path(__file__).resolve().parents[1]
+MODULE_PATH = ROOT / "scripts" / "build_daily_earnings_report.py"
 SPEC = importlib.util.spec_from_file_location("build_daily_earnings_report", MODULE_PATH)
 assert SPEC and SPEC.loader
 report = importlib.util.module_from_spec(SPEC)
@@ -69,3 +70,17 @@ def test_audit_fail_stops_report():
         assert "not PASS" in str(exc)
     else:
         raise AssertionError("failed ledger audit must stop daily report")
+
+
+def test_collector_and_daily_report_workflows_are_separated():
+    collector = (ROOT / ".github/workflows/earnings-ledger-update.yml").read_text(
+        encoding="utf-8"
+    )
+    daily = (ROOT / ".github/workflows/earnings-daily-report.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "Discard collector-generated report artifacts" in collector
+    assert 'cron: "7 7 * * *"' in daily
+    assert 'timezone: "Asia/Tokyo"' in daily
+    assert "SEC_USER_AGENT" not in daily
+    assert "scripts/earnings_ledger.py" not in daily
