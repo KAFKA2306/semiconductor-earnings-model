@@ -57,7 +57,7 @@ def valid_payloads() -> dict[str, dict]:
     return {
         "verified_revenue_latest.json": raw_payload("revenue", "RevenueFromContractWithCustomerExcludingAssessedTax"),
         "verified_capex_latest.json": raw_payload("capital_expenditures", "PaymentsToAcquirePropertyPlantAndEquipment"),
-        "verified_inventory_latest.json": raw_payload("inventory", "InventoryNet"),
+        "verified_inventory_latest.json": raw_payload("inventory_net", "InventoryNet"),
         "verified_fcf_latest.json": fcf_payload(),
     }
 
@@ -117,10 +117,9 @@ def test_metric_count_mismatch_fails_closed() -> None:
     assert any(issue["code"] == "VERIFIED_METRIC_COUNT_MISMATCH" for issue in result["issues"])
 
 
-def test_duplicate_event_metric_pair_fails_closed_across_artifacts() -> None:
+def test_wrong_metric_identity_fails_closed() -> None:
     payloads = valid_payloads()
-    payloads["verified_inventory_latest.json"]["metrics"][0]["event_id"] = "evt-revenue"
-    payloads["verified_inventory_latest.json"]["metrics"][0]["metric"] = "revenue"
+    payloads["verified_inventory_latest.json"]["metrics"][0]["metric"] = "inventory"
     result = module.audit_artifacts(payloads)
     assert result["status"] == "FAIL"
     assert any(issue["code"] == "INVALID_METRIC_IDENTITY" for issue in result["issues"])
