@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REGISTRY = ROOT / "data/earnings_ledger/source_registry.json"
@@ -45,6 +45,20 @@ def _valid_official_url(adapter: str, value: object) -> bool:
         return False
     host, path_prefix = rule
     return parsed.scheme == "https" and parsed.hostname == host and parsed.path.startswith(path_prefix)
+
+
+def _sec_url_cik(value: object) -> int | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = urlparse(value)
+        values = parse_qs(parsed.query, keep_blank_values=True).get("CIK", [])
+    except (ValueError, TypeError):
+        return None
+    if len(values) != 1 or not re.fullmatch(r"\d{1,10}", values[0]):
+        return None
+    cik = int(values[0])
+    return cik if cik > 0 else None
 
 
 def audit_registry(registry: dict) -> dict:
@@ -128,6 +142,12 @@ def audit_registry(registry: dict) -> dict:
             else:
                 seen_sec_ciks.add(cik)
 
+            url_cik = _sec_url_cik(source.get("official_source"))
+            if url_cik is None:
+                _issue(issues, "MISSING_SEC_URL_CIK", sid, "SEC official_source must contain exactly one numeric CIK query parameter")
+            elif isinstance(cik, int) and not isinstance(cik, bool) and url_cik != cik:
+                _issue(issues, "SEC_URL_CIK_MISMATCH", sid, f"official_source CIK {url_cik} does not match registry CIK {cik}")
+
             ticker = source.get("ticker")
             if not isinstance(ticker, str) or not re.fullmatch(r"[A-Z][A-Z0-9.\-]{0,9}", ticker):
                 _issue(issues, "INVALID_SEC_TICKER", sid, "SEC source requires a normalized uppercase ticker")
@@ -193,6 +213,7 @@ def audit_registry(registry: dict) -> dict:
             "primary_domains_allow_listed": True,
             "unsafe_policy_mutation_rejected": True,
             "duplicate_source_and_company_identity_rejected": True,
+            "sec_registry_cik_bound_to_official_url": True,
             "disabled_sources_require_reason": True,
             "opendart_remains_fail_closed_without_authenticated_timestamp_contract": True,
         },
