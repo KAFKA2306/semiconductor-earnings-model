@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-period-normalization.v1",
-  "run_at": "2026-08-09T03:00:45.283901Z",
+  "run_at": "2026-08-09T05:00:30.055070Z",
   "events_total": 1,
   "normalized_events_total": 1,
   "items": [
@@ -8,6 +8,7 @@
       "event_id": "eaf7cce59f6f7acaabe282cc",
       "company_id": "lam-research",
       "document_type": "10-K",
+      "accession_number": "0000707549-26-000037",
       "period_end": "2026-06-28",
       "period_source": "SEC submissions reportDate",
       "fiscal_year": null,
@@ -17,5 +18,5 @@
   ],
   "issues": [],
   "status": "PASS",
-  "contract": "period_end equals SEC submissions reportDate; fiscal year/quarter are never inferred"
+  "contract": "period_end equals SEC submissions reportDate for freshness-PASS 10-K/10-Q events; period_end cannot be after verified publication time; fiscal year/quarter are never inferred"
 }
