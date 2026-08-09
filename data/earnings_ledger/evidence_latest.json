@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-08-09T13:16:11.727326Z",
-  "window_start": "2026-08-08T13:16:11.409547Z",
-  "window_end": "2026-08-09T13:16:11.409547Z",
+  "verified_at": "2026-08-09T14:53:14.420339Z",
+  "window_start": "2026-08-08T14:53:14.004296Z",
+  "window_end": "2026-08-09T14:53:14.004296Z",
   "verified_events": 0,
   "evidence": [],
   "issues": [],
