@@ -1,0 +1,31 @@
+{
+  "schema_version": "verified-sec-inventory.v1",
+  "run_at": "2026-08-09T01:02:51.953734Z",
+  "eligible_events_total": 1,
+  "verified_metrics_total": 1,
+  "metrics": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "ticker": "LRCX",
+      "accession_number": "0000707549-26-000037",
+      "period_end": "2026-06-28",
+      "document_type": "10-K",
+      "metric": "inventory_net",
+      "value": 4276111000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet",
+      "frame": "CY2026Q2I",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "filed": "2026-08-07",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000707549.json",
+      "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
+    }
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "Only SEC us-gaap InventoryNet facts matching exact accession, form, period end and USD are persisted. Missing or conflicting values fail closed; inferred inventory values are never saved."
+}
