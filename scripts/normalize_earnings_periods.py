@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 LEDGER_DIR = ROOT / "data" / "earnings_ledger"
 EVENTS_PATH = LEDGER_DIR / "events.ndjson"
 OUTPUT_PATH = LEDGER_DIR / "period_normalization_latest.json"
+ELIGIBLE_SEC_FORMS = {"10-K", "10-Q"}
 
 
 def load_ndjson(path: Path) -> list[dict[str, Any]]:
@@ -22,29 +23,62 @@ def load_ndjson(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def parse_utc_timestamp(value: Any, *, event_id: Any) -> datetime:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError(f"missing SEC published_at for {event_id}")
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError(f"invalid SEC published_at for {event_id}: {value}") from exc
+    if parsed.tzinfo is None:
+        raise ValueError(f"timezone-naive SEC published_at for {event_id}: {value}")
+    return parsed.astimezone(timezone.utc)
+
+
 def normalize_period(row: dict[str, Any]) -> dict[str, Any] | None:
-    """Normalize only primary-source reporting-period facts.
+    """Normalize only verified primary-source SEC reporting-period facts.
 
     SEC submissions exposes reportDate as filing metadata. We preserve that date as
     period_end, but deliberately do not infer fiscal year or quarter from calendar
-    dates. Non-SEC events remain unnormalized until their primary source exposes an
-    equally authoritative period field.
+    dates. Only accepted 10-K/10-Q events that still carry the collector's strict
+    freshness PASS are eligible. The period end must not be later than the SEC
+    publication timestamp already verified elsewhere in the ledger pipeline.
     """
 
     if row.get("source_adapter") != "sec_edgar":
         return None
+    if row.get("document_type") not in ELIGIBLE_SEC_FORMS:
+        return None
+
+    event_id = row.get("event_id")
+    if row.get("freshness") != "PASS":
+        raise ValueError(f"SEC freshness is not PASS for {event_id}")
+
     report_date = row.get("report_date")
     if not report_date:
-        return None
+        raise ValueError(f"missing SEC report_date for {event_id}")
     try:
         parsed = date.fromisoformat(str(report_date))
     except ValueError as exc:
-        raise ValueError(f"invalid SEC report_date for {row.get('event_id')}: {report_date}") from exc
+        raise ValueError(f"invalid SEC report_date for {event_id}: {report_date}") from exc
+
+    published_at = parse_utc_timestamp(row.get("published_at"), event_id=event_id)
+    if parsed > published_at.date():
+        raise ValueError(
+            f"SEC report_date is after published_at for {event_id}: "
+            f"{parsed.isoformat()} > {published_at.date().isoformat()}"
+        )
+
+    accession_number = str(row.get("accession_number") or "").strip()
+    if not accession_number:
+        raise ValueError(f"missing SEC accession_number for {event_id}")
 
     return {
-        "event_id": row.get("event_id"),
+        "event_id": event_id,
         "company_id": row.get("company_id"),
         "document_type": row.get("document_type"),
+        "accession_number": accession_number,
         "period_end": parsed.isoformat(),
         "period_source": "SEC submissions reportDate",
         "fiscal_year": None,
@@ -85,7 +119,10 @@ def audit(events: list[dict[str, Any]]) -> dict[str, Any]:
         "items": normalized,
         "issues": issues,
         "status": "PASS" if not issues else "FAIL",
-        "contract": "period_end equals SEC submissions reportDate; fiscal year/quarter are never inferred",
+        "contract": (
+            "period_end equals SEC submissions reportDate for freshness-PASS 10-K/10-Q events; "
+            "period_end cannot be after verified publication time; fiscal year/quarter are never inferred"
+        ),
     }
 
 
