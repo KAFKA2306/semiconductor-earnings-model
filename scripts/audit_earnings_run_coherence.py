@@ -68,9 +68,30 @@ def audit(ledger: Path = LEDGER) -> dict:
             ledger_audit = json.loads(ledger_audit_path.read_text(encoding="utf-8"))
             publication = json.loads(publication_path.read_text(encoding="utf-8"))
             accepted = ledger_audit.get("accepted_events_total")
-            published = publication.get("events_total", publication.get("accepted_events_total"))
-            if isinstance(accepted, int) and isinstance(published, int) and accepted != published:
-                issues.append(f"PUBLICATION_COUNT_MISMATCH:{accepted}:{published}")
+            publication_ledger_total = publication.get(
+                "ledger_accepted_events_total",
+                publication.get("events_total", publication.get("accepted_events_total")),
+            )
+            if (
+                isinstance(accepted, int)
+                and isinstance(publication_ledger_total, int)
+                and accepted != publication_ledger_total
+            ):
+                issues.append(
+                    f"PUBLICATION_LEDGER_COUNT_MISMATCH:{accepted}:{publication_ledger_total}"
+                )
+
+            published = publication.get("accepted_events_total")
+            expired = publication.get("expired_events_total", 0)
+            if (
+                isinstance(accepted, int)
+                and isinstance(published, int)
+                and isinstance(expired, int)
+                and accepted != published + expired
+            ):
+                issues.append(
+                    f"PUBLICATION_FRESHNESS_COUNT_MISMATCH:{accepted}:{published}:{expired}"
+                )
 
             ledger_run_at = ledger_audit.get("run_at")
             publication_run_at = publication.get("generated_from_run_at")
@@ -102,7 +123,8 @@ def audit(ledger: Path = LEDGER) -> dict:
         "contract": (
             "A ledger run is publishable only when every required audit artifact exists, parses as JSON, "
             "declares a schema version, reports PASS, contains zero audit issues, and the publication is "
-            "bound to the exact same ledger run_at so a stale PASS publication cannot be reused."
+            "bound to the exact same ledger run_at. The publication may omit events older than 24 hours, "
+            "but its fresh plus expired counts must reconcile exactly to the audited ledger count."
         ),
     }
 

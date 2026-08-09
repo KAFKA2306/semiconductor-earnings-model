@@ -65,14 +65,40 @@ def test_fails_when_schema_version_is_missing(tmp_path):
     assert "MISSING_SCHEMA_VERSION:accounting_basis_audit_latest.json" in result["issues"]
 
 
-def test_fails_when_publication_count_disagrees(tmp_path):
+def test_fails_when_publication_ledger_count_disagrees(tmp_path):
     valid_ledger(tmp_path)
     payload = json.loads((tmp_path / "publication_latest.json").read_text())
     payload["events_total"] = 2
     (tmp_path / "publication_latest.json").write_text(json.dumps(payload))
     result = audit(tmp_path)
     assert result["status"] == "FAIL"
-    assert "PUBLICATION_COUNT_MISMATCH:1:2" in result["issues"]
+    assert "PUBLICATION_LEDGER_COUNT_MISMATCH:1:2" in result["issues"]
+
+
+def test_allows_expired_events_when_counts_reconcile(tmp_path):
+    valid_ledger(tmp_path)
+    payload = json.loads((tmp_path / "publication_latest.json").read_text())
+    payload.pop("events_total")
+    payload["ledger_accepted_events_total"] = 1
+    payload["accepted_events_total"] = 0
+    payload["expired_events_total"] = 1
+    (tmp_path / "publication_latest.json").write_text(json.dumps(payload))
+    result = audit(tmp_path)
+    assert result["status"] == "PASS"
+    assert result["issues"] == []
+
+
+def test_fails_when_freshness_counts_do_not_reconcile(tmp_path):
+    valid_ledger(tmp_path)
+    payload = json.loads((tmp_path / "publication_latest.json").read_text())
+    payload.pop("events_total")
+    payload["ledger_accepted_events_total"] = 1
+    payload["accepted_events_total"] = 0
+    payload["expired_events_total"] = 0
+    (tmp_path / "publication_latest.json").write_text(json.dumps(payload))
+    result = audit(tmp_path)
+    assert result["status"] == "FAIL"
+    assert "PUBLICATION_FRESHNESS_COUNT_MISMATCH:1:0:0" in result["issues"]
 
 
 def test_fails_when_publication_is_from_a_different_ledger_run(tmp_path):
