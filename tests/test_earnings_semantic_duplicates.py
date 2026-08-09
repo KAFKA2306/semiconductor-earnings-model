@@ -37,10 +37,25 @@ def test_different_document_types_are_not_collapsed():
     assert result["duplicate_count"] == 0
 
 
-def test_missing_primary_report_date_is_not_inferred():
-    result = mod.audit([sec_event("a", report_date=None), sec_event("b", report_date=None)])
-    assert result["status"] == "PASS"
+def test_missing_primary_report_date_fails_closed_without_inference():
+    result = mod.audit([sec_event("a", report_date=None)])
+    assert result["status"] == "FAIL"
     assert result["events_with_primary_period_key"] == 0
+    assert result["unkeyable_sec_event_count"] == 1
+    assert result["unkeyable_sec_events"][0] == {
+        "code": "UNKEYABLE_SEC_EARNINGS_EVENT",
+        "event_id": "a",
+        "missing_fields": ["report_date"],
+    }
+
+
+def test_missing_company_and_document_type_are_reported_without_inference():
+    event = sec_event("a")
+    event["company_id"] = ""
+    event["document_type"] = None
+    result = mod.audit([event])
+    assert result["status"] == "FAIL"
+    assert result["unkeyable_sec_events"][0]["missing_fields"] == ["company_id", "document_type"]
 
 
 def test_non_sec_event_is_outside_this_gate():
@@ -51,4 +66,8 @@ def test_non_sec_event_is_outside_this_gate():
         "document_type": "TDNET_DISCLOSURE",
         "report_date": "2026-06-30",
     }
+    result = mod.audit([event])
     assert mod.semantic_key(event) is None
+    assert result["status"] == "PASS"
+    assert result["sec_events_total"] == 0
+    assert result["unkeyable_sec_event_count"] == 0
