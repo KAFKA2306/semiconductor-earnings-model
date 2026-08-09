@@ -1,0 +1,18 @@
+{
+  "schema_version": "verified-revenue-growth-duration-audit.v1",
+  "run_at": "2026-08-09T09:59:35.709341Z",
+  "growth_rows_total": 1,
+  "checked_growth_rows_total": 1,
+  "issues": [],
+  "status": "PASS",
+  "contract": {
+    "same_primary_sec_companyfacts_provenance_required": true,
+    "yoy_period_end_gap_days": [
+      350,
+      380
+    ],
+    "maximum_duration_difference_days": 7,
+    "non_positive_durations_rejected": true,
+    "uncalculated_rows_must_not_contain_values": true
+  }
+}
