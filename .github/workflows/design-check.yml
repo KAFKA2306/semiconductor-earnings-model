@@ -112,6 +112,8 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Verify ledger page live publication boundary
+        run: uv run python scripts/check_ledger_page_publication_boundary.py
       - name: Verify shared design and research workflow
         run: |
           set -euo pipefail
