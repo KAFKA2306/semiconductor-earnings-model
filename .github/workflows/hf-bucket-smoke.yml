@@ -10,7 +10,9 @@ on:
       - config/data_lake_publish.json
       - config/edinetdb_quota_plan.json
       - scripts/build_data_lake_bundle.py
+      - scripts/publish_investor2_jquants_private.py
       - tests/test_build_data_lake_bundle.py
+      - tests/test_publish_investor2_jquants_private.py
       - docs/central-data-lake.md
       - .github/workflows/hf-bucket-smoke.yml
   workflow_dispatch:
@@ -32,7 +34,9 @@ on:
       - config/data_lake_publish.json
       - config/edinetdb_quota_plan.json
       - scripts/build_data_lake_bundle.py
+      - scripts/publish_investor2_jquants_private.py
       - tests/test_build_data_lake_bundle.py
+      - tests/test_publish_investor2_jquants_private.py
       - docs/central-data-lake.md
       - .github/workflows/hf-bucket-smoke.yml
 
@@ -73,7 +77,9 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install 'pytest>=8,<9'
-          python -m pytest tests/test_build_data_lake_bundle.py
+          python -m pytest \
+            tests/test_build_data_lake_bundle.py \
+            tests/test_publish_investor2_jquants_private.py
           python scripts/build_data_lake_bundle.py \
             --source-revision "$GITHUB_SHA" \
             --output .data_lake_bundle
@@ -153,6 +159,68 @@ jobs:
           echo "HF_SMOKE_RESULT=PASS"
           echo "HF_SMOKE_SHA256=$ACTUAL_SHA"
           echo "HF_SMOKE_CLEANUP=PASS"
+
+      - name: Publish investor2 J-Quants data to private bucket only
+        shell: bash
+        env:
+          JQUANTS_API_KEY: ${{ secrets.JQUANTS_API_KEY }}
+        run: |
+          set -euo pipefail
+          PRIVATE_ROOT="central/investor2/private/jquants"
+          LATEST_REMOTE="$PRIVATE_ROOT/latest.json"
+          RUN_REMOTE="$PRIVATE_ROOT/runs/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.json"
+          CURRENT=/tmp/investor2-jquants-current.json
+          PREVIOUS=/tmp/investor2-jquants-previous.json
+          READBACK=/tmp/investor2-jquants-readback.json
+
+          if hf buckets cp "hf://buckets/$HF_BUCKET/$LATEST_REMOTE" "$PREVIOUS" >/dev/null 2>&1; then
+            if python - "$PREVIOUS" <<'PY'
+          import json
+          import sys
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          payload = json.load(open(sys.argv[1], encoding='utf-8'))
+          generated = datetime.fromisoformat(payload['generated_at']).astimezone(ZoneInfo('Asia/Tokyo')).date()
+          now = datetime.now(ZoneInfo('Asia/Tokyo')).date()
+          raise SystemExit(0 if generated == now else 1)
+          PY
+            then
+              echo "JQUANTS_PRIVATE_RESULT=SKIP_ALREADY_CURRENT"
+              exit 0
+            fi
+          fi
+
+          test -n "$JQUANTS_API_KEY"
+          python scripts/publish_investor2_jquants_private.py \
+            --output "$CURRENT" \
+            --lookback-days 730 \
+            --minimum-interval-seconds 13
+
+          EXPECTED_SHA=$(sha256sum "$CURRENT" | awk '{print $1}')
+          hf buckets cp "$CURRENT" "hf://buckets/$HF_BUCKET/$RUN_REMOTE"
+          hf buckets cp "hf://buckets/$HF_BUCKET/$RUN_REMOTE" "$READBACK"
+          test "$EXPECTED_SHA" = "$(sha256sum "$READBACK" | awk '{print $1}')"
+
+          hf buckets cp "$CURRENT" "hf://buckets/$HF_BUCKET/$LATEST_REMOTE"
+          rm -f "$READBACK"
+          hf buckets cp "hf://buckets/$HF_BUCKET/$LATEST_REMOTE" "$READBACK"
+          test "$EXPECTED_SHA" = "$(sha256sum "$READBACK" | awk '{print $1}')"
+
+          python - "$CURRENT" <<'PY'
+          import json
+          import sys
+          payload = json.load(open(sys.argv[1], encoding='utf-8'))
+          assert payload['visibility_contract']['storage'] == 'private_only'
+          assert payload['visibility_contract']['public_git_storage'] is False
+          assert payload['universe']['company_count'] == 10
+          assert payload['record_count'] > 0
+          print('JQUANTS_PRIVATE_RESULT=PASS')
+          print(f"JQUANTS_PRIVATE_COMPANY_COUNT={payload['universe']['company_count']}")
+          print(f"JQUANTS_PRIVATE_RECORD_COUNT={payload['record_count']}")
+          print(f"JQUANTS_PRIVATE_SERIES_SHA256={payload['series_sha256']}")
+          PY
+          echo "JQUANTS_PRIVATE_FILE_SHA256=$EXPECTED_SHA"
+          echo "JQUANTS_PRIVATE_REMOTE=$LATEST_REMOTE"
 
       - name: Exact-mirror allow-listed prefixes and verify every object
         shell: bash
