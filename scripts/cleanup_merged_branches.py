@@ -8,7 +8,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 EPHEMERAL_PREFIXES = (
@@ -107,6 +107,27 @@ def select_branch_decisions(
     return decisions
 
 
+def apply_ancestry_proof(
+    decisions: Iterable[Decision], *, ancestor_shas: set[str]
+) -> list[Decision]:
+    """Upgrade only unresolved ephemeral branches with exact ancestry proof.
+
+    The caller must establish that every SHA in ``ancestor_shas`` is the merge
+    base of ``sha...default`` with zero commits behind. Open/protected/default
+    decisions are never reconsidered here.
+    """
+
+    upgraded: list[Decision] = []
+    for decision in decisions:
+        if decision.reason == "no_merge_proof" and decision.sha in ancestor_shas:
+            upgraded.append(
+                replace(decision, action="delete", reason="ancestor_of_default")
+            )
+        else:
+            upgraded.append(decision)
+    return upgraded
+
+
 class GitHubApi:
     def __init__(self, *, repo: str, token: str) -> None:
         self.repo = repo
@@ -178,6 +199,21 @@ class GitHubApi:
             )
         return result
 
+    def is_ancestor(self, candidate_sha: str, default_sha: str) -> bool:
+        """Return true only when GitHub proves candidate is contained in default."""
+
+        candidate = urllib.parse.quote(candidate_sha, safe="")
+        default = urllib.parse.quote(default_sha, safe="")
+        payload = self._request(f"/compare/{candidate}...{default}")
+        if not isinstance(payload, dict):
+            return False
+        merge_base = payload.get("merge_base_commit") or {}
+        return (
+            merge_base.get("sha") == candidate_sha
+            and payload.get("behind_by") == 0
+            and payload.get("status") in {"ahead", "identical"}
+        )
+
     def delete_branch(self, branch: str) -> None:
         ref = urllib.parse.quote(f"heads/{branch}", safe="/")
         self._request(f"/git/refs/{ref}", method="DELETE")
@@ -191,15 +227,33 @@ def run(*, apply: bool, repo: str, token: str) -> int:
     by_name = {branch.name: branch for branch in branches}
     if default_branch not in by_name:
         raise RuntimeError(f"default branch {default_branch!r} missing from branch list")
+    default_sha = by_name[default_branch].sha
 
     decisions = select_branch_decisions(
         branches=branches,
         default_branch=default_branch,
-        default_sha=by_name[default_branch].sha,
+        default_sha=default_sha,
         open_pr_heads=api.pull_heads(state="open"),
         closed_pr_heads=api.pull_heads(state="closed"),
         repo_full_name=repo,
     )
+
+    unresolved_shas = {
+        decision.sha
+        for decision in decisions
+        if decision.reason == "no_merge_proof"
+    }
+    ancestor_shas: set[str] = set()
+    for sha in sorted(unresolved_shas):
+        try:
+            if api.is_ancestor(sha, default_sha):
+                ancestor_shas.add(sha)
+        except RuntimeError as exc:
+            # A failed proof must preserve the branch, not turn into authority
+            # to delete it. Surface the failure in logs for later audit.
+            print(f"ANCESTRY_PROOF_UNAVAILABLE {sha}: {exc}", file=sys.stderr)
+
+    decisions = apply_ancestry_proof(decisions, ancestor_shas=ancestor_shas)
     deletions = [item for item in decisions if item.action == "delete"]
 
     for decision in decisions:
@@ -235,7 +289,7 @@ def run(*, apply: bool, repo: str, token: str) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Delete only proven-merged ephemeral GitHub branches."
+        description="Delete only proven-merged or default-contained ephemeral GitHub branches."
     )
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
