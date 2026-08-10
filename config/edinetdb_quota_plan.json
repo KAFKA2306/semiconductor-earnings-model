@@ -1,0 +1,100 @@
+{
+  "schema_version": "edinetdb.quota-plan.v1",
+  "daily_limit": 100,
+  "reserve_requests": 10,
+  "refresh_after_jst": "08:20",
+  "attribution": "Powered by EDINET DB",
+  "policy": {
+    "quota_owner": "KAFKA2306/semiconductor-earnings-model",
+    "raw_response_persistence": "forbidden",
+    "public_bulk_redistribution": "forbidden",
+    "consumer_projection_only": true,
+    "retry_policy": "no_automatic_retry_on_authenticated_http_error"
+  },
+  "company_master": {
+    "codes": [
+      "E02144",
+      "E35948"
+    ],
+    "consumers": [
+      "KAFKA2306/factory",
+      "KAFKA2306/semiconductor-earnings-model"
+    ],
+    "projection_fields": [
+      "edinet_code",
+      "sec_code",
+      "name",
+      "industry",
+      "accounting_standard",
+      "latest_fiscal_year",
+      "listing_status"
+    ]
+  },
+  "requests": [
+    {
+      "id": "factory-toyota-financials",
+      "consumer": "KAFKA2306/factory",
+      "method": "GET",
+      "path": "/v1/companies/E02144/financials",
+      "params": {
+        "period": "annual",
+        "years": "6",
+        "include_nulls": "true",
+        "include_null_reasons": "true"
+      },
+      "projection_fields": [
+        "fiscal_year",
+        "accounting_standard",
+        "basis",
+        "basis_source",
+        "revenue",
+        "operating_income",
+        "ordinary_income",
+        "net_income",
+        "profit_ifrs",
+        "total_assets",
+        "total_liabilities",
+        "total_equity",
+        "cf_operating",
+        "cf_investing",
+        "cf_financing",
+        "source_doc_id",
+        "source_url",
+        "null_reasons"
+      ]
+    },
+    {
+      "id": "semiconductor-kioxia-financials",
+      "consumer": "KAFKA2306/semiconductor-earnings-model",
+      "method": "GET",
+      "path": "/v1/companies/E35948/financials",
+      "params": {
+        "period": "annual",
+        "years": "6",
+        "include_nulls": "true",
+        "include_null_reasons": "true"
+      },
+      "projection_fields": [
+        "fiscal_year",
+        "accounting_standard",
+        "basis",
+        "basis_source",
+        "revenue",
+        "operating_income",
+        "ordinary_income",
+        "net_income",
+        "profit_ifrs",
+        "eps",
+        "total_assets",
+        "total_liabilities",
+        "total_equity",
+        "cf_operating",
+        "cf_investing",
+        "cf_financing",
+        "source_doc_id",
+        "source_url",
+        "null_reasons"
+      ]
+    }
+  ]
+}
