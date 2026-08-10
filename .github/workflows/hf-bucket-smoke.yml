@@ -1,5 +1,6 @@
 name: Hugging Face bucket smoke test
 
+# Central HF writer: keep authentication in this repository only.
 on:
   workflow_dispatch:
   push:
