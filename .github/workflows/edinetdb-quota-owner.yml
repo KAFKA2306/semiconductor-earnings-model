@@ -12,6 +12,16 @@ on:
       - "data/edinetdb_quota/usage.json"
       - "docs/edinetdb-quota-owner.md"
       - ".github/workflows/edinetdb-quota-owner.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "config/edinetdb_quota_plan.json"
+      - "config/edinetdb_consumer_registry.json"
+      - "scripts/edinetdb_quota_owner.py"
+      - "scripts/edinetdb_quota_guard.py"
+      - "docs/edinetdb-quota-owner.md"
+      - ".github/workflows/edinetdb-quota-owner.yml"
   workflow_dispatch:
     inputs:
       fetch:
@@ -20,8 +30,8 @@ on:
         type: boolean
         default: false
   schedule:
-    # 08:20 JST on Monday, after EDINET DB's documented 08:00 JST daily ingestion.
-    - cron: "20 23 * * 0"
+    # 08:20 JST daily, after EDINET DB's documented 08:00 JST daily ingestion.
+    - cron: "20 23 * * *"
 
 permissions:
   contents: write
@@ -45,6 +55,7 @@ jobs:
     needs: validate-plan
     if: >-
       github.event_name == 'schedule' ||
+      github.event_name == 'push' ||
       (github.event_name == 'workflow_dispatch' && inputs.fetch)
     runs-on: ubuntu-latest
     concurrency:
