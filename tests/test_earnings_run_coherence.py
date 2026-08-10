@@ -145,9 +145,9 @@ def test_fails_when_derived_audit_is_from_an_old_run(tmp_path):
 
 def test_allows_small_generation_skew_within_same_run(tmp_path):
     valid_ledger(tmp_path)
-    payload = json.loads((tmp_path / "evidence_latest.json").read_text())
+    payload = json.loads((tmp_path / "published_at_audit_latest.json").read_text())
     payload["run_at"] = "2026-08-09T00:04:59Z"
-    (tmp_path / "evidence_latest.json").write_text(json.dumps(payload))
+    (tmp_path / "published_at_audit_latest.json").write_text(json.dumps(payload))
     result = audit(tmp_path)
     assert result["status"] == "PASS"
     assert result["issues"] == []
@@ -155,12 +155,12 @@ def test_allows_small_generation_skew_within_same_run(tmp_path):
 
 def test_fails_when_derived_audit_run_at_is_timezone_naive(tmp_path):
     valid_ledger(tmp_path)
-    payload = json.loads((tmp_path / "consensus_separation_audit_latest.json").read_text())
+    payload = json.loads((tmp_path / "semantic_duplicate_audit_latest.json").read_text())
     payload["run_at"] = "2026-08-09T00:00:00"
-    (tmp_path / "consensus_separation_audit_latest.json").write_text(json.dumps(payload))
+    (tmp_path / "semantic_duplicate_audit_latest.json").write_text(json.dumps(payload))
     result = audit(tmp_path)
     assert result["status"] == "FAIL"
     assert any(
-        issue.startswith("INVALID_ARTIFACT_RUN_AT:consensus_separation_audit_latest.json:")
+        issue.startswith("INVALID_ARTIFACT_RUN_AT:semantic_duplicate_audit_latest.json:")
         for issue in result["issues"]
     )
