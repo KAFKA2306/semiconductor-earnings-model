@@ -20,6 +20,8 @@ def test_current_actual_only_artifacts_are_consensus_free():
     assert payload["status"] == "PASS"
     assert payload["issues"] == []
     assert payload["checked_artifacts_total"] == len(consensus.ACTUAL_ONLY_ARTIFACTS)
+    assert payload["schema_version"] == "earnings-consensus-separation-audit.v2"
+    assert payload["checked_string_values_total"] > 0
 
 
 def test_consensus_key_is_rejected_fail_closed(tmp_path: Path):
@@ -40,6 +42,34 @@ def test_nested_estimate_key_is_rejected(tmp_path: Path):
     assert any("events[0].metrics.analyst_estimate" in issue["key_path"] for issue in payload["issues"])
 
 
+def test_consensus_semantic_value_is_rejected_fail_closed(tmp_path: Path):
+    artifact = tmp_path / "actual.json"
+    write_json(artifact, {"metric": "revenue", "value_type": "consensus"})
+    payload = consensus.audit_artifacts((artifact,))
+    assert payload["status"] == "FAIL"
+    assert payload["issues"] == [
+        {
+            "code": "CONSENSUS_SEMANTIC_VALUE_IN_ACTUAL_ONLY_ARTIFACT",
+            "artifact": str(artifact),
+            "value_path": "$.value_type",
+            "matched_value": "consensus",
+        }
+    ]
+
+
+def test_compound_estimate_semantic_value_is_rejected(tmp_path: Path):
+    artifact = tmp_path / "actual.json"
+    write_json(artifact, {"metrics": [{"basis": "Analyst Estimate"}]})
+    payload = consensus.audit_artifacts((artifact,))
+    assert payload["status"] == "FAIL"
+    assert any(
+        issue.get("code") == "CONSENSUS_SEMANTIC_VALUE_IN_ACTUAL_ONLY_ARTIFACT"
+        and issue.get("value_path") == "$.metrics[0].basis"
+        and issue.get("matched_value") == "analyst_estimate"
+        for issue in payload["issues"]
+    )
+
+
 def test_consensus_words_in_provenance_values_do_not_trigger(tmp_path: Path):
     artifact = tmp_path / "actual.json"
     write_json(
@@ -51,6 +81,21 @@ def test_consensus_words_in_provenance_values_do_not_trigger(tmp_path: Path):
     )
     payload = consensus.audit_artifacts((artifact,))
     assert payload["status"] == "PASS"
+
+
+def test_actual_enum_values_remain_allowed(tmp_path: Path):
+    artifact = tmp_path / "actual.json"
+    write_json(
+        artifact,
+        {
+            "value_type": "actual",
+            "accounting_basis": "us-gaap-xbrl-fact",
+            "status": "PASS",
+        },
+    )
+    payload = consensus.audit_artifacts((artifact,))
+    assert payload["status"] == "PASS"
+    assert payload["issues"] == []
 
 
 def test_missing_actual_only_artifact_fails_closed(tmp_path: Path):
@@ -67,3 +112,6 @@ def test_missing_actual_only_artifact_fails_closed(tmp_path: Path):
 def test_forbidden_tokens_cover_consensus_and_expectation_language():
     required = {"consensus", "estimate", "expected", "forecast", "analyst", "beat", "miss", "surprise"}
     assert required.issubset(set(consensus.FORBIDDEN_KEY_TOKENS))
+    assert {"consensus", "analyst_estimate", "street_consensus"}.issubset(
+        consensus.FORBIDDEN_SEMANTIC_VALUES
+    )
