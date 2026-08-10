@@ -8,6 +8,62 @@
       "destination": "edinetdb/projections",
       "required": false,
       "extensions": [".json"]
+    },
+    {
+      "source": "data/earnings_ledger",
+      "destination": "semiconductor/earnings-ledger",
+      "required": true,
+      "extensions": [".json", ".ndjson", ".md"]
+    },
+    {
+      "source": "data/financial_db",
+      "destination": "finance/semiconductor",
+      "required": true,
+      "extensions": [".json"]
+    },
+    {
+      "repository": "KAFKA2306/factory",
+      "ref": "main",
+      "source": "data",
+      "destination": "factory",
+      "required": true,
+      "extensions": [".json", ".jsonl"]
+    },
+    {
+      "repository": "KAFKA2306/books",
+      "ref": "main",
+      "source": "data",
+      "destination": "books",
+      "required": true,
+      "extensions": [".json", ".ndjson"],
+      "include": [
+        "catalog.json",
+        "catalog.schema.json",
+        "issue-1-books.json",
+        "isbn-enrichments.json",
+        "kindle/manifest.json",
+        "kindle/records-*.ndjson"
+      ]
+    },
+    {
+      "repository": "KAFKA2306/cast_event_cal",
+      "ref": "main",
+      "source": "public",
+      "destination": "events",
+      "required": true,
+      "extensions": [".json", ".ics"],
+      "include": [
+        "events.json",
+        "calendar.ics",
+        "health.json",
+        "event-ontology.json",
+        "category-ontology.json",
+        "event-link-audit.json",
+        "official-asset-audit.json",
+        "ontology-match-audit.json",
+        "registration-count-audit.json",
+        "audit/**"
+      ]
     }
   ],
   "policy": {
