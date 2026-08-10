@@ -123,3 +123,19 @@ def test_hf_publish_requires_materialized_financial_data_change() -> None:
     assert 'echo "changed=false" >> "$GITHUB_OUTPUT"' in workflow
     assert 'echo "changed=true" >> "$GITHUB_OUTPUT"' in workflow
     assert "if: steps.materialize.outputs.changed == 'true'" in workflow
+
+
+def test_hf_publish_is_bound_to_materialized_source_revision() -> None:
+    quota_workflow = (
+        ROOT / ".github" / "workflows" / "edinetdb-quota-owner.yml"
+    ).read_text(encoding="utf-8")
+    publisher_workflow = (
+        ROOT / ".github" / "workflows" / "hf-bucket-smoke.yml"
+    ).read_text(encoding="utf-8")
+    assert 'echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"' in quota_workflow
+    assert "EXPECTED_SOURCE_SHA: ${{ steps.materialize.outputs.sha }}" in quota_workflow
+    assert '-f expected_source_sha="$EXPECTED_SOURCE_SHA"' in quota_workflow
+    assert "expected_source_sha:" in publisher_workflow
+    assert "github.event_name == 'workflow_dispatch' && inputs.expected_source_sha != ''" in publisher_workflow
+    assert "Verify dispatched source revision" in publisher_workflow
+    assert 'if [ "$GITHUB_SHA" != "$EXPECTED_SOURCE_SHA" ]; then' in publisher_workflow
