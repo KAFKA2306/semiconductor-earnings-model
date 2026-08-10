@@ -1,0 +1,55 @@
+name: Hugging Face bucket smoke test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/hf-bucket-smoke.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
+      HF_BUCKET: k4fka/kafka-data-lake
+    steps:
+      - name: Install current Hugging Face CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -LsSf https://hf.co/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify OIDC bucket round trip
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=/tmp/hf-smoke.json
+          DST=/tmp/hf-smoke-readback.json
+          REMOTE=".smoke/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}/payload.json"
+
+          cleanup() {
+            hf buckets rm "$HF_BUCKET/$REMOTE" --yes >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          printf '{"schema":"hf-bucket-smoke.v2","source":"synthetic-only","run_id":"%s","attempt":"%s"}\n' \
+            "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > "$SRC"
+          EXPECTED_SHA=$(sha256sum "$SRC" | awk '{print $1}')
+
+          hf buckets cp "$SRC" "hf://buckets/$HF_BUCKET/$REMOTE"
+          hf buckets cp "hf://buckets/$HF_BUCKET/$REMOTE" "$DST"
+
+          ACTUAL_SHA=$(sha256sum "$DST" | awk '{print $1}')
+          test "$EXPECTED_SHA" = "$ACTUAL_SHA"
+
+          hf buckets info "$HF_BUCKET"
+          echo "HF_SMOKE_RESULT=PASS"
+          echo "HF_SMOKE_SHA256=$ACTUAL_SHA"
