@@ -136,5 +136,6 @@ def test_hf_publish_is_bound_to_materialized_source_revision() -> None:
     assert "EXPECTED_SOURCE_SHA: ${{ steps.materialize.outputs.sha }}" in quota_workflow
     assert '-f expected_source_sha="$EXPECTED_SOURCE_SHA"' in quota_workflow
     assert "expected_source_sha:" in publisher_workflow
+    assert "github.event_name == 'workflow_dispatch' && inputs.expected_source_sha != ''" in publisher_workflow
     assert "Verify dispatched source revision" in publisher_workflow
     assert 'if [ "$GITHUB_SHA" != "$EXPECTED_SOURCE_SHA" ]; then' in publisher_workflow
