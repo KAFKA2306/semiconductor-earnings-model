@@ -25,14 +25,31 @@ def sec_row(**overrides):
     return row
 
 
-def test_sec_report_date_becomes_period_end_without_quarter_inference():
+def test_sec_10k_report_date_becomes_annual_period_end_without_fiscal_inference():
     item = periods.normalize_period(sec_row())
     assert item is not None
     assert item["period_end"] == "2026-06-28"
     assert item["accession_number"] == "0000707549-26-000037"
+    assert item["period_kind"] == "ANNUAL_REPORT_PERIOD_END"
+    assert item["period_kind_source"] == "SEC form type"
     assert item["fiscal_year"] is None
     assert item["fiscal_quarter"] is None
-    assert item["normalization_status"] == "PRIMARY_PERIOD_END_ONLY"
+    assert item["normalization_status"] == "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+
+
+def test_sec_10q_is_interim_without_guessing_quarter_number():
+    item = periods.normalize_period(sec_row(document_type="10-Q"))
+    assert item is not None
+    assert item["period_kind"] == "INTERIM_REPORT_PERIOD_END"
+    assert item["fiscal_year"] is None
+    assert item["fiscal_quarter"] is None
+
+
+def test_audit_emits_v2_contract():
+    result = periods.audit([sec_row()])
+    assert result["status"] == "PASS"
+    assert result["schema_version"] == "earnings-period-normalization.v2"
+    assert "fiscal year/quarter numbers are never inferred" in result["contract"]
 
 
 def test_non_sec_period_is_not_guessed():
