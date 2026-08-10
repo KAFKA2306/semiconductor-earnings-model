@@ -1,6 +1,20 @@
 {
   "schema_version": "edinetdb.quota-usage.v1",
-  "days": {},
-  "months": {},
-  "reservations": []
+  "days": {
+    "2026-08-10": 3
+  },
+  "months": {
+    "2026-08": 3
+  },
+  "reservations": [
+    {
+      "id": "2026-08-10:2026-08-10T02:16:46Z:3",
+      "day": "2026-08-10",
+      "month": "2026-08",
+      "attempts_reserved": 3,
+      "status": "completed",
+      "created_at": "2026-08-10T02:16:46Z",
+      "updated_at": "2026-08-10T02:16:47Z"
+    }
+  ]
 }

@@ -1,0 +1,23 @@
+{
+  "schema_version": "edinetdb.consumer-projection.v1",
+  "consumer": "KAFKA2306/semiconductor-earnings-model",
+  "projection_id": "company-master-01",
+  "provider": "EDINET DB",
+  "attribution": "Powered by EDINET DB",
+  "provider_terms": "https://edinetdb.jp/legal/terms",
+  "source_endpoint": "/v1/companies",
+  "request_fingerprint": "2e1e0a9684b3d280cb2ebf6feddd085cdc9153ce0e622c33203f4c2a7c0955e0",
+  "fetched_at": "2026-08-10T02:16:46Z",
+  "response_sha256": "49e89f2f077f4106c3192c4121e89d13029e890a603a175dfbaab61e1ff4da24",
+  "record_count": 1,
+  "records": [
+    {
+      "edinet_code": "E35948",
+      "sec_code": "285A0",
+      "name": "キオクシアホールディングス株式会社",
+      "industry": "電気機器",
+      "accounting_standard": "IFRS",
+      "listing_status": "listed"
+    }
+  ]
+}
