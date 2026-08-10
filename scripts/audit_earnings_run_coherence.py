@@ -25,14 +25,14 @@ REQUIRED = (
     "publication_latest.json",
 )
 
+# These artifacts already expose a timezone-aware run_at and are produced in the same
+# ledger workflow as audit_latest.json. Artifacts without run_at remain covered by the
+# existing existence/schema/PASS/issues checks rather than fabricating a timestamp.
 RUN_BOUND = (
-    "rejection_reason_audit_latest.json",
     "semantic_duplicate_audit_latest.json",
     "period_normalization_latest.json",
     "accounting_basis_audit_latest.json",
     "published_at_audit_latest.json",
-    "evidence_latest.json",
-    "consensus_separation_audit_latest.json",
 )
 MAX_RUN_SKEW_SECONDS = 300
 
@@ -168,10 +168,10 @@ def audit(ledger: Path = LEDGER) -> dict:
         "status": "PASS" if not issues else "FAIL",
         "contract": (
             "A ledger run is publishable only when every required audit artifact exists, parses as JSON, "
-            "declares a schema version, reports PASS, contains zero audit issues, every run-bound derived "
-            "audit was generated within 300 seconds of the audited ledger run, and the publication is bound "
-            "to the exact same ledger run_at. The publication may omit events older than 24 hours, but its "
-            "fresh plus expired counts must reconcile exactly to the audited ledger count."
+            "declares a schema version, reports PASS, contains zero audit issues, every timestamped run-bound "
+            "derived audit was generated within 300 seconds of the audited ledger run, and the publication is "
+            "bound to the exact same ledger run_at. The publication may omit events older than 24 hours, but "
+            "its fresh plus expired counts must reconcile exactly to the audited ledger count."
         ),
     }
 
