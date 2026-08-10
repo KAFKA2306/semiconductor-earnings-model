@@ -2,6 +2,14 @@ name: Hugging Face central data lake publisher
 
 # Sole HF writer. Other repositories must not carry HF credentials or Trusted Publishers.
 on:
+  pull_request:
+    paths:
+      - data/edinetdb_projections/**
+      - config/data_lake_publish.json
+      - config/edinetdb_quota_plan.json
+      - scripts/build_data_lake_bundle.py
+      - tests/test_build_data_lake_bundle.py
+      - .github/workflows/hf-bucket-smoke.yml
   workflow_dispatch:
   schedule:
     - cron: "47 */2 * * *"
@@ -11,25 +19,22 @@ on:
     paths:
       - data/edinetdb_projections/**
       - config/data_lake_publish.json
+      - config/edinetdb_quota_plan.json
       - scripts/build_data_lake_bundle.py
       - tests/test_build_data_lake_bundle.py
       - .github/workflows/hf-bucket-smoke.yml
 
 permissions:
   contents: read
-  id-token: write
 
 concurrency:
-  group: central-hf-data-lake-publisher
+  group: central-hf-data-lake-publisher-${{ github.event_name }}
   cancel-in-progress: false
 
 jobs:
-  publish:
+  validate-contract:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
-      HF_BUCKET: k4fka/kafka-data-lake
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -47,6 +52,32 @@ jobs:
             --source-revision "$GITHUB_SHA" \
             --output .data_lake_bundle
 
+  publish:
+    needs: validate-contract
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
+      HF_BUCKET: k4fka/kafka-data-lake
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build validated publish bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/build_data_lake_bundle.py \
+            --source-revision "$GITHUB_SHA" \
+            --output .data_lake_bundle
+
       - name: Install current Hugging Face CLI
         shell: bash
         run: |
@@ -54,24 +85,28 @@ jobs:
           curl -LsSf https://hf.co/cli/install.sh | bash
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Verify private bucket and OIDC round trip
+      - name: Verify private bucket and OIDC round trip with residue-free cleanup
         shell: bash
         run: |
           set -euo pipefail
           SRC=/tmp/hf-smoke.json
           DST=/tmp/hf-smoke-readback.json
           REMOTE=".smoke/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}/payload.json"
+          CLEANUP_REQUIRED=0
 
-          cleanup() {
-            hf buckets rm "$HF_BUCKET/$REMOTE" --yes >/dev/null 2>&1 || true
+          cleanup_best_effort() {
+            if [ "$CLEANUP_REQUIRED" = "1" ]; then
+              hf buckets rm "$HF_BUCKET/$REMOTE" --yes >/dev/null 2>&1 || true
+            fi
           }
-          trap cleanup EXIT
+          trap cleanup_best_effort EXIT
 
-          printf '{"schema":"hf-bucket-smoke.v3","source":"synthetic-only","run_id":"%s","attempt":"%s"}\n' \
+          printf '{"schema":"hf-bucket-smoke.v4","source":"synthetic-only","run_id":"%s","attempt":"%s"}\n' \
             "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > "$SRC"
           EXPECTED_SHA=$(sha256sum "$SRC" | awk '{print $1}')
 
           hf buckets cp "$SRC" "hf://buckets/$HF_BUCKET/$REMOTE"
+          CLEANUP_REQUIRED=1
           hf buckets cp "hf://buckets/$HF_BUCKET/$REMOTE" "$DST"
           ACTUAL_SHA=$(sha256sum "$DST" | awk '{print $1}')
           test "$EXPECTED_SHA" = "$ACTUAL_SHA"
@@ -79,8 +114,17 @@ jobs:
           INFO=$(hf buckets info "$HF_BUCKET")
           printf '%s\n' "$INFO"
           printf '%s\n' "$INFO" | grep -q '"private": true'
+
+          hf buckets rm "$HF_BUCKET/$REMOTE" --yes
+          CLEANUP_REQUIRED=0
+          if hf buckets list "$HF_BUCKET/.smoke/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" -R -q | grep -q 'payload.json'; then
+            echo "Smoke object still exists after cleanup" >&2
+            exit 1
+          fi
+
           echo "HF_SMOKE_RESULT=PASS"
           echo "HF_SMOKE_SHA256=$ACTUAL_SHA"
+          echo "HF_SMOKE_CLEANUP=PASS"
 
       - name: Publish allow-listed bundle and verify every object
         shell: bash
