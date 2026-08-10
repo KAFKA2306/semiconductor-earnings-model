@@ -1,0 +1,58 @@
+name: Residue-free merged branch GC
+
+on:
+  pull_request:
+    paths:
+      - "scripts/cleanup_merged_branches.py"
+      - "tests/test_cleanup_merged_branches.py"
+      - ".github/workflows/merged-branch-gc.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/cleanup_merged_branches.py"
+      - "tests/test_cleanup_merged_branches.py"
+      - ".github/workflows/merged-branch-gc.yml"
+  schedule:
+    - cron: "35 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: residue-free-merged-branch-gc
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependency
+        run: python -m pip install 'pytest>=8,<9'
+      - name: Test conservative deletion proof
+        run: python -m pytest tests/test_cleanup_merged_branches.py
+      - name: Compile branch GC
+        run: python -m py_compile scripts/cleanup_merged_branches.py
+
+  cleanup:
+    needs: validate
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Delete only proven-merged ephemeral branches
+        run: python scripts/cleanup_merged_branches.py --apply
