@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,6 +10,7 @@ MODULE_PATH = ROOT / "scripts" / "edinetdb_quota_owner.py"
 SPEC = importlib.util.spec_from_file_location("edinetdb_quota_owner", MODULE_PATH)
 assert SPEC and SPEC.loader
 quota_owner = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = quota_owner
 SPEC.loader.exec_module(quota_owner)
 
 
