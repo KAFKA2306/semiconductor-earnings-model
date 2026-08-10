@@ -12,7 +12,7 @@
     "6-K": 1,
     "TDNET_DISCLOSURE": 2
   },
-  "generated_at": "2026-08-10T15:17:19.660835Z",
+  "generated_at": "2026-08-10T17:09:49.927197Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
