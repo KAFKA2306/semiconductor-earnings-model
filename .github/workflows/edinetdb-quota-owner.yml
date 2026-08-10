@@ -34,6 +34,7 @@ on:
     - cron: "20 23 * * *"
 
 permissions:
+  actions: write
   contents: write
 
 jobs:
@@ -95,3 +96,9 @@ jobs:
           git commit -m "data: refresh EDINETDB consumer projections"
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
+      - name: Dispatch central Hugging Face data lake publisher
+        if: steps.fetch.outputs.ran == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: gh workflow run hf-bucket-smoke.yml --ref "$GITHUB_REF_NAME"
