@@ -2,8 +2,11 @@
   "schema_version": "edinetdb.quota-plan.v1",
   "daily_limit": 100,
   "reserve_requests": 10,
+  "monthly_limit": 3000,
+  "monthly_reserve_requests": 300,
   "refresh_after_jst": "08:20",
   "attribution": "Powered by EDINET DB",
+  "consumer_registry": "config/edinetdb_consumer_registry.json",
   "policy": {
     "quota_owner": "KAFKA2306/semiconductor-earnings-model",
     "raw_response_persistence": "forbidden",
