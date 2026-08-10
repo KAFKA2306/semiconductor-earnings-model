@@ -99,9 +99,14 @@ jobs:
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
           echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Dispatch central Hugging Face data lake publisher
         if: steps.materialize.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          EXPECTED_SOURCE_SHA: ${{ steps.materialize.outputs.sha }}
         shell: bash
-        run: gh workflow run hf-bucket-smoke.yml --ref "$GITHUB_REF_NAME"
+        run: |
+          gh workflow run hf-bucket-smoke.yml \
+            --ref "$GITHUB_REF_NAME" \
+            -f expected_source_sha="$EXPECTED_SOURCE_SHA"
