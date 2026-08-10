@@ -16,6 +16,25 @@ jobs:
     env:
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
     steps:
+      - name: Install current Hugging Face CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -LsSf https://hf.co/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify bucket CLI is available
+        shell: bash
+        run: |
+          set -euo pipefail
+          hf --version
+          hf buckets --help >/dev/null
+          hf buckets create --help >/dev/null
+          hf buckets cp --help >/dev/null
+          hf buckets info --help >/dev/null
+          hf buckets delete --help >/dev/null
+          echo "HF_BUCKET_CLI_RESULT=PASS"
+
       - name: Verify write credential exists
         shell: bash
         run: |
@@ -26,13 +45,6 @@ jobs:
             exit 2
           fi
           echo "HF_SMOKE_CREDENTIAL=present"
-
-      - name: Install current Hugging Face CLI
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -LsSf https://hf.co/cli/install.sh | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Create private bucket, round-trip object, verify SHA, and clean up
         shell: bash
