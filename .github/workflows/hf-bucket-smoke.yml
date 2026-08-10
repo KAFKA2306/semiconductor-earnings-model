@@ -5,10 +5,13 @@ on:
   pull_request:
     paths:
       - data/edinetdb_projections/**
+      - data/earnings_ledger/**
+      - data/financial_db/**
       - config/data_lake_publish.json
       - config/edinetdb_quota_plan.json
       - scripts/build_data_lake_bundle.py
       - tests/test_build_data_lake_bundle.py
+      - docs/central-data-lake.md
       - .github/workflows/hf-bucket-smoke.yml
   workflow_dispatch:
   schedule:
@@ -18,10 +21,13 @@ on:
       - main
     paths:
       - data/edinetdb_projections/**
+      - data/earnings_ledger/**
+      - data/financial_db/**
       - config/data_lake_publish.json
       - config/edinetdb_quota_plan.json
       - scripts/build_data_lake_bundle.py
       - tests/test_build_data_lake_bundle.py
+      - docs/central-data-lake.md
       - .github/workflows/hf-bucket-smoke.yml
 
 permissions:
@@ -34,9 +40,11 @@ concurrency:
 jobs:
   validate-contract:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         with:
@@ -56,7 +64,7 @@ jobs:
     needs: validate-contract
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     permissions:
       contents: read
       id-token: write
@@ -65,6 +73,8 @@ jobs:
       HF_BUCKET: k4fka/kafka-data-lake
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         with:
@@ -126,7 +136,7 @@ jobs:
           echo "HF_SMOKE_SHA256=$ACTUAL_SHA"
           echo "HF_SMOKE_CLEANUP=PASS"
 
-      - name: Publish allow-listed bundle and verify every object
+      - name: Exact-mirror allow-listed prefixes and verify every object
         shell: bash
         run: |
           set -euo pipefail
@@ -143,6 +153,49 @@ jobs:
             done
           }
 
+          python - <<'PY' > /tmp/data-lake-roots.tsv
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path('.data_lake_bundle/manifest.json').read_text())
+          for item in manifest['roots']:
+              print(item['destination'])
+          PY
+
+          INDEX=0
+          while IFS= read -r DESTINATION; do
+            [ -n "$DESTINATION" ] || continue
+            INDEX=$((INDEX + 1))
+            LOCAL=".data_lake_bundle/payload/$DESTINATION"
+            REMOTE="hf://buckets/$HF_BUCKET/$DESTINATION"
+            PLAN="/tmp/data-lake-plan-$INDEX.jsonl"
+            POST_PLAN="/tmp/data-lake-post-plan-$INDEX.jsonl"
+
+            test -d "$LOCAL"
+            echo "=== preview $DESTINATION ==="
+            hf buckets sync "$LOCAL" "$REMOTE" --delete --dry-run > "$PLAN"
+            cat "$PLAN"
+
+            echo "=== apply $DESTINATION ==="
+            retry hf buckets sync "$LOCAL" "$REMOTE" --delete
+
+            hf buckets sync "$LOCAL" "$REMOTE" --delete --ignore-times --dry-run > "$POST_PLAN"
+            python - "$POST_PLAN" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          changes = []
+          for raw in Path(sys.argv[1]).read_text(encoding='utf-8').splitlines():
+              if not raw.strip():
+                  continue
+              item = json.loads(raw)
+              if item.get('action') in {'upload', 'download', 'delete'}:
+                  changes.append(item)
+          if changes:
+              raise SystemExit(f'post-sync plan is not empty: {changes[:5]}')
+          PY
+          done < /tmp/data-lake-roots.tsv
+
           python - <<'PY' > /tmp/data-lake-files.tsv
           import json
           from pathlib import Path
@@ -155,9 +208,7 @@ jobs:
           while IFS=$'\t' read -r BUNDLE_PATH REMOTE_PATH EXPECTED_SHA; do
             [ -n "$BUNDLE_PATH" ] || continue
             INDEX=$((INDEX + 1))
-            LOCAL=".data_lake_bundle/$BUNDLE_PATH"
             READBACK="/tmp/data-lake-readback-$INDEX"
-            retry hf buckets cp "$LOCAL" "hf://buckets/$HF_BUCKET/$REMOTE_PATH"
             retry hf buckets cp "hf://buckets/$HF_BUCKET/$REMOTE_PATH" "$READBACK"
             ACTUAL_SHA=$(sha256sum "$READBACK" | awk '{print $1}')
             test "$EXPECTED_SHA" = "$ACTUAL_SHA"
@@ -166,7 +217,7 @@ jobs:
 
           MANIFEST=.data_lake_bundle/manifest.json
           MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
-          RUN_MANIFEST="central/manifests/runs/${GITHUB_SHA}.json"
+          RUN_MANIFEST="central/manifests/runs/${GITHUB_SHA}/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.json"
           LATEST_MANIFEST="central/manifests/latest.json"
 
           retry hf buckets cp "$MANIFEST" "hf://buckets/$HF_BUCKET/$RUN_MANIFEST"
