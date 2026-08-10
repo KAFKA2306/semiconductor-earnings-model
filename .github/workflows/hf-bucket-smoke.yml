@@ -1,0 +1,63 @@
+name: Hugging Face bucket smoke test
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .hf-smoke-trigger
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - name: Verify write credential exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${HF_TOKEN:-}" ]; then
+            echo "HF_SMOKE_RESULT=BLOCKED_NO_HF_TOKEN"
+            echo "No repository secret named HF_TOKEN is available to this workflow."
+            exit 2
+          fi
+          echo "HF_SMOKE_CREDENTIAL=present"
+
+      - name: Install current Hugging Face CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -LsSf https://hf.co/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Create private bucket, round-trip object, verify SHA, and clean up
+        shell: bash
+        run: |
+          set -euo pipefail
+          BUCKET="k4fka/kafka-datalake-smoke-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          SRC=/tmp/hf-smoke.json
+          DST=/tmp/hf-smoke-readback.json
+
+          cleanup() {
+            hf buckets delete "$BUCKET" --yes --missing-ok >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          printf '{"schema":"hf-bucket-smoke.v1","source":"synthetic-only","run_id":"%s"}\n' "$GITHUB_RUN_ID" > "$SRC"
+          EXPECTED_SHA=$(sha256sum "$SRC" | awk '{print $1}')
+
+          hf auth whoami
+          hf buckets create "$BUCKET" --private
+          hf buckets cp "$SRC" "hf://buckets/$BUCKET/smoke/payload.json"
+          hf buckets cp "hf://buckets/$BUCKET/smoke/payload.json" "$DST"
+
+          ACTUAL_SHA=$(sha256sum "$DST" | awk '{print $1}')
+          test "$EXPECTED_SHA" = "$ACTUAL_SHA"
+
+          hf buckets info "$BUCKET"
+          echo "HF_SMOKE_RESULT=PASS"
+          echo "HF_SMOKE_SHA256=$ACTUAL_SHA"
