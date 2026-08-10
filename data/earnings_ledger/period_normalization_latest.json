@@ -1,6 +1,6 @@
 {
-  "schema_version": "earnings-period-normalization.v1",
-  "run_at": "2026-08-09T22:50:55.572089Z",
+  "schema_version": "earnings-period-normalization.v2",
+  "run_at": "2026-08-10T01:00:31.132451Z",
   "events_total": 1,
   "normalized_events_total": 1,
   "items": [
@@ -11,12 +11,14 @@
       "accession_number": "0000707549-26-000037",
       "period_end": "2026-06-28",
       "period_source": "SEC submissions reportDate",
+      "period_kind": "ANNUAL_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
       "fiscal_year": null,
       "fiscal_quarter": null,
-      "normalization_status": "PRIMARY_PERIOD_END_ONLY"
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
     }
   ],
   "issues": [],
   "status": "PASS",
-  "contract": "period_end equals SEC submissions reportDate for freshness-PASS 10-K/10-Q events; period_end cannot be after verified publication time; fiscal year/quarter are never inferred"
+  "contract": "period_end equals SEC submissions reportDate for freshness-PASS 10-K/10-Q events; 10-K/10-Q only distinguish annual versus interim report period kind; period_end cannot be after verified publication time; fiscal year/quarter numbers are never inferred"
 }
