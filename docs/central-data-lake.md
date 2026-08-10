@@ -6,7 +6,7 @@
 
 Consumer/source repositories do not receive `HF_TOKEN`, do not register their own Hugging Face Trusted Publisher, and do not write directly to the private bucket. New public `KAFKA2306/*` sources are added only through the central allow-list, so they create no Hugging Face setup work.
 
-The sole writer is `.github/workflows/hf-bucket-smoke.yml`. The filename is intentionally retained because the Hugging Face Trusted Publisher is pinned to that workflow path. It uses GitHub OIDC with `HF_OIDC_RESOURCE=buckets/k4fka/kafka-data-lake`; no long-lived Hugging Face token is stored.
+The sole writer is `.github/workflows/hf-bucket-smoke.yml`. The established workflow path is retained to avoid changing the already-proven OIDC boundary. It uses GitHub OIDC with `HF_OIDC_RESOURCE=buckets/k4fka/kafka-data-lake`; no long-lived Hugging Face token is stored.
 
 Primary references:
 
