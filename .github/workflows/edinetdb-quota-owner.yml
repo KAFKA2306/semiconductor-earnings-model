@@ -83,12 +83,14 @@ jobs:
           python scripts/edinetdb_quota_guard.py
           echo "ran=true" >> "$GITHUB_OUTPUT"
       - name: Commit quota ledgers and consumer projections
+        id: materialize
         if: steps.fetch.outputs.ran == 'true'
         shell: bash
         run: |
           git add data/edinetdb_quota data/edinetdb_projections
           if git diff --cached --quiet; then
             echo "No projection or quota-ledger changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -96,8 +98,9 @@ jobs:
           git commit -m "data: refresh EDINETDB consumer projections"
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
       - name: Dispatch central Hugging Face data lake publisher
-        if: steps.fetch.outputs.ran == 'true'
+        if: steps.materialize.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
