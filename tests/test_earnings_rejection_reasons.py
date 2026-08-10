@@ -25,6 +25,7 @@ def rejected(
         "rejection_reason": reason,
         "document_type": document_type,
         "published_at": "2026-08-07T20:05:03Z",
+        "published_timezone": "UTC",
         "retrieved_at": "2026-08-08T18:59:34Z",
         "source_adapter": source_adapter,
         "source_url": "https://www.sec.gov/Archives/edgar/data/319201/example-index.html",
@@ -33,6 +34,7 @@ def rejected(
     }
     if source_adapter == "tdnet_public":
         row["source_url"] = "https://www.release.tdnet.info/inbs/example.pdf"
+        row["published_timezone"] = "Asia/Tokyo"
         row["security_code"] = "6146"
         row.pop("accession_number", None)
         row.pop("cik", None)
@@ -42,6 +44,7 @@ def rejected(
 def test_known_not_earnings_reason_passes():
     result = module.audit_rejections([], [rejected("a", "NOT_EARNINGS_RELATED")])
     assert result["status"] == "PASS"
+    assert result["schema_version"] == "earnings-rejection-reason-audit.v2"
     assert result["reason_counts"] == {"NOT_EARNINGS_RELATED": 1}
 
 
@@ -88,6 +91,16 @@ def test_missing_rejection_provenance_field_fails_closed():
     assert "MISSING_REJECTION_PROVENANCE_FIELD" in {issue["code"] for issue in result["issues"]}
 
 
+def test_missing_published_timezone_fails_closed():
+    row = rejected("a", "NOT_EARNINGS_RELATED")
+    row.pop("published_timezone")
+    result = module.audit_rejections([], [row])
+    codes = {issue["code"] for issue in result["issues"]}
+    assert result["status"] == "FAIL"
+    assert "MISSING_REJECTION_PROVENANCE_FIELD" in codes
+    assert "REJECTION_PUBLISHED_TIMEZONE_MISMATCH" in codes
+
+
 def test_source_adapter_domain_mismatch_fails_closed():
     row = rejected("a", "NOT_EARNINGS_RELATED")
     row["source_url"] = "https://example.com/not-primary"
@@ -120,6 +133,14 @@ def test_sec_rejection_requires_accession_and_cik():
     assert "MISSING_REJECTION_SOURCE_IDENTITY" in {issue["code"] for issue in result["issues"]}
 
 
+def test_sec_rejection_timezone_must_be_utc():
+    row = rejected("a", "NOT_EARNINGS_RELATED")
+    row["published_timezone"] = "America/New_York"
+    result = module.audit_rejections([], [row])
+    assert result["status"] == "FAIL"
+    assert "REJECTION_PUBLISHED_TIMEZONE_MISMATCH" in {issue["code"] for issue in result["issues"]}
+
+
 def test_tdnet_rejection_requires_security_code_and_primary_domain():
     row = rejected("a", "NOT_EARNINGS_RELATED", document_type="TDNET_DISCLOSURE", source_adapter="tdnet_public")
     result = module.audit_rejections([], [row])
@@ -128,3 +149,11 @@ def test_tdnet_rejection_requires_security_code_and_primary_domain():
     result = module.audit_rejections([], [row])
     assert result["status"] == "FAIL"
     assert "MISSING_REJECTION_SOURCE_IDENTITY" in {issue["code"] for issue in result["issues"]}
+
+
+def test_tdnet_rejection_timezone_must_be_asia_tokyo():
+    row = rejected("a", "NOT_EARNINGS_RELATED", document_type="TDNET_DISCLOSURE", source_adapter="tdnet_public")
+    row["published_timezone"] = "UTC"
+    result = module.audit_rejections([], [row])
+    assert result["status"] == "FAIL"
+    assert "REJECTION_PUBLISHED_TIMEZONE_MISMATCH" in {issue["code"] for issue in result["issues"]}
