@@ -4,7 +4,7 @@
 
 EDINETDB Freeプランの認証付きリクエストを、複数GitHub repositoryが重複して消費しないための共有取得規約です。
 
-EDINETDB公式ドキュメントではFreeは100 requests/dayで、REST APIとMCPは同一アカウントの制限対象です。複数API keyを使ってもアカウント単位で合算されます。また`search_companies_batch`は複数企業検索を1 callへまとめる用途として提供され、RESTの`GET /v1/companies`は`edinet_code`を最大50件まで1 requestへまとめられます。
+EDINETDB公式ドキュメントではFreeは100 requests/day・3,000 requests/monthで、REST APIとMCPは同一アカウントの制限対象です。複数API keyを使ってもアカウント単位で合算されます。また`search_companies_batch`は複数企業検索を1 callへまとめる用途として提供され、RESTの`GET /v1/companies`は`edinet_code`を最大50件まで1 requestへまとめられます。
 
 一次情報:
 
@@ -49,6 +49,8 @@ EDINETDB利用規約は、API/MCP responseの全部または大部分をファ�
   -> raw responseはmemory上だけで処理
   -> consumerごとのallow-list fieldsだけproject
   -> projection + hash + ledgerだけcommit
+  -> sole HF publisherがprojectionを再検証
+  -> private Hugging Face data lakeへpublish + SHA-256 readback
 ```
 
 ## 現在のpilot
@@ -72,11 +74,14 @@ EDINETDB利用規約は、API/MCP responseの全部または大部分をファ�
 
 - `daily_limit = 100`
 - `reserve_requests = 10`
-- usable budget = 90
+- daily usable budget = 90
+- `monthly_limit = 3000`
+- `monthly_reserve_requests = 300`
+- monthly usable budget = 2700
 
 としています。
 
-planが90 unique authenticated requestsを超えた時点でnetwork access前に失敗します。10 requestsは対話調査・障害確認等のために予約します。
+planがdaily/monthly usable budgetを超える場合はnetwork access前に失敗します。現行pilotは3 unique authenticated requests/runで、同一日の再実行はmaterialized projectionを再利用します。
 
 ## 再利用
 
@@ -99,13 +104,15 @@ export EDINETDB_API_KEY=...
 python scripts/edinetdb_quota_owner.py
 ```
 
-GitHub Actionsでは`EDINETDB_API_KEY`をrepository secretとして登録します。secretが無ければscheduled syncはfetchせず終了します。
+GitHub Actionsでは`EDINETDB_API_KEY`をrepository secretとして登録します。secretが無ければsyncはfetchせず終了します。
 
 ## 定期頻度
 
-pilot対象は年次財務なので、EDINETDBが毎朝8:00 JSTに原典を取り込むことを踏まえても毎日3 requestsを消費する必要はありません。現在は月曜08:20 JSTの週次同期です。
+EDINET DB公式のデータソース説明では、有報取得・変換は**毎日8:00 JST**です。その更新窓の直後に1回だけ同期すれば十分なので、quota ownerは**毎日08:20 JST**に実行します。
 
-今後、速報性が必要なendpointを追加する場合も、まず以下を検討します。
+さらに、quota plan・consumer registry・quota owner実装・workflow自体が`main`で変更された場合は、そのpush直後にも1回同期します。これにより、新しいconsumer/field契約を追加しても次回定刻まで待たずに検証できます。同一日の同一requestはprojection/ledgerでdedupeされるため、契約変更が既存requestだけなら重複取得を避けます。
+
+速報性が必要なendpointを追加する場合も、まず以下を検討します。
 
 1. 金融庁EDINET API v2等の原典側で変更を検知する
 2. EDINETDB callは変更があるcompany/endpointだけに限定する
@@ -114,8 +121,6 @@ pilot対象は年次財務なので、EDINETDBが毎朝8:00 JSTに原典を取�
 
 ## consumerへの反映
 
-projectionの正本は`data/edinetdb_projections/<owner>__<repo>/`です。
+projectionの正本はquota ownerのmaterialization境界にだけ置きます。consumer repositoryはEDINET DBへ直接fallbackせず、中央で検証済みのprojection/manifestを参照します。
 
-公開consumer repositoryへ転記する場合も、bulk mirrorではなくそのapplicationが使う限定fieldだけを反映し、UI/READMEに`Powered by EDINET DB`相当の表示を残します。
-
-将来的に専用private quota-owner repositoryを用意できる場合は、取得計画とledgerをそこへ移管できます。consumer projection contractは変えません。
+中央data lake publisherは`config/edinetdb_quota_plan.json`のfield allow-listとprojectionの`records[]`を照合し、許可外field・endpoint drift・未知のconsumer/projection idをfail closedします。公開consumerへはbulk mirrorではなく、そのapplicationが使う限定fieldだけを供給し、UI/READMEに`Powered by EDINET DB`相当の表示を残します。
