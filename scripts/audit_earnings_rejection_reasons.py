@@ -23,10 +23,12 @@ ADAPTER_CONTRACTS = {
     "sec_edgar": {
         "domains": {"www.sec.gov"},
         "identity_fields": ("accession_number", "cik"),
+        "published_timezones": {"UTC"},
     },
     "tdnet_public": {
         "domains": {"www.release.tdnet.info"},
         "identity_fields": ("security_code",),
+        "published_timezones": {"Asia/Tokyo"},
     },
 }
 
@@ -37,6 +39,7 @@ REQUIRED_REJECTED_FIELDS = (
     "company_name",
     "document_type",
     "published_at",
+    "published_timezone",
     "retrieved_at",
     "source_adapter",
     "source_url",
@@ -147,6 +150,15 @@ def audit_rejections(
                     "source_adapter": source_adapter,
                     "fields": missing_identity,
                 })
+            published_timezone = row.get("published_timezone")
+            if published_timezone not in adapter_contract["published_timezones"]:
+                issues.append({
+                    "code": "REJECTION_PUBLISHED_TIMEZONE_MISMATCH",
+                    "event_id": event_id,
+                    "source_adapter": source_adapter,
+                    "published_timezone": published_timezone,
+                    "allowed_timezones": sorted(adapter_contract["published_timezones"]),
+                })
 
         if row.get("freshness") != "REJECTED":
             issues.append({
@@ -190,7 +202,7 @@ def audit_rejections(
                 })
 
     return {
-        "schema_version": "earnings-rejection-reason-audit.v1",
+        "schema_version": "earnings-rejection-reason-audit.v2",
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "allowed_rejection_reasons": sorted(ALLOWED_REJECTION_REASONS),
         "accepted_events_total": len(accepted),
@@ -206,6 +218,7 @@ def audit_rejections(
             "reason_form_consistency_required": True,
             "rejection_provenance_required": True,
             "source_adapter_domain_binding_required": True,
+            "source_adapter_timezone_binding_required": True,
             "retrieved_at_not_before_published_at": True,
         },
     }
