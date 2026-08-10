@@ -81,6 +81,27 @@ def test_unmerged_ephemeral_branch_without_proof_is_preserved() -> None:
     assert result["agent/wip"] == ("keep", "no_merge_proof")
 
 
+def test_ancestry_proof_upgrades_only_unresolved_branch() -> None:
+    decisions = [
+        gc.Decision("agent/old", "old-sha", "keep", "no_merge_proof"),
+        gc.Decision("agent/live", "live-sha", "keep", "open_pull_request"),
+        gc.Decision("main", "main-sha", "keep", "default_branch"),
+    ]
+    result = {
+        item.branch: (item.action, item.reason)
+        for item in gc.apply_ancestry_proof(decisions, ancestor_shas={"old-sha", "live-sha", "main-sha"})
+    }
+    assert result["agent/old"] == ("delete", "ancestor_of_default")
+    assert result["agent/live"] == ("keep", "open_pull_request")
+    assert result["main"] == ("keep", "default_branch")
+
+
+def test_no_ancestry_proof_keeps_unresolved_branch() -> None:
+    decisions = [gc.Decision("agent/diverged", "abc", "keep", "no_merge_proof")]
+    result = gc.apply_ancestry_proof(decisions, ancestor_shas=set())
+    assert result[0] == gc.Decision("agent/diverged", "abc", "keep", "no_merge_proof")
+
+
 def test_long_lived_prefix_is_preserved_even_if_merged() -> None:
     result = decision_map(
         branches=[gc.Branch("main", "main-sha"), gc.Branch("release/2026", "abc")],
