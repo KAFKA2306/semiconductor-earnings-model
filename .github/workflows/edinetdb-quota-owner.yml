@@ -1,0 +1,80 @@
+name: EDINETDB quota owner
+
+on:
+  pull_request:
+    paths:
+      - "config/edinetdb_quota_plan.json"
+      - "scripts/edinetdb_quota_owner.py"
+      - "tests/test_edinetdb_quota_owner.py"
+      - "docs/edinetdb-quota-owner.md"
+      - ".github/workflows/edinetdb-quota-owner.yml"
+  workflow_dispatch:
+    inputs:
+      fetch:
+        description: "Consume EDINETDB quota and refresh consumer projections"
+        required: true
+        type: boolean
+        default: false
+  schedule:
+    # 08:20 JST on Monday, after EDINET DB's documented 08:00 JST daily ingestion.
+    - cron: "20 23 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  validate-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Print quota plan without network access
+        run: python scripts/edinetdb_quota_owner.py --plan-only
+      - name: Test deduplication and projection boundaries
+        run: python -m pytest tests/test_edinetdb_quota_owner.py
+
+  sync:
+    needs: validate-plan
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.fetch)
+    runs-on: ubuntu-latest
+    concurrency:
+      group: edinetdb-quota-owner
+      cancel-in-progress: false
+    env:
+      EDINETDB_API_KEY: ${{ secrets.EDINETDB_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Refresh consumer projections once
+        id: fetch
+        shell: bash
+        run: |
+          if [ -z "$EDINETDB_API_KEY" ]; then
+            echo "EDINETDB_API_KEY is not configured; skipping authenticated fetch."
+            echo "ran=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python scripts/edinetdb_quota_owner.py
+          echo "ran=true" >> "$GITHUB_OUTPUT"
+      - name: Commit quota ledger and consumer projections
+        if: steps.fetch.outputs.ran == 'true'
+        shell: bash
+        run: |
+          git add data/edinetdb_quota data/edinetdb_projections
+          if git diff --cached --quiet; then
+            echo "No projection changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "data: refresh EDINETDB consumer projections"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
