@@ -1,0 +1,39 @@
+name: Reusable residue-free merged branch GC
+
+on:
+  workflow_call:
+    inputs:
+      apply:
+        description: "Delete proven-safe branches instead of dry-run only"
+        required: true
+        type: boolean
+
+jobs:
+  branch-gc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check out pinned GC control implementation
+        uses: actions/checkout@v4
+        with:
+          repository: KAFKA2306/semiconductor-earnings-model
+          ref: 886d945beff9e09cbf9a7fd4ce2e6e83a6e86ac6
+          path: .gc-control
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile pinned GC implementation
+        run: python -m py_compile .gc-control/scripts/cleanup_merged_branches.py
+
+      - name: Dry-run deletion proof
+        if: ${{ !inputs.apply }}
+        run: python .gc-control/scripts/cleanup_merged_branches.py --repo "$GITHUB_REPOSITORY"
+
+      - name: Delete only proven-merged/default-contained ephemeral branches
+        if: ${{ inputs.apply }}
+        run: python .gc-control/scripts/cleanup_merged_branches.py --repo "$GITHUB_REPOSITORY" --apply
