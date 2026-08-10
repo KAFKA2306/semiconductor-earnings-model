@@ -11,6 +11,10 @@ LEDGER_DIR = ROOT / "data" / "earnings_ledger"
 EVENTS_PATH = LEDGER_DIR / "events.ndjson"
 OUTPUT_PATH = LEDGER_DIR / "period_normalization_latest.json"
 ELIGIBLE_SEC_FORMS = {"10-K", "10-Q"}
+PERIOD_KIND_BY_SEC_FORM = {
+    "10-K": "ANNUAL_REPORT_PERIOD_END",
+    "10-Q": "INTERIM_REPORT_PERIOD_END",
+}
 
 
 def load_ndjson(path: Path) -> list[dict[str, Any]]:
@@ -40,15 +44,18 @@ def normalize_period(row: dict[str, Any]) -> dict[str, Any] | None:
     """Normalize only verified primary-source SEC reporting-period facts.
 
     SEC submissions exposes reportDate as filing metadata. We preserve that date as
-    period_end, but deliberately do not infer fiscal year or quarter from calendar
-    dates. Only accepted 10-K/10-Q events that still carry the collector's strict
-    freshness PASS are eligible. The period end must not be later than the SEC
-    publication timestamp already verified elsewhere in the ledger pipeline.
+    period_end and use the primary SEC form only to distinguish an annual report
+    period end (10-K) from an interim report period end (10-Q). We deliberately do
+    not infer fiscal year or fiscal quarter numbers from calendar dates or form type.
+    Only accepted 10-K/10-Q events that still carry the collector's strict freshness
+    PASS are eligible. The period end must not be later than the SEC publication
+    timestamp already verified elsewhere in the ledger pipeline.
     """
 
     if row.get("source_adapter") != "sec_edgar":
         return None
-    if row.get("document_type") not in ELIGIBLE_SEC_FORMS:
+    document_type = row.get("document_type")
+    if document_type not in ELIGIBLE_SEC_FORMS:
         return None
 
     event_id = row.get("event_id")
@@ -74,16 +81,22 @@ def normalize_period(row: dict[str, Any]) -> dict[str, Any] | None:
     if not accession_number:
         raise ValueError(f"missing SEC accession_number for {event_id}")
 
+    period_kind = PERIOD_KIND_BY_SEC_FORM.get(str(document_type))
+    if not period_kind:
+        raise ValueError(f"unmapped SEC reporting form for {event_id}: {document_type}")
+
     return {
         "event_id": event_id,
         "company_id": row.get("company_id"),
-        "document_type": row.get("document_type"),
+        "document_type": document_type,
         "accession_number": accession_number,
         "period_end": parsed.isoformat(),
         "period_source": "SEC submissions reportDate",
+        "period_kind": period_kind,
+        "period_kind_source": "SEC form type",
         "fiscal_year": None,
         "fiscal_quarter": None,
-        "normalization_status": "PRIMARY_PERIOD_END_ONLY",
+        "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY",
     }
 
 
@@ -112,7 +125,7 @@ def audit(events: list[dict[str, Any]]) -> dict[str, Any]:
 
     normalized.sort(key=lambda x: (x["period_end"], x["event_id"]))
     return {
-        "schema_version": "earnings-period-normalization.v1",
+        "schema_version": "earnings-period-normalization.v2",
         "run_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "events_total": len(events),
         "normalized_events_total": len(normalized),
@@ -121,7 +134,8 @@ def audit(events: list[dict[str, Any]]) -> dict[str, Any]:
         "status": "PASS" if not issues else "FAIL",
         "contract": (
             "period_end equals SEC submissions reportDate for freshness-PASS 10-K/10-Q events; "
-            "period_end cannot be after verified publication time; fiscal year/quarter are never inferred"
+            "10-K/10-Q only distinguish annual versus interim report period kind; period_end cannot be "
+            "after verified publication time; fiscal year/quarter numbers are never inferred"
         ),
     }
 
