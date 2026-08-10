@@ -42,7 +42,14 @@
       "destination": "books",
       "required": true,
       "extensions": [".json", ".ndjson"],
-      "include": ["catalog.json", "catalog.schema.json", "issue-1-books.json", "isbn-enrichments.json", "kindle/manifest.json", "kindle/records-*.ndjson"]
+      "include": [
+        "catalog.json",
+        "catalog.schema.json",
+        "issue-1-books.json",
+        "isbn-enrichments.json",
+        "kindle/manifest.json",
+        "kindle/records-*.ndjson"
+      ]
     },
     {
       "repository": "KAFKA2306/cast_event_cal",
@@ -51,7 +58,18 @@
       "destination": "events",
       "required": true,
       "extensions": [".json", ".ics"],
-      "include": ["events.json", "calendar.ics", "health.json", "event-ontology.json", "category-ontology.json", "event-link-audit.json", "official-asset-audit.json", "ontology-match-audit.json", "registration-count-audit.json", "audit/**"]
+      "include": [
+        "events.json",
+        "calendar.ics",
+        "health.json",
+        "event-ontology.json",
+        "category-ontology.json",
+        "event-link-audit.json",
+        "official-asset-audit.json",
+        "ontology-match-audit.json",
+        "registration-count-audit.json",
+        "audit/**"
+      ]
     }
   ],
   "policy": {
