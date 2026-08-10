@@ -1,0 +1,20 @@
+{
+  "schema_version": "data-lake-publish.v1",
+  "bucket": "k4fka/kafka-data-lake",
+  "destination_prefix": "central",
+  "publish_roots": [
+    {
+      "source": "data/edinetdb_projections",
+      "destination": "edinetdb/projections",
+      "required": false,
+      "extensions": [".json"]
+    }
+  ],
+  "policy": {
+    "allow_list_only": true,
+    "raw_provider_responses": false,
+    "manifest_required": true,
+    "sha256_readback_required": true,
+    "consumer_repository_authentication": false
+  }
+}
