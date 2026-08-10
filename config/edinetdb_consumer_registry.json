@@ -1,0 +1,38 @@
+{
+  "schema_version": "edinetdb.consumer-registry.v1",
+  "quota_owner": "KAFKA2306/semiconductor-earnings-model",
+  "repositories": {
+    "KAFKA2306/semiconductor-earnings-model": {
+      "edinetdb_mode": "quota_owner",
+      "reason": "Central authenticated fetch owner and semiconductor financial consumer"
+    },
+    "KAFKA2306/factory": {
+      "edinetdb_mode": "projection_only",
+      "reason": "Uses a narrow EDINET DB projection only for financial cross-checks"
+    },
+    "KAFKA2306/investor2": {
+      "edinetdb_mode": "projection_only",
+      "reason": "Keeps FSA EDINET API v2 as Bronze and consumes normalized KIOXIA projection"
+    },
+    "KAFKA2306/books": {
+      "edinetdb_mode": "not_applicable",
+      "reason": "Book catalog data does not require listed-company financial data"
+    },
+    "KAFKA2306/WealthAudit": {
+      "edinetdb_mode": "not_applicable",
+      "reason": "Personal finance calculations remain local; no EDINET DB dependency is required by the current contract"
+    },
+    "KAFKA2306/pal-atlas": {
+      "edinetdb_mode": "not_applicable",
+      "reason": "Pal/game data has no EDINET DB data dependency"
+    },
+    "KAFKA2306/cast_event_cal": {
+      "edinetdb_mode": "not_applicable",
+      "reason": "VRChat event ingestion and provenance do not require EDINET DB"
+    },
+    "KAFKA2306/vrc_cast_event_calender": {
+      "edinetdb_mode": "not_applicable",
+      "reason": "Projection/deploy repository must not add independent data-source ingestion"
+    }
+  }
+}
