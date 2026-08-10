@@ -11,7 +11,7 @@
     "424B2": 1,
     "TDNET_DISCLOSURE": 2
   },
-  "generated_at": "2026-08-10T02:35:34.877506Z",
+  "generated_at": "2026-08-10T02:59:55.775616Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
@@ -19,13 +19,14 @@
     "rejection_provenance_required": true,
     "retrieved_at_not_before_published_at": true,
     "source_adapter_domain_binding_required": true,
+    "source_adapter_timezone_binding_required": true,
     "unknown_reason_fails_closed": true
   },
   "reason_counts": {
     "NOT_EARNINGS_RELATED": 14
   },
   "rejected_events_total": 14,
-  "schema_version": "earnings-rejection-reason-audit.v1",
+  "schema_version": "earnings-rejection-reason-audit.v2",
   "source_adapter_counts": {
     "sec_edgar": 12,
     "tdnet_public": 2
