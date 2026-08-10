@@ -113,3 +113,13 @@ def test_reservation_counts_attempts_even_before_result() -> None:
     assert usage["days"]["2026-08-10"] == 3
     assert usage["months"]["2026-08"] == 3
     assert usage["reservations"][0]["status"] == "reserved"
+
+
+def test_hf_publish_requires_materialized_financial_data_change() -> None:
+    workflow = (
+        ROOT / ".github" / "workflows" / "edinetdb-quota-owner.yml"
+    ).read_text(encoding="utf-8")
+    assert "id: materialize" in workflow
+    assert 'echo "changed=false" >> "$GITHUB_OUTPUT"' in workflow
+    assert 'echo "changed=true" >> "$GITHUB_OUTPUT"' in workflow
+    assert "if: steps.materialize.outputs.changed == 'true'" in workflow
