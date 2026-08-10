@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from scripts.audit_earnings_run_coherence import REQUIRED, audit
+from scripts.audit_earnings_run_coherence import MAX_RUN_SKEW_SECONDS, REQUIRED, RUN_BOUND, audit
 
 
 RUN_AT = "2026-08-09T00:00:00Z"
@@ -11,6 +11,8 @@ def write_artifact(root: Path, name: str, *, status: str = "PASS", issues=None, 
     payload = {"status": status, "issues": [] if issues is None else issues}
     if schema:
         payload["schema_version"] = f"test-{name}.v1"
+    if name in RUN_BOUND:
+        payload["run_at"] = RUN_AT
     if name == "audit_latest.json":
         payload["accepted_events_total"] = 1
         payload["run_at"] = RUN_AT
@@ -31,6 +33,8 @@ def test_passes_when_all_required_artifacts_are_clean(tmp_path):
     assert result["status"] == "PASS"
     assert result["issues"] == []
     assert result["checked_artifacts_total"] == len(REQUIRED)
+    assert result["run_bound_artifacts"] == list(RUN_BOUND)
+    assert result["max_run_skew_seconds"] == MAX_RUN_SKEW_SECONDS
 
 
 def test_fails_when_required_artifact_is_missing(tmp_path):
@@ -121,5 +125,42 @@ def test_fails_when_run_binding_metadata_is_missing(tmp_path):
     (tmp_path / "publication_latest.json").write_text(json.dumps(publication))
     result = audit(tmp_path)
     assert result["status"] == "FAIL"
+    assert any(issue.startswith("INVALID_LEDGER_RUN_AT:") for issue in result["issues"])
     assert "MISSING_LEDGER_RUN_AT" in result["issues"]
     assert "MISSING_PUBLICATION_SOURCE_RUN_AT" in result["issues"]
+
+
+def test_fails_when_derived_audit_is_from_an_old_run(tmp_path):
+    valid_ledger(tmp_path)
+    payload = json.loads((tmp_path / "period_normalization_latest.json").read_text())
+    payload["run_at"] = "2026-08-08T22:00:00Z"
+    (tmp_path / "period_normalization_latest.json").write_text(json.dumps(payload))
+    result = audit(tmp_path)
+    assert result["status"] == "FAIL"
+    assert any(
+        issue.startswith("STALE_DERIVED_AUDIT_RUN:period_normalization_latest.json:")
+        for issue in result["issues"]
+    )
+
+
+def test_allows_small_generation_skew_within_same_run(tmp_path):
+    valid_ledger(tmp_path)
+    payload = json.loads((tmp_path / "published_at_audit_latest.json").read_text())
+    payload["run_at"] = "2026-08-09T00:04:59Z"
+    (tmp_path / "published_at_audit_latest.json").write_text(json.dumps(payload))
+    result = audit(tmp_path)
+    assert result["status"] == "PASS"
+    assert result["issues"] == []
+
+
+def test_fails_when_derived_audit_run_at_is_timezone_naive(tmp_path):
+    valid_ledger(tmp_path)
+    payload = json.loads((tmp_path / "semantic_duplicate_audit_latest.json").read_text())
+    payload["run_at"] = "2026-08-09T00:00:00"
+    (tmp_path / "semantic_duplicate_audit_latest.json").write_text(json.dumps(payload))
+    result = audit(tmp_path)
+    assert result["status"] == "FAIL"
+    assert any(
+        issue.startswith("INVALID_ARTIFACT_RUN_AT:semantic_duplicate_audit_latest.json:")
+        for issue in result["issues"]
+    )
