@@ -14,6 +14,12 @@ on:
       - docs/central-data-lake.md
       - .github/workflows/hf-bucket-smoke.yml
   workflow_dispatch:
+    inputs:
+      expected_source_sha:
+        description: "Fail closed unless the dispatched revision matches this source SHA"
+        required: false
+        type: string
+        default: ""
   schedule:
     - cron: "47 */2 * * *"
   push:
@@ -49,6 +55,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Verify dispatched source revision
+        if: github.event_name == 'workflow_dispatch' && inputs.expected_source_sha != ''
+        shell: bash
+        env:
+          EXPECTED_SOURCE_SHA: ${{ inputs.expected_source_sha }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_SHA" != "$EXPECTED_SOURCE_SHA" ]; then
+            echo "Ref moved before publisher dispatch: expected $EXPECTED_SOURCE_SHA, got $GITHUB_SHA" >&2
+            exit 1
+          fi
 
       - name: Validate fail-closed publish contract
         shell: bash
