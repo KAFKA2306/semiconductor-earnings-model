@@ -10,6 +10,12 @@
       "extensions": [".json"]
     },
     {
+      "source": "data/financial_analysis",
+      "destination": "finance/analysis",
+      "required": false,
+      "extensions": [".json"]
+    },
+    {
       "source": "data/earnings_ledger",
       "destination": "semiconductor/earnings-ledger",
       "required": true,
