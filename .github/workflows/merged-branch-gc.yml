@@ -6,6 +6,7 @@ on:
       - "scripts/cleanup_merged_branches.py"
       - "tests/test_cleanup_merged_branches.py"
       - ".github/workflows/merged-branch-gc.yml"
+      - ".github/workflows/reusable-merged-branch-gc.yml"
   push:
     branches:
       - main
@@ -13,6 +14,7 @@ on:
       - "scripts/cleanup_merged_branches.py"
       - "tests/test_cleanup_merged_branches.py"
       - ".github/workflows/merged-branch-gc.yml"
+      - ".github/workflows/reusable-merged-branch-gc.yml"
   schedule:
     - cron: "35 1 * * *"
   workflow_dispatch:
