@@ -70,6 +70,14 @@
         "registration-count-audit.json",
         "audit/**"
       ]
+    },
+    {
+      "repository": "KAFKA2306/investor2",
+      "ref": "main",
+      "source": "data/market_snapshots",
+      "destination": "investor2/market-snapshots",
+      "required": true,
+      "extensions": [".json"]
     }
   ],
   "policy": {
