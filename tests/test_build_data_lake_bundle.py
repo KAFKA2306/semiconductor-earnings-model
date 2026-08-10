@@ -55,8 +55,34 @@ def config():
     }
 
 
+def quota_plan():
+    return {
+        "company_master": {
+            "projection_fields": ["edinet_code", "name"],
+            "code_consumers": {
+                "E02144": ["KAFKA2306/factory"],
+            },
+        },
+        "requests": [
+            {
+                "id": "factory-toyota-financials",
+                "consumer": "KAFKA2306/factory",
+                "path": "/v1/companies/E02144/financials",
+                "projection_fields": ["fiscal_year", "revenue", "source_doc_id"],
+            }
+        ],
+    }
+
+
+def write_quota_plan(tmp_path: Path) -> None:
+    path = tmp_path / "config" / "edinetdb_quota_plan.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(quota_plan()), encoding="utf-8")
+
+
 def test_bundle_contains_only_allow_listed_projection(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(bundle, "ROOT", tmp_path)
+    write_quota_plan(tmp_path)
     source = tmp_path / "data" / "edinetdb_projections" / "KAFKA2306__factory"
     source.mkdir(parents=True)
     projection_path = source / "factory-toyota-financials.json"
@@ -78,7 +104,16 @@ def test_bundle_contains_only_allow_listed_projection(monkeypatch, tmp_path: Pat
         "central/edinetdb/projections/KAFKA2306__factory/factory-toyota-financials.json"
     )
     assert len(result["files"][0]["sha256"]) == 64
-    assert not (tmp_path / "out" / "payload" / "central" / "edinetdb" / "projections" / "KAFKA2306__factory" / "ignored.txt").exists()
+    assert not (
+        tmp_path
+        / "out"
+        / "payload"
+        / "central"
+        / "edinetdb"
+        / "projections"
+        / "KAFKA2306__factory"
+        / "ignored.txt"
+    ).exists()
 
 
 def test_optional_missing_projection_root_produces_empty_manifest(monkeypatch, tmp_path: Path) -> None:
@@ -98,6 +133,7 @@ def test_optional_missing_projection_root_produces_empty_manifest(monkeypatch, t
 
 def test_raw_or_unknown_top_level_field_is_fail_closed(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(bundle, "ROOT", tmp_path)
+    write_quota_plan(tmp_path)
     source = tmp_path / "data" / "edinetdb_projections"
     source.mkdir(parents=True)
     bad = projection(raw_response={"forbidden": True})
@@ -117,6 +153,55 @@ def test_raw_or_unknown_top_level_field_is_fail_closed(monkeypatch, tmp_path: Pa
         assert "unexpected EDINETDB projection top-level fields" in str(exc)
     else:
         raise AssertionError("unknown/raw fields must fail closed")
+
+
+def test_raw_or_unknown_nested_record_field_is_fail_closed(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(bundle, "ROOT", tmp_path)
+    write_quota_plan(tmp_path)
+    source = tmp_path / "data" / "edinetdb_projections"
+    source.mkdir(parents=True)
+    bad = projection(records=[{"fiscal_year": 2026, "raw_provider_payload": {"secret": True}}])
+    path = source / "bad-record.json"
+    path.write_text(json.dumps(bad), encoding="utf-8")
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps(config()), encoding="utf-8")
+
+    try:
+        bundle.build_bundle(
+            config_path,
+            tmp_path / "out",
+            source_repo="KAFKA2306/semiconductor-earnings-model",
+            source_revision="abc123",
+        )
+    except ValueError as exc:
+        assert "unexpected EDINETDB record fields" in str(exc)
+        assert "raw_provider_payload" in str(exc)
+    else:
+        raise AssertionError("nested unknown/raw fields must fail closed")
+
+
+def test_projection_id_and_endpoint_must_match_quota_plan(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(bundle, "ROOT", tmp_path)
+    write_quota_plan(tmp_path)
+    source = tmp_path / "data" / "edinetdb_projections"
+    source.mkdir(parents=True)
+    bad = projection(source_endpoint="/v1/companies/E99999/financials")
+    path = source / "wrong-endpoint.json"
+    path.write_text(json.dumps(bad), encoding="utf-8")
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps(config()), encoding="utf-8")
+
+    try:
+        bundle.build_bundle(
+            config_path,
+            tmp_path / "out",
+            source_repo="KAFKA2306/semiconductor-earnings-model",
+            source_revision="abc123",
+        )
+    except ValueError as exc:
+        assert "endpoint is not allow-listed" in str(exc)
+    else:
+        raise AssertionError("endpoint drift must fail closed")
 
 
 def test_policy_cannot_enable_consumer_authentication() -> None:
