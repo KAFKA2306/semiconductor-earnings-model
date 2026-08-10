@@ -7,9 +7,13 @@ on:
       - "config/edinetdb_consumer_registry.json"
       - "scripts/edinetdb_quota_owner.py"
       - "scripts/edinetdb_quota_guard.py"
+      - "scripts/build_financial_analysis_projection.py"
       - "tests/test_edinetdb_quota_owner.py"
       - "tests/test_edinetdb_quota_guard.py"
+      - "tests/test_financial_analysis_projection.py"
       - "data/edinetdb_quota/usage.json"
+      - "data/edinetdb_projections/**"
+      - "data/financial_analysis/**"
       - "docs/edinetdb-quota-owner.md"
       - ".github/workflows/edinetdb-quota-owner.yml"
   push:
@@ -20,6 +24,9 @@ on:
       - "config/edinetdb_consumer_registry.json"
       - "scripts/edinetdb_quota_owner.py"
       - "scripts/edinetdb_quota_guard.py"
+      - "scripts/build_financial_analysis_projection.py"
+      - "data/edinetdb_projections/**"
+      - "data/financial_analysis/**"
       - "docs/edinetdb-quota-owner.md"
       - ".github/workflows/edinetdb-quota-owner.yml"
   workflow_dispatch:
@@ -30,7 +37,6 @@ on:
         type: boolean
         default: false
   schedule:
-    # 08:20 JST daily, after EDINET DB's documented 08:00 JST daily ingestion.
     - cron: "20 23 * * *"
 
 permissions:
@@ -49,8 +55,8 @@ jobs:
         run: python -m pip install 'pytest>=8,<9'
       - name: Print guarded quota plan without network access
         run: python scripts/edinetdb_quota_guard.py --plan-only
-      - name: Test deduplication, quota and consumer boundaries
-        run: python -m pytest tests/test_edinetdb_quota_owner.py tests/test_edinetdb_quota_guard.py
+      - name: Test acquisition and financial-analysis contracts
+        run: python -m pytest tests/test_edinetdb_quota_owner.py tests/test_edinetdb_quota_guard.py tests/test_financial_analysis_projection.py
 
   sync:
     needs: validate-plan
@@ -82,20 +88,23 @@ jobs:
           fi
           python scripts/edinetdb_quota_guard.py
           echo "ran=true" >> "$GITHUB_OUTPUT"
-      - name: Commit quota ledgers and consumer projections
+      - name: Build deterministic financial analysis
+        if: steps.fetch.outputs.ran == 'true'
+        run: python scripts/build_financial_analysis_projection.py
+      - name: Commit quota, projections and financial analysis
         id: materialize
         if: steps.fetch.outputs.ran == 'true'
         shell: bash
         run: |
-          git add data/edinetdb_quota data/edinetdb_projections
+          git add data/edinetdb_quota data/edinetdb_projections data/financial_analysis
           if git diff --cached --quiet; then
-            echo "No projection or quota-ledger changes."
+            echo "No materialized financial-data changes."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: refresh EDINETDB consumer projections"
+          git commit -m "data: refresh financial projections and analysis"
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
           echo "changed=true" >> "$GITHUB_OUTPUT"
