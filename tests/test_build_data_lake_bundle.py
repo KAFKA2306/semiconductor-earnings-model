@@ -5,6 +5,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "build_data_lake_bundle.py"
 SPEC = importlib.util.spec_from_file_location("build_data_lake_bundle", MODULE_PATH)
 assert SPEC and SPEC.loader
@@ -99,11 +101,13 @@ def test_bundle_contains_only_allow_listed_projection(monkeypatch, tmp_path: Pat
         generated_at="2026-08-10T00:00:00Z",
     )
 
+    assert result["schema_version"] == "data-lake-manifest.v2"
     assert result["file_count"] == 1
     assert result["files"][0]["remote_path"] == (
         "central/edinetdb/projections/KAFKA2306__factory/factory-toyota-financials.json"
     )
     assert len(result["files"][0]["sha256"]) == 64
+    assert result["files"][0]["source_repository"] == "KAFKA2306/semiconductor-earnings-model"
     assert not (
         tmp_path
         / "out"
@@ -129,6 +133,8 @@ def test_optional_missing_projection_root_produces_empty_manifest(monkeypatch, t
     )
     assert result["file_count"] == 0
     assert result["total_bytes"] == 0
+    assert result["roots"][0]["file_count"] == 0
+    assert (tmp_path / "out" / "payload" / "central" / "edinetdb" / "projections").is_dir()
 
 
 def test_raw_or_unknown_top_level_field_is_fail_closed(monkeypatch, tmp_path: Path) -> None:
@@ -142,17 +148,13 @@ def test_raw_or_unknown_top_level_field_is_fail_closed(monkeypatch, tmp_path: Pa
     config_path = tmp_path / "config.json"
     config_path.write_text(json.dumps(config()), encoding="utf-8")
 
-    try:
+    with pytest.raises(ValueError, match="unexpected EDINETDB projection top-level fields"):
         bundle.build_bundle(
             config_path,
             tmp_path / "out",
             source_repo="KAFKA2306/semiconductor-earnings-model",
             source_revision="abc123",
         )
-    except ValueError as exc:
-        assert "unexpected EDINETDB projection top-level fields" in str(exc)
-    else:
-        raise AssertionError("unknown/raw fields must fail closed")
 
 
 def test_raw_or_unknown_nested_record_field_is_fail_closed(monkeypatch, tmp_path: Path) -> None:
@@ -166,18 +168,14 @@ def test_raw_or_unknown_nested_record_field_is_fail_closed(monkeypatch, tmp_path
     config_path = tmp_path / "config.json"
     config_path.write_text(json.dumps(config()), encoding="utf-8")
 
-    try:
+    with pytest.raises(ValueError, match="unexpected EDINETDB record fields") as exc_info:
         bundle.build_bundle(
             config_path,
             tmp_path / "out",
             source_repo="KAFKA2306/semiconductor-earnings-model",
             source_revision="abc123",
         )
-    except ValueError as exc:
-        assert "unexpected EDINETDB record fields" in str(exc)
-        assert "raw_provider_payload" in str(exc)
-    else:
-        raise AssertionError("nested unknown/raw fields must fail closed")
+    assert "raw_provider_payload" in str(exc_info.value)
 
 
 def test_projection_id_and_endpoint_must_match_quota_plan(monkeypatch, tmp_path: Path) -> None:
@@ -191,25 +189,132 @@ def test_projection_id_and_endpoint_must_match_quota_plan(monkeypatch, tmp_path:
     config_path = tmp_path / "config.json"
     config_path.write_text(json.dumps(config()), encoding="utf-8")
 
-    try:
+    with pytest.raises(ValueError, match="endpoint is not allow-listed"):
         bundle.build_bundle(
             config_path,
             tmp_path / "out",
             source_repo="KAFKA2306/semiconductor-earnings-model",
             source_revision="abc123",
         )
-    except ValueError as exc:
-        assert "endpoint is not allow-listed" in str(exc)
-    else:
-        raise AssertionError("endpoint drift must fail closed")
 
 
 def test_policy_cannot_enable_consumer_authentication() -> None:
     bad = config()
     bad["policy"]["consumer_repository_authentication"] = True
-    try:
+    with pytest.raises(ValueError, match="consumer_repository_authentication"):
         bundle.validate_config(bad)
-    except ValueError as exc:
-        assert "consumer_repository_authentication" in str(exc)
-    else:
-        raise AssertionError("consumer repo authentication must remain disabled")
+
+
+def test_remote_public_source_records_repository_revision_and_filters(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(bundle, "ROOT", tmp_path / "central")
+    bundle.ROOT.mkdir()
+    remote = tmp_path / "remote-factory"
+    data = remote / "data"
+    data.mkdir(parents=True)
+    (data / "companies-01.jsonl").write_text('{"id":"c1"}\n', encoding="utf-8")
+    (data / "ignored.txt").write_text("ignored\n", encoding="utf-8")
+
+    cfg = config()
+    cfg["publish_roots"].append(
+        {
+            "repository": "KAFKA2306/factory",
+            "ref": "main",
+            "source": "data",
+            "destination": "factory",
+            "required": True,
+            "extensions": [".jsonl"],
+        }
+    )
+    config_path = bundle.ROOT / "config.json"
+    config_path.write_text(json.dumps(cfg), encoding="utf-8")
+
+    def fake_checkout(repository: str, ref: str, checkout_root: Path):
+        assert repository == "KAFKA2306/factory"
+        assert ref == "main"
+        return remote, "c" * 40
+
+    monkeypatch.setattr(bundle, "checkout_public_repository", fake_checkout)
+    result = bundle.build_bundle(
+        config_path,
+        bundle.ROOT / "out",
+        source_repo="KAFKA2306/semiconductor-earnings-model",
+        source_revision="d" * 40,
+        generated_at="2026-08-10T00:00:00Z",
+    )
+
+    remote_file = next(
+        item
+        for item in result["files"]
+        if item["remote_path"] == "central/factory/companies-01.jsonl"
+    )
+    assert remote_file["source_repository"] == "KAFKA2306/factory"
+    assert remote_file["source_revision"] == "c" * 40
+    assert not any(item["remote_path"].endswith("ignored.txt") for item in result["files"])
+    factory_root = next(
+        item for item in result["roots"] if item["destination"] == "central/factory"
+    )
+    assert factory_root["file_count"] == 1
+
+
+def test_include_patterns_are_root_scoped_and_explicit(tmp_path: Path) -> None:
+    source = tmp_path / "data"
+    (source / "kindle").mkdir(parents=True)
+    (source / "nested").mkdir()
+    (source / "catalog.json").write_text("{}\n", encoding="utf-8")
+    (source / "nested" / "catalog.json").write_text("{}\n", encoding="utf-8")
+    (source / "kindle" / "manifest.json").write_text("{}\n", encoding="utf-8")
+    (source / "kindle" / "records-01.ndjson").write_text("{}\n", encoding="utf-8")
+    (source / "kindle" / "debug.json").write_text("{}\n", encoding="utf-8")
+
+    selected = bundle.selected_files(
+        source,
+        {
+            "extensions": [".json", ".ndjson"],
+            "include": ["catalog.json", "kindle/manifest.json", "kindle/records-*.ndjson"],
+        },
+    )
+    assert [path.relative_to(source).as_posix() for path in selected] == [
+        "catalog.json",
+        "kindle/manifest.json",
+        "kindle/records-01.ndjson",
+    ]
+
+
+def test_remote_repository_boundary_rejects_other_owners() -> None:
+    bad = config()
+    bad["publish_roots"].append(
+        {
+            "repository": "someone-else/factory",
+            "ref": "main",
+            "source": "data",
+            "destination": "factory",
+            "required": True,
+            "extensions": [".jsonl"],
+        }
+    )
+    with pytest.raises(ValueError, match="not allow-listed"):
+        bundle.validate_config(bad)
+
+
+def test_checkout_creates_work_root_before_anonymous_clone(monkeypatch, tmp_path: Path) -> None:
+    checkout_root = tmp_path / "sources"
+    calls: list[tuple[list[str], Path | None, bool]] = []
+
+    def fake_run_git(
+        command: list[str], *, cwd: Path | None = None, capture: bool = False
+    ) -> str:
+        calls.append((command, cwd, capture))
+        if command[0] == "clone":
+            assert checkout_root.is_dir()
+            Path(command[-1]).mkdir(parents=True)
+            return ""
+        assert command == ["rev-parse", "HEAD"]
+        return "e" * 40
+
+    monkeypatch.setattr(bundle, "run_git", fake_run_git)
+    checkout, revision = bundle.checkout_public_repository(
+        "KAFKA2306/books", "main", checkout_root
+    )
+    assert checkout == checkout_root / "KAFKA2306__books"
+    assert revision == "e" * 40
+    assert calls[0][0][0] == "clone"
