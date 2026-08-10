@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install test dependency
+        run: python -m pip install 'pytest>=8,<9'
       - name: Print quota plan without network access
         run: python scripts/edinetdb_quota_owner.py --plan-only
       - name: Test deduplication and projection boundaries
