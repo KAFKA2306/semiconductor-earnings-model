@@ -4,8 +4,12 @@ on:
   pull_request:
     paths:
       - "config/edinetdb_quota_plan.json"
+      - "config/edinetdb_consumer_registry.json"
       - "scripts/edinetdb_quota_owner.py"
+      - "scripts/edinetdb_quota_guard.py"
       - "tests/test_edinetdb_quota_owner.py"
+      - "tests/test_edinetdb_quota_guard.py"
+      - "data/edinetdb_quota/usage.json"
       - "docs/edinetdb-quota-owner.md"
       - ".github/workflows/edinetdb-quota-owner.yml"
   workflow_dispatch:
@@ -32,10 +36,10 @@ jobs:
           python-version: "3.12"
       - name: Install test dependency
         run: python -m pip install 'pytest>=8,<9'
-      - name: Print quota plan without network access
-        run: python scripts/edinetdb_quota_owner.py --plan-only
-      - name: Test deduplication and projection boundaries
-        run: python -m pytest tests/test_edinetdb_quota_owner.py
+      - name: Print guarded quota plan without network access
+        run: python scripts/edinetdb_quota_guard.py --plan-only
+      - name: Test deduplication, quota and consumer boundaries
+        run: python -m pytest tests/test_edinetdb_quota_owner.py tests/test_edinetdb_quota_guard.py
 
   sync:
     needs: validate-plan
@@ -55,7 +59,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Refresh consumer projections once
+      - name: Refresh consumer projections once through quota guard
         id: fetch
         shell: bash
         run: |
@@ -64,15 +68,15 @@ jobs:
             echo "ran=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          python scripts/edinetdb_quota_owner.py
+          python scripts/edinetdb_quota_guard.py
           echo "ran=true" >> "$GITHUB_OUTPUT"
-      - name: Commit quota ledger and consumer projections
+      - name: Commit quota ledgers and consumer projections
         if: steps.fetch.outputs.ran == 'true'
         shell: bash
         run: |
           git add data/edinetdb_quota data/edinetdb_projections
           if git diff --cached --quiet; then
-            echo "No projection changes."
+            echo "No projection or quota-ledger changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
