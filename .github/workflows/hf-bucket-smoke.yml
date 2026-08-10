@@ -1,26 +1,52 @@
-name: Hugging Face bucket smoke test
+name: Hugging Face central data lake publisher
 
-# Central HF writer: keep authentication in this repository only.
+# Sole HF writer. Other repositories must not carry HF credentials or Trusted Publishers.
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "47 */2 * * *"
   push:
     branches:
       - main
     paths:
+      - data/edinetdb_projections/**
+      - config/data_lake_publish.json
+      - scripts/build_data_lake_bundle.py
+      - tests/test_build_data_lake_bundle.py
       - .github/workflows/hf-bucket-smoke.yml
 
 permissions:
   contents: read
   id-token: write
 
+concurrency:
+  group: central-hf-data-lake-publisher
+  cancel-in-progress: false
+
 jobs:
-  smoke:
+  publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
       HF_BUCKET: k4fka/kafka-data-lake
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate fail-closed publish contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'pytest>=8,<9'
+          python -m pytest tests/test_build_data_lake_bundle.py
+          python scripts/build_data_lake_bundle.py \
+            --source-revision "$GITHUB_SHA" \
+            --output .data_lake_bundle
+
       - name: Install current Hugging Face CLI
         shell: bash
         run: |
@@ -28,7 +54,7 @@ jobs:
           curl -LsSf https://hf.co/cli/install.sh | bash
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Verify OIDC bucket round trip
+      - name: Verify private bucket and OIDC round trip
         shell: bash
         run: |
           set -euo pipefail
@@ -41,16 +67,73 @@ jobs:
           }
           trap cleanup EXIT
 
-          printf '{"schema":"hf-bucket-smoke.v2","source":"synthetic-only","run_id":"%s","attempt":"%s"}\n' \
+          printf '{"schema":"hf-bucket-smoke.v3","source":"synthetic-only","run_id":"%s","attempt":"%s"}\n' \
             "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > "$SRC"
           EXPECTED_SHA=$(sha256sum "$SRC" | awk '{print $1}')
 
           hf buckets cp "$SRC" "hf://buckets/$HF_BUCKET/$REMOTE"
           hf buckets cp "hf://buckets/$HF_BUCKET/$REMOTE" "$DST"
-
           ACTUAL_SHA=$(sha256sum "$DST" | awk '{print $1}')
           test "$EXPECTED_SHA" = "$ACTUAL_SHA"
 
-          hf buckets info "$HF_BUCKET"
+          INFO=$(hf buckets info "$HF_BUCKET")
+          printf '%s\n' "$INFO"
+          printf '%s\n' "$INFO" | grep -q '"private": true'
           echo "HF_SMOKE_RESULT=PASS"
           echo "HF_SMOKE_SHA256=$ACTUAL_SHA"
+
+      - name: Publish allow-listed bundle and verify every object
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          retry() {
+            local attempt=1
+            local max=3
+            until "$@"; do
+              if [ "$attempt" -ge "$max" ]; then
+                return 1
+              fi
+              sleep $((attempt * 2))
+              attempt=$((attempt + 1))
+            done
+          }
+
+          python - <<'PY' > /tmp/data-lake-files.tsv
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path('.data_lake_bundle/manifest.json').read_text())
+          for item in manifest['files']:
+              print(f"{item['bundle_path']}\t{item['remote_path']}\t{item['sha256']}")
+          PY
+
+          INDEX=0
+          while IFS=$'\t' read -r BUNDLE_PATH REMOTE_PATH EXPECTED_SHA; do
+            [ -n "$BUNDLE_PATH" ] || continue
+            INDEX=$((INDEX + 1))
+            LOCAL=".data_lake_bundle/$BUNDLE_PATH"
+            READBACK="/tmp/data-lake-readback-$INDEX"
+            retry hf buckets cp "$LOCAL" "hf://buckets/$HF_BUCKET/$REMOTE_PATH"
+            retry hf buckets cp "hf://buckets/$HF_BUCKET/$REMOTE_PATH" "$READBACK"
+            ACTUAL_SHA=$(sha256sum "$READBACK" | awk '{print $1}')
+            test "$EXPECTED_SHA" = "$ACTUAL_SHA"
+            echo "VERIFIED $REMOTE_PATH $ACTUAL_SHA"
+          done < /tmp/data-lake-files.tsv
+
+          MANIFEST=.data_lake_bundle/manifest.json
+          MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
+          RUN_MANIFEST="central/manifests/runs/${GITHUB_SHA}.json"
+          LATEST_MANIFEST="central/manifests/latest.json"
+
+          retry hf buckets cp "$MANIFEST" "hf://buckets/$HF_BUCKET/$RUN_MANIFEST"
+          retry hf buckets cp "hf://buckets/$HF_BUCKET/$RUN_MANIFEST" /tmp/run-manifest-readback.json
+          test "$MANIFEST_SHA" = "$(sha256sum /tmp/run-manifest-readback.json | awk '{print $1}')"
+
+          retry hf buckets cp "$MANIFEST" "hf://buckets/$HF_BUCKET/$LATEST_MANIFEST"
+          retry hf buckets cp "hf://buckets/$HF_BUCKET/$LATEST_MANIFEST" /tmp/latest-manifest-readback.json
+          test "$MANIFEST_SHA" = "$(sha256sum /tmp/latest-manifest-readback.json | awk '{print $1}')"
+
+          FILE_COUNT=$(python -c "import json; print(json.load(open('$MANIFEST'))['file_count'])")
+          echo "HF_DATA_LAKE_RESULT=PASS"
+          echo "HF_DATA_LAKE_FILE_COUNT=$FILE_COUNT"
+          echo "HF_DATA_LAKE_MANIFEST_SHA256=$MANIFEST_SHA"
