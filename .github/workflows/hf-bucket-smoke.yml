@@ -166,6 +166,11 @@ jobs:
           JQUANTS_API_KEY: ${{ secrets.JQUANTS_API_KEY }}
         run: |
           set -euo pipefail
+          if [ -z "$JQUANTS_API_KEY" ]; then
+            echo "JQUANTS_PRIVATE_RESULT=SKIP_MISSING_SECRET"
+            exit 0
+          fi
+
           PRIVATE_ROOT="central/investor2/private/jquants"
           LATEST_REMOTE="$PRIVATE_ROOT/latest.json"
           RUN_REMOTE="$PRIVATE_ROOT/runs/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.json"
@@ -190,7 +195,6 @@ jobs:
             fi
           fi
 
-          test -n "$JQUANTS_API_KEY"
           python scripts/publish_investor2_jquants_private.py \
             --output "$CURRENT" \
             --lookback-days 730 \
