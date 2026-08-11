@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-11T13:44:03.105873Z",
+  "run_at": "2026-08-11T15:16:40.840153Z",
   "accepted_events_total": 1,
-  "rejected_events_total": 59,
+  "rejected_events_total": 61,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -50,7 +50,7 @@
       "source_id": "kla",
       "status": "success",
       "accepted": 0,
-      "rejected": 8
+      "rejected": 10
     },
     {
       "source_id": "micron",
