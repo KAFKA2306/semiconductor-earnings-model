@@ -128,10 +128,10 @@ jobs:
       - name: Clean checkout gate
         if: github.event_name == 'pull_request'
         run: |
-          rm -f data/earnings_ledger/verified_revenue_growth_latest.json \
-                data/earnings_ledger/verified_revenue_growth_duration_audit_latest.json \
-                data/earnings_ledger/verified_revenue_qoq_latest.json \
-                data/earnings_ledger/verified_revenue_actuals.ndjson \
+          git checkout -- data/earnings_ledger/verified_revenue_growth_latest.json \
+                          data/earnings_ledger/verified_revenue_growth_duration_audit_latest.json \
+                          data/earnings_ledger/verified_revenue_qoq_latest.json
+          rm -f data/earnings_ledger/verified_revenue_actuals.ndjson \
                 data/earnings_ledger/verified_revenue_actuals_manifest.json \
                 data/earnings_ledger/verified_revenue_persisted_growth_latest.json
           git status --porcelain --untracked-files=all
