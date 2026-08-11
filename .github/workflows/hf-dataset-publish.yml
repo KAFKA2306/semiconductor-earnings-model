@@ -1,0 +1,226 @@
+name: Hugging Face versioned dataset publisher
+
+on:
+  pull_request:
+    paths:
+      - data/edinetdb_projections/**
+      - data/earnings_ledger/**
+      - data/financial_analysis/**
+      - data/financial_db/**
+      - config/data_lake_publish.json
+      - config/edinetdb_quota_plan.json
+      - scripts/build_data_lake_bundle.py
+      - tests/test_build_data_lake_bundle.py
+      - .github/workflows/hf-dataset-publish.yml
+  workflow_dispatch:
+    inputs:
+      expected_source_sha:
+        description: "Fail closed unless the dispatched revision matches this source SHA"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hf-versioned-dataset-publisher-${{ github.event_name }}
+  cancel-in-progress: false
+
+env:
+  HF_DATASET: k4fka/kafka-data
+
+jobs:
+  validate-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify dispatched source revision
+        if: github.event_name == 'workflow_dispatch' && inputs.expected_source_sha != ''
+        shell: bash
+        env:
+          EXPECTED_SOURCE_SHA: ${{ inputs.expected_source_sha }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_SHA" != "$EXPECTED_SOURCE_SHA" ]; then
+            echo "Ref moved before dataset publish: expected $EXPECTED_SOURCE_SHA, got $GITHUB_SHA" >&2
+            exit 1
+          fi
+
+      - name: Build and validate the allow-listed Gold bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'pytest>=8,<9'
+          python -m pytest tests/test_build_data_lake_bundle.py
+          python scripts/build_data_lake_bundle.py \
+            --source-revision "$GITHUB_SHA" \
+            --output .data_lake_bundle
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          bundle = Path('.data_lake_bundle')
+          manifest = json.loads((bundle / 'manifest.json').read_text(encoding='utf-8'))
+          assert manifest['schema_version'] == 'data-lake-manifest.v2'
+          assert manifest['policy']['allow_list_only'] is True
+          assert manifest['policy']['raw_provider_responses'] is False
+          assert manifest['policy']['manifest_required'] is True
+          assert manifest['policy']['sha256_readback_required'] is True
+
+          for item in manifest['files']:
+              path = bundle / item['bundle_path']
+              assert path.is_file(), path
+              actual = hashlib.sha256(path.read_bytes()).hexdigest()
+              assert actual == item['sha256'], (path, actual, item['sha256'])
+
+          assert manifest['file_count'] == len(manifest['files'])
+          print(f"HF_DATASET_BUNDLE_RESULT=PASS files={manifest['file_count']}")
+          PY
+
+  publish:
+    needs: validate-contract
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      HF_OIDC_RESOURCE: datasets/k4fka/kafka-data
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build validated release bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/build_data_lake_bundle.py \
+            --source-revision "$GITHUB_SHA" \
+            --output .data_lake_bundle
+
+      - name: Prepare versioned dataset release
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE=.hf_dataset_release
+          rm -rf "$RELEASE"
+          mkdir -p "$RELEASE"
+          cp -R .data_lake_bundle/payload/. "$RELEASE/"
+          cp .data_lake_bundle/manifest.json "$RELEASE/manifest.json"
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          release = Path('.hf_dataset_release')
+          manifest = json.loads((release / 'manifest.json').read_text(encoding='utf-8'))
+          rows = []
+          for root in manifest['roots']:
+              rows.append(
+                  f"| `{root['destination']}` | `{root['source_repository']}` | "
+                  f"`{root['source_revision'][:12]}` | {root['file_count']} | {root['total_bytes']} |"
+              )
+
+          readme = f"""---
+          pretty_name: KAFKA Data
+          ---
+
+          # KAFKA Data
+
+          Versioned Gold snapshot produced by `KAFKA2306/semiconductor-earnings-model` from the same allow-listed bundle used by the central Hugging Face Storage Bucket publisher.
+
+          - Source repository: `{manifest['source_repository']}`
+          - Source revision: `{manifest['source_revision']}`
+          - Generated at: `{manifest['generated_at']}`
+          - Manifest schema: `{manifest['schema_version']}`
+          - Files in validated payload: {manifest['file_count']}
+          - Total validated bytes: {manifest['total_bytes']}
+          - Raw provider responses allowed: `{manifest['policy']['raw_provider_responses']}`
+          - SHA-256 readback required: `{manifest['policy']['sha256_readback_required']}`
+
+          ## Included roots
+
+          | Dataset path | Source repository | Revision | Files | Bytes |
+          |---|---|---:|---:|---:|
+          {chr(10).join(rows)}
+
+          `manifest.json` is the machine-readable provenance ledger. Dataset publication is fail-closed: only the validated allow-list bundle is uploaded, and every uploaded file is re-downloaded and SHA-256 verified by GitHub Actions.
+          """
+          # Strip indentation introduced by the workflow YAML while preserving Markdown.
+          lines = [line[10:] if line.startswith('          ') else line for line in readme.splitlines()]
+          (release / 'README.md').write_text('\n'.join(lines).strip() + '\n', encoding='utf-8')
+          PY
+
+      - name: Install current Hugging Face CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -LsSf https://hf.co/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Exact-mirror validated Gold release to private Dataset
+        shell: bash
+        run: |
+          set -euo pipefail
+          hf upload "$HF_DATASET" .hf_dataset_release . \
+            --repo-type=dataset \
+            --delete='*' \
+            --commit-message="Publish validated Gold snapshot ${GITHUB_SHA::7}" \
+            --commit-description="Source: ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+
+      - name: Re-download and verify the complete Dataset release
+        shell: bash
+        run: |
+          set -euo pipefail
+          READBACK=/tmp/hf-dataset-readback
+          rm -rf "$READBACK"
+          hf download "$HF_DATASET" --repo-type=dataset --local-dir "$READBACK"
+
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+
+          expected_root = Path('.hf_dataset_release')
+          actual_root = Path('/tmp/hf-dataset-readback')
+
+          def inventory(root: Path):
+              result = {}
+              for path in root.rglob('*'):
+                  if not path.is_file():
+                      continue
+                  rel = path.relative_to(root)
+                  if '.cache' in rel.parts or rel.as_posix() == '.gitattributes':
+                      continue
+                  digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                  result[rel.as_posix()] = digest
+              return result
+
+          expected = inventory(expected_root)
+          actual = inventory(actual_root)
+          if expected.keys() != actual.keys():
+              missing = sorted(expected.keys() - actual.keys())
+              extra = sorted(actual.keys() - expected.keys())
+              raise SystemExit(f'Dataset mirror mismatch: missing={missing[:20]} extra={extra[:20]}')
+
+          mismatched = [path for path in expected if expected[path] != actual[path]]
+          if mismatched:
+              raise SystemExit(f'Dataset SHA-256 mismatch: {mismatched[:20]}')
+
+          print(f'HF_DATASET_RESULT=PASS files={len(expected)}')
+          PY
