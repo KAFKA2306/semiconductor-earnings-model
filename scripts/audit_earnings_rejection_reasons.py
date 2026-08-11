@@ -7,17 +7,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from earnings_rejection_contract import (
+    CANONICAL_REJECTION_REASONS,
+    DISCOVERY_DETAIL_REASONS,
+    classify_rejection,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 LEDGER_DIR = ROOT / "data" / "earnings_ledger"
 EVENTS_PATH = LEDGER_DIR / "events.ndjson"
 REJECTED_PATH = LEDGER_DIR / "rejected.ndjson"
 OUTPUT_PATH = LEDGER_DIR / "rejection_reason_audit_latest.json"
-
-ALLOWED_REJECTION_REASONS = {
-    "NOT_EARNINGS_RELATED",
-    "UNVERIFIED_6K",
-    "SOURCE_FETCH_FAILED",
-}
 
 ADAPTER_CONTRACTS = {
     "sec_edgar": {
@@ -84,7 +84,10 @@ def audit_rejections(
     for event_id in sorted(accepted_nonempty & rejected_nonempty):
         issues.append({"code": "EVENT_ACCEPTED_AND_REJECTED", "event_id": event_id})
 
-    reason_counts: Counter[str] = Counter()
+    raw_reason_counts: Counter[str] = Counter()
+    canonical_reason_counts: Counter[str] = Counter()
+    detail_reason_counts: Counter[str] = Counter()
+    stage_counts: Counter[str] = Counter()
     source_counts: Counter[str] = Counter()
     document_type_counts: Counter[str] = Counter()
 
@@ -93,6 +96,8 @@ def audit_rejections(
         reason = row.get("rejection_reason")
         document_type = str(row.get("document_type") or "")
         source_adapter = str(row.get("source_adapter") or "")
+        semantic = classify_rejection(row)
+        stage = semantic["rejection_stage"]
 
         missing_fields = [field for field in REQUIRED_REJECTED_FIELDS if not row.get(field)]
         if missing_fields:
@@ -169,7 +174,7 @@ def audit_rejections(
         if not isinstance(reason, str) or not reason:
             issues.append({"code": "MISSING_REJECTION_REASON", "event_id": event_id})
             continue
-        if reason not in ALLOWED_REJECTION_REASONS:
+        if stage == "UNKNOWN":
             issues.append({
                 "code": "UNKNOWN_REJECTION_REASON",
                 "event_id": event_id,
@@ -177,23 +182,28 @@ def audit_rejections(
             })
             continue
 
-        reason_counts[reason] += 1
+        raw_reason_counts[reason] += 1
+        stage_counts[stage] += 1
         source_counts[source_adapter] += 1
         document_type_counts[document_type] += 1
+        if semantic["canonical_rejection_reason"]:
+            canonical_reason_counts[str(semantic["canonical_rejection_reason"])] += 1
+        if semantic["detail_reason"]:
+            detail_reason_counts[str(semantic["detail_reason"])] += 1
 
-        if reason == "UNVERIFIED_6K" and document_type != "6-K":
+        if stage == "DISCOVERY_FILTER" and reason == "UNVERIFIED_6K" and document_type != "6-K":
             issues.append({
                 "code": "UNVERIFIED_6K_REASON_FORM_MISMATCH",
                 "event_id": event_id,
                 "document_type": document_type,
             })
-        if reason == "SOURCE_FETCH_FAILED" and document_type != "6-K":
+        if stage == "DISCOVERY_FILTER" and reason == "SOURCE_FETCH_FAILED" and document_type != "6-K":
             issues.append({
                 "code": "SOURCE_FETCH_FAILED_REASON_FORM_MISMATCH",
                 "event_id": event_id,
                 "document_type": document_type,
             })
-        if reason == "NOT_EARNINGS_RELATED" and document_type == "6-K":
+        if stage == "DISCOVERY_FILTER" and reason == "NOT_EARNINGS_RELATED" and document_type == "6-K":
             if source_adapter != "sec_edgar":
                 issues.append({
                     "code": "SIX_K_CONTENT_REJECTION_NON_SEC_SOURCE",
@@ -202,17 +212,24 @@ def audit_rejections(
                 })
 
     return {
-        "schema_version": "earnings-rejection-reason-audit.v2",
+        "schema_version": "earnings-rejection-reason-audit.v3",
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "allowed_rejection_reasons": sorted(ALLOWED_REJECTION_REASONS),
+        "canonical_rejection_reasons": sorted(CANONICAL_REJECTION_REASONS),
+        "discovery_detail_reasons": sorted(DISCOVERY_DETAIL_REASONS),
         "accepted_events_total": len(accepted),
         "rejected_events_total": len(rejected),
-        "reason_counts": dict(sorted(reason_counts.items())),
+        "raw_reason_counts": dict(sorted(raw_reason_counts.items())),
+        "canonical_reason_counts": dict(sorted(canonical_reason_counts.items())),
+        "detail_reason_counts": dict(sorted(detail_reason_counts.items())),
+        "rejection_stage_counts": dict(sorted(stage_counts.items())),
         "source_adapter_counts": dict(sorted(source_counts.items())),
         "document_type_counts": dict(sorted(document_type_counts.items())),
         "issues": issues,
         "status": "PASS" if not issues else "FAIL",
         "policy": {
+            "immutable_legacy_evidence_preserved": True,
+            "discovery_detail_not_relabelled_as_canonical": True,
+            "canonical_reason_enum_fixed": True,
             "unknown_reason_fails_closed": True,
             "accepted_rejected_collision_fails_closed": True,
             "reason_form_consistency_required": True,

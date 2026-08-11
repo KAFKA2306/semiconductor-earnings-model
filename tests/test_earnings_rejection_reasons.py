@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import importlib.util
+import sys
 from pathlib import Path
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "audit_earnings_rejection_reasons.py"
+SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+MODULE_PATH = SCRIPTS / "audit_earnings_rejection_reasons.py"
 SPEC = importlib.util.spec_from_file_location("audit_earnings_rejection_reasons", MODULE_PATH)
 assert SPEC and SPEC.loader
 module = importlib.util.module_from_spec(SPEC)
@@ -41,11 +44,35 @@ def rejected(
     return row
 
 
-def test_known_not_earnings_reason_passes():
+def test_discovery_reason_is_preserved_but_not_promoted_to_canonical():
     result = module.audit_rejections([], [rejected("a", "NOT_EARNINGS_RELATED")])
     assert result["status"] == "PASS"
-    assert result["schema_version"] == "earnings-rejection-reason-audit.v2"
-    assert result["reason_counts"] == {"NOT_EARNINGS_RELATED": 1}
+    assert result["schema_version"] == "earnings-rejection-reason-audit.v3"
+    assert result["rejection_stage_counts"] == {"DISCOVERY_FILTER": 1}
+    assert result["detail_reason_counts"] == {"NOT_EARNINGS_RELATED": 1}
+    assert result["canonical_reason_counts"] == {}
+
+
+def test_issue_26_canonical_enum_is_fixed():
+    assert set(module.CANONICAL_REJECTION_REASONS) == {
+        "OUTSIDE_TIME_WINDOW",
+        "UNKNOWN_PUBLISHED_TIME",
+        "STALE_FISCAL_PERIOD",
+        "DUPLICATE",
+        "NOT_PRIMARY_SOURCE",
+        "FUTURE_EARNINGS_EVENT",
+        "REPOST",
+        "MISMATCHED_COMPANY",
+        "UNVERIFIED_NUMBER",
+    }
+
+
+def test_canonical_validation_reason_is_classified_separately():
+    result = module.audit_rejections([], [rejected("a", "UNVERIFIED_NUMBER", document_type="10-Q")])
+    assert result["status"] == "PASS"
+    assert result["rejection_stage_counts"] == {"CANONICAL_VALIDATION": 1}
+    assert result["canonical_reason_counts"] == {"UNVERIFIED_NUMBER": 1}
+    assert result["detail_reason_counts"] == {}
 
 
 def test_unknown_reason_fails_closed():

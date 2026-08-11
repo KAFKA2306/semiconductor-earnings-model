@@ -1,0 +1,44 @@
+name: Earnings rejection contract
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/earnings-rejection-contract.yml"
+      - "scripts/earnings_rejection_contract.py"
+      - "scripts/audit_earnings_rejection_reasons.py"
+      - "tests/test_earnings_rejection_reasons.py"
+      - "data/earnings_ledger/rejected.ndjson"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/earnings-rejection-contract.yml"
+      - "scripts/earnings_rejection_contract.py"
+      - "scripts/audit_earnings_rejection_reasons.py"
+      - "tests/test_earnings_rejection_reasons.py"
+      - "data/earnings_ledger/rejected.ndjson"
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependency
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Compile rejection contract
+        run: python -m py_compile scripts/earnings_rejection_contract.py scripts/audit_earnings_rejection_reasons.py tests/test_earnings_rejection_reasons.py
+      - name: Run rejection contract tests
+        run: python -m pytest -q tests/test_earnings_rejection_reasons.py
+      - name: Audit persisted immutable rejected ledger
+        run: python scripts/audit_earnings_rejection_reasons.py
+      - name: Verify clean checkout
+        run: |
+          git restore --worktree -- data/earnings_ledger/rejection_reason_audit_latest.json
+          rm -rf .pytest_cache scripts/__pycache__ tests/__pycache__
+          test -z "$(git status --porcelain --untracked-files=all)"
