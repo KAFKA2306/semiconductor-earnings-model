@@ -1,0 +1,38 @@
+{
+  "schema_version": "verified-revenue-persisted-growth.v1",
+  "run_at": "2026-08-11T04:10:17.297190Z",
+  "eligible_metrics_total": 1,
+  "calculated_growth_total": 1,
+  "growth": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "ticker": "LRCX",
+      "metric": "revenue",
+      "growth_type": "YoY",
+      "current_value": 23232690000,
+      "prior_value": 18435591000,
+      "unit": "USD",
+      "current_period_start": "2025-06-30",
+      "current_period_end": "2026-06-28",
+      "prior_period_start": "2024-07-01",
+      "prior_period_end": "2025-06-29",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000707549.json",
+      "actuals_ledger": "data/earnings_ledger/verified_revenue_actuals.ndjson",
+      "verification": "current and prior values were joined from the persisted verified revenue actual ledger; this comparator performs no network access",
+      "yoy_percent": 26.0209
+    }
+  ],
+  "not_calculated": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "growth_type": "QoQ",
+      "reason": "CURRENT_FACT_NOT_STANDALONE_QUARTER"
+    }
+  ],
+  "issues": [],
+  "status": "PASS",
+  "contract": "QoQ/YoY compares persisted verified actuals only. The comparator has no HTTP client and missing/ambiguous comparables produce no fabricated value."
+}

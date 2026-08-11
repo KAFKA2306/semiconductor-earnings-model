@@ -1,0 +1,8 @@
+{
+  "schema_version": "verified-revenue-actuals-manifest.v1",
+  "run_at": "2026-08-11T04:10:17.234084Z",
+  "actuals_total": 104,
+  "issues": [],
+  "status": "PASS",
+  "contract": "Growth calculations consume this persisted multi-period actual ledger; SEC Company Facts is fetched only by the ledger builder."
+}
