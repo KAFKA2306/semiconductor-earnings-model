@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 from mcp.server import MCPServer
 from mcp.server.transport_security import TransportSecuritySettings
@@ -19,49 +20,49 @@ mcp = MCPServer(
 
 
 @mcp.tool()
-def search_companies(query: str = "") -> dict:
+def search_companies(query: str = "") -> dict[str, Any]:
     """Search canonical company identities by company id, name, or ticker."""
     return _service.search_companies(query)
 
 
 @mcp.tool()
-def get_company_earnings(company_id: str) -> dict:
+def get_company_earnings(company_id: str) -> dict[str, Any]:
     """Return the latest canonical earnings event for one company."""
     return _service.get_company_earnings(company_id)
 
 
 @mcp.tool()
-def get_earnings_history(company_id: str) -> dict:
+def get_earnings_history(company_id: str) -> dict[str, Any]:
     """Return the canonical earnings event history for one company."""
     return _service.get_earnings_history(company_id)
 
 
 @mcp.tool()
-def get_evidence(event_id: str = "") -> dict:
+def get_evidence(event_id: str = "") -> dict[str, Any]:
     """Return event evidence and the latest evidence audit."""
     return _service.get_evidence(event_id)
 
 
 @mcp.tool()
-def get_lineage() -> dict:
+def get_lineage() -> dict[str, Any]:
     """Return the SHA-256-bound canonical lineage manifest."""
     return _service.get_lineage()
 
 
 @mcp.tool()
-def get_audit_status() -> dict:
+def get_audit_status() -> dict[str, Any]:
     """Return all canonical ledger audit artifacts and aggregate status."""
     return _service.get_audit_status()
 
 
 @mcp.tool()
-def get_publication_snapshot() -> dict:
+def get_publication_snapshot() -> dict[str, Any]:
     """Return the latest fail-closed publication snapshot."""
     return _service.get_publication_snapshot()
 
 
 @mcp.tool()
-def get_data_quality() -> dict:
+def get_data_quality() -> dict[str, Any]:
     """Return deterministic audit, publication, and lineage quality status."""
     return _service.get_data_quality()
 
