@@ -117,6 +117,20 @@ NAND ASPとビット出荷量は、次を明示して保存します。
 - [Financial research ontology](data/ontology/financial_research_ontology.json)
 - [Cross-project ontology](ontology/project.yaml)
 
+## Data Platform Standard v1
+
+`data/earnings_ledger/` を一次事実の正本とし、同じread-only `DataPlatformService` をREST Data API・CLI・MCPから利用します。adapter側で財務値、freshness、quality statusを再計算しません。
+
+- [Data sources / data layers](docs/data-sources.md)
+- [Methodology / deterministic replay](docs/methodology.md)
+- [Data quality / correction policy](docs/data-quality.md)
+- [MCP 2026-07-28 / tool catalog](docs/mcp.md)
+- [Machine-readable standard contract](config/data_platform_standard.json)
+
+主要recordは `canonical_id`、source URL/hash、freshness、null reason、derivation、basis、provenanceを保持します。欠損を0/falseへ補完せず、source不明・basis不明・矛盾はfail-closeします。
+
+MCPは公式Python SDK v2の `MCPServer` を使うstateless Streamable HTTP `/mcp` で、`server/discover` と `tools/list` をCI検証します。
+
 ## ローカル検証
 
 ```bash
@@ -134,6 +148,8 @@ uv run python scripts/build_financial_database_with_nand.py
 uv run python scripts/check_readme_pages_link.py
 uv run python scripts/build_model_snapshot.py
 uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
+uv run python scripts/check_data_platform_standard.py
+uv run --with "mcp>=2,<3" python scripts/check_mcp_contract.py
 uv run python -m pytest -q
 npm --prefix site ci
 npm --prefix site run test:unit-audit
@@ -146,4 +162,4 @@ GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local 
 
 このプロジェクトは財務・業界研究用です。投資助言、売買推奨、将来利益の保証ではありません。
 
-**README最終監査:** 2026-08-07
+**README最終監査:** 2026-08-11

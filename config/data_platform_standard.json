@@ -1,0 +1,80 @@
+{
+  "schema_version": "data-platform-standard.v1",
+  "protocol_version": "2026-07-28",
+  "canonical_root": "data/earnings_ledger",
+  "mcp_endpoint": "/mcp",
+  "data_layers": {
+    "raw/bronze": [
+      "data/earnings_ledger/rejected.ndjson",
+      "data/earnings_ledger/source_registry.json",
+      "data/earnings_ledger/source_state.json"
+    ],
+    "normalized/silver": [
+      "data/earnings_ledger/events.ndjson",
+      "data/earnings_ledger/*audit_latest.json",
+      "data/earnings_ledger/lineage_latest.json"
+    ],
+    "public/gold": [
+      "data/earnings_ledger/publication_latest.json",
+      "site/public/api/**"
+    ]
+  },
+  "provenance_required_fields": [
+    "canonical_id",
+    "schema_version",
+    "data_layer",
+    "data_as_of",
+    "generated_at",
+    "source_type",
+    "source_id",
+    "source_doc_id",
+    "source_url",
+    "source_observed_at",
+    "source_hash",
+    "freshness",
+    "stale",
+    "null_reason",
+    "derivation_method",
+    "basis",
+    "provenance"
+  ],
+  "mcp_tools": [
+    "search_companies",
+    "get_company_earnings",
+    "get_earnings_history",
+    "get_evidence",
+    "get_lineage",
+    "get_audit_status",
+    "get_publication_snapshot",
+    "get_data_quality"
+  ],
+  "determinism": {
+    "llm_overwrites_primary_facts": false,
+    "point_in_time_hashes_required": true,
+    "null_is_not_defaulted": true,
+    "fail_closed": true
+  },
+  "security": {
+    "read_only": true,
+    "secrets": "environment-only",
+    "request_body_limit_bytes": 65536,
+    "host_allowlist_env": "MCP_ALLOWED_HOSTS",
+    "origin_allowlist_env": "MCP_ALLOWED_ORIGINS",
+    "rate_limit_policy": "Enforce at the deployment ingress; default production policy is 60 requests per minute per client identity or source IP.",
+    "stateless_http": true
+  },
+  "rest_api": {
+    "base_path": "/api/data-platform/v1",
+    "read_only": true,
+    "routes": {
+      "search_companies": "GET /api/data-platform/v1/companies?q={query}",
+      "get_company_earnings": "GET /api/data-platform/v1/companies/{company_id}/earnings",
+      "get_earnings_history": "GET /api/data-platform/v1/companies/{company_id}/history",
+      "get_evidence": "GET /api/data-platform/v1/evidence?event_id={event_id}",
+      "get_lineage": "GET /api/data-platform/v1/lineage",
+      "get_audit_status": "GET /api/data-platform/v1/audit",
+      "get_publication_snapshot": "GET /api/data-platform/v1/publication",
+      "get_data_quality": "GET /api/data-platform/v1/quality"
+    }
+  }
+}

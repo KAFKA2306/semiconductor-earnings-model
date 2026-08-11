@@ -1,0 +1,50 @@
+name: Data Platform Standard v1
+
+on:
+  pull_request:
+    paths:
+      - "config/data_platform_standard.json"
+      - "data/earnings_ledger/**"
+      - "docs/data-sources.md"
+      - "docs/methodology.md"
+      - "docs/data-quality.md"
+      - "docs/mcp.md"
+      - "scripts/check_data_platform_standard.py"
+      - "scripts/check_mcp_contract.py"
+      - "src/data_platform.py"
+      - "src/data_platform_cli.py"
+      - "src/data_platform_rest.py"
+      - "src/mcp_server.py"
+      - "tests/test_data_platform_standard.py"
+      - "README.md"
+      - ".github/workflows/data-platform-standard.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  standard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install existing locked environment
+        run: uv sync --frozen
+
+      - name: Verify Data Platform Standard v1
+        run: uv run python scripts/check_data_platform_standard.py
+
+      - name: Run deterministic service tests
+        run: uv run python -m pytest tests/test_data_platform_standard.py -q
+
+      - name: Verify MCP 2026-07-28 discovery, tools and parity
+        run: uv run --with "mcp>=2,<3" python scripts/check_mcp_contract.py
