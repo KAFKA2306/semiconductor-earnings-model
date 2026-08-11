@@ -8,9 +8,12 @@ on:
       - '.github/workflows/verified-revenue-growth.yml'
       - 'scripts/derive_verified_revenue_growth.py'
       - 'scripts/derive_verified_revenue_qoq.py'
+      - 'scripts/build_verified_revenue_actuals_ledger.py'
+      - 'scripts/derive_persisted_revenue_growth.py'
       - 'scripts/audit_verified_revenue_growth_duration.py'
       - 'tests/test_verified_revenue_growth.py'
       - 'tests/test_verified_revenue_qoq.py'
+      - 'tests/test_persisted_revenue_actuals_join.py'
       - 'tests/test_verified_revenue_growth_duration_audit.py'
       - 'data/earnings_ledger/verified_revenue_latest.json'
       - 'data/earnings_ledger/verified_revenue_lineage_audit_latest.json'
@@ -19,9 +22,12 @@ on:
       - '.github/workflows/verified-revenue-growth.yml'
       - 'scripts/derive_verified_revenue_growth.py'
       - 'scripts/derive_verified_revenue_qoq.py'
+      - 'scripts/build_verified_revenue_actuals_ledger.py'
+      - 'scripts/derive_persisted_revenue_growth.py'
       - 'scripts/audit_verified_revenue_growth_duration.py'
       - 'tests/test_verified_revenue_growth.py'
       - 'tests/test_verified_revenue_qoq.py'
+      - 'tests/test_persisted_revenue_actuals_join.py'
       - 'tests/test_verified_revenue_growth_duration_audit.py'
       - 'data/earnings_ledger/verified_revenue_latest.json'
       - 'data/earnings_ledger/verified_revenue_lineage_audit_latest.json'
@@ -47,8 +53,8 @@ jobs:
       - name: Install test dependency
         run: python -m pip install --disable-pip-version-check pytest
       - name: Regression tests
-        run: python -m pytest -q tests/test_verified_revenue_growth.py tests/test_verified_revenue_qoq.py tests/test_verified_revenue_growth_duration_audit.py
-      - name: Derive verified YoY with retry
+        run: python -m pytest -q tests/test_verified_revenue_growth.py tests/test_verified_revenue_qoq.py tests/test_persisted_revenue_actuals_join.py tests/test_verified_revenue_growth_duration_audit.py
+      - name: Build persisted verified actual ledger with retry
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         shell: bash
@@ -60,19 +66,29 @@ jobs:
           fi
           ok=0
           for attempt in 1 2 3; do
-            echo "Verified revenue YoY attempt ${attempt}/3"
-            if python scripts/derive_verified_revenue_growth.py; then
+            echo "Verified revenue actual ledger attempt ${attempt}/3"
+            if python scripts/build_verified_revenue_actuals_ledger.py; then
               ok=1
               break
             fi
-            if [ "$attempt" -lt 3 ]; then
-              sleep $((attempt * 30))
-            fi
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 30)); fi
           done
-          if [ "$ok" -ne 1 ]; then
-            echo "verified revenue YoY derivation failed after 3 attempts"
-            exit 1
-          fi
+          if [ "$ok" -ne 1 ]; then exit 1; fi
+      - name: Derive persisted-ledger QoQ and YoY without network access
+        run: python scripts/derive_persisted_revenue_growth.py
+      - name: Derive verified YoY with retry
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        shell: bash
+        run: |
+          set -u
+          ok=0
+          for attempt in 1 2 3; do
+            echo "Verified revenue YoY attempt ${attempt}/3"
+            if python scripts/derive_verified_revenue_growth.py; then ok=1; break; fi
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 30)); fi
+          done
+          if [ "$ok" -ne 1 ]; then exit 1; fi
       - name: Audit YoY duration and provenance contract
         run: python scripts/audit_verified_revenue_growth_duration.py
       - name: Derive verified QoQ with retry
@@ -84,28 +100,39 @@ jobs:
           ok=0
           for attempt in 1 2 3; do
             echo "Verified revenue QoQ attempt ${attempt}/3"
-            if python scripts/derive_verified_revenue_qoq.py; then
-              ok=1
-              break
-            fi
-            if [ "$attempt" -lt 3 ]; then
-              sleep $((attempt * 30))
-            fi
+            if python scripts/derive_verified_revenue_qoq.py; then ok=1; break; fi
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 30)); fi
           done
-          if [ "$ok" -ne 1 ]; then
-            echo "verified revenue QoQ derivation failed after 3 attempts"
-            exit 1
-          fi
+          if [ "$ok" -ne 1 ]; then exit 1; fi
       - name: Persist verified growth artifacts on main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash
         run: |
-          if [ -z "$(git status --porcelain -- data/earnings_ledger/verified_revenue_growth_latest.json data/earnings_ledger/verified_revenue_growth_duration_audit_latest.json data/earnings_ledger/verified_revenue_qoq_latest.json)" ]; then
+          paths=(
+            data/earnings_ledger/verified_revenue_growth_latest.json
+            data/earnings_ledger/verified_revenue_growth_duration_audit_latest.json
+            data/earnings_ledger/verified_revenue_qoq_latest.json
+            data/earnings_ledger/verified_revenue_actuals.ndjson
+            data/earnings_ledger/verified_revenue_actuals_manifest.json
+            data/earnings_ledger/verified_revenue_persisted_growth_latest.json
+          )
+          if [ -z "$(git status --porcelain -- "${paths[@]}")" ]; then
             echo "No verified growth changes."
             exit 0
           fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add data/earnings_ledger/verified_revenue_growth_latest.json data/earnings_ledger/verified_revenue_growth_duration_audit_latest.json data/earnings_ledger/verified_revenue_qoq_latest.json
+          git add "${paths[@]}"
           git commit -m "data: update verified revenue growth"
           git push
+      - name: Clean checkout gate
+        if: github.event_name == 'pull_request'
+        run: |
+          git checkout -- data/earnings_ledger/verified_revenue_growth_latest.json \
+                          data/earnings_ledger/verified_revenue_growth_duration_audit_latest.json \
+                          data/earnings_ledger/verified_revenue_qoq_latest.json
+          rm -f data/earnings_ledger/verified_revenue_actuals.ndjson \
+                data/earnings_ledger/verified_revenue_actuals_manifest.json \
+                data/earnings_ledger/verified_revenue_persisted_growth_latest.json
+          git status --porcelain --untracked-files=all
+          test -z "$(git status --porcelain --untracked-files=all)"
