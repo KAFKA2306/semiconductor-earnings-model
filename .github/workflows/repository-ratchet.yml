@@ -1,0 +1,27 @@
+name: Repository Ratchet
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-earnings-flow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Verify canonical earnings flow
+        run: python scripts/verify_repository_ratchet.py
+      - name: Compile ratchet verifier
+        run: python -m py_compile scripts/verify_repository_ratchet.py
+      - name: Verify clean checkout
+        run: |
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          test -z "$(git status --porcelain --untracked-files=all)"
