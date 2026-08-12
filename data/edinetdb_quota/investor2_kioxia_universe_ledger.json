@@ -1,0 +1,1009 @@
+{
+  "schema_version": "edinetdb.quota-ledger.v1",
+  "days": {
+    "2026-08-12": {
+      "requests": {
+        "61dbedf948c999c48f0a6a0c9d3fd37d7ac8557576dace2dadd1e9af57e86735": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01777/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "07e6390e661922031758af87038db8720dba1e2c6dc7203b3969429929649f82",
+          "completed_at": "2026-08-12T02:00:31Z"
+        },
+        "fe9f2c72d0114ae3066cec8f684cb23f8a533fddbfa2813d2cb3e5f8bd266c0c": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E00776/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "d70829bdfcd9afe3c69d6c3bb2ed69e9be71ee09b10d7fbae9e93182f2712eb9",
+          "completed_at": "2026-08-12T02:00:31Z"
+        },
+        "8e76ca5748d9e7def2d94149ebff73fbf561f02745a8f47b90c5d38b493d07ab": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02652/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "269d5811d82d1b1296826cb9a9a5279a5d924f45ca467e47a7602623c14d58e7",
+          "completed_at": "2026-08-12T02:00:31Z"
+        },
+        "0b7c651d0366ff4e318dd3ba9f59e7ee931ecd57c1bdcb78b0b8c2c05f4c6e42": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E35948/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "101101ad6eb4a97a225f86bd19ace55cbc619514efd6108a30409fb4f6efcab7",
+          "completed_at": "2026-08-12T02:00:32Z"
+        },
+        "967ebf451633171eefaab4b3ed7fe686792acd22d2bc89edaab45c0e1b180f91": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02081/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "c0cff773cdbe5305d015e57d48493277566963a69d3327a7dd0cde1bc49bcd79",
+          "completed_at": "2026-08-12T02:00:32Z"
+        },
+        "126b93870ff6b334461813f73302bacb1db9479f4548b40804609823c26f9a75": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01950/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "2f390b9ae0ad3d20c564742ba73d257f8bed4020bdc5d5b213b0a4d2456d4df6",
+          "completed_at": "2026-08-12T02:00:32Z"
+        },
+        "6427b389231489f4851d673dc7562a7aaa9e64f9b4ae426ce06df72d3f230ac3": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01081/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "4b885fc257b832cd186773d5132b872eba30a2dade27c33cf510f1a5ff776903",
+          "completed_at": "2026-08-12T02:00:32Z"
+        },
+        "8220ef5e537cf277436af86dac5a9291d0849498e714b9c0b2258f0a5c8089e9": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E00024/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "f52c9cbb3e9f4427fa18d448c549818ac83951b3ca0eefde73cb612fe02cc3d3",
+          "completed_at": "2026-08-12T02:00:32Z"
+        },
+        "e798c9491e37eda324ae6d3dbf7befe3023226bb76106378c320a7c9a22412c9": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02271/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "5f021cc32236b49128ce85ce1502603b349260037afa58a6588d754756fab19b",
+          "completed_at": "2026-08-12T02:00:32Z"
+        },
+        "e679af8f498e48ebd6c25ce95ba57a75655ec716e208fa9e0f03588600b662de": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02288/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "9d5c3e4d7dbb53c76908940a051c0a84b0cdd4e61c94c3ad0d1c89a9cc2fd3b0",
+          "completed_at": "2026-08-12T02:00:32Z"
+        },
+        "8aeff17d38bb88ed03fa11908335f5c2d3ed00197af0d5ddabe865fb96d1c9ac": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01953/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "e2d365b5adfa947a6fe2fac0223693424ac68555cd984b2117ab9bd84564e4d9",
+          "completed_at": "2026-08-12T02:00:33Z"
+        },
+        "b1221567524e14d998ae8c6cc9be987c52bdf79d2d90c679ba44ce5838be7682": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01506/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "3a77f50fa14e0fa231876394ec5761a30d8a731e769a21ad2d149b3bcf9c22b1",
+          "completed_at": "2026-08-12T02:00:33Z"
+        },
+        "c92f6c7586eaf3e64964d1244888107be21a8e2a89c0405bc4005578cdf007da": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E00775/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "cd2f5b1b534fed700b872c0ccaa173299390ec98e106a74234328642087214ea",
+          "completed_at": "2026-08-12T02:00:33Z"
+        },
+        "a37e8bbdded18f077830d57cff9acea320ba006303b0a51a2092262be7fecde9": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02024/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "7b41b4ce1e52a14fa38ded562a5d467231f14b17a71d4f10b346d389514e09be",
+          "completed_at": "2026-08-12T02:00:33Z"
+        },
+        "327fb5754a4afc85023ee37d27a550026ca1dd0bd8fe36846bea59d44b5111e8": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01991/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "6e23246aeb2ca69f36f5f933e5e84d297555e1ebaf0a0defb35dd56e459771a0",
+          "completed_at": "2026-08-12T02:00:34Z"
+        },
+        "53f61322f8c4da321e10847df92ae760ae114b2ac51981d9889bea65c231ca34": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E00854/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "a42c1c8bc857a6d8f7b653d350646e0e54f0c27ffbe02ad4e111a541c079c854",
+          "completed_at": "2026-08-12T02:00:34Z"
+        },
+        "2e1e05f8bfda240727144756eb067b8a8f5f3c4909af964e59c67a99e91ccc96": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E37488/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "bb184d93c5e8c759fb6c3415e9bab7f4f9e10806795ce51b8131293fe419f8d5",
+          "completed_at": "2026-08-12T02:00:34Z"
+        },
+        "0f91adfceff0d29ae2f8c8fcac21b5fb1067466fab27ea4c20288397d63f9dad": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02293/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "f0afdaf06400937ad6c52be8cd686905f76d09b847c67b0155d4f7e367874795",
+          "completed_at": "2026-08-12T02:00:34Z"
+        },
+        "fdff351e24788bfff8866439780dad13629c0a5b4a64465dafa26101cc0b61fd": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01955/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "197f3dc685ddc3dff0c8b11fbda9b596193d3c2ec50ad143b443bc83b4629675",
+          "completed_at": "2026-08-12T02:00:34Z"
+        },
+        "13af825ae91fdeda3bb3fc879a8f00711a734ade2a9f399ead1c7c1fc619f09d": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E37978/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "02479ce7b26e468d44e8bc188a4d795f89dcab43640c627264e522e67968d5eb",
+          "completed_at": "2026-08-12T02:00:34Z"
+        },
+        "a2e164bafeb1930285180fa8a13fffc0ae4ff2bf7ecef58d983e610d5e7589fb": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02289/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "5f50550f534c77eec0bf605215b30ff7b045341e7c127f04b4f83ed295716ca0",
+          "completed_at": "2026-08-12T02:00:34Z"
+        },
+        "e176c1500b44bb410dc22cc0cec6e5abe864be87aecc60d7ba5f9ed1245d9dca": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02328/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "adcfa0e8b97908a284ea1d1ba7afabb2ad230691bb6989de188caa5c8c9110ff",
+          "completed_at": "2026-08-12T02:00:35Z"
+        },
+        "24ddf6e0ea520b07bbd04bf2409e22e7aae3bdfeea84c1c8e29e4be41049b401": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01887/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "0bfc118749321dff308da73630f7e4f10a11f14a128dd3c2be8323f5944a2b87",
+          "completed_at": "2026-08-12T02:00:35Z"
+        },
+        "2228d22fe746ddf9e0548a1b9756452ad9a9f8d938c908250445cf45a4517d55": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01790/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "6dd95dabf3fbb0d5bf2467ac3ef36a57442b516d3ebf696697848baa52b46d61",
+          "completed_at": "2026-08-12T02:00:35Z"
+        },
+        "5d5f8eb648260288d0e5af1072426e5336654bf464fa24075e2a040d84969106": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01210/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "408fdc84fdd3946f861e7a2627a8ebe40c78dfd92c34d470ef4b2513e1155a9b",
+          "completed_at": "2026-08-12T02:00:35Z"
+        },
+        "df12fa45c4ac2ca4b372349179a7da06796ed14af3c51294d980329dd71697df": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02030/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "641a2c7496be093e8d048d15dcf33ee88f1f47edc18b27fb4402a4e0eb55d5c8",
+          "completed_at": "2026-08-12T02:00:36Z"
+        },
+        "a229e285011305846283d2b450bec524a21665bef0c698effe970dc4a0bf71b2": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01735/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "7a86ac558286effc1c062a099181d65d0163bf65fb68b31bba0d91a24b936c4f",
+          "completed_at": "2026-08-12T02:00:36Z"
+        },
+        "3fcdf9ba3af9425a7fdb987d59884b85b9b70da5cc2ad031ec992979e4d95cf3": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01708/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "f3025035404b43a9bbedab115ea4947f8c955c2a741aaa9623fb4bc09d9bebc9",
+          "completed_at": "2026-08-12T02:00:36Z"
+        },
+        "86d3c7834867d360f796014c71b7ca34b6b9f169f48779481b044cbb0fec7401": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02334/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "12f8874a2b7679274e3c513f0702be628b83c9d01a97d028cd9e62a5f6c6b9d1",
+          "completed_at": "2026-08-12T02:00:36Z"
+        },
+        "2f613df7bc0da2cad857d4779cc5f7fbf91b53fc206d8f7b3f7fca01be65db51": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01051/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "cb0bfd86f531f2a1fd15b291fe3a6132db256a10fb1b6c7572f3183864db4114",
+          "completed_at": "2026-08-12T02:00:36Z"
+        },
+        "c012eeb81b89418e2d71d548f0183314467f91c89ebfeaa85ddbb9ec8ef151ee": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E24994/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "c391e20c04468ce52280b771ab944f127844ab233598856f171938409e1d2b4f",
+          "completed_at": "2026-08-12T02:00:36Z"
+        },
+        "cec72249324fc62de2aa25479aac9cb3324776fc18ede8d4931016f0ef9a5ed8": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02051/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "1acc668bce2bd7415a2dd9010b1167005decef21f9461567be19283e405db898",
+          "completed_at": "2026-08-12T02:00:36Z"
+        },
+        "1118d2956f3868f6462f7c6f091f7ae2b7677cf9786202b83b740937f769d8d1": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E00119/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "164914dc36f1e844bca8e7998e2a5a786e09aa4922f4c6fba1670a3d2bf64ab6",
+          "completed_at": "2026-08-12T02:00:37Z"
+        },
+        "675294672460a684de6aa96df4255d95f9625806c07a678e4a2f458f6e875909": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02042/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "49232384efdf03d94e0240dfa39845b51016022465ec08be8152d7349eda5f7d",
+          "completed_at": "2026-08-12T02:00:37Z"
+        },
+        "66afc65361d013993e8cb0f43e3a8fecd8b1f663de891e3380152ee839f36ec9": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02350/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "f2fa2cd738eaaa640e94380a72523bb0c4c256eb3ed0965b4fac4a3d9a4543dd",
+          "completed_at": "2026-08-12T02:00:37Z"
+        },
+        "e53e436b2c09effe7707398519f5bf524257227724fd7f56e59dd955ca6647c4": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02043/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "21708adc4fba4a5806f13d1f55804e11e6ec2c2b5fd36879b3ad963ecce4e7d2",
+          "completed_at": "2026-08-12T02:00:37Z"
+        },
+        "98f4c92c8a84eee4bb6eb21dea34da95766e6167b03d93a479f070f288c183e4": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E31640/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "68a811bc2b35ce08d70a316c7bfade58f3abd654c87b48255b9f84fd771a5bc1",
+          "completed_at": "2026-08-12T02:00:37Z"
+        },
+        "a2e1e78e0020822f2e276e8995e2317d17dc780b2dfb86f878e130c1f1acedae": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E04856/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "907cf76ef3878f3159db20fce2e2135842ba3d64671a5dde3bfe0f13325d9e67",
+          "completed_at": "2026-08-12T02:00:37Z"
+        },
+        "c1af0e3e54a65175d753cd5a51d47aad0b989f0961f5228055956eeb4193d886": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E30479/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "7636cecd6d6cb48d265923e061d6febdd0cdf4fc370d783ab5a2592602d124cb",
+          "completed_at": "2026-08-12T02:00:38Z"
+        },
+        "bdc2fc710024ba24f9b290428c64654050937832459e7573cbd63e618cad227e": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E36750/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "8032f5620ccf6e2448589052579930a379897423887e2fda226a505114761779",
+          "completed_at": "2026-08-12T02:00:38Z"
+        },
+        "6fda8de228a26c3b52faa6e7fa84e1363a55ea3f6f674bc158f913cf0f61cc22": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E36545/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "3284affe4c6305c6f593048f35f187d90da4ef66be29e07cadfef6cca2c3f495",
+          "completed_at": "2026-08-12T02:00:38Z"
+        },
+        "40aa5a8abc49954ebbeaa5330c1e4d76f85ec229a78ec11ca98b74d75ab6daaa": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E36433/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "213bace193fae852600784a7630f8e5ef65a5162239ce85811854230bfd1e185",
+          "completed_at": "2026-08-12T02:00:38Z"
+        },
+        "4a46a74058b4b97e6111bc23417518d44c49804efacdf91daca4703f13e31735": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02060/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "f908fed722718d5e2a2d1ec7e85d692da97dd399b5b87a4da27af5f12ec2db1f",
+          "completed_at": "2026-08-12T02:00:38Z"
+        },
+        "15e3814a3feae15409665b223ab71119a9b09f915f8a4164f7c03af807b7982e": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E36368/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "fbe12cf79bb9cba88986718eaceab92792ea4866679573457964db2ac4bfd42e",
+          "completed_at": "2026-08-12T02:00:38Z"
+        },
+        "948f2bf65f804889210efe7a161a598b0fbbb57359513e6c4d9bf7f52beb4ae8": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02049/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "bf8c1bcb322b0c239b9aeba39bda662997be277a287b401f040de400e1a37697",
+          "completed_at": "2026-08-12T02:00:39Z"
+        },
+        "2f24733b95cc05570a31a495185dc2362cfcc21170ce14e8882093e8a867b312": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01257/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "ae3ba7c7d157f38d3fbcfac7eee527e01d9139d587d18f6825e636e391d9e139",
+          "completed_at": "2026-08-12T02:00:39Z"
+        },
+        "f78db64e317d2a250ea3174c39dd38f9acd7e3cea982e0b01adfc33f727a22ce": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02062/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "d6c4416e3880b9bc1869aae785f073e82dc67c075deade138bb8cef5ca46723b",
+          "completed_at": "2026-08-12T02:00:39Z"
+        },
+        "6815b8e33b52c880cd2f031086b0c1f8c7d27bdb42cc32c35afc42eb640988bd": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E25620/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "e8a3e48f4dcb250a512646fc2a2b4442fa036b4bc9d181ec2dfd9e450c74fe73",
+          "completed_at": "2026-08-12T02:00:39Z"
+        },
+        "2215f5ca02c3cfd9a57923e4dc0e128f20a461959baafc23878a1d24c8aef295": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E05669/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "e21c8e6d5032ec2bafd8f5ec9c35d7269e130d337dd413a9e434541de59c5fbf",
+          "completed_at": "2026-08-12T02:00:39Z"
+        },
+        "d2d81bea05a58d012b4be862a1f187ca39d5d6b81223a9951bda4a79afdfc27c": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E01205/financials",
+          "params": [
+            [
+              "period",
+              "quarterly_standalone"
+            ],
+            [
+              "years",
+              "5"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2"
+          ],
+          "response_sha256": "82f7dad9c41414bd2c4fddcb6a31e0f4c4dbbb995d80638af39d5306c195bb51",
+          "completed_at": "2026-08-12T02:00:39Z"
+        }
+      }
+    }
+  }
+}
