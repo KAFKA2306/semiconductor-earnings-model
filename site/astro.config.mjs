@@ -46,8 +46,9 @@ const pastelWatercolorSystem = {
             enhanced = enhanced.replace('<main', '<main id="main-content"');
           }
           if (!enhanced.includes('class="skip-link"')) {
-            if (!enhanced.includes('<body>')) throw new Error(`Missing <body> in ${file}`);
-            enhanced = enhanced.replace('<body>', '<body><a class="skip-link" href="#main-content">本文へ移動</a>');
+            const bodyPattern = /<body([^>]*)>/;
+            if (!bodyPattern.test(enhanced)) throw new Error(`Missing body element in ${file}`);
+            enhanced = enhanced.replace(bodyPattern, '<body$1><a class="skip-link" href="#main-content">本文へ移動</a>');
           }
         }
         await fs.writeFile(file, enhanced);
