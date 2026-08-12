@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-12T11:11:05.032155Z",
+  "run_at": "2026-08-12T13:48:24.467603Z",
   "accepted_events_total": 1,
-  "rejected_events_total": 79,
+  "rejected_events_total": 80,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -26,7 +26,7 @@
       "source_id": "tsmc",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 0
     },
     {
       "source_id": "asml",
@@ -80,7 +80,7 @@
       "source_id": "synopsys",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "cadence",
