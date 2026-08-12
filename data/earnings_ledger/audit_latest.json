@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-12T09:32:22.509264Z",
+  "run_at": "2026-08-12T11:11:05.032155Z",
   "accepted_events_total": 1,
   "rejected_events_total": 79,
   "source_status": [
