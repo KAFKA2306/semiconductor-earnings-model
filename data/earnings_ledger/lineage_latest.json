@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-lineage.v2",
-  "generated_from_run_at": "2026-08-09T20:52:09.102747Z",
+  "generated_from_run_at": "2026-08-12T07:53:43.764302Z",
   "status": "PASS",
   "artifacts": [
     {
@@ -10,8 +10,8 @@
     },
     {
       "path": "data/earnings_ledger/rejected.ndjson",
-      "sha256": "06adc4c8cefdde6d2712e12a009ccdd3348e896c62fffbe20c2bdecc35cf20ec",
-      "size_bytes": 8584
+      "sha256": "81b72f6b63a012efce321bee108066d255e021b1d51aa14524f0269649ff461b",
+      "size_bytes": 49513
     },
     {
       "path": "data/earnings_ledger/source_registry.json",
@@ -20,47 +20,47 @@
     },
     {
       "path": "data/earnings_ledger/state.json",
-      "sha256": "a9ce9299f5d1894d95cd871e13580791a6b821868c3d487686e0af87c193cc6d",
+      "sha256": "53270855a34bf5e4707cc446cf4cd8df65acb3df3d7a1bdef8777736b87314f5",
       "size_bytes": 268
     },
     {
       "path": "data/earnings_ledger/audit_latest.json",
-      "sha256": "b4dd11dbb89a7e5132908bccdd3466766e85ad003357e5ded8c2a5ae684b18f0",
+      "sha256": "d3d0319b9fff4c4668fff37d9d7635935bb81f74d550e5626b70bcfbe9b8c4e6",
       "size_bytes": 3074
     },
     {
       "path": "data/earnings_ledger/publication_latest.json",
-      "sha256": "dfee6e65dc3928f2642671dd875731ad53d19e087fc0b8325cc969d86eac3454",
+      "sha256": "94dd10bad58c3518117f970dd9495d57ab6b62b010d94406730161a92ef16d60",
       "size_bytes": 862
     },
     {
       "path": "data/earnings_ledger/source_state.json",
-      "sha256": "9947b84626531c3f45c332efedc95144aa360b06a07eea25f8613392a31c067e",
-      "size_bytes": 6056
+      "sha256": "def40e25766c0059126b6cce3a1cfef61ffe1ee79380a0263adb0d88311c5bb5",
+      "size_bytes": 6378
     },
     {
       "path": "data/earnings_ledger/semantic_duplicate_audit_latest.json",
-      "sha256": "439f0a8b18b9aa154eb2588c3bd680aa31da8adc9189113ffb818e60a0c3379d",
+      "sha256": "c24fe72812ca4649e3ebeb65db042a228088c3d0a3d441d8d0b5c4e695138d77",
       "size_bytes": 526
     },
     {
       "path": "data/earnings_ledger/period_normalization_latest.json",
-      "sha256": "8a0805092ad6ec24e94aaa4d5d321f434e23ef07a0e1b51aa1a1a826337560de",
-      "size_bytes": 776
+      "sha256": "3d44613e33bd7da469a9260f8046b26598c2034cdad578ff2a4e6805ededecda",
+      "size_bytes": 963
     },
     {
       "path": "data/earnings_ledger/accounting_basis_audit_latest.json",
-      "sha256": "e4bef3f5360a3d2cf68bb2c820cbec8d9133a12b7897f628589de597f1cbbce3",
+      "sha256": "a17a047adb02ea5c1ce8090e2e6504f88d94e154aa3dbc9db53254096db51f5a",
       "size_bytes": 982
     },
     {
       "path": "data/earnings_ledger/rejection_reason_audit_latest.json",
-      "sha256": "d35e7ed9108764ee58cdcf054d509a9b59118a9e6d8fe9ab14def3ba19a0620d",
-      "size_bytes": 859
+      "sha256": "c3ca21d80dac21668cc581da36967456d875907d55beec69eaea667e37dd71d8",
+      "size_bytes": 1573
     },
     {
       "path": "data/earnings_ledger/published_at_audit_latest.json",
-      "sha256": "16dca63ccccee6f82bdfb734fd0ba32684da8fe25bb40f29e514544028d2ad5d",
+      "sha256": "4e523050dda8f3d6f0966b100dfd8bf2c13c30dbf425b0a19c1ed9df9037a400",
       "size_bytes": 878
     },
     {
@@ -70,8 +70,8 @@
     },
     {
       "path": "data/earnings_ledger/consensus_separation_audit_latest.json",
-      "sha256": "6e8f4af544f7c478f5ac5beab30c574ed7c63c15be1d7250b4ea0933827f2f7d",
-      "size_bytes": 864
+      "sha256": "2c921ba8ab6ac775f90b4434f54a3ad188f558d244539675e9d82edc2719c751",
+      "size_bytes": 1261
     }
   ],
   "contract": {

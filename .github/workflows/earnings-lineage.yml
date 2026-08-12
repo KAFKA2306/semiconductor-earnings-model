@@ -6,8 +6,10 @@ on:
     paths:
       - ".github/workflows/earnings-lineage.yml"
       - "scripts/build_earnings_lineage_manifest.py"
+      - "scripts/verify_earnings_lineage_manifest.py"
       - "tests/test_earnings_lineage_manifest.py"
       - "tests/test_earnings_lineage_derived_audits.py"
+      - "tests/test_earnings_lineage_verifier.py"
       - "data/earnings_ledger/events.ndjson"
       - "data/earnings_ledger/rejected.ndjson"
       - "data/earnings_ledger/source_registry.json"
@@ -22,13 +24,16 @@ on:
       - "data/earnings_ledger/published_at_audit_latest.json"
       - "data/earnings_ledger/source_registry_audit_latest.json"
       - "data/earnings_ledger/consensus_separation_audit_latest.json"
+      - "data/earnings_ledger/lineage_latest.json"
   push:
     branches: [main]
     paths:
       - ".github/workflows/earnings-lineage.yml"
       - "scripts/build_earnings_lineage_manifest.py"
+      - "scripts/verify_earnings_lineage_manifest.py"
       - "tests/test_earnings_lineage_manifest.py"
       - "tests/test_earnings_lineage_derived_audits.py"
+      - "tests/test_earnings_lineage_verifier.py"
       - "data/earnings_ledger/events.ndjson"
       - "data/earnings_ledger/rejected.ndjson"
       - "data/earnings_ledger/source_registry.json"
@@ -43,6 +48,7 @@ on:
       - "data/earnings_ledger/published_at_audit_latest.json"
       - "data/earnings_ledger/source_registry_audit_latest.json"
       - "data/earnings_ledger/consensus_separation_audit_latest.json"
+      - "data/earnings_ledger/lineage_latest.json"
 
 permissions:
   contents: write
@@ -66,10 +72,27 @@ jobs:
         run: python -m pip install --disable-pip-version-check pytest
 
       - name: Run lineage regression tests
-        run: python -m pytest -q tests/test_earnings_lineage_manifest.py tests/test_earnings_lineage_derived_audits.py
+        run: python -m pytest -q tests/test_earnings_lineage_manifest.py tests/test_earnings_lineage_derived_audits.py tests/test_earnings_lineage_verifier.py
 
       - name: Build lineage manifest
         run: python scripts/build_earnings_lineage_manifest.py
+
+      - name: Verify generated lineage manifest
+        run: python scripts/verify_earnings_lineage_manifest.py --output data/earnings_ledger/lineage_verification.json
+
+      - name: Upload lineage verification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: earnings-lineage-verification-${{ github.sha }}
+          path: |
+            data/earnings_ledger/lineage_latest.json
+            data/earnings_ledger/lineage_verification.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Require pull request to carry current lineage manifest
+        if: github.event_name == 'pull_request'
+        run: git diff --exit-code -- data/earnings_ledger/lineage_latest.json
 
       - name: Commit validated lineage manifest
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

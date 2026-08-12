@@ -30,6 +30,46 @@ def test_select_window_events_is_strict_and_pass_only():
     assert [row["event_id"] for row in selected] == ["a", "b"]
 
 
+def test_required_verified_metric_event_survives_window_rollover():
+    state = {
+        "window_start": "2026-08-11T09:00:00Z",
+        "window_end": "2026-08-12T09:00:00Z",
+    }
+    rows = [
+        {"event_id": "old-metric", "freshness": "PASS", "published_at": "2026-08-07T20:06:32Z"},
+        {"event_id": "current", "freshness": "PASS", "published_at": "2026-08-12T08:00:00Z"},
+        {"event_id": "rejected", "freshness": "REJECTED", "published_at": "2026-08-07T20:06:32Z"},
+    ]
+    selected = evidence.select_window_events(rows, state, {"old-metric", "rejected"})
+    assert [row["event_id"] for row in selected] == ["old-metric", "current"]
+
+
+def test_required_metric_ids_only_come_from_clean_pass_document():
+    clean = {
+        "status": "PASS",
+        "issues": [],
+        "metrics": [{"event_id": "evt-1"}, {"event_id": "evt-2"}],
+    }
+    assert evidence.required_metric_event_ids(clean) == {"evt-1", "evt-2"}
+    dirty = {**clean, "issues": ["bad"]}
+    assert evidence.required_metric_event_ids(dirty) == set()
+
+
+def test_reusable_evidence_requires_same_event_and_valid_digest():
+    event = {"event_id": "evt-1", "company_id": "lam-research", "document_type": "10-K"}
+    proof = {
+        "event_id": "evt-1",
+        "company_id": "lam-research",
+        "document_type": "10-K",
+        "status": "PASS",
+        "source_content_sha256": "a" * 64,
+        "source_content_bytes": 123,
+    }
+    assert evidence.reusable_evidence(event, proof) is True
+    assert evidence.reusable_evidence(event, {**proof, "company_id": "other"}) is False
+    assert evidence.reusable_evidence(event, {**proof, "source_content_sha256": "bad"}) is False
+
+
 def test_audit_accepts_valid_primary_content_hash():
     row = {
         "event_id": "evt-1",

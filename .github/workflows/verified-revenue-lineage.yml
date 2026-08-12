@@ -3,14 +3,18 @@ name: Verified revenue lineage audit
 on:
   pull_request:
     paths:
+      - 'scripts/audit_earnings_evidence.py'
       - 'scripts/audit_verified_revenue_lineage.py'
+      - 'tests/test_earnings_evidence_audit.py'
       - 'tests/test_verified_revenue_lineage.py'
       - 'data/earnings_ledger/**'
       - '.github/workflows/verified-revenue-lineage.yml'
   push:
     branches: [main]
     paths:
+      - 'scripts/audit_earnings_evidence.py'
       - 'scripts/audit_verified_revenue_lineage.py'
+      - 'tests/test_earnings_evidence_audit.py'
       - 'tests/test_verified_revenue_lineage.py'
       - 'data/earnings_ledger/**'
       - '.github/workflows/verified-revenue-lineage.yml'
@@ -30,7 +34,16 @@ jobs:
       - name: Install test dependency
         run: python -m pip install pytest
       - name: Regression tests
-        run: python -m pytest -q tests/test_verified_revenue_lineage.py
+        run: python -m pytest -q tests/test_earnings_evidence_audit.py tests/test_verified_revenue_lineage.py
+      - name: Refresh required primary evidence
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: |
+          if [ -z "${SEC_USER_AGENT:-}" ]; then
+            echo "Repository variable SEC_USER_AGENT is required." >&2
+            exit 1
+          fi
+          python scripts/audit_earnings_evidence.py
       - name: Audit verified revenue lineage
         run: python scripts/audit_verified_revenue_lineage.py
       - name: Persist audit artifact on main

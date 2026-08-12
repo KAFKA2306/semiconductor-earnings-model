@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 UNIVERSE_PATH = ROOT / "config" / "investor2_kioxia_semiconductor_universe_50_2026-08-12.json"
 BASE_PLAN_PATH = ROOT / "config" / "edinetdb_quota_plan.json"
 PROJECTIONS_ROOT = ROOT / "data" / "edinetdb_projections" / "KAFKA2306__investor2"
-OUTPUT_PATH = PROJECTIONS_ROOT / "investor2-kioxia-semiconductor-universe-50-5y-quarterly.json"
+OUTPUT_PATH = ROOT / "data" / "financial_analysis" / "investor2" / "investor2-kioxia-semiconductor-universe-50-5y-quarterly.json"
 
 # Only deterministic first-party/official filing channels are canonical by default.
 # Other fetched rows are retained, but quarantined instead of silently discarded.
@@ -123,7 +123,6 @@ def canonical_reason(record: dict[str, Any]) -> tuple[bool, str | None]:
         if source_type == "ir_pdf":
             return False, "ir_pdf_extraction_requires_primary_url_verification"
         return False, "source_type_not_first_party_allowlisted"
-    # Keep the filing/disclosure row, but mark traceability gaps explicitly.
     if not record.get("doc_id") and not record.get("edinet_filing_url"):
         return False, "official_source_identifier_missing"
     return True, None
@@ -153,7 +152,6 @@ def derive_annual(quarters: list[dict[str, Any]]) -> dict[str, Any]:
     q4 = by_q.get(4, {})
     for field in STOCK_FIELDS:
         result[field] = q4.get(field)
-    # Standalone-quarter EPS is not safely additive across changing weighted-average share counts.
     result["eps"] = None
     result["eps_note"] = "not_derived_from_standalone_quarters"
     return result

@@ -44,8 +44,6 @@ jobs:
           from pathlib import Path
           p = Path('/tmp/investor2-kioxia-plan.json')
           data = json.loads(p.read_text(encoding='utf-8'))
-          # The universe manifest already carries company metadata. Avoid overwriting the
-          # shared company-master projection; this run spends quota only on 50 histories.
           data['company_master'] = {
               'codes': [],
               'code_consumers': {},
@@ -77,7 +75,7 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          path = Path('data/edinetdb_projections/KAFKA2306__investor2/investor2-kioxia-semiconductor-universe-50-5y-quarterly.json')
+          path = Path('data/financial_analysis/investor2/investor2-kioxia-semiconductor-universe-50-5y-quarterly.json')
           data = json.loads(path.read_text(encoding='utf-8'))
           assert data['company_count'] == 50
           assert len(data['companies']) == 50
@@ -92,7 +90,8 @@ jobs:
           git add \
             data/edinetdb_quota/usage.json \
             data/edinetdb_quota/investor2_kioxia_universe_ledger.json \
-            data/edinetdb_projections/KAFKA2306__investor2
+            data/edinetdb_projections/KAFKA2306__investor2 \
+            data/financial_analysis/investor2/investor2-kioxia-semiconductor-universe-50-5y-quarterly.json
           if git diff --cached --quiet; then
             echo "No snapshot changes"
             exit 0
