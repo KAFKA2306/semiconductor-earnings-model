@@ -1,0 +1,19 @@
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  padding: 10px 14px;
+  color: #263752;
+  border: 2px solid #5f86cf;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(77, 91, 124, 0.16);
+  font: 700 0.82rem "Hiragino Sans", "Yu Gothic", sans-serif;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 24px));
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
