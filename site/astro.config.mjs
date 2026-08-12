@@ -24,6 +24,7 @@ const pastelWatercolorSystem = {
     'astro:build:done': async ({ dir }) => {
       const outputDirectory = fileURLToPath(dir);
       const stylesheet = `/${repositoryName}/pastel-watercolor.css`;
+      const accessibilityStylesheet = `/${repositoryName}/accessibility.css`;
       const marker = '2026-07-23-pastel-watercolor-1';
       for (const file of await htmlFiles(outputDirectory)) {
         const html = await fs.readFile(file, 'utf8');
@@ -35,10 +36,21 @@ const pastelWatercolorSystem = {
           '<meta name="theme-color" content="#fbfaf7">',
           `<meta name="app-build" content="${marker}">`,
           `<link rel="stylesheet" href="${stylesheet}">`,
+          `<link rel="stylesheet" href="${accessibilityStylesheet}">`,
           modelCompatibilityMarker,
         ].join('');
         if (!html.includes('</head>')) throw new Error(`Missing </head> in ${file}`);
-        await fs.writeFile(file, html.replace('</head>', `${injection}</head>`));
+        let enhanced = html.replace('</head>', `${injection}</head>`);
+        if (enhanced.includes('<main')) {
+          if (!enhanced.includes('id="main-content"')) {
+            enhanced = enhanced.replace('<main', '<main id="main-content"');
+          }
+          if (!enhanced.includes('class="skip-link"')) {
+            if (!enhanced.includes('<body>')) throw new Error(`Missing <body> in ${file}`);
+            enhanced = enhanced.replace('<body>', '<body><a class="skip-link" href="#main-content">本文へ移動</a>');
+          }
+        }
+        await fs.writeFile(file, enhanced);
       }
     },
   },
