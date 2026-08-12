@@ -1,0 +1,104 @@
+name: investor2 Kioxia universe snapshot
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "config/investor2_kioxia_semiconductor_universe_50_2026-08-12.json"
+      - "scripts/investor2_kioxia_universe_snapshot.py"
+      - ".github/workflows/investor2-kioxia-universe-snapshot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: investor2-kioxia-universe-snapshot
+      cancel-in-progress: false
+    env:
+      EDINETDB_API_KEY: ${{ secrets.EDINETDB_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Require EDINET DB credential
+        shell: bash
+        run: |
+          if [ -z "$EDINETDB_API_KEY" ]; then
+            echo "EDINETDB_API_KEY is not configured" >&2
+            exit 1
+          fi
+      - name: Build guarded 50-company fetch plan
+        shell: bash
+        run: |
+          python scripts/investor2_kioxia_universe_snapshot.py plan --output /tmp/investor2-kioxia-plan.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('/tmp/investor2-kioxia-plan.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          # The universe manifest already carries company metadata. Avoid overwriting the
+          # shared company-master projection; this run spends quota only on 50 histories.
+          data['company_master'] = {
+              'codes': [],
+              'code_consumers': {},
+              'projection_fields': data['company_master']['projection_fields'],
+          }
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          assert len(data['requests']) == 50
+          PY
+          python scripts/edinetdb_quota_guard.py \
+            --plan /tmp/investor2-kioxia-plan.json \
+            --ledger data/edinetdb_quota/investor2_kioxia_universe_ledger.json \
+            --projections data/edinetdb_projections \
+            --usage data/edinetdb_quota/usage.json \
+            --registry config/edinetdb_consumer_registry.json \
+            --plan-only
+      - name: Fetch five years of standalone quarters
+        run: |
+          python scripts/edinetdb_quota_guard.py \
+            --plan /tmp/investor2-kioxia-plan.json \
+            --ledger data/edinetdb_quota/investor2_kioxia_universe_ledger.json \
+            --projections data/edinetdb_projections \
+            --usage data/edinetdb_quota/usage.json \
+            --registry config/edinetdb_consumer_registry.json
+      - name: Aggregate canonical and quarantined records
+        run: python scripts/investor2_kioxia_universe_snapshot.py aggregate
+      - name: Validate aggregate contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path('data/edinetdb_projections/KAFKA2306__investor2/investor2-kioxia-semiconductor-universe-50-5y-quarterly.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          assert data['company_count'] == 50
+          assert len(data['companies']) == 50
+          assert data['requested_years'] == 5
+          assert data['period'] == 'quarterly_standalone'
+          assert data['counts']['fetched_quarter_rows'] > 0
+          print(json.dumps(data['counts'], ensure_ascii=False))
+          PY
+      - name: Commit projection snapshot
+        shell: bash
+        run: |
+          git add \
+            data/edinetdb_quota/usage.json \
+            data/edinetdb_quota/investor2_kioxia_universe_ledger.json \
+            data/edinetdb_projections/KAFKA2306__investor2
+          if git diff --cached --quiet; then
+            echo "No snapshot changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "data: refresh investor2 Kioxia universe snapshot"
+          git pull --rebase origin main
+          git push origin HEAD:main
