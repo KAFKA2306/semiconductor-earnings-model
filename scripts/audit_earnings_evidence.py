@@ -17,6 +17,7 @@ LEDGER_DIR = ROOT / "data" / "earnings_ledger"
 EVENTS_PATH = LEDGER_DIR / "events.ndjson"
 STATE_PATH = LEDGER_DIR / "state.json"
 OUTPUT_PATH = LEDGER_DIR / "evidence_latest.json"
+VERIFIED_REVENUE_PATH = LEDGER_DIR / "verified_revenue_latest.json"
 ALLOWED_DOMAINS = {"data.sec.gov", "www.release.tdnet.info"}
 SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 
@@ -74,17 +75,32 @@ def request_bytes(url: str, user_agent: str, retries: int = 1, timeout: int = 30
     raise last
 
 
+def required_metric_event_ids(metrics_doc: dict[str, Any]) -> set[str]:
+    if metrics_doc.get("status") != "PASS" or metrics_doc.get("issues"):
+        return set()
+    return {
+        event_id
+        for metric in metrics_doc.get("metrics", [])
+        if isinstance(metric, dict)
+        for event_id in [metric.get("event_id")]
+        if isinstance(event_id, str) and event_id
+    }
+
+
 def select_window_events(
-    events: list[dict[str, Any]], state: dict[str, Any]
+    events: list[dict[str, Any]],
+    state: dict[str, Any],
+    required_event_ids: set[str] | None = None,
 ) -> list[dict[str, Any]]:
     start = parse_dt(state["window_start"])
     end = parse_dt(state["window_end"])
+    required = required_event_ids or set()
     selected = []
     for event in events:
         if event.get("freshness") != "PASS":
             continue
         published = parse_dt(event["published_at"])
-        if start <= published <= end:
+        if start <= published <= end or event.get("event_id") in required:
             selected.append(event)
     return sorted(selected, key=lambda e: (e["published_at"], e["event_id"]))
 
@@ -127,6 +143,21 @@ def verify_event(event: dict[str, Any], user_agent: str, verified_at: datetime) 
     }
 
 
+def reusable_evidence(event: dict[str, Any], row: Any) -> bool:
+    if not isinstance(row, dict) or row.get("status") != "PASS":
+        return False
+    if row.get("event_id") != event.get("event_id"):
+        return False
+    if row.get("company_id") != event.get("company_id"):
+        return False
+    if row.get("document_type") != event.get("document_type"):
+        return False
+    digest = row.get("source_content_sha256", "")
+    if not isinstance(digest, str) or len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest):
+        return False
+    return isinstance(row.get("source_content_bytes"), int) and row["source_content_bytes"] > 0
+
+
 def audit_evidence(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     issues: list[dict[str, Any]] = []
     seen: set[str] = set()
@@ -158,10 +189,40 @@ def run(now: datetime | None = None) -> int:
         raise RuntimeError("earnings ledger must PASS before evidence verification")
     if not state.get("window_start") or not state.get("window_end"):
         raise RuntimeError("ledger window is missing")
+
     events = load_ndjson(EVENTS_PATH)
-    selected = select_window_events(events, state)
+    metrics_doc = load_json(VERIFIED_REVENUE_PATH, {})
+    required_ids = required_metric_event_ids(metrics_doc)
+    window_events = select_window_events(events, state)
+    window_ids = {event["event_id"] for event in window_events}
+    selected = select_window_events(events, state, required_ids)
+
+    selected_ids = {event.get("event_id") for event in selected}
+    missing_required = sorted(required_ids - selected_ids)
+    if missing_required:
+        raise RuntimeError(
+            "verified revenue metric references missing fresh accepted event: "
+            + ", ".join(missing_required)
+        )
+
+    previous_doc = load_json(OUTPUT_PATH, {})
+    previous_by_id = {
+        row.get("event_id"): row
+        for row in previous_doc.get("evidence", [])
+        if isinstance(row, dict) and row.get("event_id")
+    }
     user_agent = os.environ.get("SEC_USER_AGENT", "").strip()
-    rows = [verify_event(event, user_agent, now) for event in selected]
+    rows: list[dict[str, Any]] = []
+    reused = 0
+    for event in selected:
+        event_id = event["event_id"]
+        prior = previous_by_id.get(event_id)
+        if event_id not in window_ids and reusable_evidence(event, prior):
+            rows.append(prior)
+            reused += 1
+        else:
+            rows.append(verify_event(event, user_agent, now))
+
     issues = audit_evidence(rows)
     payload = {
         "schema_version": "earnings-evidence-audit.v1",
@@ -169,12 +230,24 @@ def run(now: datetime | None = None) -> int:
         "window_start": state["window_start"],
         "window_end": state["window_end"],
         "verified_events": len(rows),
+        "required_metric_events": len(required_ids),
+        "reused_evidence_events": reused,
         "evidence": rows,
         "issues": issues,
         "status": "PASS" if not issues else "FAIL",
     }
     OUTPUT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"verified_events": len(rows), "status": payload["status"]}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "verified_events": len(rows),
+                "required_metric_events": len(required_ids),
+                "reused_evidence_events": reused,
+                "status": payload["status"],
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0 if payload["status"] == "PASS" else 1
 
 
