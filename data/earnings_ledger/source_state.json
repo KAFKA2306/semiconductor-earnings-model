@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-08-12T13:48:24.467603Z",
+  "generated_from_run_at": "2026-08-12T15:15:28.079763Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -70,8 +70,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "fa0ca66c3a8573ae2559c089",
-      "last_seen_published_at": "2026-08-11T20:05:08Z",
+      "last_seen_id": "611c10ddde316d21d0ac6d06",
+      "last_seen_published_at": "2026-08-12T09:49:39Z",
       "last_seen_disposition": "rejected"
     },
     {
