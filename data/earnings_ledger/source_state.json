@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-08-12T11:11:05.032155Z",
+  "generated_from_run_at": "2026-08-12T13:48:24.467603Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -115,9 +115,9 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": null,
-      "last_seen_published_at": null,
-      "last_seen_disposition": null
+      "last_seen_id": "c1f7e8bc09409771aa4129c7",
+      "last_seen_published_at": "2026-08-12T09:15:06Z",
+      "last_seen_disposition": "rejected"
     },
     {
       "source_id": "cadence",
