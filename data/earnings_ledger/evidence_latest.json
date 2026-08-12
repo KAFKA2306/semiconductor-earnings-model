@@ -1,10 +1,27 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-08-12T07:53:44.307060Z",
-  "window_start": "2026-08-11T07:53:43.764302Z",
-  "window_end": "2026-08-12T07:53:43.764302Z",
-  "verified_events": 0,
-  "evidence": [],
+  "verified_at": "2026-08-12T08:15:17.001323Z",
+  "window_start": "2026-08-11T08:15:16.582550Z",
+  "window_end": "2026-08-12T08:15:16.582550Z",
+  "verified_events": 1,
+  "required_metric_events": 1,
+  "reused_evidence_events": 0,
+  "evidence": [
+    {
+      "event_id": "eaf7cce59f6f7acaabe282cc",
+      "company_id": "lam-research",
+      "document_type": "10-K",
+      "published_at": "2026-08-07T20:06:32Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/707549/000070754926000037/0000707549-26-000037-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000707549.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "0743e49f5243bc83c1f7029f4771c41dae0bda5906cb148030703b8d95ce6f31",
+      "source_content_bytes": 165542,
+      "content_type": "application/json",
+      "verified_at": "2026-08-12T08:15:17.001323Z",
+      "status": "PASS"
+    }
+  ],
   "issues": [],
   "status": "PASS"
 }
