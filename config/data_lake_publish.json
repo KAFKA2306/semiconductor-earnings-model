@@ -7,7 +7,10 @@
       "source": "data/edinetdb_projections",
       "destination": "edinetdb/projections",
       "required": false,
-      "extensions": [".json"]
+      "extensions": [".json"],
+      "exclude": [
+        "KAFKA2306__investor2/investor2-kioxia-semiconductor-universe-50-5y-quarterly.json"
+      ]
     },
     {
       "source": "data/financial_analysis",
