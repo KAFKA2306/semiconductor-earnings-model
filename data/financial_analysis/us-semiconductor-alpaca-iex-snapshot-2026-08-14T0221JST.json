@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_kind": "market_snapshot_mart",
+  "as_of": "2026-08-14T02:21:39+09:00",
+  "currency": "USD",
+  "source": {
+    "provider": "Alpaca Market Data API",
+    "connector": "Alpaca MCP",
+    "tool": "get_stock_snapshot",
+    "feed": "iex",
+    "request": {
+      "symbols": ["NVDA", "AMD", "MU"],
+      "currency": "USD"
+    },
+    "documentation_url": "https://docs.alpaca.markets/us/reference/stocksnapshots-1",
+    "feed_note_url": "https://docs.alpaca.markets/us/docs/market-data-faq",
+    "retrieved_at": "2026-08-14T02:21:39+09:00"
+  },
+  "quality": {
+    "records_requested": 3,
+    "records_received": 3,
+    "missing_records": 0,
+    "null_coercion": false,
+    "feed_scope": "IEX only; not consolidated SIP market coverage",
+    "derived_fields": ["daily_close_change_ratio"],
+    "derived_formula": "daily_bar.close / previous_daily_bar.close - 1"
+  },
+  "records": [
+    {
+      "symbol": "NVDA",
+      "latest_trade": {
+        "timestamp": "2026-08-13T17:21:37.090671+00:00",
+        "exchange": "V",
+        "price": 225.57,
+        "size": 100.0
+      },
+      "latest_quote": {
+        "timestamp": "2026-08-13T17:21:39.014025+00:00",
+        "bid_price": 225.56,
+        "bid_size": 800.0,
+        "ask_price": 225.59,
+        "ask_size": 600.0
+      },
+      "daily_bar": {
+        "timestamp": "2026-08-13T04:00:00+00:00",
+        "open": 225.07,
+        "high": 227.2,
+        "low": 223.72,
+        "close": 225.695,
+        "volume": 2640585.0,
+        "trade_count": 24915.0,
+        "vwap": 225.337568
+      },
+      "previous_daily_bar": {
+        "timestamp": "2026-08-12T04:00:00+00:00",
+        "open": 221.01,
+        "high": 225.1,
+        "low": 220.295,
+        "close": 224.11,
+        "volume": 3733189.0,
+        "trade_count": 42798.0,
+        "vwap": 223.27024
+      },
+      "daily_close_change_ratio": 0.0070724197938512035
+    },
+    {
+      "symbol": "AMD",
+      "latest_trade": {
+        "timestamp": "2026-08-13T17:21:33.571730+00:00",
+        "exchange": "V",
+        "price": 494.41,
+        "size": 100.0
+      },
+      "latest_quote": {
+        "timestamp": "2026-08-13T17:21:26.916755+00:00",
+        "bid_price": 492.81,
+        "bid_size": 100.0,
+        "ask_price": 496.0,
+        "ask_size": 100.0
+      },
+      "daily_bar": {
+        "timestamp": "2026-08-13T04:00:00+00:00",
+        "open": 482.965,
+        "high": 497.89,
+        "low": 481.3,
+        "close": 495.22,
+        "volume": 227027.0,
+        "trade_count": 4596.0,
+        "vwap": 493.578692
+      },
+      "previous_daily_bar": {
+        "timestamp": "2026-08-12T04:00:00+00:00",
+        "open": 486.795,
+        "high": 491.49,
+        "low": 481.09,
+        "close": 482.845,
+        "volume": 376903.0,
+        "trade_count": 8373.0,
+        "vwap": 486.18871
+      },
+      "daily_close_change_ratio": 0.0256293427497436
+    },
+    {
+      "symbol": "MU",
+      "latest_trade": {
+        "timestamp": "2026-08-13T17:20:56.089870+00:00",
+        "exchange": "V",
+        "price": 970.62,
+        "size": 72.0
+      },
+      "latest_quote": {
+        "timestamp": "2026-08-13T17:21:33.961717+00:00",
+        "bid_price": 959.65,
+        "bid_size": 40.0,
+        "ask_price": 978.0,
+        "ask_size": 80.0
+      },
+      "daily_bar": {
+        "timestamp": "2026-08-13T04:00:00+00:00",
+        "open": 912.88,
+        "high": 978.0,
+        "low": 906.61,
+        "close": 970.62,
+        "volume": 444077.0,
+        "trade_count": 11357.0,
+        "vwap": 952.231675
+      },
+      "previous_daily_bar": {
+        "timestamp": "2026-08-12T04:00:00+00:00",
+        "open": 912.855,
+        "high": 935.73,
+        "low": 900.09,
+        "close": 911.3,
+        "volume": 933696.0,
+        "trade_count": 21051.0,
+        "vwap": 922.888484
+      },
+      "daily_close_change_ratio": 0.06509382201250968
+    }
+  ]
+}
