@@ -1,20 +1,20 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-13T21:04:17.630063Z",
+  "run_at": "2026-08-13T23:03:51.928882Z",
   "accepted_events_total": 2,
-  "rejected_events_total": 92,
+  "rejected_events_total": 94,
   "source_status": [
     {
       "source_id": "nvidia",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "amd",
       "status": "success",
       "accepted": 0,
-      "rejected": 3
+      "rejected": 4
     },
     {
       "source_id": "broadcom",
@@ -116,7 +116,7 @@
       "source_id": "apple",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "oracle",
