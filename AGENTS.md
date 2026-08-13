@@ -43,7 +43,45 @@ Every change must keep all four criteria provable:
 3. **Rollback remains possible.** A repository change can be reversed without rewriting shared history; prefer a normal Git revert of the relevant commit/PR and regenerate derived artifacts from versioned inputs when needed.
 4. **Observability is preserved.** CI results and the applicable audit/state/report artifacts continue to expose success, failure, counts, and reason codes rather than hiding them.
 
-## 3. Claim
+## 3. Source-of-Truth Precedence
+
+When sources disagree, use this order:
+
+1. current primary-source response or versioned raw evidence required by the owning contract;
+2. canonical repository ledgers and manifests, especially `data/earnings_ledger/`;
+3. current executable code, schemas, configuration, and deterministic audit logic;
+4. CI results and generated evidence bound to the exact commit SHA;
+5. current documentation and ADRs;
+6. Issue/PR prose and historical reports;
+7. inference.
+
+Never let stale prose override current executable or versioned evidence. Do not repair a discrepancy by rewriting historical evidence to match a newer interpretation.
+
+## 4. Claim Provenance
+
+Every material statement made while operating the repository must be classified mentally as one of:
+
+- **VERIFIED** — directly observed from a primary source, repository file, command result, artifact, API response, or CI run.
+- **OBSERVED** — explicitly provided by the user or task contract.
+- **INFERRED** — a hypothesis derived from verified/observed evidence; identify it as inference when reporting it.
+- **UNVERIFIED** — not inspected yet; never present it as fact.
+- **FABRICATED** — forbidden.
+
+A command returning successfully does not prove the business outcome. Verify the owning postcondition: persisted ledger row, manifest hash, audit result, deployed endpoint, or other contract-specific evidence.
+
+## 5. Canonical Workline Rule
+
+Before creating work, inspect current PRs, branches, Issues, CI, and the relevant canonical artifacts.
+
+Priority:
+
+1. continue an existing canonical PR/branch for the same outcome;
+2. otherwise continue the unresolved Issue that owns the gap;
+3. only then create one new descriptive branch and one PR.
+
+Do not create duplicate branches, PRs, manifests, ledgers, or alternative pipelines for the same outcome. If an older workline is clearly superseded, consolidate to one canonical line and remove/close the duplicate when safe.
+
+## 6. Claim
 
 A **Claim** is a proposed unit of work. Before implementation, state which acceptance criterion would become unprovable without that work and identify the smallest evidence needed to prove completion.
 
@@ -56,22 +94,134 @@ A valid Claim should identify:
 
 Claims that only improve style, convenience, abstraction, or future flexibility are out of scope unless deleting them would make an acceptance criterion unprovable for the requested outcome.
 
-## 4. Deletion Test
+## 7. Deletion Test
 
 **A claim becomes work only when deleting it makes one acceptance criterion unprovable.**
 
 Apply the test before implementation and again before merge. If a proposed file, refactor, dependency, abstraction, generated artifact, or documentation section can be removed while the requested outcome and all four acceptance criteria remain provable, remove it from the change.
 
-## 5. Verification Evidence
+## 8. Investigation Before Implementation
+
+Before editing a financial/data contract:
+
+1. inspect the relevant Issue/PR/branch and latest base SHA;
+2. inspect the owning schema, canonical ledger/manifest, producer, consumer, and audit;
+3. inspect existing regression tests and GitHub Actions gates;
+4. inspect primary-source documentation or current provider behavior when external semantics are involved;
+5. determine whether the target is canonical evidence or a generated projection;
+6. identify the exact postcondition that will prove completion.
+
+Do not design from README prose, screenshots, file names, or memory alone when the underlying evidence is inspectable.
+
+## 9. Data and Calculation Boundaries
+
+- `data/earnings_ledger/` is the canonical earnings evidence boundary unless an owning contract explicitly defines another canonical source.
+- Adapters must not silently recompute financial values already owned by the canonical service/ledger layer.
+- A derived metric must retain its formula/basis and traceable inputs.
+- Null is not zero. Missing, unavailable, incomparable, ambiguous, stale, or rejected values must remain distinguishable with explicit reason semantics.
+- Actuals, guidance, consensus, estimates, scenarios, and market observations must not cross value-type boundaries implicitly.
+- Period, consolidation basis, accounting standard, currency, scale, and unit comparability must be proven before comparison.
+
+## 10. Primary-Source and External-Data Rule
+
+For current external facts, use the repository's documented primary-source/provider surface and verify the exact response used.
+
+- Prefer SEC/EDGAR, TDnet/JPX, issuer IR, official public-data APIs, or the explicitly authorized provider for the owning dataset.
+- Do not upgrade a secondary summary into canonical primary evidence.
+- If a provider projection disagrees with raw filing text, preserve the discrepancy and fail closed rather than reconstructing missing rows heuristically.
+- Record source URL/identifier, relevant timestamps, hashes/fingerprints, and provider revision/as-of fields when required by the owning contract.
+
+## 11. Verification Evidence
 
 Prefer existing repository evidence over parallel mechanisms.
 
 - Earnings collection/provenance: `data/earnings_ledger/README.md`, `source_registry.json`, `events.ndjson`, `rejected.ndjson`, `state.json`, `audit_latest.json`, and dated reports.
 - Automated checks: relevant `pytest` tests and the existing GitHub Actions workflows under `.github/workflows/`.
+- Data Platform Standard: `config/data_platform_standard.json`, `scripts/check_data_platform_standard.py`, and MCP contract checks.
 - Published/research datasets: use their owning schema, manifest, source metadata, hashes, and audit fields rather than inventing a second provenance format.
 - Rollback: use normal version-control reversal (`git revert`) rather than destructive history rewriting for shared changes.
 
-## 6. Fixed Point
+The README documents a broad local validation surface. Run the smallest relevant subset first, then escalate when the affected contract requires it. A repository-wide change may require `uv run python -m pytest -q`, data-platform checks, site unit audits, and a production-equivalent site build.
+
+## 12. Builder / Auditor Separation
+
+Treat implementation and acceptance as separate phases even when one agent performs both sequentially.
+
+### Builder
+
+The Builder may modify code, schemas, tests, data projections, docs, workflows, and canonical artifacts only within the bounded Contract.
+
+### Auditor
+
+The Auditor independently checks:
+
+- the requested outcome exists;
+- canonical evidence was not fabricated or rewritten improperly;
+- deterministic acceptance checks pass;
+- evidence belongs to the current PR head/base SHA;
+- generated outputs match their manifests/hashes where applicable;
+- no source/value-type/unit/period boundary was weakened;
+- cleanup is complete.
+
+Implementation intent is never audit evidence.
+
+## 13. Fail-Closed Rule
+
+A missing source, stale source, ambiguous period, unsupported unit, schema failure, hash mismatch, provenance failure, provider timeout, audit crash, or deployment verification failure blocks the corresponding update.
+
+Do not:
+
+- fill an unknown financial value with a plausible value;
+- relabel immutable historical rejections merely to satisfy a new enum;
+- suppress a failed audit to keep CI green;
+- publish a partial projection as complete without explicit coverage state;
+- substitute a different dataset for the exact dataset required by the contract without recording that change as a new contract.
+
+## 14. Git / PR / CI Protocol
+
+For repository changes:
+
+1. start from the latest intended base;
+2. reuse the canonical branch if one exists;
+3. otherwise create one descriptive branch;
+4. keep the diff limited by the Contract and Deletion Test;
+5. add/update regression evidence with behavior or schema changes;
+6. open/update one canonical PR;
+7. verify CI on the exact PR head SHA;
+8. inspect failed jobs and root causes rather than retrying blindly;
+9. merge only after acceptance criteria are provable;
+10. verify the merged `main` SHA and any required post-merge workflow/deployment;
+11. close the owning Issue only when its outcome is actually complete;
+12. delete the merged/unneeded work branch when the available GitHub surface permits it.
+
+If a host-side safety system rejects a GitHub write, re-fetch current state and retry the exact canonical action once. Do not create a duplicate branch/PR or weaken the action as a workaround.
+
+## 15. Publication and Irreversible Side Effects
+
+Publishing to GitHub Pages, Hugging Face, external APIs, or other remote stores requires explicit contract authority and postcondition evidence.
+
+- A successful build is not proof of successful publication.
+- A dispatch is not proof of successful publication.
+- Verify the remote artifact/revision/URL when the contract requires external publication.
+- Preserve publication receipts, manifest hashes, source revision binding, or equivalent evidence.
+- Never publish from a moving/unverified source revision when the publisher contract expects an exact SHA.
+
+## 16. Cleanup Is Part of Completion
+
+Before final reporting, inspect for residue created by the work:
+
+- temporary/staging files;
+- debug output;
+- obsolete generated intermediates;
+- superseded PRs;
+- merged/unneeded branches;
+- stale Issue state;
+- duplicate manifests or alternate state stores;
+- CI helper artifacts that are not part of the final contract.
+
+Do not delete unrelated valid work. If a blocker remains, keep exactly one canonical workline and record the blocker plus next action there.
+
+## 17. Fixed Point
 
 Stop when the requested outcome is satisfied, all four acceptance criteria are provable, and every remaining change survives the Deletion Test.
 
@@ -80,4 +230,21 @@ At the Fixed Point:
 - required tests/audits have passed or a concrete blocker is recorded;
 - provenance and observability evidence remain available;
 - rollback remains possible;
+- exact-head CI and required external postconditions are verified;
+- linked Issue/PR state is correct;
+- task-created residue is cleaned up or an explicit connector/tooling blocker is recorded;
 - no extra refactor, feature, dataset expansion, or policy change is included solely because it might be useful later.
+
+## 18. Final Report Contract
+
+Report only verified state relevant to the task:
+
+- target Issue/PR/repository URL;
+- bounded change;
+- tests/audits and exact result;
+- PR/commit/merge SHA;
+- external publication receipt when applicable;
+- cleanup performed;
+- blocker and exact next action if unfinished.
+
+Do not use completion theater or unsupported confidence. If evidence is absent, say so.
