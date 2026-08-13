@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-08-13T19:26:56.859228Z",
-  "window_start": "2026-08-12T19:26:56.419982Z",
-  "window_end": "2026-08-13T19:26:56.419982Z",
-  "verified_events": 1,
+  "verified_at": "2026-08-13T21:04:18.165784Z",
+  "window_start": "2026-08-12T21:04:17.630063Z",
+  "window_end": "2026-08-13T21:04:17.630063Z",
+  "verified_events": 2,
   "required_metric_events": 1,
   "reused_evidence_events": 1,
   "evidence": [
@@ -19,6 +19,20 @@
       "source_content_bytes": 165542,
       "content_type": "application/json",
       "verified_at": "2026-08-12T08:15:17.001323Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "4a6873ba8cec88e2e748da7e",
+      "company_id": "applied-materials",
+      "document_type": "8-K",
+      "published_at": "2026-08-13T16:03:36Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/6951/000162828026056699/0001628280-26-056699-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000006951.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "20818d50a38e213dcdb75f526b2a84218f2243a7f73b1ae62b7a9de388343766",
+      "source_content_bytes": 159728,
+      "content_type": "application/json",
+      "verified_at": "2026-08-13T21:04:18.165784Z",
       "status": "PASS"
     }
   ],

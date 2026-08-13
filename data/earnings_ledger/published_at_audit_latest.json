@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-08-13T19:26:56.767152Z",
-  "events_total": 1,
-  "sec_events_total": 1,
+  "run_at": "2026-08-13T21:04:18.076925Z",
+  "events_total": 2,
+  "sec_events_total": 2,
   "non_sec_events_not_independently_reverified": 0,
   "items": [
     {
@@ -14,6 +14,18 @@
       "primary_acceptance_at": "2026-08-07T20:06:32.000Z",
       "ledger_published_at_utc": "2026-08-07T20:06:32Z",
       "primary_acceptance_at_utc": "2026-08-07T20:06:32Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "4a6873ba8cec88e2e748da7e",
+      "company_id": "applied-materials",
+      "accession_number": "0001628280-26-056699",
+      "ledger_published_at": "2026-08-13T16:03:36Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-13T16:03:36.000Z",
+      "ledger_published_at_utc": "2026-08-13T16:03:36Z",
+      "primary_acceptance_at_utc": "2026-08-13T16:03:36Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

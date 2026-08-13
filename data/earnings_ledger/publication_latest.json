@@ -1,16 +1,26 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-08-13T19:26:56.419982Z",
+  "generated_from_run_at": "2026-08-13T21:04:17.630063Z",
   "audit_status": "PASS",
-  "accepted_events_total": 0,
-  "ledger_accepted_events_total": 1,
+  "accepted_events_total": 1,
+  "ledger_accepted_events_total": 2,
   "expired_events_total": 1,
-  "rejected_events_total": 89,
+  "rejected_events_total": 92,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
-  "events": [],
+  "events": [
+    {
+      "event_id": "4a6873ba8cec88e2e748da7e",
+      "company_id": "applied-materials",
+      "company_name": "Applied Materials",
+      "document_type": "8-K",
+      "published_at": "2026-08-13T16:03:36Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/6951/000162828026056699/0001628280-26-056699-index.html",
+      "freshness": "PASS"
+    }
+  ],
   "audit_artifacts": {
     "ledger": "audit_latest.json",
     "semantic_duplicates": "semantic_duplicate_audit_latest.json",

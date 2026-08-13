@@ -1,9 +1,19 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-08-13T19:26:56.638945Z",
-  "events_total": 1,
-  "classified_events_total": 1,
+  "run_at": "2026-08-13T21:04:17.830117Z",
+  "events_total": 2,
+  "classified_events_total": 2,
   "items": [
+    {
+      "event_id": "4a6873ba8cec88e2e748da7e",
+      "company_id": "applied-materials",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
       "company_id": "lam-research",
