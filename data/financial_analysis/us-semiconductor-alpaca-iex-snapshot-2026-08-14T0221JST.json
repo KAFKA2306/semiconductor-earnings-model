@@ -22,7 +22,8 @@
     "missing_records": 0,
     "null_coercion": false,
     "feed_scope": "IEX only; not consolidated SIP market coverage",
-    "derived_fields": ["daily_close_change_ratio"],
+    "session_state": "snapshot captured during the US trading session; current daily_bar is not treated as a final official close",
+    "derived_fields": ["session_bar_close_vs_previous_day_close_ratio"],
     "derived_formula": "daily_bar.close / previous_daily_bar.close - 1"
   },
   "records": [
@@ -61,7 +62,7 @@
         "trade_count": 42798.0,
         "vwap": 223.27024
       },
-      "daily_close_change_ratio": 0.0070724197938512035
+      "session_bar_close_vs_previous_day_close_ratio": 0.0070724197938512035
     },
     {
       "symbol": "AMD",
@@ -98,7 +99,7 @@
         "trade_count": 8373.0,
         "vwap": 486.18871
       },
-      "daily_close_change_ratio": 0.0256293427497436
+      "session_bar_close_vs_previous_day_close_ratio": 0.0256293427497436
     },
     {
       "symbol": "MU",
@@ -135,7 +136,7 @@
         "trade_count": 21051.0,
         "vwap": 922.888484
       },
-      "daily_close_change_ratio": 0.06509382201250968
+      "session_bar_close_vs_previous_day_close_ratio": 0.06509382201250968
     }
   ]
 }
