@@ -1,0 +1,67 @@
+{
+  "schema_version": "facility-analysis.v1",
+  "dataset_id": "kioxia-fy2026-major-facilities",
+  "entity": {
+    "name": "キオクシアホールディングス株式会社",
+    "edinet_code": "E35948"
+  },
+  "period": {
+    "fiscal_year": 2026,
+    "as_of": "2026-03-31"
+  },
+  "provenance": {
+    "retrieved_date_jst": "2026-08-14",
+    "mcp": "EDINET DB 2028-08-10",
+    "mcp_tools": ["get_facilities", "get_text_blocks"],
+    "provider_data_as_of": "2026-08-13",
+    "doc_id": "S100YJ18",
+    "filing_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?S100YJ18",
+    "company_ir_source": "https://www.kioxia-holdings.com/ja-jp/ir/library/securities.html",
+    "raw_provider_response_persisted": false
+  },
+  "coverage_audit": {
+    "source_direct_domestic_facility_rows": 3,
+    "structured_get_facilities_rows": 1,
+    "structured_extraction_complete": false,
+    "missing_from_structured_projection": [
+      "キオクシア株式会社 四日市工場",
+      "キオクシアエネルギー・マネジメント株式会社 四日市工場"
+    ],
+    "policy": "Only dual-confirmed structured rows are materialized; source-only rows remain audit findings until a deterministic extractor can reproduce them."
+  },
+  "records": [
+    {
+      "facility_id": "facility:kioxia-kitakami-fy2026",
+      "operator": "キオクシア株式会社",
+      "name": "北上工場",
+      "location_raw": "岩手県北上市",
+      "prefecture": "岩手県",
+      "municipality_code": "03206",
+      "municipality_name": "北上市",
+      "facility_content": "製造設備等・エネルギー供給関連設備等",
+      "book_value_million_yen": {
+        "buildings_and_structures": 174236,
+        "machinery_and_transport": 56105,
+        "land": 11328,
+        "lease_assets": 26307,
+        "other": 16153,
+        "total_reported": 284129,
+        "component_sum": 284129,
+        "component_sum_matches_total": true
+      },
+      "land_area_m2": 351000,
+      "employees": null,
+      "employees_null_reason": "source_table_dash_not_zero",
+      "excluded_affiliate_employees": {
+        "company": "キオクシア岩手株式会社",
+        "count": 1846,
+        "reason": "The filing note explicitly states these employees are not included in the Kitakami Plant employee figure."
+      },
+      "verification": {
+        "structured_get_facilities": true,
+        "raw_major_facilities_text": true,
+        "status": "DUAL_CONFIRMED"
+      }
+    }
+  ]
+}
