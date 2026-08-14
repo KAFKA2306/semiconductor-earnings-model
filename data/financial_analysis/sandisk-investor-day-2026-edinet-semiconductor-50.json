@@ -1,0 +1,202 @@
+{
+  "schema_version": "semiconductor.sandisk-investor-day-edinet50.v1",
+  "observed_at": "2026-08-14T10:07:00+09:00",
+  "issue": "https://github.com/KAFKA2306/semiconductor-earnings-model/issues/106",
+  "purpose": "Re-verify Sandisk Investor Day 2026 claims with issuer primary sources and refresh the reproducible top-50 Japan-listed semiconductor comparison universe with EDINET DB MCP latest annual financials.",
+  "event_evidence": {
+    "primary_sources": [
+      {
+        "id": "sandisk_investor_day_2026",
+        "publisher": "Sandisk",
+        "date": "2026-08-13",
+        "url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-details-growth-strategy-and-long-term-financial-model"
+      },
+      {
+        "id": "sandisk_investor_day_event",
+        "publisher": "Sandisk",
+        "date": "2026-08-13",
+        "url": "https://investor.sandisk.com/events/event-details/2026-sandisk-investor-day"
+      },
+      {
+        "id": "sandisk_fy2026_q4",
+        "publisher": "Sandisk",
+        "date": "2026-08-06",
+        "url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-reports-fiscal-fourth-quarter-2026-financial-results"
+      },
+      {
+        "id": "sk_hynix_hbf_fms_2026",
+        "publisher": "SK hynix",
+        "date": "2026-08-04",
+        "url": "https://news.skhynix.com/en/hbf-at-fms-2026/"
+      },
+      {
+        "id": "sk_hynix_sandisk_hbf_standardization",
+        "publisher": "SK hynix",
+        "date": "2026-02-26",
+        "url": "https://news.skhynix.com/en/sk-hynix-and-sandisk-begin-global-standardization-ofnext-generation-memory-hbf/"
+      }
+    ],
+    "verified_claims": {
+      "sandisk_long_term_model": {
+        "period": "FY2028-FY2030",
+        "revenue_growth": "mid-to-high teens, consistent with bit growth",
+        "non_gaap_gross_margin_approx_pct": 80,
+        "non_gaap_operating_margin_approx_pct": 75,
+        "operating_expense_approx_pct_of_revenue": 5,
+        "adjusted_free_cash_flow_margin_approx_pct": 50,
+        "excess_cash_return_pct_after_business_investment": 100
+      },
+      "nbm": {
+        "customers_signed": 8,
+        "fy2027_bit_shipments_covered_approx_pct": 50,
+        "fy2028_bit_shipments_covered": "approximately two-thirds",
+        "features": [
+          "committed volumes",
+          "enforceable contractual frameworks with minimum financial guarantees",
+          "structured pricing"
+        ]
+      },
+      "technology": {
+        "bics9_qlc": "proven BiCS8 array combined with BiCS10-based CMOS wafer",
+        "bics10_qlc_bit_density_increase_vs_bics8_pct": 60,
+        "enterprise_datacenter_flash_tam_2030_zettabytes": 1.2
+      },
+      "hbf": {
+        "official_spec_release_date": "2026-08-04",
+        "capacity_up_to_gb": 512,
+        "bandwidth_up_to_tb_per_s": 3.0,
+        "interconnect": "UCIe",
+        "participants_named": [
+          "Google",
+          "Tenstorrent"
+        ],
+        "positioning": "memory/storage layer between HBM and SSD; not stated as an HBM replacement"
+      },
+      "sandisk_fy2026_q4": {
+        "revenue_usd_billion": 8.965,
+        "gaap_gross_margin_pct": 84.6,
+        "gaap_operating_income_usd_billion": 7.037,
+        "gaap_net_income_usd_billion": 6.903,
+        "prior_year_q4_revenue_usd_billion": 1.901,
+        "prior_year_q4_gaap_gross_margin_pct": 26.2,
+        "prior_year_q4_gaap_operating_income_usd_million": 18
+      }
+    },
+    "corrections_and_boundaries": [
+      {
+        "field": "HBF first specification release date",
+        "posted_claim": "2026-08-03",
+        "verified": "2026-08-04",
+        "status": "corrected"
+      },
+      {
+        "field": "market price snapshots and same-day peer moves",
+        "status": "excluded_from_canonical_financial_evidence",
+        "reason": "Issuer IR is not the primary market-price source; keep market observations separate from issuer/EDINET financial evidence."
+      },
+      {
+        "field": "15-19% revenue growth paraphrase",
+        "status": "not_normalized_to_numeric_range",
+        "reason": "Sandisk official release states 'mid-to-high teens'; preserve the issuer wording rather than inventing endpoints."
+      }
+    ]
+  },
+  "edinet_universe": {
+    "provider": "EDINET DB MCP",
+    "selection_operation": "screen_companies",
+    "financial_operation": "compare_companies",
+    "selection": {
+      "business_tags": [
+        "semiconductor"
+      ],
+      "conditions": [
+        {
+          "metric": "revenue",
+          "operator": "gt",
+          "value": 0
+        }
+      ],
+      "include_delisted": false,
+      "sort_by": "revenue",
+      "limit": 50
+    },
+    "candidate_count": 51,
+    "record_count": 50,
+    "first_excluded_by_limit": {
+      "edinet_code": "E35542",
+      "sec_code": "66130",
+      "name": "株式会社ＱＤレーザ",
+      "fiscal_year": 2026,
+      "revenue": 1372801000.0,
+      "currency": "JPY"
+    },
+    "metrics": [
+      "revenue",
+      "operatingIncome",
+      "netIncome",
+      "totalAssets",
+      "netAssets",
+      "cfOperating",
+      "capex",
+      "roeOfficial",
+      "equityRatioOfficial",
+      "eps",
+      "dividendPerShare"
+    ],
+    "money_unit": "JPY",
+    "ratio_encoding": "fraction (0.156 = 15.6%)",
+    "missing_value_policy": "null is preserved; null is never converted to zero",
+    "records": [
+      {"rank":1,"edinet_code":"E01777","sec_code":"67580","name":"ソニーグループ株式会社","fiscal_year":2026,"revenue":12479620000000.0,"operating_income":1447507000000.0,"net_income":-326865000000.0,"total_assets":15683490000000.0,"net_assets":8119011000000.0,"cf_operating":1945617000000.0,"capex":804946000000.0,"roe_official":0.156,"equity_ratio_official":0.518,"eps":-54.7,"dividend_per_share":25.0},
+      {"rank":2,"edinet_code":"E00776","sec_code":"40630","name":"信越化学工業株式会社","fiscal_year":2026,"revenue":2573969000000.0,"operating_income":635204000000.0,"net_income":474459000000.0,"total_assets":5661907000000.0,"net_assets":4643307000000.0,"cf_operating":712651000000.0,"capex":339706000000.0,"roe_official":0.104,"equity_ratio_official":0.787,"eps":252.69,"dividend_per_share":106.0},
+      {"rank":3,"edinet_code":"E02652","sec_code":"80350","name":"東京エレクトロン株式会社","fiscal_year":2026,"revenue":2443533000000.0,"operating_income":624936000000.0,"net_income":574454000000.0,"total_assets":2860997000000.0,"net_assets":2069996000000.0,"cf_operating":539732000000.0,"capex":216000000000.0,"roe_official":0.296,"equity_ratio_official":0.715,"eps":1254.57,"dividend_per_share":628.0},
+      {"rank":4,"edinet_code":"E35948","sec_code":"285A0","name":"キオクシアホールディングス株式会社","fiscal_year":2026,"revenue":2337628000000.0,"operating_income":870369000000.0,"net_income":554490000000.0,"total_assets":3690071000000.0,"net_assets":1398929000000.0,"cf_operating":616540000000.0,"capex":283700000000.0,"roe_official":0.519,"equity_ratio_official":0.379,"eps":1024.07,"dividend_per_share":null},
+      {"rank":5,"edinet_code":"E02081","sec_code":"67230","name":"ルネサスエレクトロニクス株式会社","fiscal_year":2025,"revenue":1321212000000.0,"operating_income":201166000000.0,"net_income":-51763000000.0,"total_assets":4177163000000.0,"net_assets":2443034000000.0,"cf_operating":452857000000.0,"capex":57600000000.0,"roe_official":-0.021,"equity_ratio_official":0.585,"eps":-28.65,"dividend_per_share":28.0},
+      {"rank":6,"edinet_code":"E01950","sec_code":"68570","name":"株式会社アドバンテスト","fiscal_year":2026,"revenue":1128610000000.0,"operating_income":499120000000.0,"net_income":375353000000.0,"total_assets":1171816000000.0,"net_assets":795726000000.0,"cf_operating":335182000000.0,"capex":34300000000.0,"roe_official":0.576,"equity_ratio_official":0.679,"eps":515.15,"dividend_per_share":59.0},
+      {"rank":7,"edinet_code":"E01081","sec_code":"50160","name":"ＪＸ金属株式会社","fiscal_year":2026,"revenue":884638000000.0,"operating_income":174967000000.0,"net_income":104645000000.0,"total_assets":1505337000000.0,"net_assets":726488000000.0,"cf_operating":107544000000.0,"capex":77904000000.0,"roe_official":0.156,"equity_ratio_official":0.483,"eps":112.94,"dividend_per_share":31.0},
+      {"rank":8,"edinet_code":"E00024","sec_code":"57060","name":"三井金属株式会社","fiscal_year":2026,"revenue":758532000000.0,"operating_income":130912000000.0,"net_income":91263000000.0,"total_assets":697481000000.0,"net_assets":420910000000.0,"cf_operating":87541000000.0,"capex":36400000000.0,"roe_official":0.245,"equity_ratio_official":0.591,"eps":1595.45,"dividend_per_share":245.0},
+      {"rank":9,"edinet_code":"E02271","sec_code":"77310","name":"株式会社ニコン","fiscal_year":2026,"revenue":677163000000.0,"operating_income":-112448000000.0,"net_income":-86088000000.0,"total_assets":1075007000000.0,"net_assets":586785000000.0,"cf_operating":-4439000000.0,"capex":59803000000.0,"roe_official":-0.141,"equity_ratio_official":0.546,"eps":-261.57,"dividend_per_share":40.0},
+      {"rank":10,"edinet_code":"E02288","sec_code":"77350","name":"株式会社ＳＣＲＥＥＮホールディングス","fiscal_year":2026,"revenue":605748000000.0,"operating_income":122522000000.0,"net_income":92003000000.0,"total_assets":722421000000.0,"net_assets":486684000000.0,"cf_operating":92707000000.0,"capex":27710000000.0,"roe_official":0.203,"equity_ratio_official":0.674,"eps":486.63,"dividend_per_share":293.0},
+      {"rank":11,"edinet_code":"E01953","sec_code":"69630","name":"ローム株式会社","fiscal_year":2026,"revenue":481148000000.0,"operating_income":10864000000.0,"net_income":-158424000000.0,"total_assets":1283559000000.0,"net_assets":758616000000.0,"cf_operating":89448000000.0,"capex":82403000000.0,"roe_official":-0.192,"equity_ratio_official":0.591,"eps":-410.46,"dividend_per_share":50.0},
+      {"rank":12,"edinet_code":"E01506","sec_code":"61460","name":"株式会社ディスコ","fiscal_year":2026,"revenue":436889000000.0,"operating_income":184989000000.0,"net_income":135521000000.0,"total_assets":743410000000.0,"net_assets":588125000000.0,"cf_operating":133543000000.0,"capex":32708000000.0,"roe_official":0.251,"equity_ratio_official":0.789,"eps":1249.84,"dividend_per_share":505.0},
+      {"rank":13,"edinet_code":"E00775","sec_code":"40620","name":"イビデン株式会社","fiscal_year":2026,"revenue":416201000000.0,"operating_income":62027000000.0,"net_income":63713000000.0,"total_assets":960425000000.0,"net_assets":557412000000.0,"cf_operating":106407000000.0,"capex":64277000000.0,"roe_official":0.1225,"equity_ratio_official":0.5727,"eps":228.16,"dividend_per_share":45.0},
+      {"rank":14,"edinet_code":"E02024","sec_code":"68900","name":"株式会社フェローテック","fiscal_year":2026,"revenue":288933000000.0,"operating_income":27561000000.0,"net_income":14886000000.0,"total_assets":689238000000.0,"net_assets":362075000000.0,"cf_operating":29255000000.0,"capex":54598000000.0,"roe_official":0.06,"equity_ratio_official":0.376,"eps":317.88,"dividend_per_share":148.0},
+      {"rank":15,"edinet_code":"E01991","sec_code":"69200","name":"レーザーテック株式会社","fiscal_year":2025,"revenue":251477000000.0,"operating_income":122843000000.0,"net_income":84652000000.0,"total_assets":329601000000.0,"net_assets":209900000000.0,"cf_operating":77874000000.0,"capex":5037000000.0,"roe_official":0.469,"equity_ratio_official":0.637,"eps":938.61,"dividend_per_share":329.0},
+      {"rank":16,"edinet_code":"E00854","sec_code":"41860","name":"東京応化工業株式会社","fiscal_year":2025,"revenue":237029000000.0,"operating_income":47386000000.0,"net_income":33345000000.0,"total_assets":335292000000.0,"net_assets":242299000000.0,"cf_operating":35194000000.0,"capex":28723000000.0,"roe_official":0.156,"equity_ratio_official":0.679,"eps":278.42,"dividend_per_share":72.0},
+      {"rank":17,"edinet_code":"E37488","sec_code":"65250","name":"株式会社ＫＯＫＵＳＡＩ　ＥＬＥＣＴＲＩＣ","fiscal_year":2026,"revenue":235079000000.0,"operating_income":41836000000.0,"net_income":30099000000.0,"total_assets":359658000000.0,"net_assets":219270000000.0,"cf_operating":48801000000.0,"capex":16862000000.0,"roe_official":0.145,"equity_ratio_official":0.61,"eps":129.0,"dividend_per_share":37.0},
+      {"rank":18,"edinet_code":"E02293","sec_code":"69660","name":"株式会社三井ハイテック","fiscal_year":2026,"revenue":218329000000.0,"operating_income":12651000000.0,"net_income":3151000000.0,"total_assets":240994000000.0,"net_assets":113614000000.0,"cf_operating":24135000000.0,"capex":30116000000.0,"roe_official":0.028,"equity_ratio_official":0.47,"eps":17.25,"dividend_per_share":18.0},
+      {"rank":19,"edinet_code":"E01955","sec_code":"69650","name":"浜松ホトニクス株式会社","fiscal_year":2025,"revenue":212051000000.0,"operating_income":16163000000.0,"net_income":14203000000.0,"total_assets":455008000000.0,"net_assets":323455000000.0,"cf_operating":37784000000.0,"capex":34819000000.0,"roe_official":0.044,"equity_ratio_official":0.707,"eps":47.32,"dividend_per_share":38.0},
+      {"rank":20,"edinet_code":"E37978","sec_code":"65260","name":"株式会社ソシオネクスト","fiscal_year":2026,"revenue":200834000000.0,"operating_income":12354000000.0,"net_income":8733000000.0,"total_assets":167623000000.0,"net_assets":133056000000.0,"cf_operating":7693000000.0,"capex":22238000000.0,"roe_official":0.0647,"equity_ratio_official":0.7938,"eps":49.74,"dividend_per_share":50.0},
+      {"rank":21,"edinet_code":"E02289","sec_code":"77290","name":"株式会社東京精密","fiscal_year":2026,"revenue":166839000000.0,"operating_income":33738000000.0,"net_income":24739000000.0,"total_assets":250533000000.0,"net_assets":192916000000.0,"cf_operating":25012000000.0,"capex":11069000000.0,"roe_official":0.135,"equity_ratio_official":0.763,"eps":610.02,"dividend_per_share":262.0},
+      {"rank":22,"edinet_code":"E02328","sec_code":"63230","name":"ローツェ株式会社","fiscal_year":2026,"revenue":128794000000.0,"operating_income":31154000000.0,"net_income":19048000000.0,"total_assets":197302000000.0,"net_assets":139961000000.0,"cf_operating":31191000000.0,"capex":4533000000.0,"roe_official":0.154,"equity_ratio_official":0.66,"eps":109.33,"dividend_per_share":17.0},
+      {"rank":23,"edinet_code":"E01887","sec_code":"68440","name":"新電元工業株式会社","fiscal_year":2026,"revenue":113836000000.0,"operating_income":3848000000.0,"net_income":5655000000.0,"total_assets":144652000000.0,"net_assets":72561000000.0,"cf_operating":6318000000.0,"capex":5771000000.0,"roe_official":0.082,"equity_ratio_official":0.502,"eps":549.0,"dividend_per_share":100.0},
+      {"rank":24,"edinet_code":"E01790","sec_code":"67070","name":"サンケン電気株式会社","fiscal_year":2026,"revenue":80175000000.0,"operating_income":-4728000000.0,"net_income":-9798000000.0,"total_assets":239456000000.0,"net_assets":119965000000.0,"cf_operating":-8898000000.0,"capex":6293000000.0,"roe_official":-0.073,"equity_ratio_official":0.501,"eps":-472.88,"dividend_per_share":null},
+      {"rank":25,"edinet_code":"E01210","sec_code":"53440","name":"株式会社ＭＡＲＵＷＡ","fiscal_year":2026,"revenue":74476000000.0,"operating_income":24976000000.0,"net_income":18163000000.0,"total_assets":162691000000.0,"net_assets":147262000000.0,"cf_operating":16933000000.0,"capex":22525000000.0,"roe_official":0.132,"equity_ratio_official":0.905,"eps":1472.03,"dividend_per_share":102.0},
+      {"rank":26,"edinet_code":"E02030","sec_code":"68710","name":"株式会社日本マイクロニクス","fiscal_year":2025,"revenue":70173000000.0,"operating_income":16542000000.0,"net_income":12063000000.0,"total_assets":99026000000.0,"net_assets":66052000000.0,"cf_operating":12903000000.0,"capex":15252000000.0,"roe_official":0.209,"equity_ratio_official":0.667,"eps":311.53,"dividend_per_share":95.0},
+      {"rank":27,"edinet_code":"E01735","sec_code":"62540","name":"野村マイクロ・サイエンス株式会社","fiscal_year":2026,"revenue":56245860000.0,"operating_income":6667477000.0,"net_income":3818172000.0,"total_assets":110290164000.0,"net_assets":39852930000.0,"cf_operating":4363668000.0,"capex":1419000000.0,"roe_official":0.101,"equity_ratio_official":0.356,"eps":100.36,"dividend_per_share":81.0},
+      {"rank":28,"edinet_code":"E01708","sec_code":"63150","name":"ＴＯＷＡ株式会社","fiscal_year":2026,"revenue":54365224000.0,"operating_income":6917028000.0,"net_income":4593096000.0,"total_assets":106267772000.0,"net_assets":70611835000.0,"cf_operating":4120066000.0,"capex":4196156000.0,"roe_official":0.0696,"equity_ratio_official":0.664,"eps":61.22,"dividend_per_share":20.0},
+      {"rank":29,"edinet_code":"E02334","sec_code":"77170","name":"株式会社ブイ・テクノロジー","fiscal_year":2026,"revenue":52992000000.0,"operating_income":3768000000.0,"net_income":2301000000.0,"total_assets":72977000000.0,"net_assets":36250000000.0,"cf_operating":5748000000.0,"capex":1114000000.0,"roe_official":0.066,"equity_ratio_official":0.496,"eps":243.48,"dividend_per_share":80.0},
+      {"rank":30,"edinet_code":"E01051","sec_code":"49700","name":"東洋合成工業株式会社","fiscal_year":2026,"revenue":41956000000.0,"operating_income":3668000000.0,"net_income":2692000000.0,"total_assets":66949000000.0,"net_assets":27452000000.0,"cf_operating":7490000000.0,"capex":4336000000.0,"roe_official":0.103,"equity_ratio_official":0.41,"eps":339.26,"dividend_per_share":40.0},
+      {"rank":31,"edinet_code":"E24994","sec_code":"66270","name":"株式会社テラプローブ","fiscal_year":2025,"revenue":41746379000.0,"operating_income":8893949000.0,"net_income":3367998000.0,"total_assets":100572987000.0,"net_assets":59928689000.0,"cf_operating":20140044000.0,"capex":30554563000.0,"roe_official":0.086,"equity_ratio_official":0.402,"eps":370.23,"dividend_per_share":110.0},
+      {"rank":32,"edinet_code":"E02051","sec_code":"68320","name":"アオイ電子株式会社","fiscal_year":2026,"revenue":38323311000.0,"operating_income":306356000.0,"net_income":70129000.0,"total_assets":62706238000.0,"net_assets":43245192000.0,"cf_operating":878904000.0,"capex":11802000000.0,"roe_official":0.0016,"equity_ratio_official":0.6896,"eps":6.26,"dividend_per_share":54.0},
+      {"rank":33,"edinet_code":"E00119","sec_code":"19640","name":"中外炉工業株式会社","fiscal_year":2026,"revenue":37332000000.0,"operating_income":2879000000.0,"net_income":4668000000.0,"total_assets":51282000000.0,"net_assets":31481000000.0,"cf_operating":6427000000.0,"capex":1318000000.0,"roe_official":0.157,"equity_ratio_official":0.608,"eps":643.7,"dividend_per_share":166.0},
+      {"rank":34,"edinet_code":"E02042","sec_code":"68750","name":"株式会社メガチップス","fiscal_year":2026,"revenue":36169313000.0,"operating_income":-174817000.0,"net_income":9284249000.0,"total_assets":255158843000.0,"net_assets":185667324000.0,"cf_operating":5297471000.0,"capex":2581000000.0,"roe_official":0.061,"equity_ratio_official":0.724,"eps":578.31,"dividend_per_share":250.0},
+      {"rank":35,"edinet_code":"E02350","sec_code":"62660","name":"タツモ株式会社","fiscal_year":2025,"revenue":35428641000.0,"operating_income":4768771000.0,"net_income":3541412000.0,"total_assets":46893210000.0,"net_assets":27037398000.0,"cf_operating":9425231000.0,"capex":1520000000.0,"roe_official":0.14,"equity_ratio_official":0.566,"eps":244.3,"dividend_per_share":34.0},
+      {"rank":36,"edinet_code":"E02043","sec_code":"68550","name":"日本電子材料株式会社","fiscal_year":2026,"revenue":29366000000.0,"operating_income":7249000000.0,"net_income":5451000000.0,"total_assets":58476000000.0,"net_assets":44878000000.0,"cf_operating":5758000000.0,"capex":3866000000.0,"roe_official":0.1498,"equity_ratio_official":0.767,"eps":425.98,"dividend_per_share":80.0},
+      {"rank":37,"edinet_code":"E31640","sec_code":"39180","name":"ＰＣＩホールディングス株式会社","fiscal_year":2026,"revenue":26835853000.0,"operating_income":1558230000.0,"net_income":1129629000.0,"total_assets":16023505000.0,"net_assets":10189140000.0,"cf_operating":1192479000.0,"capex":116566000.0,"roe_official":0.121,"equity_ratio_official":0.608,"eps":113.97,"dividend_per_share":57.0},
+      {"rank":38,"edinet_code":"E04856","sec_code":"96870","name":"株式会社ＫＳＫ","fiscal_year":2026,"revenue":25767000000.0,"operating_income":2740000000.0,"net_income":2182000000.0,"total_assets":26110000000.0,"net_assets":18609000000.0,"cf_operating":3417000000.0,"capex":83000000.0,"roe_official":0.125,"equity_ratio_official":0.704,"eps":360.17,"dividend_per_share":181.0},
+      {"rank":39,"edinet_code":"E30479","sec_code":"66160","name":"トレックス・セミコンダクター株式会社","fiscal_year":2026,"revenue":25073221000.0,"operating_income":1085033000.0,"net_income":1159435000.0,"total_assets":35801367000.0,"net_assets":18761895000.0,"cf_operating":3127307000.0,"capex":2273339000.0,"roe_official":0.064,"equity_ratio_official":0.524,"eps":109.38,"dividend_per_share":56.0},
+      {"rank":40,"edinet_code":"E36750","sec_code":"62270","name":"ＡＩメカテック株式会社","fiscal_year":2025,"revenue":21005577000.0,"operating_income":2095320000.0,"net_income":337742000.0,"total_assets":27373524000.0,"net_assets":10861129000.0,"cf_operating":1526612000.0,"capex":null,"roe_official":0.031,"equity_ratio_official":0.397,"eps":54.62,"dividend_per_share":45.0},
+      {"rank":41,"edinet_code":"E36545","sec_code":"62280","name":"株式会社ジェイ・イー・ティ","fiscal_year":2025,"revenue":14662000000.0,"operating_income":-1493000000.0,"net_income":-2336000000.0,"total_assets":19512000000.0,"net_assets":9720000000.0,"cf_operating":3080000000.0,"capex":null,"roe_official":-0.214,"equity_ratio_official":0.498,"eps":-177.97,"dividend_per_share":null},
+      {"rank":42,"edinet_code":"E36433","sec_code":"65210","name":"株式会社オキサイド","fiscal_year":2026,"revenue":10040393000.0,"operating_income":542745000.0,"net_income":-538075000.0,"total_assets":14773151000.0,"net_assets":4694989000.0,"cf_operating":2846872000.0,"capex":467184000.0,"roe_official":-0.106,"equity_ratio_official":0.318,"eps":-46.99,"dividend_per_share":null},
+      {"rank":43,"edinet_code":"E02060","sec_code":"63870","name":"サムコ　株式会社","fiscal_year":2025,"revenue":9342282000.0,"operating_income":2342740000.0,"net_income":1697328000.0,"total_assets":17774224000.0,"net_assets":13558675000.0,"cf_operating":1206003000.0,"capex":428000000.0,"roe_official":0.131,"equity_ratio_official":0.763,"eps":211.3,"dividend_per_share":60.0},
+      {"rank":44,"edinet_code":"E36368","sec_code":"66140","name":"株式会社シキノハイテック","fiscal_year":2026,"revenue":6485529000.0,"operating_income":-169825000.0,"net_income":-109665000.0,"total_assets":5765610000.0,"net_assets":2291801000.0,"cf_operating":-960622000.0,"capex":50175000.0,"roe_official":null,"equity_ratio_official":0.3975,"eps":-24.92,"dividend_per_share":15.0},
+      {"rank":45,"edinet_code":"E02049","sec_code":"63370","name":"株式会社テセック","fiscal_year":2026,"revenue":5567000000.0,"operating_income":301000000.0,"net_income":463000000.0,"total_assets":15896000000.0,"net_assets":14200000000.0,"cf_operating":1464000000.0,"capex":112000000.0,"roe_official":0.033,"equity_ratio_official":0.893,"eps":86.49,"dividend_per_share":100.0},
+      {"rank":46,"edinet_code":"E01257","sec_code":"55420","name":"新報国マテリアル株式会社","fiscal_year":2025,"revenue":5539581000.0,"operating_income":null,"net_income":401136000.0,"total_assets":7725366000.0,"net_assets":5806498000.0,"cf_operating":483949000.0,"capex":353000000.0,"roe_official":0.07,"equity_ratio_official":0.752,"eps":60.17,"dividend_per_share":25.0},
+      {"rank":47,"edinet_code":"E02062","sec_code":"67690","name":"ザインエレクトロニクス株式会社","fiscal_year":2025,"revenue":4639402000.0,"operating_income":-342835000.0,"net_income":-334330000.0,"total_assets":9665465000.0,"net_assets":8917368000.0,"cf_operating":-707635000.0,"capex":null,"roe_official":null,"equity_ratio_official":0.904,"eps":-31.3,"dividend_per_share":15.0},
+      {"rank":48,"edinet_code":"E25620","sec_code":"36520","name":"株式会社ディジタルメディアプロフェッショナル","fiscal_year":2026,"revenue":2432778000.0,"operating_income":null,"net_income":-327961000.0,"total_assets":3831620000.0,"net_assets":3266806000.0,"cf_operating":-648138000.0,"capex":74538000.0,"roe_official":null,"equity_ratio_official":0.853,"eps":-104.28,"dividend_per_share":null},
+      {"rank":49,"edinet_code":"E05669","sec_code":"38410","name":"株式会社ジーダット","fiscal_year":2026,"revenue":2041604000.0,"operating_income":null,"net_income":172108000.0,"total_assets":4326881000.0,"net_assets":3612400000.0,"cf_operating":378483000.0,"capex":null,"roe_official":0.0478,"equity_ratio_official":0.8349,"eps":44.71,"dividend_per_share":40.0},
+      {"rank":50,"edinet_code":"E01205","sec_code":"52160","name":"株式会社倉元製作所","fiscal_year":2025,"revenue":2010798000.0,"operating_income":-1424512000.0,"net_income":-3080720000.0,"total_assets":1820173000.0,"net_assets":736730000.0,"cf_operating":-225925000.0,"capex":409000000.0,"roe_official":null,"equity_ratio_official":0.393,"eps":-64.21,"dividend_per_share":null}
+    ]
+  }
+}
