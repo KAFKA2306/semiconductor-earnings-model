@@ -1,0 +1,225 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
+const sandisk = JSON.parse(fs.readFileSync(path.join(root, 'data/financial_analysis/sandisk-long-term-financial-model-2026.json'), 'utf8'));
+const base = import.meta.env.BASE_URL;
+const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
+if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
+
+const model = sandisk.long_term_financial_model;
+const actual = sandisk.actual_growth_context.q3_fy2026;
+const revenue = model.revenue_growth;
+const bits = model.bit_growth_relation;
+const nbm = sandisk.new_business_model;
+const sources = sandisk.primary_sources;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Sandiskの売上成長、bit shipment、ASP、mix、利益率、FCFを単位と期間を分離して読む投資方針ページ。" />
+    <title>Sandisk Investment Policy / Growth Quality</title>
+  </head>
+  <body data-build-sha={buildSha}>
+    <main>
+      <header class="topbar">
+        <a class="brand" href={base}>Financial Research Workbench</a>
+        <nav aria-label="主要ページ">
+          <a href={base}>Database</a>
+          <a href={`${base}earnings/`}>Earnings</a>
+          <a href={`${base}model/`}>Model</a>
+          <a class="active" href={`${base}investment-policy/`}>Investment Policy</a>
+        </nav>
+      </header>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">SANDISK / GROWTH QUALITY / PRIMARY EVIDENCE</p>
+          <h1>成長率を、<em>ひとつの数字にしない。</em></h1>
+          <p class="lead">
+            Sandiskの投資判断では、売上高、bit shipment、ASP、顧客mix、利益率、FCFを別々の変数として扱います。
+            QoQ・YoY・CAGR・会社長期モデルも同じ「成長率」として混ぜません。
+          </p>
+        </div>
+        <aside class="verdict">
+          <span>CURRENT POLICY</span>
+          <strong>QUALITY OVER HEADLINE</strong>
+          <p>売上成長率の大きさではなく、数量・価格・mix・利益率・契約化された需要がどこまで再現可能かで判断します。</p>
+        </aside>
+      </section>
+
+      <section class="section">
+        <div class="heading">
+          <div><p>01 / RATE BASIS</p><h2>まず、<em>何の成長率か。</em></h2></div>
+          <p>実績四半期と会社の長期モデルは、対象期間もrate basisも異なります。並べて見せますが、同じ系列として外挿しません。</p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric actual">
+            <span>ACTUAL / Q3 FY2026</span>
+            <strong>${actual.revenue_usd_billion.toFixed(2)}B</strong>
+            <dl>
+              <div><dt>Metric</dt><dd>Revenue</dd></div>
+              <div><dt>QoQ</dt><dd>+{actual.revenue_qoq_growth_pct}%</dd></div>
+              <div><dt>YoY</dt><dd>+{actual.revenue_yoy_growth_pct}%</dd></div>
+              <div><dt>Value type</dt><dd>Actual</dd></div>
+            </dl>
+          </article>
+          <article class="metric target">
+            <span>ISSUER TARGET / {revenue.period}</span>
+            <strong>{revenue.value}</strong>
+            <dl>
+              <div><dt>Metric</dt><dd>{revenue.metric}</dd></div>
+              <div><dt>Scope</dt><dd>{revenue.scope}</dd></div>
+              <div><dt>Unit</dt><dd>{revenue.unit}</dd></div>
+              <div><dt>Rate basis</dt><dd>{revenue.rate_basis}</dd></div>
+              <div><dt>Comparison</dt><dd>{revenue.comparison_basis ?? 'not stated'}</dd></div>
+            </dl>
+          </article>
+          <article class="metric boundary">
+            <span>BIT GROWTH / QUALIFIER</span>
+            <strong>{bits.relation_to_revenue_growth.replace('_', ' ')}</strong>
+            <dl>
+              <div><dt>Metric</dt><dd>{bits.metric}</dd></div>
+              <div><dt>Scope</dt><dd>未確認</dd></div>
+              <div><dt>Rate basis</dt><dd>未確認</dd></div>
+              <div><dt>Numeric value</dt><dd>未開示</dd></div>
+            </dl>
+          </article>
+        </div>
+        <p class="boundary-note">会社表現 <code>“{revenue.source_wording}”</code> は保持しますが、売上成長率 = bit成長率という数値等式には変換しません。</p>
+      </section>
+
+      <section class="section">
+        <div class="heading">
+          <div><p>02 / GROWTH DRIVERS</p><h2>売上成長を、<em>数量・価格・mixへ分解する。</em></h2></div>
+          <p>Q3 FY2026では会社が高付加価値顧客へのmix shiftとhigher pricingを明示しています。したがって、売上成長をbit数量だけに帰属させません。</p>
+        </div>
+        <div class="driver-grid">
+          <article><span>VOLUME</span><h3>Bit shipments</h3><p>物量。生産bit、市場需要bit、出荷bitは別概念。sourceが明示しないscopeは推測しません。</p></article>
+          <article><span>PRICE</span><h3>ASP</h3><p>単価。売上は数量だけでなく価格変動の影響を受けるため、bit growthと分離します。</p></article>
+          <article><span>MIX</span><h3>Customer / end-market mix</h3><p>高付加価値顧客やDatacenter比率の上昇は、同じbit数量でも売上と粗利を変えます。</p></article>
+        </div>
+        <div class="evidence-callout">
+          <span>Q3 FY2026 DISCLOSED DRIVERS</span>
+          <ul>{actual.driver_disclosure.map((item) => <li>{item}</li>)}</ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="heading">
+          <div><p>03 / ECONOMICS</p><h2>低く見える成長率より、<em>経済性を見る。</em></h2></div>
+          <p>FY2028–FY2030の長期モデルはトップライン成長だけではなく、粗利率・営業利益率・調整後FCFマージン・株主還元を同時に示しています。</p>
+        </div>
+        <div class="economics-grid">
+          <article><span>NON-GAAP GROSS MARGIN</span><strong>≈{model.non_gaap_gross_margin.approx_value}%</strong><small>{model.non_gaap_gross_margin.unit}</small></article>
+          <article><span>NON-GAAP OPERATING MARGIN</span><strong>≈{model.non_gaap_operating_margin.approx_value}%</strong><small>{model.non_gaap_operating_margin.unit}</small></article>
+          <article><span>ADJUSTED FCF MARGIN</span><strong>≈{model.adjusted_free_cash_flow_margin.approx_value}%</strong><small>{model.adjusted_free_cash_flow_margin.unit}</small></article>
+          <article><span>EXCESS CASH RETURN</span><strong>{model.excess_cash_return_after_business_investment.value}%</strong><small>{model.excess_cash_return_after_business_investment.unit}</small></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="heading">
+          <div><p>04 / DURABILITY</p><h2>成長の持続性を、<em>契約化されたbitで見る。</em></h2></div>
+          <p>NBMのcoverageは「売上成長率」ではありません。将来のbit shipmentのうち、契約枠に入った比率として別KPIで扱います。</p>
+        </div>
+        <div class="nbm-grid">
+          <article><span>SIGNED CUSTOMERS</span><strong>{nbm.customers_signed}</strong><small>customers</small></article>
+          <article><span>FY2027 COVERAGE</span><strong>≈{nbm.fy2027_bit_shipments_covered.approx_value}%</strong><small>{nbm.fy2027_bit_shipments_covered.scope}</small></article>
+          <article><span>FY2028 COVERAGE</span><strong>{nbm.fy2028_bit_shipments_covered.value}</strong><small>{nbm.fy2028_bit_shipments_covered.scope}</small></article>
+        </div>
+      </section>
+
+      <section class="section policy">
+        <div class="heading">
+          <div><p>05 / INVESTMENT POLICY</p><h2>投資判断の、<em>更新ルール。</em></h2></div>
+        </div>
+        <div class="policy-grid">
+          <article class="positive"><span>強気方向</span><ul><li>bit数量成長とASP/mix改善が同時に確認できる</li><li>≈80%粗利率・≈75%営業利益率・≈50%調整後FCFマージンの持続性が実績で確認できる</li><li>NBM coverageが拡大し、最低金融保証付き契約が収益安定性へ接続する</li></ul></article>
+          <article class="negative"><span>反証条件</span><ul><li>売上成長が価格上昇だけで、bit shipmentが停滞・減少する</li><li>高付加価値mixの反転で粗利率・営業利益率が長期モデルから大きく乖離する</li><li>契約coverageが増えても価格条件や顧客集中でFCF品質が悪化する</li></ul></article>
+        </div>
+        <p class="rule">このページは売買推奨ではなく、一次情報から投資仮説を更新するための判定規則です。未開示値は補完せず、独自scenarioはissuer guidanceと分離します。</p>
+      </section>
+
+      <section class="section sources">
+        <div class="heading"><div><p>06 / PRIMARY SOURCES</p><h2>数字から、<em>一次情報へ戻れる。</em></h2></div></div>
+        <div class="source-list">
+          {sources.map((source) => <a href={source.url} target="_blank" rel="noreferrer"><span>{source.publisher}</span><strong>{source.type}</strong><small>{source.date}</small></a>)}
+        </div>
+      </section>
+
+      <footer><span>BUILD SHA</span><code>{buildSha}</code><span>SCHEMA</span><code>{sandisk.schema_version}</code></footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(html) { scroll-behavior: smooth; }
+  :global(body) { margin: 0; background: #fbfaf7; color: #243653; font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
+  :global(a) { color: inherit; }
+  main { width: min(1240px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 72px; }
+  .topbar { min-height: 76px; display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid rgba(76,91,125,.14); }
+  .brand { font-weight:900; text-decoration:none; }
+  nav { display:flex; flex-wrap:wrap; gap:16px; font-size:.75rem; font-weight:850; }
+  nav a { text-decoration:none; color:#69768b; }
+  nav a.active { color:#243653; }
+  .hero { min-height:540px; display:grid; grid-template-columns:1.45fr .55fr; gap:52px; align-items:center; padding:64px 0; }
+  .eyebrow, .heading > div > p { margin:0 0 14px; color:#69768b; font-size:.68rem; letter-spacing:.16em; font-weight:900; }
+  h1, h2 { margin:0; font-family:Georgia,"Noto Serif JP",serif; font-weight:500; letter-spacing:-.04em; }
+  h1 { max-width:850px; font-size:clamp(3rem,6vw,5.7rem); line-height:1.02; }
+  h2 { font-size:clamp(2.2rem,4vw,4rem); line-height:1.07; }
+  h1 em, h2 em { display:block; color:#8a6e98; font-style:normal; }
+  .lead { max-width:800px; margin:28px 0 0; color:#69768b; line-height:1.9; }
+  .verdict { padding:28px; border:1px solid rgba(76,91,125,.13); border-radius:24px; background:linear-gradient(145deg,rgba(185,168,230,.38),rgba(183,219,200,.46)); box-shadow:0 18px 50px rgba(76,91,125,.09); }
+  .verdict span { color:#69768b; font-size:.66rem; letter-spacing:.14em; font-weight:900; }
+  .verdict strong { display:block; margin:12px 0 18px; font-family:Georgia,serif; font-size:2.4rem; line-height:1; }
+  .verdict p { margin:0; color:#56657a; line-height:1.75; font-size:.82rem; }
+  .section { padding:72px 0; border-top:1px solid rgba(76,91,125,.13); }
+  .heading { display:flex; justify-content:space-between; align-items:end; gap:30px; margin-bottom:30px; }
+  .heading > p { max-width:520px; margin:0; color:#69768b; font-size:.82rem; line-height:1.75; }
+  .metric-grid, .driver-grid, .economics-grid, .nbm-grid, .policy-grid { display:grid; gap:12px; }
+  .metric-grid { grid-template-columns:repeat(3,1fr); }
+  .metric, .driver-grid article, .economics-grid article, .nbm-grid article, .policy-grid article { border:1px solid rgba(76,91,125,.12); border-radius:22px; background:rgba(255,255,255,.74); }
+  .metric { padding:24px; }
+  .metric.actual { background:rgba(143,181,236,.25); }
+  .metric.target { background:rgba(183,219,200,.36); }
+  .metric.boundary { background:rgba(243,207,170,.31); }
+  .metric > span, .driver-grid span, .economics-grid span, .nbm-grid span, .policy-grid span, .evidence-callout > span { color:#69768b; font-size:.64rem; letter-spacing:.12em; font-weight:900; }
+  .metric > strong { display:block; margin:18px 0 22px; font-family:Georgia,serif; font-size:2.3rem; font-weight:500; }
+  dl { margin:0; }
+  dl div { display:flex; justify-content:space-between; gap:16px; padding:9px 0; border-top:1px solid rgba(76,91,125,.1); font-size:.72rem; }
+  dt { color:#69768b; }
+  dd { margin:0; text-align:right; font-weight:800; overflow-wrap:anywhere; }
+  .boundary-note, .rule { margin:16px 0 0; padding:16px 18px; border-radius:16px; background:rgba(239,180,193,.18); color:#56657a; line-height:1.7; font-size:.78rem; }
+  code { overflow-wrap:anywhere; }
+  .driver-grid { grid-template-columns:repeat(3,1fr); }
+  .driver-grid article { min-height:190px; padding:24px; }
+  .driver-grid h3 { margin:28px 0 10px; font-family:Georgia,serif; font-size:1.45rem; font-weight:500; }
+  .driver-grid p { color:#69768b; font-size:.77rem; line-height:1.7; }
+  .evidence-callout { margin-top:12px; padding:20px 24px; border-radius:18px; background:#243653; color:white; }
+  .evidence-callout ul { margin:12px 0 0; padding-left:20px; line-height:1.8; font-size:.8rem; }
+  .economics-grid { grid-template-columns:repeat(4,1fr); }
+  .economics-grid article, .nbm-grid article { padding:23px; min-height:145px; }
+  .economics-grid strong, .nbm-grid strong { display:block; margin:24px 0 8px; font-family:Georgia,serif; font-size:2.15rem; font-weight:500; }
+  .economics-grid small, .nbm-grid small { color:#69768b; line-height:1.5; }
+  .nbm-grid { grid-template-columns:repeat(3,1fr); }
+  .policy-grid { grid-template-columns:repeat(2,1fr); }
+  .policy-grid article { padding:24px; }
+  .policy-grid .positive { background:rgba(183,219,200,.34); }
+  .policy-grid .negative { background:rgba(239,180,193,.22); }
+  .policy-grid ul { margin:18px 0 0; padding-left:20px; color:#56657a; font-size:.8rem; line-height:1.85; }
+  .source-list { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .source-list a { display:grid; grid-template-columns:1fr auto; gap:6px 18px; padding:18px; border:1px solid rgba(76,91,125,.12); border-radius:16px; background:rgba(255,255,255,.72); text-decoration:none; }
+  .source-list span { color:#69768b; font-size:.66rem; }
+  .source-list strong { font-size:.78rem; }
+  .source-list small { grid-column:2; color:#69768b; }
+  footer { display:grid; grid-template-columns:auto 1fr; gap:7px 14px; padding:18px; border-radius:16px; background:#243653; color:#fff; font-size:.65rem; }
+  footer span { color:#cbd4e2; font-weight:900; }
+  footer code { overflow-wrap:anywhere; }
+  @media (max-width:940px) { .hero { grid-template-columns:1fr; min-height:auto; } .metric-grid,.driver-grid,.economics-grid,.nbm-grid { grid-template-columns:repeat(2,1fr); } .verdict { max-width:560px; } }
+  @media (max-width:650px) { main { width:min(100% - 20px,1240px); } nav { display:none; } .hero { padding:50px 0; } h1 { font-size:2.8rem; } .heading { display:block; } .heading > p { margin-top:18px; } .metric-grid,.driver-grid,.economics-grid,.nbm-grid,.policy-grid,.source-list { grid-template-columns:1fr; } .source-list a { grid-template-columns:1fr; } .source-list small { grid-column:1; } footer { grid-template-columns:1fr; } }
+</style>

@@ -43,6 +43,7 @@ const guidance = (item) => item?.guidance_status === 'comparable' ? interval(ite
           <a href={`${base}resilience/`}>Research</a>
           <a href={`${base}earnings/`}>Earnings</a>
           <a href={`${base}model/`}>Model</a>
+          <a href={`${base}investment-policy/`}>Investment Policy</a>
           <a href={`${base}api/v3/financial-database/index.json`}>JSON API</a>
         </nav>
       </header>
@@ -54,6 +55,7 @@ const guidance = (item) => item?.guidance_status === 'comparable' ? interval(ite
           <p class="lead">財務fact、設備投資、資金耐久力に加え、NAND ASPとビット出荷量のQoQ・YoY・会社想定比を同じ証拠データベースで管理します。</p>
           <div class="actions">
             <a class="primary" href={`${base}resilience/`}>分析画面を開く</a>
+            <a href={`${base}investment-policy/`}>投資方針を見る</a>
             <a href={`${base}api/v3/financial-database/index.json`}>公開JSONを見る</a>
             <a href={`${base}api/v3/financial-database/financial.db`}>SQLiteを取得</a>
           </div>
@@ -102,6 +104,7 @@ const guidance = (item) => item?.guidance_status === 'comparable' ? interval(ite
           <a href={`${base}resilience/`}><span>RESEARCH</span><h3>同業比較・資金耐久力</h3><p>四半期利益、年次FCF、流動性、同業順位、反証可能な評価規則。</p></a>
           <a href={`${base}earnings/`}><span>EARNINGS</span><h3>一次fact決算台帳</h3><p>SEC報告値、XBRLタグ、期間、出典、直接計算した値を保持。</p></a>
           <a href={`${base}model/`}><span>MODEL</span><h3>需要から利益への計算境界</h3><p>入力、式、中間値、未確認変数、判定を分離。</p></a>
+          <a href={`${base}investment-policy/`}><span>INVESTMENT POLICY</span><h3>成長率の質を判定</h3><p>売上・bit・ASP・mix・利益率・FCFを、単位と期間を分けて投資仮説へ接続。</p></a>
           <a href={`${base}api/v3/financial-database/index.json`}><span>DATABASE</span><h3>JSON / SQLite</h3><p>観測値、派生値、証拠edge、監査、NAND比較viewを機械可読で公開。</p></a>
         </div>
       </section>
@@ -147,18 +150,20 @@ const guidance = (item) => item?.guidance_status === 'comparable' ? interval(ite
   td:first-child strong, td:first-child span { display: block; }
   td:first-child span { margin-top: 3px; color: #69768b; font-size: .64rem; }
   .empty { padding: 24px; border-radius: 18px; background: rgba(239,180,193,.22); color: #69768b; }
-  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
   .cards a { min-height: 210px; padding: 23px; border: 1px solid rgba(76,91,125,.12); border-radius: 22px; background: rgba(255,255,255,.72); text-decoration: none; }
   .cards a:nth-child(1) { background: rgba(183,219,200,.38); }
   .cards a:nth-child(2) { background: rgba(143,181,236,.27); }
   .cards a:nth-child(3) { background: rgba(243,207,170,.32); }
-  .cards a:nth-child(4) { background: rgba(185,168,230,.28); }
+  .cards a:nth-child(4) { background: rgba(239,180,193,.22); }
+  .cards a:nth-child(5) { background: rgba(185,168,230,.28); }
   .cards span { color: #69768b; font-size: .64rem; letter-spacing: .13em; font-weight: 900; }
   .cards h3 { margin: 28px 0 10px; font-family: Georgia, serif; font-size: 1.45rem; font-weight: 500; }
   .cards p { color: #69768b; font-size: .75rem; line-height: 1.7; }
   footer { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; padding: 18px; border-radius: 16px; background: #243653; color: #fff; font-size: .65rem; }
   footer span { color: #cbd4e2; font-weight: 900; }
   footer code { overflow-wrap: anywhere; }
+  @media (max-width: 1100px) { .cards { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 940px) { .hero { grid-template-columns: 1fr; min-height: auto; } aside { max-width: 550px; } .cards { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 650px) { main { width: min(100% - 20px, 1280px); } nav { display: none; } .hero { padding: 52px 0; } h1 { font-size: 2.8rem; } .heading { display: block; } .heading > p { margin-top: 18px; } .cards { grid-template-columns: 1fr; } footer { grid-template-columns: 1fr; } }
 </style>
