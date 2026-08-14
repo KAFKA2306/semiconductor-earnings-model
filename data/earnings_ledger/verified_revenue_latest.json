@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-sec-revenue.v1",
-  "run_at": "2026-08-14T19:23:40.707508Z",
-  "eligible_events_total": 1,
-  "verified_metrics_total": 1,
+  "run_at": "2026-08-14T20:51:16.776143Z",
+  "eligible_events_total": 2,
+  "verified_metrics_total": 2,
   "metrics": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -22,6 +22,26 @@
       "filed": "2026-08-07",
       "source": "SEC Company Facts API",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000707549.json",
+      "verification": "exact accession + exact form + exact period end + USD + standard us-gaap taxonomy"
+    },
+    {
+      "event_id": "110d99434de9ce74bdd7a88d",
+      "company_id": "western-digital",
+      "ticker": "WDC",
+      "accession_number": "0001628280-26-057139",
+      "period_end": "2026-07-03",
+      "document_type": "10-K",
+      "metric": "revenue",
+      "value": 12919000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "frame": "CY2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "filed": "2026-08-14",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000106040.json",
       "verification": "exact accession + exact form + exact period end + USD + standard us-gaap taxonomy"
     }
   ],
