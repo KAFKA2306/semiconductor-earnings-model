@@ -33,7 +33,7 @@
     "S-4/A": 1,
     "TDNET_DISCLOSURE": 2
   },
-  "generated_at": "2026-08-14T11:09:02.066298Z",
+  "generated_at": "2026-08-14T13:44:47.658611Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,

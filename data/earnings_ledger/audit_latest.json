@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-14T11:09:02.004846Z",
+  "run_at": "2026-08-14T13:44:47.600952Z",
   "accepted_events_total": 2,
   "rejected_events_total": 96,
   "source_status": [
@@ -14,7 +14,7 @@
       "source_id": "amd",
       "status": "success",
       "accepted": 0,
-      "rejected": 4
+      "rejected": 2
     },
     {
       "source_id": "broadcom",
