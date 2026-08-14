@@ -8,6 +8,26 @@
 
 実績、会社予想、アナリスト予想、独自推計、シナリオ、株価観測を混ぜず、すべての計算を元データまで追跡できる形で公開します。
 
+## Vision
+
+半導体企業の決算を単発の売上・利益数字として読むのではなく、**需要、ASP、bit shipment、設備投資、生産能力、財務、会社予想までを同じ証拠線上でたどり、「なぜ利益が動くのか」を検証できる分析体験**を作ります。
+
+対象は、決算数字そのものよりも、その数字がどの期間・定義・一次資料に基づき、どの需要・価格・数量・設備投資要因とつながっているかを確認したい投資家・研究者・事業分析者です。
+
+## Design philosophy
+
+- **実績と予想を混ぜない。** Actual / Guidance / Consensus / Market observation / Estimate / Scenario を別の value type として保持します。
+- **数字より証拠線を優先する。** 派生値から source URL、period、unit、basis、計算式へ戻れる状態を正準とします。
+- **比較不能を推測で埋めない。** 未取得、非開示、定義差、期間差は欠損理由として残します。
+- **企業ごとの表記差を利用者へ押し付けない。** 年次・四半期、期間値・時点値、連結・セグメント、通貨・scaleを明示して正規化します。
+- **API / DB / UIで別々の真実を作らない。** 同じ正準データとevidence lineageを異なる入口から利用します。
+
+## Why / 差別化
+
+一般的な決算まとめやscreeningでは、同じ表の中に実績・会社予想・市場予想・独自推計が並び、比較条件や計算根拠が見えにくくなることがあります。本リポジトリは、DBやAPIの機能数ではなく、**「この数字は実績か予想か」「どの期間か」「何から計算したか」「本当に比較可能か」を利用者自身が一次情報まで逆引きできること**を差別化の中心に置きます。
+
+そのため、値を増やすことよりも、source URL / period / unit / basis / value type / evidence edge を失わないことを優先します。比較できない値は、見栄えのために補完しません。
+
 ## 最初に見るページ
 
 - [統合リサーチ画面・財務耐久力比較](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
@@ -19,7 +39,7 @@
 - [Research API v2](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
 - [API v1 index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
 
-## このプロジェクトで扱う内容
+## 利用者ができる主要な分析
 
 - 売上高、営業利益、営業CF、設備投資、FCF、現金、負債、利益剰余金
 - 四半期成長率、利益率、年次推移、CAGR、変動性
@@ -162,4 +182,4 @@ GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local 
 
 このプロジェクトは財務・業界研究用です。投資助言、売買推奨、将来利益の保証ではありません。
 
-**README最終監査:** 2026-08-11
+**README最終監査:** 2026-08-14
