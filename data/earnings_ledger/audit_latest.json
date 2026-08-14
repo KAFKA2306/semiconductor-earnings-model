@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-14T13:44:47.600952Z",
+  "run_at": "2026-08-14T15:08:01.909661Z",
   "accepted_events_total": 2,
   "rejected_events_total": 96,
   "source_status": [
@@ -50,7 +50,7 @@
       "source_id": "kla",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 1
     },
     {
       "source_id": "micron",
