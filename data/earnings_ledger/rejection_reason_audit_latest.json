@@ -32,7 +32,7 @@
     "S-3ASR": 1,
     "TDNET_DISCLOSURE": 2
   },
-  "generated_at": "2026-08-14T05:47:24.983811Z",
+  "generated_at": "2026-08-14T07:51:26.845328Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
