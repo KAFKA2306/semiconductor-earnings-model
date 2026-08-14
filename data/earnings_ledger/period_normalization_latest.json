@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-08-14T19:15:13.717212Z",
-  "events_total": 2,
-  "normalized_events_total": 1,
+  "run_at": "2026-08-14T20:46:42.320195Z",
+  "events_total": 3,
+  "normalized_events_total": 2,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -10,6 +10,19 @@
       "document_type": "10-K",
       "accession_number": "0000707549-26-000037",
       "period_end": "2026-06-28",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "ANNUAL_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "110d99434de9ce74bdd7a88d",
+      "company_id": "western-digital",
+      "document_type": "10-K",
+      "accession_number": "0001628280-26-057139",
+      "period_end": "2026-07-03",
       "period_source": "SEC submissions reportDate",
       "period_kind": "ANNUAL_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",

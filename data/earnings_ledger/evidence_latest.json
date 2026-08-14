@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-08-14T19:15:13.994726Z",
-  "window_start": "2026-08-13T19:15:13.569693Z",
-  "window_end": "2026-08-14T19:15:13.569693Z",
+  "verified_at": "2026-08-14T20:46:42.756746Z",
+  "window_start": "2026-08-13T20:46:42.168490Z",
+  "window_end": "2026-08-14T20:46:42.168490Z",
   "verified_events": 2,
   "required_metric_events": 1,
   "reused_evidence_events": 1,
@@ -22,17 +22,17 @@
       "status": "PASS"
     },
     {
-      "event_id": "4a6873ba8cec88e2e748da7e",
-      "company_id": "applied-materials",
-      "document_type": "8-K",
-      "published_at": "2026-08-13T20:03:36Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/6951/000162828026056699/0001628280-26-056699-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0000006951.json",
+      "event_id": "110d99434de9ce74bdd7a88d",
+      "company_id": "western-digital",
+      "document_type": "10-K",
+      "published_at": "2026-08-14T16:20:57Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/106040/000162828026057139/0001628280-26-057139-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000106040.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "abeea8f1192e8cfa0fc1d38189141c3d34040e322d892b16bfbc7d118071e71c",
-      "source_content_bytes": 159576,
+      "source_content_sha256": "c58a75d209e288ced78c40ed02c7454b38f93b52e36f90aec762b3cdecd13dea",
+      "source_content_bytes": 160098,
       "content_type": "application/json",
-      "verified_at": "2026-08-14T19:15:13.994726Z",
+      "verified_at": "2026-08-14T20:46:42.756746Z",
       "status": "PASS"
     }
   ],

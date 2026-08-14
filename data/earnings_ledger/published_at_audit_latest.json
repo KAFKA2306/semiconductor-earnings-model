@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-08-14T19:15:13.911797Z",
-  "events_total": 2,
-  "sec_events_total": 2,
+  "run_at": "2026-08-14T20:46:42.673282Z",
+  "events_total": 3,
+  "sec_events_total": 3,
   "non_sec_events_not_independently_reverified": 0,
   "items": [
     {
@@ -26,6 +26,18 @@
       "primary_acceptance_at": "2026-08-13T20:03:36.000Z",
       "ledger_published_at_utc": "2026-08-13T20:03:36Z",
       "primary_acceptance_at_utc": "2026-08-13T20:03:36Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "110d99434de9ce74bdd7a88d",
+      "company_id": "western-digital",
+      "accession_number": "0001628280-26-057139",
+      "ledger_published_at": "2026-08-14T16:20:57Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-14T16:20:57.000Z",
+      "ledger_published_at_utc": "2026-08-14T16:20:57Z",
+      "primary_acceptance_at_utc": "2026-08-14T16:20:57Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

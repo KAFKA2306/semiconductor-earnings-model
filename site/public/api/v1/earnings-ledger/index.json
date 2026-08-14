@@ -1,23 +1,23 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-08-14T19:15:13.569693Z",
+  "generated_from_run_at": "2026-08-14T20:46:42.168490Z",
   "audit_status": "PASS",
   "accepted_events_total": 1,
-  "ledger_accepted_events_total": 2,
-  "expired_events_total": 1,
-  "rejected_events_total": 96,
+  "ledger_accepted_events_total": 3,
+  "expired_events_total": 2,
+  "rejected_events_total": 100,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
     {
-      "event_id": "4a6873ba8cec88e2e748da7e",
-      "company_id": "applied-materials",
-      "company_name": "Applied Materials",
-      "document_type": "8-K",
-      "published_at": "2026-08-13T20:03:36Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/6951/000162828026056699/0001628280-26-056699-index.html",
+      "event_id": "110d99434de9ce74bdd7a88d",
+      "company_id": "western-digital",
+      "company_name": "Western Digital Corporation",
+      "document_type": "10-K",
+      "published_at": "2026-08-14T16:20:57Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/106040/000162828026057139/0001628280-26-057139-index.html",
       "freshness": "PASS"
     }
   ],
