@@ -1,0 +1,113 @@
+{
+  "schema_version": "semiconductor.sandisk-long-term-financial-model.v1",
+  "company": {
+    "name": "Sandisk Corporation",
+    "ticker": "SNDK",
+    "exchange": "Nasdaq"
+  },
+  "event": {
+    "name": "2026 Sandisk Investor Day",
+    "date": "2026-08-13",
+    "period": "FY2028-FY2030"
+  },
+  "value_type": "issuer_guidance",
+  "canonical_use": [
+    "financial_analysis",
+    "investment_image_generation",
+    "report_generation"
+  ],
+  "primary_sources": [
+    {
+      "publisher": "Sandisk Corporation",
+      "type": "investor_day_event",
+      "date": "2026-08-13",
+      "url": "https://investor.sandisk.com/events/event-details/2026-sandisk-investor-day"
+    },
+    {
+      "publisher": "Sandisk Corporation",
+      "type": "long_term_financial_model_release",
+      "date": "2026-08-13",
+      "url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-details-growth-strategy-and-long-term-financial-model"
+    }
+  ],
+  "long_term_financial_model": {
+    "period": "FY2028-FY2030",
+    "revenue_growth": {
+      "value": "mid-to-high teens",
+      "unit": "percent",
+      "qualifier": "consistent with bit growth",
+      "numeric_range": null,
+      "note": "Preserve issuer wording; do not normalize to 15-19% or another numeric interval."
+    },
+    "non_gaap_gross_margin": {
+      "approx_value": 80,
+      "unit": "percent"
+    },
+    "non_gaap_operating_margin": {
+      "approx_value": 75,
+      "unit": "percent"
+    },
+    "operating_expense": {
+      "approx_value": 5,
+      "unit": "percent_of_revenue"
+    },
+    "adjusted_free_cash_flow_margin": {
+      "approx_value": 50,
+      "unit": "percent"
+    },
+    "excess_cash_return_after_business_investment": {
+      "value": 100,
+      "unit": "percent"
+    }
+  },
+  "new_business_model": {
+    "customers_signed": 8,
+    "fy2027_bit_shipments_covered": {
+      "approx_value": 50,
+      "unit": "percent"
+    },
+    "fy2028_bit_shipments_covered": {
+      "value": "approximately two-thirds",
+      "numeric_value": null,
+      "unit": "share_of_bits"
+    },
+    "features": [
+      "committed volumes",
+      "enforceable contractual frameworks with minimum financial guarantees",
+      "structured pricing"
+    ]
+  },
+  "image_generation_contract": {
+    "must_show_source": true,
+    "must_label_forward_looking": true,
+    "allowed_fields": [
+      "period",
+      "revenue_growth",
+      "non_gaap_gross_margin",
+      "non_gaap_operating_margin",
+      "operating_expense",
+      "adjusted_free_cash_flow_margin",
+      "excess_cash_return_after_business_investment",
+      "new_business_model"
+    ],
+    "do_not_infer": [
+      "annual revenue values",
+      "annual operating income values",
+      "annual free cash flow values",
+      "WACC",
+      "terminal growth rate",
+      "enterprise value",
+      "equity value",
+      "price target",
+      "share price path",
+      "numeric endpoints for mid-to-high teens revenue growth"
+    ],
+    "rule": "If a value is not explicitly stated in the issuer primary sources, omit it from an issuer-guidance image. Any independent estimate or scenario must be stored and displayed separately with value_type=estimate or value_type=scenario."
+  },
+  "provenance": {
+    "derived_from": "data/financial_analysis/sandisk-investor-day-2026-edinet-semiconductor-50.json",
+    "verification_issue": "https://github.com/KAFKA2306/semiconductor-earnings-model/issues/106",
+    "canonicalization_issue": "https://github.com/KAFKA2306/semiconductor-earnings-model/issues/110",
+    "verified_on": "2026-08-14"
+  }
+}
