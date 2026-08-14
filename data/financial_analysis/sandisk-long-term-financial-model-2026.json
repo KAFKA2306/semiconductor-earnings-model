@@ -1,5 +1,5 @@
 {
-  "schema_version": "semiconductor.sandisk-long-term-financial-model.v1",
+  "schema_version": "semiconductor.sandisk-long-term-financial-model.v2",
   "company": {
     "name": "Sandisk Corporation",
     "ticker": "SNDK",
@@ -14,7 +14,8 @@
   "canonical_use": [
     "financial_analysis",
     "investment_image_generation",
-    "report_generation"
+    "report_generation",
+    "investment_policy"
   ],
   "primary_sources": [
     {
@@ -28,48 +29,140 @@
       "type": "long_term_financial_model_release",
       "date": "2026-08-13",
       "url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-details-growth-strategy-and-long-term-financial-model"
+    },
+    {
+      "publisher": "Sandisk Corporation",
+      "type": "q3_fy2026_results",
+      "date": "2026-04-30",
+      "url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-reports-fiscal-third-quarter-2026-financial-results"
+    },
+    {
+      "publisher": "U.S. Securities and Exchange Commission",
+      "type": "q3_fy2026_exhibit_99_1",
+      "date": "2026-04-30",
+      "url": "https://www.sec.gov/Archives/edgar/data/2023554/000162828026028879/sndkq3-26ex991xpressrelease.htm"
     }
   ],
+  "growth_metric_contract": {
+    "required_dimensions": [
+      "metric",
+      "scope",
+      "unit",
+      "period",
+      "rate_basis",
+      "comparison_basis",
+      "value_type",
+      "source_wording"
+    ],
+    "rules": [
+      "Revenue growth, bit shipment growth, ASP movement, mix shift, and margin expansion are distinct metrics.",
+      "QoQ, YoY, CAGR, and issuer long-term model targets must never be treated as interchangeable rate bases.",
+      "The issuer phrase 'consistent with bit growth' is a qualitative relation, not a numeric identity between revenue growth and bit growth.",
+      "If the issuer source does not state a rate basis or bit-growth scope, preserve it as unspecified rather than inferring it.",
+      "Actual, issuer guidance, and independent scenario values must remain separate value types."
+    ],
+    "growth_drivers": [
+      {
+        "driver": "volume",
+        "observable": "bit_shipments",
+        "unit": "bits_or_percent_change",
+        "status": "separate_metric"
+      },
+      {
+        "driver": "price",
+        "observable": "asp",
+        "unit": "currency_per_bit_or_percent_change",
+        "status": "separate_metric"
+      },
+      {
+        "driver": "mix",
+        "observable": "customer_end_market_mix",
+        "unit": "share_or_revenue_mix",
+        "status": "separate_metric"
+      }
+    ]
+  },
   "long_term_financial_model": {
     "period": "FY2028-FY2030",
     "revenue_growth": {
+      "metric": "revenue_growth",
+      "scope": "Sandisk consolidated revenue",
       "value": "mid-to-high teens",
       "unit": "percent",
+      "period": "FY2028-FY2030",
+      "rate_basis": "issuer_long_term_model_target",
+      "comparison_basis": null,
+      "source_wording": "mid-to-high teens, consistent with bit growth",
       "qualifier": "consistent with bit growth",
       "numeric_range": null,
-      "note": "Preserve issuer wording; do not normalize to 15-19% or another numeric interval."
+      "note": "Preserve issuer wording; do not normalize to 15-19% or another numeric interval, and do not relabel as YoY or CAGR unless the issuer source explicitly states that basis."
+    },
+    "bit_growth_relation": {
+      "metric": "bit_growth",
+      "scope": "unspecified_in_canonical_source_capture",
+      "unit": "percent_change",
+      "period": "FY2028-FY2030",
+      "rate_basis": "unspecified_in_canonical_source_capture",
+      "comparison_basis": null,
+      "value_type": "issuer_qualifier",
+      "relation_to_revenue_growth": "consistent_with",
+      "numeric_value": null,
+      "source_wording": "consistent with bit growth",
+      "note": "Do not assume market bit demand, Sandisk production bits, or Sandisk shipped bits until the issuer wording is captured explicitly."
     },
     "non_gaap_gross_margin": {
+      "metric": "non_gaap_gross_margin",
       "approx_value": 80,
-      "unit": "percent"
+      "unit": "percent_of_revenue"
     },
     "non_gaap_operating_margin": {
+      "metric": "non_gaap_operating_margin",
       "approx_value": 75,
-      "unit": "percent"
+      "unit": "percent_of_revenue"
     },
     "operating_expense": {
+      "metric": "operating_expense",
       "approx_value": 5,
       "unit": "percent_of_revenue"
     },
     "adjusted_free_cash_flow_margin": {
+      "metric": "adjusted_free_cash_flow_margin",
       "approx_value": 50,
-      "unit": "percent"
+      "unit": "percent_of_revenue"
     },
     "excess_cash_return_after_business_investment": {
+      "metric": "excess_cash_return_after_business_investment",
       "value": 100,
-      "unit": "percent"
+      "unit": "percent_of_excess_cash"
+    }
+  },
+  "actual_growth_context": {
+    "q3_fy2026": {
+      "period": "Q3 FY2026",
+      "revenue_usd_billion": 5.95,
+      "revenue_qoq_growth_pct": 97,
+      "revenue_yoy_growth_pct": 251,
+      "driver_disclosure": [
+        "mix shift toward higher-value customers",
+        "higher pricing"
+      ],
+      "note": "These are reported quarterly actuals and must not be used as the rate basis for the FY2028-FY2030 issuer long-term model."
     }
   },
   "new_business_model": {
     "customers_signed": 8,
     "fy2027_bit_shipments_covered": {
+      "metric": "contracted_bit_shipment_coverage",
+      "scope": "FY2027 Sandisk bit shipments",
       "approx_value": 50,
-      "unit": "percent"
+      "unit": "percent_of_bit_shipments"
     },
     "fy2028_bit_shipments_covered": {
+      "metric": "contracted_bit_shipment_coverage",
+      "scope": "FY2028 Sandisk bit shipments",
       "value": "approximately two-thirds",
       "numeric_value": null,
-      "unit": "share_of_bits"
+      "unit": "share_of_bit_shipments"
     },
     "features": [
       "committed volumes",
@@ -80,14 +173,23 @@
   "image_generation_contract": {
     "must_show_source": true,
     "must_label_forward_looking": true,
+    "must_show_metric_dimensions": [
+      "metric",
+      "unit",
+      "period",
+      "rate_basis",
+      "value_type"
+    ],
     "allowed_fields": [
       "period",
       "revenue_growth",
+      "bit_growth_relation",
       "non_gaap_gross_margin",
       "non_gaap_operating_margin",
       "operating_expense",
       "adjusted_free_cash_flow_margin",
       "excess_cash_return_after_business_investment",
+      "actual_growth_context",
       "new_business_model"
     ],
     "do_not_infer": [
@@ -100,7 +202,10 @@
       "equity value",
       "price target",
       "share price path",
-      "numeric endpoints for mid-to-high teens revenue growth"
+      "numeric endpoints for mid-to-high teens revenue growth",
+      "YoY or CAGR basis for the long-term revenue growth target unless explicitly stated by the issuer",
+      "scope or numeric value of bit growth from the phrase consistent with bit growth",
+      "revenue growth attribution to bit growth alone"
     ],
     "rule": "If a value is not explicitly stated in the issuer primary sources, omit it from an issuer-guidance image. Any independent estimate or scenario must be stored and displayed separately with value_type=estimate or value_type=scenario."
   },
@@ -108,6 +213,7 @@
     "derived_from": "data/financial_analysis/sandisk-investor-day-2026-edinet-semiconductor-50.json",
     "verification_issue": "https://github.com/KAFKA2306/semiconductor-earnings-model/issues/106",
     "canonicalization_issue": "https://github.com/KAFKA2306/semiconductor-earnings-model/issues/110",
+    "growth_semantics_issue": "https://github.com/KAFKA2306/semiconductor-earnings-model/issues/113",
     "verified_on": "2026-08-14"
   }
 }
