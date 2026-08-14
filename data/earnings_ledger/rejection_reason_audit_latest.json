@@ -13,7 +13,7 @@
     "UNVERIFIED_NUMBER"
   ],
   "detail_reason_counts": {
-    "NOT_EARNINGS_RELATED": 95,
+    "NOT_EARNINGS_RELATED": 97,
     "SOURCE_FETCH_FAILED": 5
   },
   "discovery_detail_reasons": [
@@ -24,9 +24,9 @@
   "document_type_counts": {
     "13F-HR": 2,
     "144": 15,
-    "4": 69,
+    "4": 70,
     "424B2": 1,
-    "424B5": 1,
+    "424B5": 2,
     "6-K": 5,
     "8-K": 2,
     "FWP": 1,
@@ -34,7 +34,7 @@
     "S-4/A": 1,
     "TDNET_DISCLOSURE": 2
   },
-  "generated_at": "2026-08-14T20:46:42.224647Z",
+  "generated_at": "2026-08-14T22:41:51.210052Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
@@ -49,16 +49,16 @@
     "unknown_reason_fails_closed": true
   },
   "raw_reason_counts": {
-    "NOT_EARNINGS_RELATED": 95,
+    "NOT_EARNINGS_RELATED": 97,
     "SOURCE_FETCH_FAILED": 5
   },
-  "rejected_events_total": 100,
+  "rejected_events_total": 102,
   "rejection_stage_counts": {
-    "DISCOVERY_FILTER": 100
+    "DISCOVERY_FILTER": 102
   },
   "schema_version": "earnings-rejection-reason-audit.v3",
   "source_adapter_counts": {
-    "sec_edgar": 98,
+    "sec_edgar": 100,
     "tdnet_public": 2
   },
   "status": "PASS"
