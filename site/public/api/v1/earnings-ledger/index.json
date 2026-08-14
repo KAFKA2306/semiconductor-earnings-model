@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-08-14T02:46:47.915491Z",
+  "generated_from_run_at": "2026-08-14T05:47:24.926747Z",
   "audit_status": "PASS",
   "accepted_events_total": 1,
   "ledger_accepted_events_total": 2,
@@ -16,7 +16,7 @@
       "company_id": "applied-materials",
       "company_name": "Applied Materials",
       "document_type": "8-K",
-      "published_at": "2026-08-13T16:03:36Z",
+      "published_at": "2026-08-13T20:03:36Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/6951/000162828026056699/0001628280-26-056699-index.html",
       "freshness": "PASS"
     }
