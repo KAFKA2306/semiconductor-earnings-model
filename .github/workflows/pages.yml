@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.8.22"
@@ -86,7 +87,7 @@ jobs:
         run: |
           npm ci
           npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site/dist
 
