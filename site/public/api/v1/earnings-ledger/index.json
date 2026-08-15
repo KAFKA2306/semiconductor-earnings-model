@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-08-15T06:58:20.843501Z",
+  "generated_from_run_at": "2026-08-15T08:46:05.552313Z",
   "audit_status": "PASS",
   "accepted_events_total": 1,
   "ledger_accepted_events_total": 3,
@@ -16,7 +16,7 @@
       "company_id": "western-digital",
       "company_name": "Western Digital Corporation",
       "document_type": "10-K",
-      "published_at": "2026-08-14T16:20:57Z",
+      "published_at": "2026-08-14T20:20:57Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/106040/000162828026057139/0001628280-26-057139-index.html",
       "freshness": "PASS"
     }
