@@ -1,6 +1,6 @@
 {
   "schema_version": "verified-sec-capex.v1",
-  "run_at": "2026-08-15T02:03:33.682666Z",
+  "run_at": "2026-08-15T07:15:18.022639Z",
   "freshness_gate_hours": 24,
   "eligible_events_total": 1,
   "stale_events_skipped_total": 1,
