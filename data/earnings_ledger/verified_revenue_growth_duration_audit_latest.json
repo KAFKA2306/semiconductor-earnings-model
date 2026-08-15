@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-revenue-growth-duration-audit.v1",
-  "run_at": "2026-08-11T04:10:17.567151Z",
-  "growth_rows_total": 1,
-  "checked_growth_rows_total": 1,
+  "run_at": "2026-08-15T12:23:06.208474Z",
+  "growth_rows_total": 2,
+  "checked_growth_rows_total": 2,
   "issues": [],
   "status": "PASS",
   "contract": {

@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-revenue-growth.v1",
-  "run_at": "2026-08-11T04:10:17.508428Z",
-  "eligible_metrics_total": 1,
-  "calculated_yoy_total": 1,
+  "run_at": "2026-08-15T12:23:06.135925Z",
+  "eligible_metrics_total": 2,
+  "calculated_yoy_total": 2,
   "growth": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -23,6 +23,27 @@
       "taxonomy": "us-gaap",
       "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000707549.json",
+      "verification": "current and prior-year revenue are duration facts in the same SEC filing accession, same form/concept/unit, with period ends 350-380 days apart and durations within 7 days"
+    },
+    {
+      "event_id": "110d99434de9ce74bdd7a88d",
+      "company_id": "western-digital",
+      "ticker": "WDC",
+      "metric": "revenue",
+      "growth_type": "YoY",
+      "current_value": 12919000000,
+      "prior_value": 9520000000,
+      "unit": "USD",
+      "current_period_start": "2025-06-28",
+      "current_period_end": "2026-07-03",
+      "prior_period_start": "2024-06-29",
+      "prior_period_end": "2025-06-27",
+      "yoy_percent": 35.7038,
+      "accession_number": "0001628280-26-057139",
+      "document_type": "10-K",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000106040.json",
       "verification": "current and prior-year revenue are duration facts in the same SEC filing accession, same form/concept/unit, with period ends 350-380 days apart and durations within 7 days"
     }
   ],

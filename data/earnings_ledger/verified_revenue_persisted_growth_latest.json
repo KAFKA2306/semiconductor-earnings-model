@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-revenue-persisted-growth.v1",
-  "run_at": "2026-08-11T04:10:17.297190Z",
-  "eligible_metrics_total": 1,
-  "calculated_growth_total": 1,
+  "run_at": "2026-08-15T12:23:05.807749Z",
+  "eligible_metrics_total": 2,
+  "calculated_growth_total": 2,
   "growth": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -23,11 +23,36 @@
       "actuals_ledger": "data/earnings_ledger/verified_revenue_actuals.ndjson",
       "verification": "current and prior values were joined from the persisted verified revenue actual ledger; this comparator performs no network access",
       "yoy_percent": 26.0209
+    },
+    {
+      "event_id": "110d99434de9ce74bdd7a88d",
+      "company_id": "western-digital",
+      "ticker": "WDC",
+      "metric": "revenue",
+      "growth_type": "YoY",
+      "current_value": 12919000000,
+      "prior_value": 9520000000,
+      "unit": "USD",
+      "current_period_start": "2025-06-28",
+      "current_period_end": "2026-07-03",
+      "prior_period_start": "2024-06-29",
+      "prior_period_end": "2025-06-27",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000106040.json",
+      "actuals_ledger": "data/earnings_ledger/verified_revenue_actuals.ndjson",
+      "verification": "current and prior values were joined from the persisted verified revenue actual ledger; this comparator performs no network access",
+      "yoy_percent": 35.7038
     }
   ],
   "not_calculated": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
+      "growth_type": "QoQ",
+      "reason": "CURRENT_FACT_NOT_STANDALONE_QUARTER"
+    },
+    {
+      "event_id": "110d99434de9ce74bdd7a88d",
       "growth_type": "QoQ",
       "reason": "CURRENT_FACT_NOT_STANDALONE_QUARTER"
     }
