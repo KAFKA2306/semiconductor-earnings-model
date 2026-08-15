@@ -40,7 +40,16 @@ def test_observations_are_traceable_unique_and_semantically_typed() -> None:
     assert all(row["source_tier"] in allowed_tiers for row in observations)
     assert all(str(row["source_url"]).startswith("https://") for row in observations)
     assert all(row["period_type"] in {"annual", "quarter", "duration", "instant", "point_in_time", "unknown"} for row in observations)
-    assert all(row["value_type"] == "actual" for row in observations if row["source_tier"] == "primary_regulatory")
+    assert all(
+        row["value_type"] in {"actual", "company_guidance"}
+        for row in observations
+        if row["source_tier"] == "primary_regulatory"
+    )
+    assert all(
+        row["source_tier"] in {"primary_regulatory", "primary_company"}
+        for row in observations
+        if row["value_type"] == "company_guidance"
+    )
 
 
 def test_fact_estimate_guidance_and_market_classes_remain_separate() -> None:
