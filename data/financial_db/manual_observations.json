@@ -88,6 +88,31 @@
       "document_form": "8-K_exhibit_99.1", "source_tag": "business_outlook",
       "reported_text": "Non-GAAP diluted net income per share $30.00 - $33.00 for fiscal fourth quarter 2026.",
       "assumptions": ["Fiscal 2026 period end July 3, 2026 is stated in Sandisk SEC filings."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:consolidated:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 41460000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "consolidated",
+      "as_of": "2026-06-24", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/node/50671", "document_form": "earnings_release", "source_tag": "fiscal_q3_2026_highlights",
+      "reported_text": "Revenue of $41.46 billion for fiscal Q3 2026.",
+      "assumptions": ["The company reports revenue in USD billions; the canonical value is converted to USD by multiplying by 1,000,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:eps_diluted:consolidated:actual:gaap",
+      "entity_id": "micron", "concept_id": "eps_diluted", "value_type": "actual", "value": 24.67, "unit": "USD_per_share",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "consolidated", "basis": "gaap",
+      "as_of": "2026-06-24", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/node/50671", "document_form": "earnings_release", "source_tag": "fiscal_q3_2026_highlights",
+      "reported_text": "GAAP diluted earnings per share of $24.67 for fiscal Q3 2026.", "assumptions": [], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:eps_diluted:consolidated:actual:non_gaap",
+      "entity_id": "micron", "concept_id": "eps_diluted", "value_type": "actual", "value": 25.11, "unit": "USD_per_share",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "consolidated", "basis": "non_gaap",
+      "as_of": "2026-06-24", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/node/50671", "document_form": "earnings_release", "source_tag": "fiscal_q3_2026_highlights",
+      "reported_text": "Non-GAAP diluted earnings per share of $25.11 for fiscal Q3 2026.", "assumptions": [], "quality_flags": []
     }
   ]
 }
