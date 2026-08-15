@@ -113,6 +113,63 @@
       "as_of": "2026-06-24", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
       "source_url": "https://investors.micron.com/node/50671", "document_form": "earnings_release", "source_tag": "fiscal_q3_2026_highlights",
       "reported_text": "Non-GAAP diluted earnings per share of $25.11 for fiscal Q3 2026.", "assumptions": [], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:consolidated:actual:10q-precision",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 41456000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "consolidated",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "consolidated_statements_of_operations",
+      "reported_text": "Revenue $41,456 million for the quarter ended May 28, 2026.",
+      "supersedes_id": "micron:2026-05-28:revenue:consolidated:actual", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:dram:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 31328000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "DRAM",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "revenue_by_technology",
+      "reported_text": "DRAM revenue $31,328 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:nand:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 9943000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "NAND",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "revenue_by_technology",
+      "reported_text": "NAND revenue $9,943 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:cmbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 13769000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Cloud Memory Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_revenue",
+      "reported_text": "CMBU revenue $13,769 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:cdbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 11524000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Core Data Center Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_revenue",
+      "reported_text": "CDBU revenue $11,524 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:mcbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 11521000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Mobile and Client Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_revenue",
+      "reported_text": "MCBU revenue $11,521 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:revenue:aebu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 4634000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Automotive and Embedded Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_revenue",
+      "reported_text": "AEBU revenue $4,634 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
     }
   ]
 }
