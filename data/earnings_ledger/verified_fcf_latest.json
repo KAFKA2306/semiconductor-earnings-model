@@ -1,43 +1,11 @@
 {
   "schema_version": "verified-sec-fcf.v1",
-  "run_at": "2026-08-15T19:14:26.425424Z",
+  "run_at": "2026-08-15T21:11:48.699225Z",
   "freshness_gate_hours": 24,
-  "eligible_events_total": 1,
-  "stale_events_skipped_total": 1,
-  "verified_metrics_total": 1,
-  "metrics": [
-    {
-      "event_id": "110d99434de9ce74bdd7a88d",
-      "company_id": "western-digital",
-      "ticker": "WDC",
-      "accession_number": "0001628280-26-057139",
-      "period_start": "2025-06-28",
-      "period_end": "2026-07-03",
-      "duration_days": 371,
-      "document_type": "10-K",
-      "metric": "free_cash_flow",
-      "value": 3511000000,
-      "unit": "USD",
-      "accounting_basis": "derived-non-gaap",
-      "derivation": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
-      "inputs": {
-        "operating_cash_flow": {
-          "taxonomy": "us-gaap",
-          "concept": "NetCashProvidedByUsedInOperatingActivities",
-          "value": 3929000000
-        },
-        "capital_expenditures": {
-          "taxonomy": "us-gaap",
-          "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-          "value": 418000000
-        }
-      },
-      "filed": "2026-08-14",
-      "source": "SEC Company Facts API",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000106040.json",
-      "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
-    }
-  ],
+  "eligible_events_total": 0,
+  "stale_events_skipped_total": 2,
+  "verified_metrics_total": 0,
+  "metrics": [],
   "issues": [],
   "status": "PASS",
   "contract": "FCF is a derived non-GAAP metric. Persist it only when live <=24h SEC 10-K/10-Q Company Facts provides one unambiguous USD us-gaap operating-cash-flow fact and one unambiguous USD us-gaap PP&E acquisition fact for the exact same accession, form, period start and period end. Missing, stale, future, malformed, mismatched or conflicting inputs never become metrics."
