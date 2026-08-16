@@ -48,31 +48,12 @@ jobs:
       - name: Run FCF regression tests
         run: python -m pytest -q tests/test_verified_sec_fcf.py tests/test_earnings_push_recovery.py
 
-      - name: Extract verified live SEC XBRL FCF with retry
+      - name: Extract verified live SEC XBRL FCF
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
-        shell: bash
         run: |
-          set -u
-          if [ -z "${SEC_USER_AGENT:-}" ]; then
-            echo "Repository variable SEC_USER_AGENT is required."
-            exit 1
-          fi
-          ok=0
-          for attempt in 1 2 3; do
-            echo "Company Facts FCF extraction attempt ${attempt}/3"
-            if python scripts/extract_verified_sec_fcf.py; then
-              ok=1
-              break
-            fi
-            if [ "$attempt" -lt 3 ]; then
-              sleep $((attempt * 30))
-            fi
-          done
-          if [ "$ok" -ne 1 ]; then
-            echo "verified SEC FCF extraction failed after 3 attempts"
-            exit 1
-          fi
+          : "${SEC_USER_AGENT:?Repository variable SEC_USER_AGENT is required}"
+          python scripts/extract_verified_sec_fcf.py
 
       - name: Commit verified FCF artifact
         if: github.event_name != 'pull_request'
