@@ -16,6 +16,33 @@
   },
   "observations": [
     {
+      "id": "sandisk:2025-10-03:revenue:datacenter:actual",
+      "entity_id": "sandisk", "concept_id": "revenue", "value_type": "actual", "value": 269000000, "unit": "USD",
+      "period_end": "2025-10-03", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q1", "scope": "segment", "segment": "Datacenter",
+      "as_of": "2025-11-06", "source_tier": "primary_company", "source_name": "Sandisk Corporation",
+      "source_url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-reports-fiscal-first-quarter-2026-financial-results",
+      "document_form": "earnings_release", "source_tag": "end_market_summary", "reported_text": "Datacenter revenue: $269 million",
+      "assumptions": ["The company reports this table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "sandisk:2025-10-03:revenue:edge:actual",
+      "entity_id": "sandisk", "concept_id": "revenue", "value_type": "actual", "value": 1387000000, "unit": "USD",
+      "period_end": "2025-10-03", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q1", "scope": "segment", "segment": "Edge",
+      "as_of": "2025-11-06", "source_tier": "primary_company", "source_name": "Sandisk Corporation",
+      "source_url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-reports-fiscal-first-quarter-2026-financial-results",
+      "document_form": "earnings_release", "source_tag": "end_market_summary", "reported_text": "Edge revenue: $1,387 million",
+      "assumptions": ["The company reports this table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "sandisk:2025-10-03:revenue:consumer:actual",
+      "entity_id": "sandisk", "concept_id": "revenue", "value_type": "actual", "value": 652000000, "unit": "USD",
+      "period_end": "2025-10-03", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q1", "scope": "segment", "segment": "Consumer",
+      "as_of": "2025-11-06", "source_tier": "primary_company", "source_name": "Sandisk Corporation",
+      "source_url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-reports-fiscal-first-quarter-2026-financial-results",
+      "document_form": "earnings_release", "source_tag": "end_market_summary", "reported_text": "Consumer revenue: $652 million",
+      "assumptions": ["The company reports this table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
       "id": "sandisk:2026-01-02:revenue:datacenter:actual",
       "entity_id": "sandisk", "concept_id": "revenue", "value_type": "actual", "value": 440000000, "unit": "USD",
       "period_end": "2026-01-02", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q2", "scope": "segment", "segment": "Datacenter",
