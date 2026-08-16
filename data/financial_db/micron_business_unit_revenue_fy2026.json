@@ -1,0 +1,99 @@
+{
+  "schema_version": "financial-manual-observations.v1",
+  "policy": {
+    "purpose": "Store reviewed observations that cannot yet be obtained from an automated primary-source adapter.",
+    "required_fields": ["id", "entity_id", "concept_id", "value_type", "unit", "period_end", "as_of", "source_tier", "source_url"],
+    "allowed_source_tiers": ["primary_regulatory", "primary_company", "licensed_consensus", "market_data", "model"],
+    "rules": [
+      "Do not enter a value from memory or from an uncited secondary summary.",
+      "Use one record per value, period, scope, source, and revision.",
+      "Each record requires value or at least one of value_low and value_high.",
+      "Guidance ranges use value_low and value_high; do not replace a range with an undocumented midpoint.",
+      "Consensus values must identify the provider and observation timestamp.",
+      "Internal estimates and scenarios must include model_id, formula or assumptions, and evidence_ids.",
+      "A correction supersedes an earlier record through supersedes_id; history is never deleted silently."
+    ]
+  },
+  "observations": [
+    {
+      "id": "micron:2025-11-27:revenue:cmbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 5284000000, "unit": "USD",
+      "period_end": "2025-11-27", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q1", "scope": "segment", "segment": "Cloud Memory Business Unit",
+      "as_of": "2025-12-17", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-first-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Cloud Memory Business Unit revenue $5,284 million for FQ1-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2025-11-27:revenue:cdbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 2379000000, "unit": "USD",
+      "period_end": "2025-11-27", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q1", "scope": "segment", "segment": "Core Data Center Business Unit",
+      "as_of": "2025-12-17", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-first-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Core Data Center Business Unit revenue $2,379 million for FQ1-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2025-11-27:revenue:mcbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 4255000000, "unit": "USD",
+      "period_end": "2025-11-27", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q1", "scope": "segment", "segment": "Mobile and Client Business Unit",
+      "as_of": "2025-12-17", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-first-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Mobile and Client Business Unit revenue $4,255 million for FQ1-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2025-11-27:revenue:aebu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 1720000000, "unit": "USD",
+      "period_end": "2025-11-27", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q1", "scope": "segment", "segment": "Automotive and Embedded Business Unit",
+      "as_of": "2025-12-17", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-first-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Automotive and Embedded Business Unit revenue $1,720 million for FQ1-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-02-26:revenue:cmbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 7749000000, "unit": "USD",
+      "period_end": "2026-02-26", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q2", "scope": "segment", "segment": "Cloud Memory Business Unit",
+      "as_of": "2026-03-18", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Cloud Memory Business Unit revenue $7,749 million for FQ2-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-02-26:revenue:cdbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 5687000000, "unit": "USD",
+      "period_end": "2026-02-26", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q2", "scope": "segment", "segment": "Core Data Center Business Unit",
+      "as_of": "2026-03-18", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Core Data Center Business Unit revenue $5,687 million for FQ2-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-02-26:revenue:mcbu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 7711000000, "unit": "USD",
+      "period_end": "2026-02-26", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q2", "scope": "segment", "segment": "Mobile and Client Business Unit",
+      "as_of": "2026-03-18", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Mobile and Client Business Unit revenue $7,711 million for FQ2-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-02-26:revenue:aebu:actual",
+      "entity_id": "micron", "concept_id": "revenue", "value_type": "actual", "value": 2708000000, "unit": "USD",
+      "period_end": "2026-02-26", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q2", "scope": "segment", "segment": "Automotive and Embedded Business Unit",
+      "as_of": "2026-03-18", "source_tier": "primary_company", "source_name": "Micron Technology, Inc.",
+      "source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2026",
+      "document_form": "earnings_release", "source_tag": "quarterly_business_unit_financial_results",
+      "reported_text": "Automotive and Embedded Business Unit revenue $2,708 million for FQ2-26.",
+      "assumptions": ["Micron reports the table in USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    }
+  ]
+}
