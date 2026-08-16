@@ -12,6 +12,7 @@ ROOT=Path(__file__).parents[1]
 INDUSTRY=ROOT/"data/financial_db/industry_entities.json"
 NAND=ROOT/"data/financial_db/nand_kpi_observations.json"
 STATE=ROOT/"data/financial_db/nand_kpi_collection_state.json"
+MICRON_BU=ROOT/"data/financial_db/micron_business_unit_revenue_fy2026.json"
 Q2Y={"nand_asp_change_qoq":"nand_asp_change_yoy","nand_bit_shipments_change_qoq":"nand_bit_shipments_change_yoy"}
 Q2G={"nand_asp_change_qoq":"nand_asp_vs_company_guidance","nand_bit_shipments_change_qoq":"nand_bit_shipments_vs_company_guidance"}
 
@@ -81,15 +82,15 @@ def extra_audit(rows,view):
     return issues
 
 def main():
-    primary=base.load(base.PRIMARY_PATH); research=base.load(base.RESEARCH_PATH); catalog=base.load(base.CATALOG_PATH); manual=base.load(base.MANUAL_PATH); industry=base.load(INDUSTRY); ledger=base.load(NAND); state=base.load(STATE) if STATE.exists() else {"schema_version":"nand-kpi-collection-state.v1","generated_at":None,"issues":[]}
+    primary=base.load(base.PRIMARY_PATH); research=base.load(base.RESEARCH_PATH); catalog=base.load(base.CATALOG_PATH); manual=base.load(base.MANUAL_PATH); micron_bu=base.load(MICRON_BU); industry=base.load(INDUSTRY); ledger=base.load(NAND); state=base.load(STATE) if STATE.exists() else {"schema_version":"nand-kpi-collection-state.v1","generated_at":None,"issues":[]}
     entities=extend_entities(base.build_entities(primary,research),industry); ids={x["id"] for x in entities}
-    raw=base.research_observations(research)+base.primary_observations(primary)+base.manual_observations(manual,catalog,ids)+base.manual_observations(ledger,catalog,ids)
+    raw=base.research_observations(research)+base.primary_observations(primary)+base.manual_observations(manual,catalog,ids)+base.manual_observations(micron_bu,catalog,ids)+base.manual_observations(ledger,catalog,ids)
     actual=base.deduplicate(raw); derived=derive_yoy(actual)+derive_guidance(actual); observations=base.deduplicate(actual+derived); sources=base.build_sources(observations)
     metrics=research.get("database",{}).get("derived_metrics",[]); evaluations=research.get("database",{}).get("evaluations",[]); edges=list(research.get("database",{}).get("evidence_edges",[]))
     for r in derived: edges.extend({"from_id":r["id"],"relationship":"derived_from","to_id":e} for e in r.get("evidence_ids",[]))
     views=base.build_views(entities,observations,metrics); views["nand_kpi_comparisons"]=nand_view(observations); audit=base.build_audit(entities,observations,metrics,catalog); audit["issues"].extend(extra_audit(observations,views["nand_kpi_comparisons"]))
     audit["counts"].update({"nand_actual_observations":sum(r.get("value_type")=="actual" and r.get("concept_id") in Q2Y for r in observations),"nand_derived_observations":len(derived),"nand_comparison_periods":len(views["nand_kpi_comparisons"])}); audit["counts"]["errors"]=sum(x["severity"]=="error" for x in audit["issues"]); audit["counts"]["warnings"]=sum(x["severity"]=="warning" for x in audit["issues"]); audit["status"]="PASS" if audit["counts"]["errors"]==0 else "FAIL"
-    core={"schema_version":"financial-database.v3","extensions":["nand-operating-kpis.v1"],"source_api_hashes":{"primary":primary.get("snapshot_hash") or primary.get("content_hash"),"semiconductor_research":research.get("content_hash"),"metric_catalog":base.canonical_hash(catalog),"manual_observations":base.canonical_hash(manual),"industry_entities":base.canonical_hash(industry),"nand_kpi_observations":base.canonical_hash(ledger),"nand_kpi_collection_state":base.canonical_hash(state)},"catalog":catalog,"entities":entities,"sources":sources,"observations":observations,"derived_metrics":metrics,"evaluations":evaluations,"evidence_edges":edges,"views":views,"collection_state":{"nand_kpi":state},"audit":audit}
+    core={"schema_version":"financial-database.v3","extensions":["nand-operating-kpis.v1"],"source_api_hashes":{"primary":primary.get("snapshot_hash") or primary.get("content_hash"),"semiconductor_research":research.get("content_hash"),"metric_catalog":base.canonical_hash(catalog),"manual_observations":base.canonical_hash(manual),"micron_business_unit_revenue_fy2026":base.canonical_hash(micron_bu),"industry_entities":base.canonical_hash(industry),"nand_kpi_observations":base.canonical_hash(ledger),"nand_kpi_collection_state":base.canonical_hash(state)},"catalog":catalog,"entities":entities,"sources":sources,"observations":observations,"derived_metrics":metrics,"evaluations":evaluations,"evidence_edges":edges,"views":views,"collection_state":{"nand_kpi":state},"audit":audit}
     payload={**core,"generated_at":datetime.now(timezone.utc).isoformat(),"content_hash":base.canonical_hash(core),"sqlite_path":"financial.db"}
     if audit["status"]!="PASS": raise AssertionError(f"Financial database NAND audit failed: {audit['issues']}")
     base.OUTPUT_DIR.mkdir(parents=True,exist_ok=True); base.JSON_PATH.write_text(json.dumps(payload,ensure_ascii=False,sort_keys=True,indent=2)+"\n",encoding="utf-8"); base.write_sqlite(payload)
