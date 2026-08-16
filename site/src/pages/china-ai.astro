@@ -8,8 +8,8 @@ const base = import.meta.env.BASE_URL;
 const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
 if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
 const observations = data.observations ?? [];
+const sourceMap = data.sources ?? {};
 const categories = [...new Set(observations.map((row) => row.category))];
-const sources = new Set(observations.map((row) => row.source_url)).size;
 const displayValue = (row) => `${row.qualifier === '=' ? '' : row.qualifier}${row.value} ${row.unit}`;
 ---
 <!doctype html>
@@ -33,7 +33,7 @@ const displayValue = (row) => `${row.qualifier === '=' ? '' : row.qualifier}${ro
     <dl>
       <div><dt>Observations</dt><dd>{observations.length}</dd></div>
       <div><dt>Categories</dt><dd>{categories.length}</dd></div>
-      <div><dt>Primary URLs</dt><dd>{sources}</dd></div>
+      <div><dt>Primary URLs</dt><dd>{Object.keys(sourceMap).length}</dd></div>
       <div><dt>As of</dt><dd>{data.as_of}</dd></div>
     </dl>
   </section>
@@ -42,9 +42,10 @@ const displayValue = (row) => `${row.qualifier === '=' ? '' : row.qualifier}${ro
       <h2>{category.replaceAll('_', ' ')}</h2>
       <div class="table-wrap"><table>
         <thead><tr><th>Entity</th><th>Period</th><th>Metric</th><th>Value</th><th>Source date</th><th>Primary source</th></tr></thead>
-        <tbody>{observations.filter((row) => row.category === category).map((row) => (
-          <tr><td>{row.entity}</td><td>{row.period}</td><td><code>{row.metric}</code></td><td><strong>{displayValue(row)}</strong></td><td>{row.source_date}</td><td><a href={row.source_url} rel="noreferrer">source</a></td></tr>
-        ))}</tbody>
+        <tbody>{observations.filter((row) => row.category === category).map((row) => {
+          const source = sourceMap[row.source];
+          return <tr><td>{row.entity}</td><td>{row.period}</td><td><code>{row.metric}</code></td><td><strong>{displayValue(row)}</strong></td><td>{source?.date ?? 'missing'}</td><td><a href={source?.url} rel="noreferrer">{source?.title ?? row.source}</a></td></tr>;
+        })}</tbody>
       </table></div>
     </section>
   ))}
