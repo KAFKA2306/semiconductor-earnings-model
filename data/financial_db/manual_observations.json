@@ -197,6 +197,46 @@
       "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
       "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_revenue",
       "reported_text": "AEBU revenue $4,634 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:operating_income:consolidated:actual",
+      "entity_id": "micron", "concept_id": "operating_income", "value_type": "actual", "value": 33318000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "consolidated",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "consolidated_statements_of_operations",
+      "reported_text": "Operating income $33,318 million for the quarter ended May 28, 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:operating_income:cmbu:actual",
+      "entity_id": "micron", "concept_id": "operating_income", "value_type": "actual", "value": 10793000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Cloud Memory Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_operating_income",
+      "reported_text": "CMBU operating income $10,793 million for the third quarter of 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:operating_income:cdbu:actual",
+      "entity_id": "micron", "concept_id": "operating_income", "value_type": "actual", "value": 9519000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Core Data Center Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_operating_income",
+      "reported_text": "CDBU operating income $9,519 million for the third quarter of 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:operating_income:mcbu:actual",
+      "entity_id": "micron", "concept_id": "operating_income", "value_type": "actual", "value": 9873000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Mobile and Client Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_operating_income",
+      "reported_text": "MCBU operating income $9,873 million for the third quarter of 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
+    },
+    {
+      "id": "micron:2026-05-28:operating_income:aebu:actual",
+      "entity_id": "micron", "concept_id": "operating_income", "value_type": "actual", "value": 3493000000, "unit": "USD",
+      "period_end": "2026-05-28", "period_type": "quarter", "fiscal_year": 2026, "fiscal_period": "Q3", "scope": "segment", "segment": "Automotive and Embedded Business Unit",
+      "as_of": "2026-06-25", "source_tier": "primary_regulatory", "source_name": "Micron Technology, Inc. / SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm", "document_form": "10-Q", "source_tag": "segment_operating_income",
+      "reported_text": "AEBU operating income $3,493 million for the third quarter of 2026.", "assumptions": ["The SEC 10-Q reports USD millions; the canonical value is converted to USD by multiplying by 1,000,000."], "quality_flags": []
     }
   ]
 }
