@@ -1,0 +1,100 @@
+{
+  "schema_version": "ai-infrastructure-observations.v1",
+  "policy": {
+    "required_fields": ["id", "entity", "concept_id", "value_type", "value", "unit", "period_end", "as_of", "source_tier", "source_url"],
+    "rules": [
+      "Actual and guidance are stored as different value types.",
+      "Quantity, capacity and currency observations use different concepts and units.",
+      "No undisclosed capacity, shipment or revenue is inferred."
+    ]
+  },
+  "observations": [
+    {
+      "id": "nvidia:2026-04-26:data-center-compute-revenue:actual",
+      "entity": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "concept_id": "data_center_compute_revenue",
+      "value_type": "actual",
+      "value": 60400000000,
+      "unit": "USD",
+      "period_end": "2026-04-26",
+      "period_type": "quarter",
+      "fiscal_year": 2027,
+      "fiscal_period": "Q1",
+      "as_of": "2026-05-20",
+      "source_tier": "primary_company",
+      "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+      "reported_text": "Data Center compute revenue was $60.4 billion."
+    },
+    {
+      "id": "nvidia:2026-04-26:data-center-networking-revenue:actual",
+      "entity": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "concept_id": "data_center_networking_revenue",
+      "value_type": "actual",
+      "value": 14800000000,
+      "unit": "USD",
+      "period_end": "2026-04-26",
+      "period_type": "quarter",
+      "fiscal_year": 2027,
+      "fiscal_period": "Q1",
+      "as_of": "2026-05-20",
+      "source_tier": "primary_company",
+      "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+      "reported_text": "Data Center networking revenue was $14.8 billion."
+    },
+    {
+      "id": "microsoft:2026-03-31:capacity-added:actual",
+      "entity": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "concept_id": "energy_capacity_added",
+      "value_type": "actual",
+      "value": 1000,
+      "unit": "MW",
+      "period_end": "2026-03-31",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-04-29",
+      "source_tier": "primary_company",
+      "source_url": "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q3",
+      "reported_text": "Microsoft said it added another gigawatt of capacity this quarter.",
+      "assumptions": ["1 gigawatt is normalized to 1,000 MW."]
+    },
+    {
+      "id": "microsoft:2026-03-31:capital-expenditures:actual",
+      "entity": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "concept_id": "capital_expenditures",
+      "value_type": "actual",
+      "value": 31900000000,
+      "unit": "USD",
+      "period_end": "2026-03-31",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-04-29",
+      "source_tier": "primary_company",
+      "source_url": "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q3",
+      "reported_text": "Capital expenditures were $31.9 billion."
+    },
+    {
+      "id": "microsoft:2026-06-30:capital-expenditures:guidance",
+      "entity": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "concept_id": "capital_expenditures",
+      "value_type": "company_guidance",
+      "value": 40000000000,
+      "qualifier": "greater_than",
+      "unit": "USD",
+      "period_end": "2026-06-30",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q4",
+      "as_of": "2026-04-29",
+      "source_tier": "primary_company",
+      "source_url": "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q3",
+      "reported_text": "Microsoft expected Q4 CapEx spend to increase to over $40 billion."
+    }
+  ]
+}
