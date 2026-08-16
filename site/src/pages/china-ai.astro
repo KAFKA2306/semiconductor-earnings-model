@@ -1,0 +1,57 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
+const data = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v3/china-ai/index.json'), 'utf8'));
+const base = import.meta.env.BASE_URL;
+const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
+if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
+const observations = data.observations ?? [];
+const categories = [...new Set(observations.map((row) => row.category))];
+const sources = new Set(observations.map((row) => row.source_url)).size;
+const displayValue = (row) => `${row.qualifier === '=' ? '' : row.qualifier}${row.value} ${row.unit}`;
+---
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="中国AI産業の算力、token価格、国産compute、導入、売上、ソフトウェア生態系を一次情報の定量値だけで追跡する公開データページ。" />
+  <title>China AI Quantitative Monitor</title>
+</head>
+<body data-build-sha={buildSha}>
+<main>
+  <header>
+    <a href={base}>Financial Research Workbench</a>
+    <a href={`${base}api/v3/china-ai/index.json`}>JSON API</a>
+  </header>
+  <section class="hero">
+    <p>PRIMARY SOURCES × QUANTITATIVE OBSERVATIONS</p>
+    <h1>China AI<br/><em>Quantitative Monitor</em></h1>
+    <p class="lead">評価・スコア・投資判断を置かず、中国AI産業の公開一次情報から取得できる数値だけを同じ形式で保存します。</p>
+    <dl>
+      <div><dt>Observations</dt><dd>{observations.length}</dd></div>
+      <div><dt>Categories</dt><dd>{categories.length}</dd></div>
+      <div><dt>Primary URLs</dt><dd>{sources}</dd></div>
+      <div><dt>As of</dt><dd>{data.as_of}</dd></div>
+    </dl>
+  </section>
+  {categories.map((category) => (
+    <section>
+      <h2>{category.replaceAll('_', ' ')}</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Entity</th><th>Period</th><th>Metric</th><th>Value</th><th>Source date</th><th>Primary source</th></tr></thead>
+        <tbody>{observations.filter((row) => row.category === category).map((row) => (
+          <tr><td>{row.entity}</td><td>{row.period}</td><td><code>{row.metric}</code></td><td><strong>{displayValue(row)}</strong></td><td>{row.source_date}</td><td><a href={row.source_url} rel="noreferrer">source</a></td></tr>
+        ))}</tbody>
+      </table></div>
+    </section>
+  ))}
+  <footer><span>SCHEMA</span><code>{data.schema_version}</code><span>BUILD SHA</span><code>{buildSha}</code></footer>
+</main>
+</body>
+</html>
+<style>
+:global(body){margin:0;background:#fbfaf7;color:#243653;font-family:Inter,"Noto Sans JP",system-ui,sans-serif}:global(a){color:#315f9c}main{width:min(1400px,calc(100% - 32px));margin:auto;padding-bottom:64px}header{min-height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dfe3e8;font-weight:800}.hero{padding:64px 0}.hero>p:first-child{font-size:.7rem;letter-spacing:.14em;font-weight:900;color:#69768b}h1,h2{font-family:Georgia,"Noto Serif JP",serif;font-weight:500}h1{font-size:clamp(3rem,7vw,6rem);line-height:1;margin:.2em 0}h1 em{color:#8a6e98}.lead{max-width:780px;line-height:1.8;color:#69768b}.hero dl{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:32px}.hero dl div{padding:18px;border:1px solid #dfe3e8;border-radius:18px;background:#fff}.hero dt{font-size:.65rem;color:#69768b}.hero dd{margin:6px 0 0;font-size:1.6rem;font-weight:900}section{padding:40px 0;border-top:1px solid #dfe3e8}h2{text-transform:capitalize;font-size:2rem}.table-wrap{overflow-x:auto;border:1px solid #dfe3e8;border-radius:18px;background:#fff}table{width:100%;min-width:980px;border-collapse:collapse}th,td{padding:12px 14px;border-bottom:1px solid #edf0f3;text-align:left;font-size:.76rem}th{color:#69768b;font-size:.65rem}td:nth-child(4){white-space:nowrap}code{font-size:.72rem}footer{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin-top:44px;padding:18px;border-radius:16px;background:#243653;color:#fff;font-size:.65rem}@media(max-width:700px){.hero dl{grid-template-columns:repeat(2,1fr)}}
+</style>
