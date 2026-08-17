@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -23,7 +24,6 @@ COMPANIES = {
     "INTC": (50863, "Intel Corporation"),
     "ORCL": (1341439, "Oracle Corporation"),
 }
-USER_AGENT = "KAFKA2306 semiconductor-earnings-model github.com/KAFKA2306"
 
 
 def source_url(cik: int) -> str:
@@ -31,7 +31,10 @@ def source_url(cik: int) -> str:
 
 
 def fetch(cik: int) -> bytes:
-    request = Request(source_url(cik), headers={"User-Agent": USER_AGENT, "Accept-Encoding": "gzip, deflate"})
+    user_agent = os.environ.get("SEC_USER_AGENT", "").strip()
+    if not user_agent:
+        raise RuntimeError("SEC_USER_AGENT is required for SEC automated access")
+    request = Request(source_url(cik), headers={"User-Agent": user_agent, "Accept-Encoding": "identity"})
     with urlopen(request, timeout=60) as response:
         return response.read()
 
