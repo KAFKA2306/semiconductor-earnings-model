@@ -1,0 +1,70 @@
+name: AI infrastructure evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/collect_ai_infrastructure_sec.py'
+      - 'scripts/build_ai_infrastructure_view.py'
+      - 'data/financial_db/ai_infrastructure_observations.json'
+      - 'tests/test_ai_infrastructure_observations.py'
+      - '.github/workflows/ai-infrastructure.yml'
+  pull_request:
+    paths:
+      - 'scripts/collect_ai_infrastructure_sec.py'
+      - 'scripts/build_ai_infrastructure_view.py'
+      - 'data/financial_db/ai_infrastructure_observations.json'
+      - 'tests/test_ai_infrastructure_observations.py'
+      - '.github/workflows/ai-infrastructure.yml'
+  schedule:
+    - cron: '40 14 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Require SEC user agent
+        run: test -n "${SEC_USER_AGENT:-}"
+      - name: Unit tests
+        run: python -m pip install pytest && python -m pytest -q tests/test_ai_infrastructure_observations.py
+      - name: Verify live SEC Company Facts coverage
+        if: github.event_name == 'pull_request'
+        run: |
+          python scripts/collect_ai_infrastructure_sec.py --output /tmp/ai-infrastructure-sec.json
+          python scripts/build_ai_infrastructure_view.py --sec /tmp/ai-infrastructure-sec.json --output-dir /tmp/ai-infrastructure-view
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          coverage = json.loads(Path('/tmp/ai-infrastructure-view/coverage.json').read_text())
+          assert coverage['company_count'] >= 10
+          assert {'compute', 'memory', 'network', 'power'} <= set(coverage['domains'])
+          print(coverage)
+          PY
+      - name: Collect and publish evidence
+        if: github.event_name != 'pull_request'
+        run: |
+          python scripts/collect_ai_infrastructure_sec.py
+          python scripts/build_ai_infrastructure_view.py
+      - name: Commit changed evidence
+        if: github.event_name != 'pull_request'
+        run: |
+          if test -z "$(git status --porcelain -- data/financial_db/ai_infrastructure_sec_capex.json api/v1/ai-infrastructure)"; then
+            echo 'No AI infrastructure evidence changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/financial_db/ai_infrastructure_sec_capex.json api/v1/ai-infrastructure
+          git commit -m 'data: update AI infrastructure evidence'
+          git push
