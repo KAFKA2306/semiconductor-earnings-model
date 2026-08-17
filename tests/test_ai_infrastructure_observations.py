@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from scripts.collect_ai_infrastructure_sec import CONCEPT, quarterly_capex
+
 
 REQUIRED = {"id", "entity", "concept_id", "value_type", "value", "unit", "period_end", "as_of", "source_tier", "source_url"}
 
@@ -36,3 +38,40 @@ def test_micron_q3_data_center_ssd_revenue_preserves_reported_lower_bound():
     assert row["fiscal_year"] == 2026
     assert row["fiscal_period"] == "Q3"
     assert row["as_of"] == "2026-06-24"
+
+
+def test_sec_cumulative_capex_is_reconstructed_into_quarters_with_lineage():
+    def fact(fp, end, val, filed, form):
+        return {
+            "start": "2025-01-01",
+            "end": end,
+            "val": val,
+            "accn": f"0000000000-25-{len(end):06d}",
+            "filed": filed,
+            "form": form,
+            "fy": 2025,
+            "fp": fp,
+        }
+
+    payload = {
+        "facts": {
+            "us-gaap": {
+                CONCEPT: {
+                    "units": {
+                        "USD": [
+                            fact("Q1", "2025-03-31", 100, "2025-04-30", "10-Q"),
+                            fact("Q2", "2025-06-30", 250, "2025-07-30", "10-Q"),
+                            fact("Q3", "2025-09-30", 400, "2025-10-30", "10-Q"),
+                            fact("FY", "2025-12-31", 600, "2026-02-15", "10-K"),
+                        ]
+                    }
+                }
+            }
+        }
+    }
+    rows = quarterly_capex(payload, "TEST", "Test Corp", 123, "a" * 64)
+    assert [row["value"] for row in rows] == [100, 150, 150, 200]
+    assert [row["fiscal_period"] for row in rows] == ["Q1", "Q2", "Q3", "Q4"]
+    assert rows[1]["formula"] == "Q2 cumulative - Q1 cumulative"
+    assert len(rows[1]["source_facts"]) == 2
+    assert rows[-1]["source_tier"] == "primary_regulatory"
