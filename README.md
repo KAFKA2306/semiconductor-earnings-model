@@ -1,5 +1,9 @@
 # 半導体決算・財務データ研究基盤
 
+[![Publish earnings model](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/pages.yml)
+[![Audit live semiconductor earnings Pages](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/live-pages-audit.yml/badge.svg)](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/live-pages-audit.yml)
+[![Data Platform Standard v1](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/data-platform-standard.yml/badge.svg)](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/data-platform-standard.yml)
+
 **半導体企業の「利益」を追いかけると、決算書だけでは終わらない。NANDのASP、ビット出荷、設備投資、データセンター電力、信用需給までつながってくる。**
 
 このプロジェクトは、そのつながりを推測で埋めず、企業の決算資料、規制開示、業界KPIを、期間・単位・情報種別・出典を保ったまま収集して検証する研究基盤です。
