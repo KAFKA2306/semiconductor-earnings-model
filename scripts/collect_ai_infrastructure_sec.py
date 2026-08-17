@@ -7,7 +7,7 @@ import hashlib
 import json
 import os
 import time
-from collections import defaultdict
+from datetime import date
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -34,67 +34,99 @@ def fetch(cik: int) -> bytes:
     user_agent = os.environ.get("SEC_USER_AGENT", "").strip()
     if not user_agent:
         raise RuntimeError("SEC_USER_AGENT is required for SEC automated access")
-    request = Request(source_url(cik), headers={"User-Agent": user_agent, "Accept-Encoding": "identity"})
+    request = Request(
+        source_url(cik),
+        headers={"User-Agent": user_agent, "Accept-Encoding": "identity"},
+    )
     with urlopen(request, timeout=60) as response:
         return response.read()
 
 
-def _pick_cumulative_facts(payload: dict) -> dict[tuple[int, str], dict]:
+def _duration_days(fact: dict) -> int:
+    return (date.fromisoformat(fact["end"]) - date.fromisoformat(fact["start"])).days
+
+
+def _concept_facts(payload: dict) -> list[dict]:
     try:
-        facts = payload["facts"]["us-gaap"][CONCEPT]["units"]["USD"]
+        raw_facts = payload["facts"]["us-gaap"][CONCEPT]["units"]["USD"]
     except KeyError as exc:
         raise ValueError(f"{CONCEPT} not found") from exc
-    grouped: dict[tuple[int, str], list[dict]] = defaultdict(list)
-    for fact in facts:
-        fp = fact.get("fp")
-        form = fact.get("form")
-        fy = fact.get("fy")
-        if fp not in {"Q1", "Q2", "Q3", "FY"} or form not in {"10-Q", "10-K"}:
+
+    grouped: dict[tuple[str, str, str], list[dict]] = {}
+    for fact in raw_facts:
+        if fact.get("form") not in {"10-Q", "10-K"}:
             continue
-        if fp == "FY" and form != "10-K":
-            continue
-        if fp != "FY" and form != "10-Q":
-            continue
-        if not isinstance(fy, int) or not all(fact.get(key) for key in ("start", "end", "filed", "accn")):
+        if not all(fact.get(key) for key in ("start", "end", "filed", "accn")):
             continue
         if not isinstance(fact.get("val"), (int, float)):
             continue
-        grouped[(fy, fp)].append(fact)
+        key = (fact["start"], fact["end"], fact["form"])
+        grouped.setdefault(key, []).append(fact)
 
-    selected = {}
-    for key, candidates in grouped.items():
-        latest_end = max(item["end"] for item in candidates)
-        current = [item for item in candidates if item["end"] == latest_end]
-        earliest_start = min(item["start"] for item in current)
-        cumulative = [item for item in current if item["start"] == earliest_start]
-        selected[key] = min(cumulative, key=lambda item: (item["filed"], item["accn"]))
-    return selected
+    # Later filings frequently repeat comparative facts. Keep the first filing for
+    # each identical duration so the lineage reflects when the value first became public.
+    return [
+        min(candidates, key=lambda item: (item["filed"], item["accn"]))
+        for candidates in grouped.values()
+    ]
 
 
 def _source_fact(fact: dict) -> dict:
-    return {key: fact[key] for key in ("start", "end", "val", "accn", "filed", "form", "fy", "fp")}
+    return {
+        key: fact.get(key)
+        for key in ("start", "end", "val", "accn", "filed", "form", "fy", "fp")
+    }
 
 
-def quarterly_capex(payload: dict, ticker: str, entity: str, cik: int, raw_sha256: str) -> list[dict]:
-    facts = _pick_cumulative_facts(payload)
+def quarterly_capex(
+    payload: dict,
+    ticker: str,
+    entity: str,
+    cik: int,
+    raw_sha256: str,
+) -> list[dict]:
+    facts = _concept_facts(payload)
+    annuals = sorted(
+        (
+            fact
+            for fact in facts
+            if fact["form"] == "10-K" and 300 <= _duration_days(fact) <= 400
+        ),
+        key=lambda item: item["end"],
+    )
     rows = []
-    fiscal_years = sorted({fy for fy, _ in facts})
-    for fy in fiscal_years:
-        if not all((fy, fp) in facts for fp in ("Q1", "Q2", "Q3", "FY")):
-            continue
-        q1, q2, q3, annual = (facts[(fy, fp)] for fp in ("Q1", "Q2", "Q3", "FY"))
-        starts = {fact["start"] for fact in (q1, q2, q3, annual)}
-        if len(starts) != 1:
-            continue
-        periods = (
-            ("Q1", q1["end"], q1["val"], [q1], "Q1 cumulative"),
-            ("Q2", q2["end"], q2["val"] - q1["val"], [q2, q1], "Q2 cumulative - Q1 cumulative"),
-            ("Q3", q3["end"], q3["val"] - q2["val"], [q3, q2], "Q3 cumulative - Q2 cumulative"),
-            ("Q4", annual["end"], annual["val"] - q3["val"], [annual, q3], "FY cumulative - Q3 cumulative"),
+    for annual in annuals:
+        cumulative = sorted(
+            (
+                fact
+                for fact in facts
+                if fact["form"] == "10-Q"
+                and fact["start"] == annual["start"]
+                and fact["end"] < annual["end"]
+                and 60 <= _duration_days(fact) <= 300
+            ),
+            key=lambda item: item["end"],
         )
-        for fp, end, value, inputs, formula in periods:
-            if value < 0:
-                continue
+        # A complete fiscal year needs the three year-to-date 10-Q values plus FY.
+        if len(cumulative) != 3:
+            continue
+        q1, q2, q3 = cumulative
+        values = (
+            q1["val"],
+            q2["val"] - q1["val"],
+            q3["val"] - q2["val"],
+            annual["val"] - q3["val"],
+        )
+        if any(value < 0 for value in values):
+            continue
+        fiscal_year = annual.get("fy") or date.fromisoformat(annual["end"]).year
+        periods = (
+            ("Q1", q1["end"], values[0], [q1], "Q1 year-to-date"),
+            ("Q2", q2["end"], values[1], [q2, q1], "Q2 year-to-date - Q1 year-to-date"),
+            ("Q3", q3["end"], values[2], [q3, q2], "Q3 year-to-date - Q2 year-to-date"),
+            ("Q4", annual["end"], values[3], [annual, q3], "FY - Q3 year-to-date"),
+        )
+        for fiscal_period, end, value, inputs, formula in periods:
             rows.append(
                 {
                     "id": f"{ticker.lower()}:{end}:capital-expenditures:actual",
@@ -108,8 +140,8 @@ def quarterly_capex(payload: dict, ticker: str, entity: str, cik: int, raw_sha25
                     "unit": "USD",
                     "period_end": end,
                     "period_type": "quarter",
-                    "fiscal_year": fy,
-                    "fiscal_period": fp,
+                    "fiscal_year": fiscal_year,
+                    "fiscal_period": fiscal_period,
                     "as_of": max(item["filed"] for item in inputs),
                     "source_tier": "primary_regulatory",
                     "source_url": source_url(cik),
@@ -134,7 +166,9 @@ def collect() -> dict:
         payload = json.loads(raw)
         rows = quarterly_capex(payload, ticker, entity, cik, digest)
         if len(rows) < 4:
-            raise ValueError(f"{ticker}: only {len(rows)} complete quarterly CAPEX observations")
+            raise ValueError(
+                f"{ticker}: only {len(rows)} complete quarterly CAPEX observations"
+            )
         observations.extend(rows)
     return {
         "schema_version": "ai-infrastructure-sec-capex.v1",
@@ -149,14 +183,24 @@ def collect() -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", type=Path, default=Path("data/financial_db/ai_infrastructure_sec_capex.json"))
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("data/financial_db/ai_infrastructure_sec_capex.json"),
+    )
     args = parser.parse_args()
     payload = collect()
     if payload["company_count"] < 10:
         raise SystemExit(f"expected 10 companies, got {payload['company_count']}")
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {len(payload['observations'])} observations across {payload['company_count']} companies")
+    args.output.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        f"wrote {len(payload['observations'])} observations "
+        f"across {payload['company_count']} companies"
+    )
 
 
 if __name__ == "__main__":
