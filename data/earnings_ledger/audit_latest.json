@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-17T20:44:51.389186Z",
+  "run_at": "2026-08-17T22:42:45.163981Z",
   "accepted_events_total": 3,
-  "rejected_events_total": 105,
+  "rejected_events_total": 109,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -14,7 +14,7 @@
       "source_id": "amd",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 3
     },
     {
       "source_id": "broadcom",
@@ -80,7 +80,7 @@
       "source_id": "synopsys",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "cadence",
@@ -92,7 +92,7 @@
       "source_id": "microsoft",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "alphabet",
@@ -104,7 +104,7 @@
       "source_id": "amazon",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "meta",
