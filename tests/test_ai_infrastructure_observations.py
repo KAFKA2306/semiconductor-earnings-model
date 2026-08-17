@@ -72,6 +72,6 @@ def test_sec_cumulative_capex_is_reconstructed_into_quarters_with_lineage():
     rows = quarterly_capex(payload, "TEST", "Test Corp", 123, "a" * 64)
     assert [row["value"] for row in rows] == [100, 150, 150, 200]
     assert [row["fiscal_period"] for row in rows] == ["Q1", "Q2", "Q3", "Q4"]
-    assert rows[1]["formula"] == "Q2 cumulative - Q1 cumulative"
+    assert rows[1]["formula"] == "Q2 year-to-date - Q1 year-to-date"
     assert len(rows[1]["source_facts"]) == 2
     assert rows[-1]["source_tier"] == "primary_regulatory"
