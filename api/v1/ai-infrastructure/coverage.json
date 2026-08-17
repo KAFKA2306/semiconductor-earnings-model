@@ -1,0 +1,34 @@
+{
+  "observation_count": 82,
+  "company_count": 10,
+  "companies": [
+    "Advanced Micro Devices, Inc.",
+    "Alphabet Inc.",
+    "Amazon.com, Inc.",
+    "Broadcom Inc.",
+    "Intel Corporation",
+    "Meta Platforms, Inc.",
+    "Micron Technology, Inc.",
+    "Microsoft Corporation",
+    "NVIDIA Corporation",
+    "Oracle Corporation"
+  ],
+  "period_start": "2011-05-01",
+  "period_end": "2026-06-30",
+  "actual_count": 81,
+  "guidance_count": 1,
+  "domains": [
+    "capital_investment",
+    "compute",
+    "memory",
+    "network",
+    "power"
+  ],
+  "domain_counts": {
+    "capital_investment": 78,
+    "compute": 1,
+    "memory": 1,
+    "network": 1,
+    "power": 1
+  }
+}
