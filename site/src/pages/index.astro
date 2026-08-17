@@ -24,7 +24,6 @@ const interval = (row, digits = 1) => {
   const high = Number(row.value_high) * 100;
   return `${low >= 0 ? '+' : ''}${low.toFixed(digits)}〜${high >= 0 ? '+' : ''}${high.toFixed(digits)}%`;
 };
-const guidance = (item) => item?.guidance_status === 'comparable' ? interval(item.vs_company_guidance) : '未開示・非比較';
 ---
 
 <!doctype html>
@@ -32,84 +31,119 @@ const guidance = (item) => item?.guidance_status === 'comparable' ? interval(ite
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="半導体・NAND業界の一次資料、財務データ、ASP、ビット出荷量、比較指標を公開するFinancial Research Workbench。" />
-    <title>Financial Research Workbench / NAND KPI Database</title>
+    <meta name="description" content="半導体・NANDの市況、企業業績、顧客の投資余力、一次資料を順に確認できる公開データサイト。" />
+    <title>半導体業績データ</title>
   </head>
   <body data-build-sha={buildSha} data-financial-api-hash={financial.content_hash}>
     <main>
-      <header class="topbar">
-        <a class="brand" href={base}>Financial Research Workbench</a>
-        <nav aria-label="主要ページ">
-          <a href={`${base}resilience/`}>Research</a>
-          <a href={`${base}earnings/`}>Earnings</a>
-          <a href={`${base}model/`}>Model</a>
-          <a href={`${base}investment-policy/`}>Investment Policy</a>
-          <a href={`${base}api/v3/financial-database/index.json`}>JSON API</a>
+      <header>
+        <a class="brand" href={base}>半導体業績データ</a>
+        <nav aria-label="ページ内ナビゲーション">
+          <a href="#market">市況</a>
+          <a href="#companies">企業</a>
+          <a href="#demand">需要</a>
+          <a href="#evidence">根拠</a>
         </nav>
       </header>
 
       <section class="hero">
-        <div>
-          <p class="eyebrow">PRIMARY DISCLOSURES × NORMALIZED DATABASE × AUDIT</p>
-          <h1>半導体の数字を、<em>継続して比較できる形にする。</em></h1>
-          <p class="lead">財務fact、設備投資、資金耐久力に加え、NAND ASPとビット出荷量のQoQ・YoY・会社想定比を同じ証拠データベースで管理します。</p>
-          <div class="actions">
-            <a class="primary" href={`${base}resilience/`}>分析画面を開く</a>
-            <a href={`${base}investment-policy/`}>投資方針を見る</a>
-            <a href={`${base}api/v3/financial-database/index.json`}>公開JSONを見る</a>
-            <a href={`${base}api/v3/financial-database/financial.db`}>SQLiteを取得</a>
-          </div>
-        </div>
-        <aside>
-          <span>DATABASE STATUS</span>
-          <strong>{financial.audit?.status || 'UNKNOWN'}</strong>
-          <dl>
-            <div><dt>Entities</dt><dd>{financial.audit?.counts?.entities ?? financial.entities?.length ?? 0}</dd></div>
-            <div><dt>Observations</dt><dd>{financial.audit?.counts?.observations ?? financial.observations?.length ?? 0}</dd></div>
-            <div><dt>NAND actuals</dt><dd>{financial.audit?.counts?.nand_actual_observations ?? 0}</dd></div>
-            <div><dt>NAND derived</dt><dd>{financial.audit?.counts?.nand_derived_observations ?? 0}</dd></div>
-          </dl>
-        </aside>
+        <p class="eyebrow">PRIMARY DATA / UPDATED CONTINUOUSLY</p>
+        <h1>半導体の今を、<br />数字から読む。</h1>
+        <p class="lead">見る順番は4つだけです。市況 → 企業 → 需要 → 根拠。分析画面の名前や内部のデータ構造を先に覚える必要はありません。</p>
       </section>
 
-      <section class="section">
-        <div class="heading">
-          <div><p>01 / NAND OPERATING KPIs</p><h2>直近四半期の、<br /><em>ASPとビット出荷量。</em></h2></div>
-          <p>QoQは会社開示、YoYは連続4四半期を複利計算。会社想定が同一KPI・同一期間で開示されていない場合は比較値を作りません。</p>
+      <section id="market" class="section">
+        <div class="section-title">
+          <span>01</span>
+          <div>
+            <h2>まず、市況を見る。</h2>
+            <p>NANDの平均販売価格（ASP）とbit出荷量の変化です。YoYは比較可能な連続四半期から計算しています。</p>
+          </div>
         </div>
+
         {latestNand.length ? (
           <div class="table-wrap">
             <table>
-              <thead><tr><th>企業</th><th>期末</th><th>ASP QoQ</th><th>ASP YoY</th><th>ASP 会社想定比</th><th>ビット QoQ</th><th>ビット YoY</th><th>ビット 会社想定比</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>企業</th>
+                  <th>期末</th>
+                  <th>価格 QoQ</th>
+                  <th>価格 YoY</th>
+                  <th>bit出荷 QoQ</th>
+                  <th>bit出荷 YoY</th>
+                </tr>
+              </thead>
               <tbody>
-                {latestNand.map((row) => <tr>
-                  <td><strong>{entityLookup[row.entity_id]?.name || row.entity_id}</strong><span>{entityLookup[row.entity_id]?.ticker || row.entity_id}</span></td>
-                  <td>{row.period_end}</td>
-                  <td>{interval(row.asp?.qoq_actual)}</td>
-                  <td>{interval(row.asp?.yoy_derived)}</td>
-                  <td>{guidance(row.asp)}</td>
-                  <td>{interval(row.bit_shipments?.qoq_actual)}</td>
-                  <td>{interval(row.bit_shipments?.yoy_derived)}</td>
-                  <td>{guidance(row.bit_shipments)}</td>
-                </tr>)}
+                {latestNand.map((row) => (
+                  <tr>
+                    <td><strong>{entityLookup[row.entity_id]?.name || row.entity_id}</strong><small>{entityLookup[row.entity_id]?.ticker || row.entity_id}</small></td>
+                    <td>{row.period_end}</td>
+                    <td>{interval(row.asp?.qoq_actual)}</td>
+                    <td>{interval(row.asp?.yoy_derived)}</td>
+                    <td>{interval(row.bit_shipments?.qoq_actual)}</td>
+                    <td>{interval(row.bit_shipments?.yoy_derived)}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-        ) : <p class="empty">NAND KPIの監査済みデータはまだ公開されていません。</p>}
+        ) : (
+          <p class="empty">比較可能なNANDデータはまだありません。</p>
+        )}
       </section>
 
-      <section class="section routes">
-        <div class="heading"><div><p>02 / ROUTES</p><h2>用途ごとに、<br /><em>証拠へ降りる。</em></h2></div></div>
-        <div class="cards">
-          <a href={`${base}resilience/`}><span>RESEARCH</span><h3>同業比較・資金耐久力</h3><p>四半期利益、年次FCF、流動性、同業順位、反証可能な評価規則。</p></a>
-          <a href={`${base}earnings/`}><span>EARNINGS</span><h3>一次fact決算台帳</h3><p>SEC報告値、XBRLタグ、期間、出典、直接計算した値を保持。</p></a>
-          <a href={`${base}model/`}><span>MODEL</span><h3>需要から利益への計算境界</h3><p>入力、式、中間値、未確認変数、判定を分離。</p></a>
-          <a href={`${base}investment-policy/`}><span>INVESTMENT POLICY</span><h3>成長率の質を判定</h3><p>売上・bit・ASP・mix・利益率・FCFを、単位と期間を分けて投資仮説へ接続。</p></a>
-          <a href={`${base}api/v3/financial-database/index.json`}><span>DATABASE</span><h3>JSON / SQLite</h3><p>観測値、派生値、証拠edge、監査、NAND比較viewを機械可読で公開。</p></a>
+      <section id="companies" class="section split">
+        <span class="number">02</span>
+        <div>
+          <h2>次に、企業を見る。</h2>
+          <p>売上、営業利益、利益率、フリーキャッシュフロー、流動性を同業で比較します。市場が強くても、利益として残っているかは別に確認します。</p>
+          <a class="button" href={`${base}resilience/`}>企業比較を見る →</a>
         </div>
       </section>
 
-      <footer><span>BUILD SHA</span><code>{buildSha}</code><span>FINANCIAL API HASH</span><code>{financial.content_hash}</code></footer>
+      <section id="demand" class="section split">
+        <span class="number">03</span>
+        <div>
+          <h2>その後、需要を支える資金を見る。</h2>
+          <p>Amazon、Alphabet、Meta、Microsoftなどの営業キャッシュフローと設備投資を確認し、AI・データセンター投資を継続できる資金余力を追います。</p>
+          <a class="button" href={`${base}earnings/`}>顧客の資金余力を見る →</a>
+        </div>
+      </section>
+
+      <section class="section split">
+        <span class="number">04</span>
+        <div>
+          <h2>最後に、どこまで言えるかを見る。</h2>
+          <p>観測済みの事実と、まだ係数や因果が不足している区間を分けます。データが足りない将来利益は埋めません。</p>
+          <a class="button" href={`${base}model/`}>計算できる範囲を見る →</a>
+        </div>
+      </section>
+
+      <section id="evidence" class="section evidence">
+        <div class="section-title">
+          <span>05</span>
+          <div>
+            <h2>必要なら、根拠まで降りる。</h2>
+            <p>一次fact、期間、単位、出典URL、派生値との関係を機械可読データで確認できます。</p>
+          </div>
+        </div>
+        <div class="links">
+          <a href={`${base}api/v3/financial-database/index.json`}><strong>JSON</strong><span>ブラウザやプログラムから読む</span></a>
+          <a href={`${base}api/v3/financial-database/financial.db`}><strong>SQLite</strong><span>まとめて取得して分析する</span></a>
+          <a href={`${base}earnings/`}><strong>一次資料</strong><span>SEC提出書類と原factを見る</span></a>
+        </div>
+      </section>
+
+      <footer>
+        <span>データ監査: {financial.audit?.status || 'UNKNOWN'}</span>
+        <span>観測値: {financial.audit?.counts?.observations ?? financial.observations?.length ?? 0}</span>
+        <details>
+          <summary>build情報</summary>
+          <code>{buildSha}</code>
+          <code>{financial.content_hash}</code>
+        </details>
+      </footer>
     </main>
   </body>
 </html>
@@ -118,52 +152,42 @@ const guidance = (item) => item?.guidance_status === 'comparable' ? interval(ite
   :global(html) { scroll-behavior: smooth; }
   :global(body) { margin: 0; color: #243653; background: #fbfaf7; font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
   :global(a) { color: inherit; }
-  main { width: min(1280px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 70px; }
-  .topbar { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(76,91,125,.14); }
-  .brand { text-decoration: none; font-weight: 900; }
-  nav { display: flex; flex-wrap: wrap; gap: 16px; font-size: .76rem; font-weight: 800; }
+  main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 64px; }
+  header { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid #dde1e7; }
+  .brand { font-weight: 900; text-decoration: none; }
+  nav { display: flex; gap: 18px; font-size: .78rem; font-weight: 800; }
   nav a { text-decoration: none; }
-  .hero { min-height: 560px; display: grid; grid-template-columns: 1.5fr .55fr; gap: 56px; align-items: center; padding: 70px 0 58px; }
-  .eyebrow, .heading > div > p { margin: 0 0 14px; color: #69768b; font-size: .7rem; letter-spacing: .16em; font-weight: 900; }
-  h1, h2 { margin: 0; font-family: Georgia, "Noto Serif JP", serif; font-weight: 500; letter-spacing: -.04em; }
-  h1 { max-width: 850px; font-size: clamp(3rem, 6vw, 5.7rem); line-height: 1.02; }
-  h2 { font-size: clamp(2.3rem, 4vw, 4.2rem); line-height: 1.07; }
-  h1 em, h2 em { display: block; color: #8a6e98; font-weight: 500; }
-  .lead { max-width: 780px; margin: 28px 0 0; color: #69768b; line-height: 1.9; }
-  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
-  .actions a { padding: 12px 16px; border: 1px solid rgba(76,91,125,.16); border-radius: 999px; background: rgba(255,255,255,.72); text-decoration: none; font-size: .78rem; font-weight: 850; }
-  .actions .primary { color: #fff; background: #5f86cf; border-color: #5f86cf; }
-  aside { padding: 28px; border: 1px solid rgba(76,91,125,.13); border-radius: 24px; background: linear-gradient(145deg, rgba(185,168,230,.38), rgba(183,219,200,.46)); box-shadow: 0 18px 50px rgba(76,91,125,.09); }
-  aside > span { color: #69768b; font-size: .67rem; letter-spacing: .14em; font-weight: 900; }
-  aside > strong { display: block; margin: 12px 0 18px; font-family: Georgia, serif; font-size: 3rem; }
-  aside dl { margin: 0; }
-  aside dl div { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid rgba(76,91,125,.12); font-size: .75rem; }
-  aside dd { margin: 0; font-weight: 900; }
-  .section { padding: 72px 0; border-top: 1px solid rgba(76,91,125,.13); }
-  .heading { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 30px; }
-  .heading > p { max-width: 500px; margin: 0; color: #69768b; font-size: .82rem; line-height: 1.75; }
-  .table-wrap { overflow-x: auto; border: 1px solid rgba(76,91,125,.13); border-radius: 22px; background: rgba(255,255,255,.72); box-shadow: 0 18px 50px rgba(76,91,125,.06); }
-  table { width: 100%; min-width: 1120px; border-collapse: collapse; }
-  th, td { padding: 15px 13px; border-bottom: 1px solid rgba(76,91,125,.1); text-align: right; white-space: nowrap; font-size: .75rem; }
-  th { color: #69768b; font-size: .65rem; }
-  th:first-child, td:first-child { position: sticky; left: 0; text-align: left; background: rgba(251,250,247,.97); }
-  td:first-child strong, td:first-child span { display: block; }
-  td:first-child span { margin-top: 3px; color: #69768b; font-size: .64rem; }
-  .empty { padding: 24px; border-radius: 18px; background: rgba(239,180,193,.22); color: #69768b; }
-  .cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-  .cards a { min-height: 210px; padding: 23px; border: 1px solid rgba(76,91,125,.12); border-radius: 22px; background: rgba(255,255,255,.72); text-decoration: none; }
-  .cards a:nth-child(1) { background: rgba(183,219,200,.38); }
-  .cards a:nth-child(2) { background: rgba(143,181,236,.27); }
-  .cards a:nth-child(3) { background: rgba(243,207,170,.32); }
-  .cards a:nth-child(4) { background: rgba(239,180,193,.22); }
-  .cards a:nth-child(5) { background: rgba(185,168,230,.28); }
-  .cards span { color: #69768b; font-size: .64rem; letter-spacing: .13em; font-weight: 900; }
-  .cards h3 { margin: 28px 0 10px; font-family: Georgia, serif; font-size: 1.45rem; font-weight: 500; }
-  .cards p { color: #69768b; font-size: .75rem; line-height: 1.7; }
-  footer { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; padding: 18px; border-radius: 16px; background: #243653; color: #fff; font-size: .65rem; }
-  footer span { color: #cbd4e2; font-weight: 900; }
-  footer code { overflow-wrap: anywhere; }
-  @media (max-width: 1100px) { .cards { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 940px) { .hero { grid-template-columns: 1fr; min-height: auto; } aside { max-width: 550px; } .cards { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 650px) { main { width: min(100% - 20px, 1280px); } nav { display: none; } .hero { padding: 52px 0; } h1 { font-size: 2.8rem; } .heading { display: block; } .heading > p { margin-top: 18px; } .cards { grid-template-columns: 1fr; } footer { grid-template-columns: 1fr; } }
+  .hero { max-width: 900px; padding: 96px 0 88px; }
+  .eyebrow { margin: 0 0 18px; color: #69768b; font-size: .68rem; font-weight: 900; letter-spacing: .14em; }
+  h1, h2 { margin: 0; font-family: Georgia, "Noto Serif JP", serif; font-weight: 500; letter-spacing: -.035em; }
+  h1 { font-size: clamp(3.2rem, 8vw, 6.5rem); line-height: 1; }
+  h2 { font-size: clamp(2rem, 4vw, 3.6rem); line-height: 1.08; }
+  .lead { max-width: 700px; margin: 28px 0 0; color: #69768b; font-size: 1rem; line-height: 1.9; }
+  .section { padding: 72px 0; border-top: 1px solid #dde1e7; }
+  .section-title, .split { display: grid; grid-template-columns: 72px 1fr; gap: 28px; }
+  .section-title > span, .number { color: #8a6e98; font: 500 2rem Georgia, serif; }
+  .section p { max-width: 760px; color: #69768b; line-height: 1.85; }
+  .table-wrap { margin-top: 34px; overflow-x: auto; border: 1px solid #dde1e7; background: #fff; }
+  table { width: 100%; min-width: 760px; border-collapse: collapse; }
+  th, td { padding: 15px 14px; border-bottom: 1px solid #e7e9ed; text-align: right; white-space: nowrap; font-size: .8rem; }
+  th { color: #69768b; font-size: .69rem; }
+  th:first-child, td:first-child { text-align: left; }
+  td strong, td small { display: block; }
+  td small { margin-top: 3px; color: #69768b; }
+  .empty { padding: 22px; border: 1px solid #dde1e7; background: #fff; }
+  .button { display: inline-block; margin-top: 18px; padding: 12px 16px; border: 1px solid #cfd5de; border-radius: 999px; background: #fff; text-decoration: none; font-size: .82rem; font-weight: 850; }
+  .links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 30px; }
+  .links a { min-height: 110px; padding: 20px; border: 1px solid #dde1e7; background: #fff; text-decoration: none; }
+  .links strong, .links span { display: block; }
+  .links span { margin-top: 10px; color: #69768b; font-size: .78rem; line-height: 1.6; }
+  footer { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding-top: 24px; border-top: 1px solid #dde1e7; color: #69768b; font-size: .72rem; }
+  footer details { margin-left: auto; }
+  footer code { display: block; max-width: 420px; margin-top: 6px; overflow-wrap: anywhere; }
+  @media (max-width: 720px) {
+    nav { gap: 10px; font-size: .7rem; }
+    .hero { padding: 72px 0 64px; }
+    .section-title, .split { grid-template-columns: 44px 1fr; gap: 14px; }
+    .links { grid-template-columns: 1fr; }
+    footer details { width: 100%; margin-left: 0; }
+  }
 </style>
