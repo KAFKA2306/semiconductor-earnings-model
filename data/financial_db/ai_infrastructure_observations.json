@@ -44,6 +44,24 @@
       "reported_text": "Data Center networking revenue was $14.8 billion."
     },
     {
+      "id": "micron:2026-05-28:data-center-ssd-revenue:actual",
+      "entity": "Micron Technology, Inc.",
+      "ticker": "MU",
+      "concept_id": "data_center_ssd_revenue",
+      "value_type": "actual",
+      "value": 5000000000,
+      "qualifier": "greater_than",
+      "unit": "USD",
+      "period_end": "2026-05-28",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-06-24",
+      "source_tier": "primary_company",
+      "source_url": "https://investors.micron.com/sites/g/files/knoqqb95536/themes/site/nir_pid310/widgets/pdf-viewer/pdf-js/web/viewer.html?file=%2Fstatic-files%2F2354ecda-77a0-4ddd-8462-a631eb491356",
+      "reported_text": "Our data center SSD revenue exceeded $5 billion, more than doubling sequentially."
+    },
+    {
       "id": "microsoft:2026-03-31:capacity-added:actual",
       "entity": "Microsoft Corporation",
       "ticker": "MSFT",
