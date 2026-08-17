@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-08-17T20:44:51.389186Z",
+  "generated_from_run_at": "2026-08-17T22:42:45.163981Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -16,8 +16,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "347ab9b7aa34b8ac9744af77",
-      "last_seen_published_at": "2026-08-17T16:22:55Z",
+      "last_seen_id": "f66c411a99eee138de2f65d4",
+      "last_seen_published_at": "2026-08-17T17:34:30Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -115,8 +115,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "c1f7e8bc09409771aa4129c7",
-      "last_seen_published_at": "2026-08-12T13:15:06Z",
+      "last_seen_id": "a67ad333364ae6aa524ee95c",
+      "last_seen_published_at": "2026-08-17T18:14:03Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -133,9 +133,9 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": null,
-      "last_seen_published_at": null,
-      "last_seen_disposition": null
+      "last_seen_id": "fec6ee58108d113bf6fd8d93",
+      "last_seen_published_at": "2026-08-17T18:04:57Z",
+      "last_seen_disposition": "rejected"
     },
     {
       "source_id": "alphabet",
@@ -151,8 +151,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "6b5fa7ef9b8f1825b9f0b79a",
-      "last_seen_published_at": "2026-08-13T21:25:16Z",
+      "last_seen_id": "422b1d3c96ae4f3525592d21",
+      "last_seen_published_at": "2026-08-17T16:47:27Z",
       "last_seen_disposition": "rejected"
     },
     {
