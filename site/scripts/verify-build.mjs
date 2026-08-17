@@ -13,11 +13,11 @@ const html = fs.readFileSync(indexPath, 'utf8');
 const financial = JSON.parse(fs.readFileSync(financialPath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
 
-if (!html.includes('Financial Research Workbench / NAND KPI Database')) {
+if (!html.includes('<title>半導体業績データ</title>')) {
   throw new Error('Pages root landing title is missing');
 }
-if (!html.includes('半導体の数字を、')) {
-  throw new Error('Pages root landing content is missing');
+for (const text of ['まず、市況を見る。', '次に、企業を見る。', 'その後、需要を支える資金を見る。', '必要なら、根拠まで降りる。']) {
+  if (!html.includes(text)) throw new Error(`Pages root reading order is incomplete: ${text}`);
 }
 if (expectedSha && !html.includes(`data-build-sha="${expectedSha}"`)) {
   throw new Error(`Pages root does not expose build SHA ${expectedSha}`);
