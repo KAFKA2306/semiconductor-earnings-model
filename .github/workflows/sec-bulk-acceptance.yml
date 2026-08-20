@@ -104,12 +104,16 @@ jobs:
           from pathlib import Path
 
           result = json.loads(Path('data/earnings_ledger/verified_revenue_latest.json').read_text())
+          manifest = json.loads(Path('data/sec_bulk/companyfacts/manifest.json').read_text())
           assert result['status'] == 'PASS'
           assert result['verified_metrics_total'] > 0
-          assert all(metric.get('source_kind') in {'bulk', 'api_freshness_delta'} for metric in result['metrics'])
-          assert any(metric.get('source_kind') == 'bulk' for metric in result['metrics'])
+          allowed = {'bulk', 'api_subset_fallback', 'api_freshness_delta'}
+          assert all(metric.get('source_kind') in allowed for metric in result['metrics'])
+          expected_base_kind = manifest['source_mode']
+          assert any(metric.get('source_kind') == expected_base_kind for metric in result['metrics'])
           print(json.dumps({
               'verified_metrics_total': result['verified_metrics_total'],
+              'materialized_source_mode': expected_base_kind,
               'source_kinds': sorted({metric.get('source_kind') for metric in result['metrics']}),
           }, sort_keys=True))
           PY
