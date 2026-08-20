@@ -45,18 +45,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+      SEC_USER_AGENT: 'KAFKA2306 semiconductor-earnings-model 137051370+KAFKA2306@users.noreply.github.com'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Require configured SEC request identity
-        run: |
-          if [ -z "${SEC_USER_AGENT:-}" ]; then
-            echo 'Repository variable SEC_USER_AGENT is required.' >&2
-            exit 1
-          fi
       - name: Materialize official SEC bulk subset
         run: >-
           python scripts/sec_bulk.py ${{ matrix.archive }}
@@ -113,7 +107,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sec-bulk-${{ matrix.archive }}-acceptance
-          path: |
-            data/sec_bulk/${{ matrix.archive }}/manifest.json
+          path: data/sec_bulk/${{ matrix.archive }}/manifest.json
           if-no-files-found: error
           retention-days: 7
