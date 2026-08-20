@@ -1,9 +1,10 @@
-name: SEC bulk acceptance
+name: SEC bulk-first acceptance
 
 on:
   pull_request:
     paths:
       - 'scripts/sec_bulk.py'
+      - 'scripts/sec_api_subset.py'
       - 'scripts/extract_verified_sec_revenue.py'
       - 'tests/test_sec_bulk.py'
       - 'tests/test_sec_bulk_revenue_integration.py'
@@ -13,6 +14,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/sec_bulk.py'
+      - 'scripts/sec_api_subset.py'
       - 'scripts/extract_verified_sec_revenue.py'
       - 'tests/test_sec_bulk.py'
       - 'tests/test_sec_bulk_revenue_integration.py'
@@ -37,7 +39,7 @@ jobs:
       - run: python scripts/audit_earnings_source_registry.py
       - run: python scripts/earnings_ledger.py --audit-only
 
-  live-bulk:
+  live-source:
     strategy:
       fail-fast: false
       matrix:
@@ -51,9 +53,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Materialize official SEC bulk subset
+      - name: Materialize bulk-first SEC source
         run: >-
-          python scripts/sec_bulk.py ${{ matrix.archive }}
+          python scripts/sec_api_subset.py ${{ matrix.archive }}
           --output-dir data/sec_bulk
           --user-agent "$SEC_USER_AGENT"
       - name: Verify live manifest
@@ -72,20 +74,28 @@ jobs:
           assert manifest['configured_sec_issuer_count'] >= 10
           assert manifest['normalized_issuer_count'] >= 10
           assert manifest['normalized_record_count'] > 0
-          assert len(manifest['source']['sha256']) == 64
           assert len(manifest['normalized_sha256']) == 64
           assert manifest['normalization_schema'] == 'sec-normalized-record.v1'
+          assert manifest['source_mode'] in {'bulk', 'api_subset_fallback'}
+          if manifest['source_mode'] == 'bulk':
+              assert len(manifest['source']['sha256']) == 64
+          else:
+              assert manifest['bulk_http_status'] == 403
+              assert manifest['request_policy']['requests_made'] == manifest['configured_sec_issuer_count']
+              assert manifest['request_policy']['max_requests_per_second'] == 10.0
+              assert len(manifest['sources']) == manifest['configured_sec_issuer_count']
+              assert all(source['http_status'] == 200 and len(source['sha256']) == 64 for source in manifest['sources'])
           print(json.dumps({
               'archive': archive,
+              'source_mode': manifest['source_mode'],
+              'bulk_http_status': manifest.get('bulk_http_status'),
               'configured_sec_issuer_count': manifest['configured_sec_issuer_count'],
               'normalized_issuer_count': manifest['normalized_issuer_count'],
               'normalized_record_count': manifest['normalized_record_count'],
-              'source_sha256': manifest['source']['sha256'],
               'normalized_sha256': manifest['normalized_sha256'],
-              'source_url': manifest['source']['source_url'],
           }, sort_keys=True))
           PY
-      - name: Regenerate existing verified revenue JSON from bulk base
+      - name: Regenerate existing verified revenue JSON from materialized Company Facts
         if: matrix.archive == 'companyfacts'
         run: |
           python scripts/extract_verified_sec_revenue.py
@@ -106,7 +116,7 @@ jobs:
       - name: Upload compact acceptance evidence
         uses: actions/upload-artifact@v4
         with:
-          name: sec-bulk-${{ matrix.archive }}-acceptance
+          name: sec-source-${{ matrix.archive }}-acceptance
           path: data/sec_bulk/${{ matrix.archive }}/manifest.json
           if-no-files-found: error
           retention-days: 7
