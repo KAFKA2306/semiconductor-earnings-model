@@ -1,11 +1,43 @@
 {
   "schema_version": "verified-sec-fcf.v1",
-  "run_at": "2026-08-20T19:23:31.661963Z",
+  "run_at": "2026-08-20T21:18:56.381124Z",
   "freshness_gate_hours": 24,
-  "eligible_events_total": 0,
+  "eligible_events_total": 1,
   "stale_events_skipped_total": 2,
-  "verified_metrics_total": 0,
-  "metrics": [],
+  "verified_metrics_total": 1,
+  "metrics": [
+    {
+      "event_id": "1e2136ff5e98d56c9b84ed7c",
+      "company_id": "applied-materials",
+      "ticker": "AMAT",
+      "accession_number": "0001628280-26-058235",
+      "period_start": "2025-10-27",
+      "period_end": "2026-07-26",
+      "duration_days": 273,
+      "document_type": "10-Q",
+      "metric": "free_cash_flow",
+      "value": 3580000000,
+      "unit": "USD",
+      "accounting_basis": "derived-non-gaap",
+      "derivation": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
+      "inputs": {
+        "operating_cash_flow": {
+          "taxonomy": "us-gaap",
+          "concept": "NetCashProvidedByUsedInOperatingActivities",
+          "value": 5568000000
+        },
+        "capital_expenditures": {
+          "taxonomy": "us-gaap",
+          "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "value": 1988000000
+        }
+      },
+      "filed": "2026-08-20",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000006951.json",
+      "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
+    }
+  ],
   "issues": [],
   "status": "PASS",
   "contract": "FCF is a derived non-GAAP metric. Persist it only when live <=24h SEC 10-K/10-Q Company Facts provides one unambiguous USD us-gaap operating-cash-flow fact and one unambiguous USD us-gaap PP&E acquisition fact for the exact same accession, form, period start and period end. Missing, stale, future, malformed, mismatched or conflicting inputs never become metrics."
