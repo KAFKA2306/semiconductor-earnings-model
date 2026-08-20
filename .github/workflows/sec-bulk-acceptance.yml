@@ -1,0 +1,127 @@
+name: SEC bulk-first acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/sec_bulk.py'
+      - 'scripts/sec_api_subset.py'
+      - 'scripts/extract_verified_sec_revenue.py'
+      - 'tests/test_sec_bulk.py'
+      - 'tests/test_sec_bulk_revenue_integration.py'
+      - 'data/earnings_ledger/source_registry.json'
+      - '.github/workflows/sec-bulk-acceptance.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/sec_bulk.py'
+      - 'scripts/sec_api_subset.py'
+      - 'scripts/extract_verified_sec_revenue.py'
+      - 'tests/test_sec_bulk.py'
+      - 'tests/test_sec_bulk_revenue_integration.py'
+      - 'data/earnings_ledger/source_registry.json'
+      - '.github/workflows/sec-bulk-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_sec_bulk.py tests/test_sec_bulk_revenue_integration.py
+      - run: python scripts/audit_earnings_source_registry.py
+      - run: python scripts/earnings_ledger.py --audit-only
+
+  live-source:
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        archive: [companyfacts, submissions]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SEC_USER_AGENT: 'KAFKA2306 semiconductor-earnings-model 137051370+KAFKA2306@users.noreply.github.com'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Materialize bulk-first SEC source
+        run: >-
+          python scripts/sec_api_subset.py ${{ matrix.archive }}
+          --output-dir data/sec_bulk
+          --user-agent "$SEC_USER_AGENT"
+      - name: Verify live manifest
+        env:
+          ARCHIVE: ${{ matrix.archive }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          archive = os.environ['ARCHIVE']
+          path = Path('data/sec_bulk') / archive / 'manifest.json'
+          manifest = json.loads(path.read_text())
+          assert manifest['status'] == 'PASS'
+          assert manifest['configured_sec_issuer_count'] >= 10
+          assert manifest['normalized_issuer_count'] >= 10
+          assert manifest['normalized_record_count'] > 0
+          assert len(manifest['normalized_sha256']) == 64
+          assert manifest['normalization_schema'] == 'sec-normalized-record.v1'
+          assert manifest['source_mode'] in {'bulk', 'api_subset_fallback'}
+          if manifest['source_mode'] == 'bulk':
+              assert len(manifest['source']['sha256']) == 64
+          else:
+              assert manifest['bulk_http_status'] == 403
+              assert manifest['request_policy']['requests_made'] == manifest['configured_sec_issuer_count']
+              assert manifest['request_policy']['max_requests_per_second'] == 10.0
+              assert len(manifest['sources']) == manifest['configured_sec_issuer_count']
+              assert all(source['http_status'] == 200 and len(source['sha256']) == 64 for source in manifest['sources'])
+          print(json.dumps({
+              'archive': archive,
+              'source_mode': manifest['source_mode'],
+              'bulk_http_status': manifest.get('bulk_http_status'),
+              'configured_sec_issuer_count': manifest['configured_sec_issuer_count'],
+              'normalized_issuer_count': manifest['normalized_issuer_count'],
+              'normalized_record_count': manifest['normalized_record_count'],
+              'normalized_sha256': manifest['normalized_sha256'],
+          }, sort_keys=True))
+          PY
+      - name: Regenerate existing verified revenue JSON from materialized Company Facts
+        if: matrix.archive == 'companyfacts'
+        run: |
+          python scripts/extract_verified_sec_revenue.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          result = json.loads(Path('data/earnings_ledger/verified_revenue_latest.json').read_text())
+          manifest = json.loads(Path('data/sec_bulk/companyfacts/manifest.json').read_text())
+          assert result['status'] == 'PASS'
+          assert result['verified_metrics_total'] > 0
+          allowed = {'bulk', 'api_subset_fallback', 'api_freshness_delta'}
+          assert all(metric.get('source_kind') in allowed for metric in result['metrics'])
+          expected_base_kind = manifest['source_mode']
+          assert any(metric.get('source_kind') == expected_base_kind for metric in result['metrics'])
+          print(json.dumps({
+              'verified_metrics_total': result['verified_metrics_total'],
+              'materialized_source_mode': expected_base_kind,
+              'source_kinds': sorted({metric.get('source_kind') for metric in result['metrics']}),
+          }, sort_keys=True))
+          PY
+      - name: Upload compact acceptance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sec-source-${{ matrix.archive }}-acceptance
+          path: data/sec_bulk/${{ matrix.archive }}/manifest.json
+          if-no-files-found: error
+          retention-days: 7
