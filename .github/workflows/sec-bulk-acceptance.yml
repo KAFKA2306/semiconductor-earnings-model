@@ -44,16 +44,24 @@ jobs:
         archive: [companyfacts, submissions]
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Require configured SEC request identity
+        run: |
+          if [ -z "${SEC_USER_AGENT:-}" ]; then
+            echo 'Repository variable SEC_USER_AGENT is required.' >&2
+            exit 1
+          fi
       - name: Materialize official SEC bulk subset
         run: >-
           python scripts/sec_bulk.py ${{ matrix.archive }}
           --output-dir data/sec_bulk
-          --user-agent 'KAFKA2306 semiconductor-earnings-model https://github.com/KAFKA2306'
+          --user-agent "$SEC_USER_AGENT"
       - name: Verify live manifest
         env:
           ARCHIVE: ${{ matrix.archive }}
@@ -85,8 +93,6 @@ jobs:
           PY
       - name: Regenerate existing verified revenue JSON from bulk base
         if: matrix.archive == 'companyfacts'
-        env:
-          SEC_USER_AGENT: 'KAFKA2306 semiconductor-earnings-model https://github.com/KAFKA2306'
         run: |
           python scripts/extract_verified_sec_revenue.py
           python - <<'PY'
