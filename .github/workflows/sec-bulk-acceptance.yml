@@ -1,0 +1,89 @@
+name: SEC bulk acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/sec_bulk.py'
+      - 'tests/test_sec_bulk.py'
+      - 'data/earnings_ledger/source_registry.json'
+      - '.github/workflows/sec-bulk-acceptance.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/sec_bulk.py'
+      - 'tests/test_sec_bulk.py'
+      - 'data/earnings_ledger/source_registry.json'
+      - '.github/workflows/sec-bulk-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_sec_bulk.py
+      - run: python scripts/audit_earnings_source_registry.py
+      - run: python scripts/earnings_ledger.py --audit-only
+
+  live-bulk:
+    strategy:
+      fail-fast: false
+      matrix:
+        archive: [companyfacts, submissions]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Materialize official SEC bulk subset
+        run: >-
+          python scripts/sec_bulk.py ${{ matrix.archive }}
+          --output-dir /tmp/sec_bulk
+          --user-agent 'KAFKA2306 semiconductor-earnings-model https://github.com/KAFKA2306'
+      - name: Verify live manifest
+        env:
+          ARCHIVE: ${{ matrix.archive }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          archive = os.environ['ARCHIVE']
+          path = Path('/tmp/sec_bulk') / archive / 'manifest.json'
+          manifest = json.loads(path.read_text())
+          assert manifest['status'] == 'PASS'
+          assert manifest['configured_sec_issuer_count'] >= 10
+          assert manifest['normalized_issuer_count'] >= 10
+          assert manifest['normalized_record_count'] > 0
+          assert len(manifest['source']['sha256']) == 64
+          assert len(manifest['normalized_sha256']) == 64
+          assert manifest['normalization_schema'] == 'sec-normalized-record.v1'
+          print(json.dumps({
+              'archive': archive,
+              'configured_sec_issuer_count': manifest['configured_sec_issuer_count'],
+              'normalized_issuer_count': manifest['normalized_issuer_count'],
+              'normalized_record_count': manifest['normalized_record_count'],
+              'source_sha256': manifest['source']['sha256'],
+              'normalized_sha256': manifest['normalized_sha256'],
+              'source_url': manifest['source']['source_url'],
+          }, sort_keys=True))
+          PY
+      - name: Upload compact acceptance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sec-bulk-${{ matrix.archive }}-acceptance
+          path: |
+            /tmp/sec_bulk/${{ matrix.archive }}/manifest.json
+          if-no-files-found: error
+          retention-days: 7
