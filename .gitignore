@@ -5,3 +5,4 @@ site/dist/
 site/.astro/
 __pycache__/
 .pytest_cache/
+data/sec_bulk/
