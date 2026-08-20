@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-sec-inventory.v1",
-  "run_at": "2026-08-20T19:17:53.702455Z",
-  "eligible_events_total": 2,
-  "verified_metrics_total": 2,
+  "run_at": "2026-08-20T21:03:40.742787Z",
+  "eligible_events_total": 3,
+  "verified_metrics_total": 3,
   "metrics": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -42,6 +42,26 @@
       "filed": "2026-08-14",
       "source": "SEC Company Facts API",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000106040.json",
+      "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
+    },
+    {
+      "event_id": "1e2136ff5e98d56c9b84ed7c",
+      "company_id": "applied-materials",
+      "ticker": "AMAT",
+      "accession_number": "0001628280-26-058235",
+      "period_end": "2026-07-26",
+      "document_type": "10-Q",
+      "metric": "inventory_net",
+      "value": 6564000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet",
+      "frame": "CY2026Q2I",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "filed": "2026-08-20",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000006951.json",
       "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
     }
   ],
