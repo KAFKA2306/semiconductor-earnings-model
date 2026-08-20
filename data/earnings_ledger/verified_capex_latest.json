@@ -1,11 +1,34 @@
 {
   "schema_version": "verified-sec-capex.v1",
-  "run_at": "2026-08-20T19:18:12.077919Z",
+  "run_at": "2026-08-20T21:02:49.325454Z",
   "freshness_gate_hours": 24,
-  "eligible_events_total": 0,
+  "eligible_events_total": 1,
   "stale_events_skipped_total": 2,
-  "verified_metrics_total": 0,
-  "metrics": [],
+  "verified_metrics_total": 1,
+  "metrics": [
+    {
+      "event_id": "1e2136ff5e98d56c9b84ed7c",
+      "company_id": "applied-materials",
+      "ticker": "AMAT",
+      "accession_number": "0001628280-26-058235",
+      "period_start": "2025-10-27",
+      "period_end": "2026-07-26",
+      "duration_days": 273,
+      "document_type": "10-Q",
+      "metric": "payments_to_acquire_property_plant_and_equipment",
+      "value": 1988000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "frame": null,
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "filed": "2026-08-20",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000006951.json",
+      "verification": "live <=24h event + exact accession + exact form + exact period end + one unambiguous duration + USD + us-gaap PaymentsToAcquirePropertyPlantAndEquipment"
+    }
+  ],
   "issues": [],
   "status": "PASS",
   "contract": "Only live <=24h SEC 10-K/10-Q us-gaap PaymentsToAcquirePropertyPlantAndEquipment facts matching exact accession, form, period end, one unambiguous duration and USD are persisted. Missing, stale, future, malformed or conflicting values never become metrics."
