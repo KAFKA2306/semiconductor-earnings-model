@@ -1,6 +1,6 @@
 {
   "schema_version": "verified-sec-revenue.v1",
-  "run_at": "2026-08-20T10:52:43.806451Z",
+  "run_at": "2026-08-20T11:02:27.162698Z",
   "eligible_events_total": 2,
   "verified_metrics_total": 2,
   "metrics": [
@@ -8,6 +8,7 @@
       "event_id": "eaf7cce59f6f7acaabe282cc",
       "company_id": "lam-research",
       "ticker": "LRCX",
+      "cik": 707549,
       "accession_number": "0000707549-26-000037",
       "period_end": "2026-06-28",
       "document_type": "10-K",
@@ -20,14 +21,16 @@
       "fiscal_year": 2026,
       "fiscal_period": "FY",
       "filed": "2026-08-07",
-      "source": "SEC Company Facts API",
+      "source": "SEC Company Facts API freshness delta",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000707549.json",
+      "source_kind": "api_freshness_delta",
       "verification": "exact accession + exact form + exact period end + USD + standard us-gaap taxonomy"
     },
     {
       "event_id": "110d99434de9ce74bdd7a88d",
       "company_id": "western-digital",
       "ticker": "WDC",
+      "cik": 106040,
       "accession_number": "0001628280-26-057139",
       "period_end": "2026-07-03",
       "document_type": "10-K",
@@ -40,12 +43,13 @@
       "fiscal_year": 2026,
       "fiscal_period": "FY",
       "filed": "2026-08-14",
-      "source": "SEC Company Facts API",
+      "source": "SEC Company Facts API freshness delta",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000106040.json",
+      "source_kind": "api_freshness_delta",
       "verification": "exact accession + exact form + exact period end + USD + standard us-gaap taxonomy"
     }
   ],
   "issues": [],
   "status": "PASS",
-  "contract": "Only standard SEC us-gaap Company Facts revenue facts matching exact accession, form, period end and USD are persisted; missing or conflicting values fail closed."
+  "contract": "Only standard SEC us-gaap Company Facts revenue facts matching exact accession, form, period end and USD are persisted; an accepted materialized base is preferred and the per-CIK API is used only when a required accession is not yet present."
 }
