@@ -1,13 +1,23 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-08-20T18:59:58.651405Z",
-  "events_total": 3,
-  "classified_events_total": 3,
+  "run_at": "2026-08-20T20:47:21.999377Z",
+  "events_total": 4,
+  "classified_events_total": 4,
   "items": [
     {
       "event_id": "110d99434de9ce74bdd7a88d",
       "company_id": "western-digital",
       "document_type": "10-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "1e2136ff5e98d56c9b84ed7c",
+      "company_id": "applied-materials",
+      "document_type": "10-Q",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,
       "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",

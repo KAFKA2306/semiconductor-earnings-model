@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-08-20T18:59:58.603828Z",
-  "events_total": 3,
-  "normalized_events_total": 2,
+  "run_at": "2026-08-20T20:47:21.954243Z",
+  "events_total": 4,
+  "normalized_events_total": 3,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -25,6 +25,19 @@
       "period_end": "2026-07-03",
       "period_source": "SEC submissions reportDate",
       "period_kind": "ANNUAL_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "1e2136ff5e98d56c9b84ed7c",
+      "company_id": "applied-materials",
+      "document_type": "10-Q",
+      "accession_number": "0001628280-26-058235",
+      "period_end": "2026-07-26",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",
       "fiscal_year": null,
       "fiscal_quarter": null,
