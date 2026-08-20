@@ -75,6 +75,26 @@ def companyfacts_contains_accession(payload: dict[str, Any], accession: str) -> 
     return False
 
 
+def materialized_source(cik: int, bulk_dir: Path, bulk_path: Path) -> dict[str, Any]:
+    manifest_path = bulk_dir.parent / "manifest.json"
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("source_mode") == "api_subset_fallback":
+            return {
+                "kind": "api_subset_fallback",
+                "source": "SEC Company Facts API bounded subset fallback",
+                "source_url": SEC_COMPANYFACTS_URL.format(cik=cik),
+                "local_path": bulk_path.as_posix(),
+                "bulk_http_status": manifest.get("bulk_http_status"),
+            }
+    return {
+        "kind": "bulk",
+        "source": "SEC Company Facts bulk ZIP",
+        "source_url": SEC_COMPANYFACTS_BULK_URL,
+        "local_path": bulk_path.as_posix(),
+    }
+
+
 def load_companyfacts(
     cik: int,
     user_agent: str,
@@ -82,7 +102,7 @@ def load_companyfacts(
     required_accessions: set[str] | None = None,
     bulk_dir: Path = SEC_BULK_COMPANYFACTS_DIR,
 ) -> dict[str, Any]:
-    """Prefer the nightly bulk subset and use the per-CIK API only as a freshness delta."""
+    """Prefer the materialized base and use the per-CIK API only as a freshness delta."""
     bulk_path = bulk_dir / f"CIK{cik:010d}.json"
     if bulk_path.exists():
         payload = json.loads(bulk_path.read_text(encoding="utf-8"))
@@ -92,15 +112,9 @@ def load_companyfacts(
             if not companyfacts_contains_accession(payload, accession)
         )
         if not missing:
-            payload["_canonical_source"] = {
-                "kind": "bulk",
-                "source": "SEC Company Facts bulk ZIP",
-                "source_url": SEC_COMPANYFACTS_BULK_URL,
-                "local_path": bulk_path.as_posix(),
-            }
+            payload["_canonical_source"] = materialized_source(cik, bulk_dir, bulk_path)
             return payload
 
-    # Freshness fallback: at most one request per required CIK in this process.
     payload = request_json(SEC_COMPANYFACTS_URL.format(cik=cik), user_agent)
     payload["_canonical_source"] = {
         "kind": "api_freshness_delta",
@@ -162,6 +176,7 @@ def extract_event_revenue(event: dict[str, Any], payload: dict[str, Any]) -> tup
         "event_id": event_id,
         "company_id": event.get("company_id"),
         "ticker": event.get("ticker"),
+        "cik": int(event["cik"]),
         "accession_number": accession,
         "period_end": report_date,
         "document_type": form,
@@ -214,7 +229,7 @@ def audit(events: list[dict[str, Any]], payloads_by_cik: dict[int, dict[str, Any
         "metrics": metrics,
         "issues": issues,
         "status": "PASS" if not issues else "FAIL",
-        "contract": "Only standard SEC us-gaap Company Facts revenue facts matching exact accession, form, period end and USD are persisted; the nightly bulk subset is preferred and the per-CIK API is used only when a required accession is not yet present in that snapshot.",
+        "contract": "Only standard SEC us-gaap Company Facts revenue facts matching exact accession, form, period end and USD are persisted; an accepted materialized base is preferred and the per-CIK API is used only when a required accession is not yet present.",
     }
 
 
