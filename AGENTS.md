@@ -75,13 +75,25 @@ Before creating work, inspect current PRs, branches, Issues, CI, and the relevan
 
 Priority:
 
-1. continue an existing canonical PR/branch for the same outcome;
-2. otherwise continue the unresolved Issue that owns the gap;
-3. only then create one new descriptive branch and one PR.
+1. continue an existing canonical open PR/head branch for the same outcome;
+2. otherwise continue the unresolved Issue that owns the gap and create exactly one bounded branch + PR if code/data changes are required;
+3. never create an untracked work branch or a second branch/PR for the same outcome.
 
-Do not create duplicate branches, PRs, manifests, ledgers, or alternative pipelines for the same outcome. If an older workline is clearly superseded, consolidate to one canonical line and remove/close the duplicate when safe.
+Do not create duplicate branches, PRs, manifests, ledgers, or alternative pipelines for the same outcome. If an older workline is clearly superseded, consolidate to one canonical line and close/delete the duplicate when safe.
 
-## 6. Claim
+## 6. Branch Lifecycle
+
+Aside from the repository default branch and unavoidable platform-managed/protected branches, a persistent branch is permitted only while it is the head branch of a currently open PR.
+
+- Creating a branch creates an obligation to open or reuse its canonical PR immediately.
+- Do not use branches as backlog, continuation state, backup, archive, release-waiting state, evidence storage, or historical marker. Git commits/PRs and canonical artifacts preserve history.
+- After a PR is merged or closed, delete its head branch after verifying PR/main state.
+- A branch with no open PR is an orphan and must be deleted.
+- Before starting and before reporting completion, compare non-default branches with currently open PR heads. Any unmatched task branch is a cleanup failure.
+- Do not report the repository at fixed point while an orphan task branch remains.
+- If the available GitHub surface cannot delete a branch, record that as a tooling blocker and leave cleanup explicitly incomplete. Never create, preserve, rename, or move another orphan branch as a workaround.
+
+## 7. Claim
 
 A **Claim** is a proposed unit of work. Before implementation, state which acceptance criterion would become unprovable without that work and identify the smallest evidence needed to prove completion.
 
@@ -94,13 +106,13 @@ A valid Claim should identify:
 
 Claims that only improve style, convenience, abstraction, or future flexibility are out of scope unless deleting them would make an acceptance criterion unprovable for the requested outcome.
 
-## 7. Deletion Test
+## 8. Deletion Test
 
 **A claim becomes work only when deleting it makes one acceptance criterion unprovable.**
 
 Apply the test before implementation and again before merge. If a proposed file, refactor, dependency, abstraction, generated artifact, or documentation section can be removed while the requested outcome and all four acceptance criteria remain provable, remove it from the change.
 
-## 8. Investigation Before Implementation
+## 9. Investigation Before Implementation
 
 Before editing a financial/data contract:
 
@@ -113,7 +125,7 @@ Before editing a financial/data contract:
 
 Do not design from README prose, screenshots, file names, or memory alone when the underlying evidence is inspectable.
 
-## 9. Data and Calculation Boundaries
+## 10. Data and Calculation Boundaries
 
 - `data/earnings_ledger/` is the canonical earnings evidence boundary unless an owning contract explicitly defines another canonical source.
 - Adapters must not silently recompute financial values already owned by the canonical service/ledger layer.
@@ -122,7 +134,7 @@ Do not design from README prose, screenshots, file names, or memory alone when t
 - Actuals, guidance, consensus, estimates, scenarios, and market observations must not cross value-type boundaries implicitly.
 - Period, consolidation basis, accounting standard, currency, scale, and unit comparability must be proven before comparison.
 
-## 10. Primary-Source and External-Data Rule
+## 11. Primary-Source and External-Data Rule
 
 For current external facts, use the repository's documented primary-source/provider surface and verify the exact response used.
 
@@ -131,7 +143,7 @@ For current external facts, use the repository's documented primary-source/provi
 - If a provider projection disagrees with raw filing text, preserve the discrepancy and fail closed rather than reconstructing missing rows heuristically.
 - Record source URL/identifier, relevant timestamps, hashes/fingerprints, and provider revision/as-of fields when required by the owning contract.
 
-## 11. Verification Evidence
+## 12. Verification Evidence
 
 Prefer existing repository evidence over parallel mechanisms.
 
@@ -143,7 +155,7 @@ Prefer existing repository evidence over parallel mechanisms.
 
 The README documents a broad local validation surface. Run the smallest relevant subset first, then escalate when the affected contract requires it. A repository-wide change may require `uv run python -m pytest -q`, data-platform checks, site unit audits, and a production-equivalent site build.
 
-## 12. Builder / Auditor Separation
+## 13. Builder / Auditor Separation
 
 Treat implementation and acceptance as separate phases even when one agent performs both sequentially.
 
@@ -161,11 +173,12 @@ The Auditor independently checks:
 - evidence belongs to the current PR head/base SHA;
 - generated outputs match their manifests/hashes where applicable;
 - no source/value-type/unit/period boundary was weakened;
-- cleanup is complete.
+- every non-default task branch is the head of a currently open PR;
+- cleanup is complete with no orphan branch remaining.
 
 Implementation intent is never audit evidence.
 
-## 13. Fail-Closed Rule
+## 14. Fail-Closed Rule
 
 A missing source, stale source, ambiguous period, unsupported unit, schema failure, hash mismatch, provenance failure, provider timeout, audit crash, or deployment verification failure blocks the corresponding update.
 
@@ -177,7 +190,7 @@ Do not:
 - publish a partial projection as complete without explicit coverage state;
 - substitute a different dataset for the exact dataset required by the contract without recording that change as a new contract.
 
-## 14. PR Merge and Product/Data Release Are Separate
+## 15. PR Merge and Product/Data Release Are Separate
 
 Do not use one gate for repository integration and external release.
 
@@ -203,27 +216,28 @@ Release is a separate post-merge decision. Treat an earnings dataset, API, site,
 
 A merged PR does not prove release. A release/live-source/deployment blocker does not retroactively invalidate a correctly merged repository change. Do not invent custom state names; report `merged` and `released` separately with direct evidence.
 
-## 15. Git / PR / CI Protocol
+## 16. Git / PR / CI Protocol
 
 For repository changes:
 
 1. start from the latest intended base;
-2. reuse the canonical branch if one exists;
-3. otherwise create one descriptive branch;
-4. keep the diff limited by the Contract and Deletion Test;
-5. add/update regression evidence with behavior or schema changes;
-6. open/update one canonical PR;
+2. reuse the head branch of the canonical open PR if one exists;
+3. otherwise create one descriptive branch and open its PR immediately in the same workline;
+4. never leave a newly created work branch without an open PR;
+5. keep the diff limited by the Contract and Deletion Test;
+6. add/update regression evidence with behavior or schema changes;
 7. verify CI on the exact PR head SHA;
 8. inspect failed jobs and root causes rather than retrying blindly;
 9. merge when the PR merge conditions are provable;
 10. verify the merged `main` SHA;
-11. if release is in scope, execute and verify the separate release conditions against the merged revision;
-12. close the owning Issue only when the Issue's actual outcome is complete; an Issue may legitimately remain open after merge when release or external acceptance remains outstanding;
-13. delete the merged/unneeded work branch when the available GitHub surface permits it.
+11. delete the merged PR head branch immediately; if the PR is closed without merge, delete its head branch after verifying the close state;
+12. if release is in scope, execute and verify the separate release conditions against the merged revision without retaining the merged head branch;
+13. close the owning Issue only when the Issue's actual outcome is complete; an Issue may legitimately remain open after merge when release or external acceptance remains outstanding;
+14. perform a final branch-vs-open-PR audit and remove every orphan task branch before claiming cleanup/fixed point.
 
-If a host-side safety system rejects a GitHub write, re-fetch current state and retry the exact canonical action once. Do not create a duplicate branch/PR or weaken the action as a workaround.
+If a host-side safety system rejects a GitHub write, re-fetch current state and retry the exact canonical action once. Do not create a duplicate branch/PR or weaken the action as a workaround. If branch deletion is unsupported by the available tool, report cleanup blocked rather than preserving the orphan as normal state.
 
-## 16. Publication and Irreversible Side Effects
+## 17. Publication and Irreversible Side Effects
 
 Publishing to GitHub Pages, Hugging Face, external APIs, or other remote stores requires explicit contract authority and postcondition evidence.
 
@@ -234,7 +248,7 @@ Publishing to GitHub Pages, Hugging Face, external APIs, or other remote stores 
 - Preserve publication receipts, manifest hashes, source revision binding, or equivalent evidence.
 - Never publish from a moving/unverified source revision when the publisher contract expects an exact SHA.
 
-## 17. Cleanup Is Part of Completion
+## 18. Cleanup Is Part of Completion
 
 Before final reporting, inspect for residue created by the work:
 
@@ -242,14 +256,14 @@ Before final reporting, inspect for residue created by the work:
 - debug output;
 - obsolete generated intermediates;
 - superseded PRs;
-- merged/unneeded branches;
+- any non-default branch that is not the head of a currently open PR;
 - stale Issue state;
 - duplicate manifests or alternate state stores;
 - CI helper artifacts that are not part of the final contract.
 
-Do not delete unrelated valid work. If a blocker remains, keep exactly one canonical workline and record the blocker plus next action there.
+Do not delete unrelated valid work. Open PR head branches are valid work; merged/closed PR heads and branches with no open PR are not. If a blocker remains, keep continuation in exactly one canonical Issue/open PR and record the blocker plus next action there, never in an orphan branch.
 
-## 18. Fixed Point
+## 19. Fixed Point
 
 Stop when the bounded repository-local outcome is satisfied, all four acceptance criteria relevant to merge are provable, and every remaining change survives the Deletion Test.
 
@@ -260,11 +274,12 @@ At the merge fixed point:
 - rollback remains possible;
 - exact-head CI is verified when applicable;
 - linked PR state is correct;
+- every persistent non-default task branch is the head of a currently open PR; no orphan branch remains;
 - task-created residue is cleaned up or an explicit connector/tooling blocker is recorded.
 
-If release is in scope, continue only through the separate release conditions. A release blocker leaves the merged repository change valid and must be reported separately. No extra refactor, feature, dataset expansion, or policy change is included solely because it might be useful later.
+If release is in scope, continue only through the separate release conditions. A release blocker leaves the merged repository change valid and must be reported separately. A release wait never justifies retaining a merged PR head branch. No extra refactor, feature, dataset expansion, or policy change is included solely because it might be useful later.
 
-## 19. Final Report Contract
+## 20. Final Report Contract
 
 Report only verified state relevant to the task:
 
@@ -274,6 +289,7 @@ Report only verified state relevant to the task:
 - PR/commit/merge SHA;
 - `merged`: yes/no with direct repository evidence;
 - `released`: yes/no with direct publication/deployment/live-source evidence when release is in scope;
+- branch cleanup: orphan branches removed/remaining and any branch-deletion tooling blocker;
 - external publication receipt when applicable;
 - cleanup performed;
 - blocker and exact next action if unfinished.
