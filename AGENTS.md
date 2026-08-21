@@ -177,7 +177,33 @@ Do not:
 - publish a partial projection as complete without explicit coverage state;
 - substitute a different dataset for the exact dataset required by the contract without recording that change as a new contract.
 
-## 14. Git / PR / CI Protocol
+## 14. PR Merge and Product/Data Release Are Separate
+
+Do not use one gate for repository integration and external release.
+
+### PR merge conditions
+
+A PR may merge when all repository-local acceptance criteria for the bounded change are provable on the exact reviewed head revision:
+
+- relevant deterministic tests/audits/builds pass;
+- provenance, value-type, period, unit/currency and schema boundaries remain correct;
+- generated repository artifacts are reproducible when affected;
+- no unresolved review, data-integrity, security, or correctness blocker remains.
+
+A future filing or official observation, live external-provider success after merge, production deployment, public traffic, downstream consumer adoption, or other release-only evidence is **not** a merge condition unless the PR itself changes the release mechanism and that mechanism must be validated before merge.
+
+### Product/data release conditions
+
+Release is a separate post-merge decision. Treat an earnings dataset, API, site, model, research output, or other external surface as released only after:
+
+- the merged `main` revision is read back;
+- the release artifact/surface is bound to that merged revision or its versioned canonical evidence;
+- every release surface in scope is directly verified, such as a live primary-source collection, deployment URL/API, published dataset/model, manifest/hash, or publication receipt;
+- rollback/rebuild/recovery expectations required by the owning contract remain valid.
+
+A merged PR does not prove release. A release/live-source/deployment blocker does not retroactively invalidate a correctly merged repository change. Do not invent custom state names; report `merged` and `released` separately with direct evidence.
+
+## 15. Git / PR / CI Protocol
 
 For repository changes:
 
@@ -189,24 +215,26 @@ For repository changes:
 6. open/update one canonical PR;
 7. verify CI on the exact PR head SHA;
 8. inspect failed jobs and root causes rather than retrying blindly;
-9. merge only after acceptance criteria are provable;
-10. verify the merged `main` SHA and any required post-merge workflow/deployment;
-11. close the owning Issue only when its outcome is actually complete;
-12. delete the merged/unneeded work branch when the available GitHub surface permits it.
+9. merge when the PR merge conditions are provable;
+10. verify the merged `main` SHA;
+11. if release is in scope, execute and verify the separate release conditions against the merged revision;
+12. close the owning Issue only when the Issue's actual outcome is complete; an Issue may legitimately remain open after merge when release or external acceptance remains outstanding;
+13. delete the merged/unneeded work branch when the available GitHub surface permits it.
 
 If a host-side safety system rejects a GitHub write, re-fetch current state and retry the exact canonical action once. Do not create a duplicate branch/PR or weaken the action as a workaround.
 
-## 15. Publication and Irreversible Side Effects
+## 16. Publication and Irreversible Side Effects
 
 Publishing to GitHub Pages, Hugging Face, external APIs, or other remote stores requires explicit contract authority and postcondition evidence.
 
+- Publication/release happens after the merge contract unless the bounded change explicitly requires a pre-merge release-mechanism validation.
 - A successful build is not proof of successful publication.
 - A dispatch is not proof of successful publication.
 - Verify the remote artifact/revision/URL when the contract requires external publication.
 - Preserve publication receipts, manifest hashes, source revision binding, or equivalent evidence.
 - Never publish from a moving/unverified source revision when the publisher contract expects an exact SHA.
 
-## 16. Cleanup Is Part of Completion
+## 17. Cleanup Is Part of Completion
 
 Before final reporting, inspect for residue created by the work:
 
@@ -221,21 +249,22 @@ Before final reporting, inspect for residue created by the work:
 
 Do not delete unrelated valid work. If a blocker remains, keep exactly one canonical workline and record the blocker plus next action there.
 
-## 17. Fixed Point
+## 18. Fixed Point
 
-Stop when the requested outcome is satisfied, all four acceptance criteria are provable, and every remaining change survives the Deletion Test.
+Stop when the bounded repository-local outcome is satisfied, all four acceptance criteria relevant to merge are provable, and every remaining change survives the Deletion Test.
 
-At the Fixed Point:
+At the merge fixed point:
 
-- required tests/audits have passed or a concrete blocker is recorded;
+- required deterministic tests/audits have passed or a concrete merge blocker is recorded;
 - provenance and observability evidence remain available;
 - rollback remains possible;
-- exact-head CI and required external postconditions are verified;
-- linked Issue/PR state is correct;
-- task-created residue is cleaned up or an explicit connector/tooling blocker is recorded;
-- no extra refactor, feature, dataset expansion, or policy change is included solely because it might be useful later.
+- exact-head CI is verified when applicable;
+- linked PR state is correct;
+- task-created residue is cleaned up or an explicit connector/tooling blocker is recorded.
 
-## 18. Final Report Contract
+If release is in scope, continue only through the separate release conditions. A release blocker leaves the merged repository change valid and must be reported separately. No extra refactor, feature, dataset expansion, or policy change is included solely because it might be useful later.
+
+## 19. Final Report Contract
 
 Report only verified state relevant to the task:
 
@@ -243,6 +272,8 @@ Report only verified state relevant to the task:
 - bounded change;
 - tests/audits and exact result;
 - PR/commit/merge SHA;
+- `merged`: yes/no with direct repository evidence;
+- `released`: yes/no with direct publication/deployment/live-source evidence when release is in scope;
 - external publication receipt when applicable;
 - cleanup performed;
 - blocker and exact next action if unfinished.
