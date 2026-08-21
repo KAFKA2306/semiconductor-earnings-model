@@ -226,6 +226,178 @@ jobs:
           echo "JQUANTS_PRIVATE_FILE_SHA256=$EXPECTED_SHA"
           echo "JQUANTS_PRIVATE_REMOTE=$LATEST_REMOTE"
 
+      - name: Publish investor2 Polymarket snapshot through hf-cache-hub
+        shell: bash
+        run: |
+          set -euo pipefail
+          INVESTOR2_DIR=/tmp/investor2
+          HF_CACHE_HUB_DIR=/tmp/hf-cache-hub
+          SNAPSHOT=/tmp/investor2-polymarket-snapshot.json
+          POINTER=/tmp/investor2-polymarket-latest.json
+          MANIFEST=/tmp/investor2-polymarket-artifacts.yaml
+          HF_CACHE_HUB_REVISION=b41ca5a6601a6ac7724cb09b3fe90554c7356d69
+
+          rm -rf "$INVESTOR2_DIR" "$HF_CACHE_HUB_DIR"
+          git clone --filter=blob:none --no-checkout https://github.com/KAFKA2306/investor2.git "$INVESTOR2_DIR"
+          git -C "$INVESTOR2_DIR" fetch --depth=1 origin main
+          INVESTOR2_SHA=$(git -C "$INVESTOR2_DIR" rev-parse FETCH_HEAD)
+          git -C "$INVESTOR2_DIR" checkout --detach "$INVESTOR2_SHA"
+
+          git clone --filter=blob:none --no-checkout https://github.com/KAFKA2306/hf-cache-hub.git "$HF_CACHE_HUB_DIR"
+          git -C "$HF_CACHE_HUB_DIR" fetch --depth=1 origin "$HF_CACHE_HUB_REVISION"
+          git -C "$HF_CACHE_HUB_DIR" checkout --detach "$HF_CACHE_HUB_REVISION"
+
+          python -m pip install \
+            'requests==2.32.5' \
+            'pydantic==2.12.5' \
+            'PyYAML>=6,<7' \
+            'huggingface-hub>=1.19,<2'
+
+          python "$INVESTOR2_DIR/scripts/polymarket_snapshot.py" \
+            --output "$SNAPSHOT" \
+            --max-markets 20 \
+            --min-liquidity 1000 \
+            >/tmp/investor2-polymarket-collector-status.json
+
+          INVESTOR2_SHA="$INVESTOR2_SHA" \
+          HF_CACHE_HUB_REVISION="$HF_CACHE_HUB_REVISION" \
+          SNAPSHOT="$SNAPSHOT" POINTER="$POINTER" MANIFEST="$MANIFEST" \
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from datetime import datetime
+          from pathlib import Path
+
+          import yaml
+
+          snapshot_path = Path(os.environ['SNAPSHOT'])
+          pointer_path = Path(os.environ['POINTER'])
+          manifest_path = Path(os.environ['MANIFEST'])
+          payload = json.loads(snapshot_path.read_text(encoding='utf-8'))
+
+          assert payload['schema_version'] == 'investor2.polymarket-market-snapshot.v1'
+          assert payload['source'] == 'polymarket_market_data'
+          assert payload['provenance']['storage_visibility'] == 'private-only'
+          assert payload['records']
+
+          source_revision = os.environ['INVESTOR2_SHA']
+          publisher_revision = os.environ['GITHUB_SHA']
+          hf_cache_revision = os.environ['HF_CACHE_HUB_REVISION']
+          run_id = os.environ['GITHUB_RUN_ID']
+          run_attempt = os.environ['GITHUB_RUN_ATTEMPT']
+          bucket = os.environ['HF_BUCKET']
+
+          observed = datetime.fromisoformat(payload['observed_at'].replace('Z', '+00:00'))
+          run_remote = (
+              'central/investor2/private/polymarket/observations/'
+              f"{observed:%Y/%m/%d/%H}/{run_id}-{run_attempt}.json"
+          )
+          latest_remote = 'central/investor2/private/polymarket/latest.json'
+
+          snapshot_bytes = snapshot_path.read_bytes()
+          snapshot_sha = hashlib.sha256(snapshot_bytes).hexdigest()
+
+          pointer = {
+              'schema_version': 'investor2.polymarket-cache-pointer.v1',
+              'source': 'polymarket_market_data',
+              'observed_at': payload['observed_at'],
+              'snapshot': {
+                  'bucket': bucket,
+                  'path': run_remote,
+                  'sha256': snapshot_sha,
+                  'size_bytes': len(snapshot_bytes),
+              },
+              'provenance': {
+                  'repository': 'KAFKA2306/investor2',
+                  'revision': source_revision,
+                  'publisher_repository': 'KAFKA2306/semiconductor-earnings-model',
+                  'publisher_revision': publisher_revision,
+                  'run_id': run_id,
+                  'run_attempt': run_attempt,
+                  'hf_cache_hub_revision': hf_cache_revision,
+              },
+          }
+          pointer_text = json.dumps(pointer, ensure_ascii=False, sort_keys=True, separators=(',', ':')) + '\n'
+          pointer_path.write_text(pointer_text, encoding='utf-8')
+          pointer_bytes = pointer_text.encode('utf-8')
+          pointer_sha = hashlib.sha256(pointer_bytes).hexdigest()
+
+          manifest = {
+              'schema_version': 1,
+              'artifacts': [
+                  {
+                      'id': 'investor2/polymarket/snapshot',
+                      'kind': 'dataset',
+                      'format': 'json',
+                      'storage': {
+                          'type': 'huggingface-bucket',
+                          'bucket': bucket,
+                          'path': run_remote,
+                      },
+                      'size_bytes': len(snapshot_bytes),
+                      'sha256': snapshot_sha,
+                      'provenance': {
+                          'repository': 'KAFKA2306/investor2',
+                          'revision': source_revision,
+                          'run_id': run_id,
+                      },
+                  },
+                  {
+                      'id': 'investor2/polymarket/latest',
+                      'kind': 'dataset',
+                      'format': 'json',
+                      'storage': {
+                          'type': 'huggingface-bucket',
+                          'bucket': bucket,
+                          'path': latest_remote,
+                      },
+                      'size_bytes': len(pointer_bytes),
+                      'sha256': pointer_sha,
+                      'provenance': {
+                          'repository': 'KAFKA2306/semiconductor-earnings-model',
+                          'revision': publisher_revision,
+                          'run_id': run_id,
+                      },
+                  },
+              ],
+          }
+          manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding='utf-8')
+
+          print('POLYMARKET_CACHE_PREPARE=PASS')
+          print(f'POLYMARKET_SOURCE_REVISION={source_revision}')
+          print(f'POLYMARKET_SNAPSHOT_SHA256={snapshot_sha}')
+          print(f'POLYMARKET_REMOTE={run_remote}')
+          PY
+
+          python "$HF_CACHE_HUB_DIR/scripts/artifact_manager.py" \
+            --manifest "$MANIFEST" validate \
+            >/tmp/investor2-polymarket-manifest-validation.json
+
+          python "$HF_CACHE_HUB_DIR/scripts/artifact_manager.py" \
+            --manifest "$MANIFEST" publish "$SNAPSHOT" \
+            --id investor2/polymarket/snapshot \
+            >/tmp/investor2-polymarket-snapshot-publish.json
+
+          python "$HF_CACHE_HUB_DIR/scripts/artifact_manager.py" \
+            --manifest "$MANIFEST" publish "$POINTER" \
+            --id investor2/polymarket/latest \
+            >/tmp/investor2-polymarket-pointer-publish.json
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          for path in (
+              '/tmp/investor2-polymarket-snapshot-publish.json',
+              '/tmp/investor2-polymarket-pointer-publish.json',
+          ):
+              result = json.loads(Path(path).read_text(encoding='utf-8'))
+              assert result['status'] == 'PUBLISHED'
+              assert result['remote_verified'] is True
+          print('POLYMARKET_HF_CACHE_RESULT=PASS')
+          PY
+
       - name: Exact-mirror allow-listed prefixes and verify every object
         shell: bash
         run: |
