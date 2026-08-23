@@ -4,7 +4,7 @@
 
 `KAFKA2306/semiconductor-earnings-model` is the sole authenticated writer to the private Hugging Face Storage Bucket `k4fka/kafka-data-lake`.
 
-Consumer/source repositories do not receive `HF_TOKEN`, do not register their own Hugging Face Trusted Publisher, and do not write directly to the private bucket. New public `KAFKA2306/*` sources are added only through the central allow-list, so they create no Hugging Face setup work.
+Consumer/source repositories do not receive `HF_TOKEN`, do not register their own Hugging Face Trusted Publisher, and do not write directly to the private bucket. New public `KAFKA2306/*` sources are added only through the central allow-list or an explicitly owned central publisher path, so they create no Hugging Face setup work.
 
 The sole writer is `.github/workflows/hf-bucket-smoke.yml`. The established workflow path is retained to avoid changing the already-proven OIDC boundary. It uses GitHub OIDC with `HF_OIDC_RESOURCE=buckets/k4fka/kafka-data-lake`; no long-lived Hugging Face token is stored.
 
@@ -39,16 +39,37 @@ Each publish run:
 3. builds a bundle only from `config/data_lake_publish.json`
 4. rejects EDINET DB fields/endpoints not present in the quota-owner allow-list
 5. proves OIDC write/read access with a synthetic object and removes it, then confirms cleanup
-6. previews every owned prefix with `hf buckets sync --delete --dry-run`
-7. exact-mirrors every owned prefix with `hf buckets sync --delete`
-8. runs a second dry-run and fails if any upload/download/delete remains
-9. downloads every manifest-listed object and compares SHA-256
-10. uploads an immutable run manifest under the central commit SHA plus GitHub run ID/attempt
-11. updates `central/manifests/latest.json` only after all data and run-manifest round trips succeed
+6. creates the immutable investor2 Yahoo market cache only when its remote completion manifest is absent
+7. previews every owned prefix with `hf buckets sync --delete --dry-run`
+8. exact-mirrors every owned prefix with `hf buckets sync --delete`
+9. runs a second dry-run and fails if any upload/download/delete remains
+10. downloads every manifest-listed object and compares SHA-256
+11. uploads an immutable run manifest under the central commit SHA plus GitHub run ID/attempt
+12. updates `central/manifests/latest.json` only after all data and run-manifest round trips succeed
 
-Transfer commands retry up to three times for transient failures. Data validation failures are not auto-corrected; they fail closed.
+Transfer commands retry up to three times for transient failures where the owning path provides retries. Data validation failures are not auto-corrected; they fail closed.
 
 Hugging Face Storage Buckets are mutable/non-versioned, so exact-mirror deletion is intentionally restricted to explicit owned data prefixes. `central/manifests/` is never a sync target and is managed separately.
+
+## One-shot investor2 Yahoo market cache
+
+`KAFKA2306/investor2` owns the market-data collection and consumption code, but it has no Hugging Face credential and performs no remote write. `scripts/alphazerobeta_build_market_snapshot.py` discovers the current Yahoo Finance equity universe through yfinance, downloads the requested daily history once, and emits a local immutable snapshot containing:
+
+- `universe.parquet`
+- `benchmark.parquet`
+- `prices/<region>/part-*.parquet`
+- `manifest.json` with byte sizes, SHA-256 hashes, fetch time, region counts and source contract
+
+The authenticated central publisher owns only the storage transition. `scripts/publish_investor2_yahoo_market_cache.py` checks this completion marker first:
+
+```text
+hf://buckets/k4fka/kafka-data-lake/
+  central/investor2/private/yahoo-market-cache/v1/manifest.json
+```
+
+If the manifest already exists and validates as an immutable `investor2.market-snapshot.v2` snapshot, the publisher exits with `SKIP_ALREADY_PUBLISHED` and does not call Yahoo. If absent, it clones the exact current `investor2/main`, runs the one-shot builder, validates every local object, syncs only the owned cache prefix, verifies convergence, downloads the published bytes again, compares every declared size/SHA-256, and uploads `manifest.json` last. The manifest therefore acts as the completion marker; a partial upload cannot be mistaken for a completed cache.
+
+The cache is a reusable frozen market-data input, not historical point-in-time index-membership evidence. Exact AlphaZeroBeta paper reproduction still needs the paper's historical constituent and vendor feature contracts separately.
 
 ## Current allow-list
 
@@ -70,7 +91,7 @@ EDINET DB full/raw API responses remain forbidden by the quota-owner contract. E
 
 Events are read from `KAFKA2306/cast_event_cal`, not `vrc_cast_event_calender`, because the latter explicitly identifies itself as a projection/deploy-only repository and identifies `cast_event_cal` as the canonical source.
 
-Adding another public source requires one explicit `publish_roots` entry in `config/data_lake_publish.json`. No Hugging Face authentication change is required as long as the same central writer and bucket are used.
+Adding another public source requires one explicit `publish_roots` entry in `config/data_lake_publish.json`. No Hugging Face authentication change is required as long as the same central writer and bucket are used. Specialized private generated datasets such as the one-shot investor2 Yahoo market cache use a separately owned prefix and must preserve the same sole-writer/OIDC/readback contract.
 
 ## Storage layout
 
@@ -83,6 +104,14 @@ hf://buckets/k4fka/kafka-data-lake/
       earnings-ledger/
     finance/
       semiconductor/
+    investor2/
+      private/
+        yahoo-market-cache/
+          v1/
+            manifest.json
+            universe.parquet
+            benchmark.parquet
+            prices/<region>/part-*.parquet
     factory/
     books/
     events/
@@ -95,9 +124,9 @@ The manifest records, for every published root and object:
 
 - source repository
 - exact source Git revision
-- source path
+- source path or generated-object identity
 - remote path
 - byte size
 - SHA-256
 
-That makes the mutable bucket reproducible from versioned source commits while keeping authentication centralized.
+That makes the mutable bucket reproducible or independently auditable from versioned source commits while keeping authentication centralized.
