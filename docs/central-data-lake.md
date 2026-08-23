@@ -39,7 +39,7 @@ Each publish run:
 3. builds a bundle only from `config/data_lake_publish.json`
 4. rejects EDINET DB fields/endpoints not present in the quota-owner allow-list
 5. proves OIDC write/read access with a synthetic object and removes it, then confirms cleanup
-6. creates the immutable investor2 Yahoo market cache only when its remote completion manifest is absent
+6. creates the immutable investor2 Japan Yahoo market cache only when its remote completion manifest is absent
 7. previews every owned prefix with `hf buckets sync --delete --dry-run`
 8. exact-mirrors every owned prefix with `hf buckets sync --delete`
 9. runs a second dry-run and fails if any upload/download/delete remains
@@ -47,18 +47,18 @@ Each publish run:
 11. uploads an immutable run manifest under the central commit SHA plus GitHub run ID/attempt
 12. updates `central/manifests/latest.json` only after all data and run-manifest round trips succeed
 
-Transfer commands retry up to three times for transient failures where the owning path provides retries. Data validation failures are not auto-corrected; they fail closed.
+Transfer commands retry up to three times for transient failures where the owning path provides retries. Yahoo screener rate limits are handled inside `investor2` with bounded exponential backoff; exhaustion still fails closed. Data validation failures are not auto-corrected.
 
 Hugging Face Storage Buckets are mutable/non-versioned, so exact-mirror deletion is intentionally restricted to explicit owned data prefixes. `central/manifests/` is never a sync target and is managed separately.
 
 ## One-shot investor2 Yahoo market cache
 
-`KAFKA2306/investor2` owns the market-data collection and consumption code, but it has no Hugging Face credential and performs no remote write. `scripts/alphazerobeta_build_market_snapshot.py` discovers the current Yahoo Finance equity universe through yfinance, downloads the requested daily history once, and emits a local immutable snapshot containing:
+`KAFKA2306/investor2` owns the market-data collection and consumption code, but it has no Hugging Face credential and performs no remote write. `scripts/alphazerobeta_build_market_snapshot.py` discovers all equities returned by Yahoo Finance for region `jp`, downloads daily history from `2004-01-01` through `2024-12-31`, downloads `1306.T` as the broad Japan benchmark proxy, and emits a local immutable snapshot containing:
 
 - `universe.parquet`
 - `benchmark.parquet`
-- `prices/<region>/part-*.parquet`
-- `manifest.json` with byte sizes, SHA-256 hashes, fetch time, region counts and source contract
+- `prices/jp/part-*.parquet`
+- `manifest.json` with byte sizes, SHA-256 hashes, fetch time, Japan ticker count and source contract
 
 The authenticated central publisher owns only the storage transition. `scripts/publish_investor2_yahoo_market_cache.py` checks this completion marker first:
 
@@ -67,9 +67,11 @@ hf://buckets/k4fka/kafka-data-lake/
   central/investor2/private/yahoo-market-cache/v1/manifest.json
 ```
 
-If the manifest already exists and validates as an immutable `investor2.market-snapshot.v2` snapshot, the publisher exits with `SKIP_ALREADY_PUBLISHED` and does not call Yahoo. If absent, it clones the exact current `investor2/main`, runs the one-shot builder, validates every local object, syncs only the owned cache prefix, verifies convergence, downloads the published bytes again, compares every declared size/SHA-256, and uploads `manifest.json` last. The manifest therefore acts as the completion marker; a partial upload cannot be mistaken for a completed cache.
+The earlier worldwide bootstrap attempt failed during Yahoo discovery before any market-cache sync began, so this prefix had no completed or partial snapshot from that run and is reused for the narrower Japan contract. The manifest itself fail-closes the contract to `regions=["jp"]`, `benchmark=1306.T`, the declared date range, writer repository, bucket and prefix.
 
-The cache is a reusable frozen market-data input, not historical point-in-time index-membership evidence. Exact AlphaZeroBeta paper reproduction still needs the paper's historical constituent and vendor feature contracts separately.
+If the manifest already exists and validates as the canonical immutable Japan `investor2.market-snapshot.v2` snapshot, the publisher exits with `SKIP_ALREADY_PUBLISHED` and does not call Yahoo. If absent, it clones the exact current `investor2/main`, runs the one-shot builder with the storage prefix passed explicitly, validates every local object, syncs only the owned cache prefix, verifies convergence, downloads the published bytes again, compares every declared size/SHA-256, and uploads `manifest.json` last. The manifest therefore acts as the completion marker; a partial upload cannot be mistaken for a completed cache.
+
+The cache is a reusable frozen Japan market-data input, not historical point-in-time index-membership evidence. Exact AlphaZeroBeta paper reproduction still needs the paper's historical constituent and vendor feature contracts separately.
 
 ## Current allow-list
 
@@ -111,7 +113,7 @@ hf://buckets/k4fka/kafka-data-lake/
             manifest.json
             universe.parquet
             benchmark.parquet
-            prices/<region>/part-*.parquet
+            prices/jp/part-*.parquet
     factory/
     books/
     events/

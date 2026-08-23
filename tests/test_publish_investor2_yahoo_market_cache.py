@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,7 @@ from scripts.publish_investor2_yahoo_market_cache import (
     BUCKET,
     PREFIX,
     assert_converged_sync_plan,
+    parse_args,
     parse_sync_changes,
     validate_manifest,
     verify_readback,
@@ -21,7 +23,7 @@ def sha256(path: Path) -> str:
 
 
 def make_snapshot(root: Path) -> dict[str, object]:
-    price = root / "prices/us/part-00000.parquet"
+    price = root / "prices/jp/part-00000.parquet"
     price.parent.mkdir(parents=True)
     price.write_bytes(b"price-bytes")
     universe = root / "universe.parquet"
@@ -36,6 +38,10 @@ def make_snapshot(root: Path) -> dict[str, object]:
         "schema_version": "investor2.market-snapshot.v2",
         "source": "Yahoo Finance via yfinance",
         "immutable": True,
+        "regions": ["jp"],
+        "start": "2004-01-01",
+        "end_exclusive": "2025-01-01",
+        "benchmark": "1306.T",
         "ticker_count": 1,
         "files": files,
         "storage_contract": {
@@ -45,6 +51,19 @@ def make_snapshot(root: Path) -> dict[str, object]:
             "consumer_repository_authentication": False,
         },
     }
+
+
+def test_publisher_defaults_are_japan_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(sys, "argv", ["publish_investor2_yahoo_market_cache.py"])
+
+    args = parse_args()
+
+    assert PREFIX.endswith("/yahoo-market-cache/v1")
+    assert args.prefix == PREFIX
+    assert args.regions == "jp"
+    assert args.start == "2004-01-01"
+    assert args.end == "2025-01-01"
+    assert args.benchmark == "1306.T"
 
 
 def test_validate_manifest_and_readback(tmp_path: Path) -> None:
@@ -68,6 +87,15 @@ def test_validate_manifest_rejects_mutated_file(tmp_path: Path) -> None:
     (root / "universe.parquet").write_bytes(b"mutated")
 
     with pytest.raises(AssertionError, match="size mismatch|SHA-256 mismatch"):
+        validate_manifest(manifest, root)
+
+
+def test_validate_manifest_rejects_non_japan_contract(tmp_path: Path) -> None:
+    root = tmp_path / "snapshot"
+    manifest = make_snapshot(root)
+    manifest["regions"] = ["us"]
+
+    with pytest.raises(AssertionError, match="region contract mismatch"):
         validate_manifest(manifest, root)
 
 
