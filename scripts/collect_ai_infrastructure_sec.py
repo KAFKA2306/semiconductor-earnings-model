@@ -64,8 +64,6 @@ def _concept_facts(payload: dict) -> list[dict]:
         key = (fact["start"], fact["end"], fact["form"])
         grouped.setdefault(key, []).append(fact)
 
-    # Later filings frequently repeat comparative facts. Keep the first filing for
-    # each identical duration so the lineage reflects when the value first became public.
     return [
         min(candidates, key=lambda item: (item["filed"], item["accn"]))
         for candidates in grouped.values()
@@ -194,7 +192,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("data/financial_db/ai_infrastructure_sec_capex.json"),
+        default=Path("data/financial_db/ai_infrastructure_sec_cash_ppe.json"),
     )
     args = parser.parse_args()
     payload = collect()
