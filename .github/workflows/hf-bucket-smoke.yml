@@ -171,7 +171,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install pandas pyarrow yfinance
+          python -m pip install pandas pyarrow 'yfinance[repair]'
           python scripts/publish_investor2_yahoo_market_cache.py | tee /tmp/yahoo-market-cache-publish.log
 
       - name: Record verified Yahoo market cache evidence
