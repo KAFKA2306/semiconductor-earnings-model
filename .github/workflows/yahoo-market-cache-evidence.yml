@@ -1,5 +1,6 @@
 name: Yahoo market cache evidence
 
+# Merge-triggered bootstrap/readback proof for the immutable one-shot cache.
 on:
   push:
     branches: [main]
