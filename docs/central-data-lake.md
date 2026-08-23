@@ -71,6 +71,12 @@ The earlier worldwide bootstrap attempt failed during Yahoo discovery before any
 
 If the manifest already exists and validates as the canonical immutable Japan `investor2.market-snapshot.v2` snapshot, the publisher exits with `SKIP_ALREADY_PUBLISHED` and does not call Yahoo. If absent, it clones the exact current `investor2/main`, runs the one-shot builder with the storage prefix passed explicitly, validates every local object, syncs only the owned cache prefix, verifies convergence, downloads the published bytes again, compares every declared size/SHA-256, and uploads `manifest.json` last. The manifest therefore acts as the completion marker; a partial upload cannot be mistaken for a completed cache.
 
+### Failure diagnostics
+
+Production run `32641969253` established a concrete dependency failure mode: the publisher installed plain `yfinance`, while the builder called `yfinance.download(..., repair=True)`. The repair path required SciPy, so 3,830 discovered Japan symbols produced empty price batches with `ModuleNotFoundError: No module named 'scipy'`; `1306.T` failed for the same reason and the snapshot aborted before HF cache publication.
+
+The central workflow now installs the declared `yfinance[repair]` extras. The source-side builder also emits structured JSON diagnostics and fails before Yahoo collection when the `repair=True` runtime is incomplete. Diagnostic events identify the dependency preflight, universe page/offset/retry, price batch context and row counts, benchmark phase, exception class/message, elapsed time, and final snapshot summary. A future runtime dependency failure must therefore be attributable before thousands of symbols are processed.
+
 The cache is a reusable frozen Japan market-data input, not historical point-in-time index-membership evidence. Exact AlphaZeroBeta paper reproduction still needs the paper's historical constituent and vendor feature contracts separately.
 
 ## Current allow-list
