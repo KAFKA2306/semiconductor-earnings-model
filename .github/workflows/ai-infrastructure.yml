@@ -41,14 +41,18 @@ jobs:
       - name: Verify live SEC Company Facts coverage
         if: github.event_name == 'pull_request'
         run: |
-          python scripts/collect_ai_infrastructure_sec.py --output /tmp/ai-infrastructure-sec.json
-          python scripts/build_ai_infrastructure_view.py --sec /tmp/ai-infrastructure-sec.json --output-dir /tmp/ai-infrastructure-view
+          python scripts/collect_ai_infrastructure_sec.py --output /tmp/ai-infrastructure-sec-cash-ppe.json
+          python scripts/build_ai_infrastructure_view.py --sec /tmp/ai-infrastructure-sec-cash-ppe.json --output-dir /tmp/ai-infrastructure-view
           python - <<'PY'
           import json
           from pathlib import Path
+          view = json.loads(Path('/tmp/ai-infrastructure-view/index.json').read_text())
           coverage = json.loads(Path('/tmp/ai-infrastructure-view/coverage.json').read_text())
+          assert view['schema_version'] == 'ai-infrastructure-view.v2'
           assert coverage['company_count'] >= 10
           assert {'compute', 'memory', 'network', 'power'} <= set(coverage['domains'])
+          assert not [r for r in view['observations'] if r.get('concept_id') == 'capital_expenditures' and r.get('source_tier') == 'primary_regulatory']
+          assert all(r['concept_id'] == 'cash_paid_for_property_plant_equipment' for r in view['observations'] if r.get('sec_concept') == 'PaymentsToAcquirePropertyPlantAndEquipment')
           print(coverage)
           PY
       - name: Collect and publish evidence
@@ -59,12 +63,12 @@ jobs:
       - name: Commit changed evidence
         if: github.event_name != 'pull_request'
         run: |
-          if test -z "$(git status --porcelain -- data/financial_db/ai_infrastructure_sec_capex.json api/v1/ai-infrastructure)"; then
+          if test -z "$(git status --porcelain -- data/financial_db/ai_infrastructure_sec_cash_ppe.json api/v1/ai-infrastructure)"; then
             echo 'No AI infrastructure evidence changes.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/financial_db/ai_infrastructure_sec_capex.json api/v1/ai-infrastructure
+          git add data/financial_db/ai_infrastructure_sec_cash_ppe.json api/v1/ai-infrastructure
           git commit -m 'data: update AI infrastructure evidence'
           git push
