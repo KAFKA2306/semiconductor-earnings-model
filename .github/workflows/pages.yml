@@ -1,6 +1,15 @@
 name: Publish earnings model
 
 on:
+  pull_request:
+    paths:
+      - "data/financial_db/ai_infrastructure_observations.json"
+      - "scripts/collect_ai_infrastructure_sec.py"
+      - "scripts/build_ai_infrastructure_view.py"
+      - "site/**"
+      - "tests/test_ai_infrastructure_observations.py"
+      - "README.md"
+      - ".github/workflows/pages.yml"
   push:
     branches: [main]
     paths:
@@ -25,7 +34,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -70,6 +79,30 @@ jobs:
         run: uv run python scripts/build_financial_database_with_nand.py
       - name: Build same-period model snapshot
         run: uv run python scripts/build_model_snapshot.py
+      - name: Build live AI infrastructure canonical view
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: |
+          test -n "${SEC_USER_AGENT:-}"
+          uv run python scripts/collect_ai_infrastructure_sec.py
+          uv run python scripts/build_ai_infrastructure_view.py
+          rm -rf site/public/api/v1/ai-infrastructure
+          mkdir -p site/public/api/v1
+          cp -R api/v1/ai-infrastructure site/public/api/v1/ai-infrastructure
+          uv run python - <<'PY'
+          import json
+          from pathlib import Path
+          view=json.loads(Path('api/v1/ai-infrastructure/index.json').read_text())
+          assert view['schema_version'] == 'ai-infrastructure-view.v2'
+          rows=view['observations']
+          assert not [r for r in rows if r.get('concept_id') == 'capital_expenditures' and r.get('source_tier') == 'primary_regulatory']
+          cash=[r for r in rows if r.get('sec_concept') == 'PaymentsToAcquirePropertyPlantAndEquipment']
+          assert cash and all(r['concept_id'] == 'cash_paid_for_property_plant_equipment' for r in cash)
+          q4=next(r for r in rows if r['id'] == 'microsoft:2026-06-30:capital-expenditures:actual')
+          q1=next(r for r in rows if r['id'] == 'microsoft:2026-09-30:capital-expenditures:guidance')
+          assert q4['value'] == 41_000_000_000 and q4['value_type'] == 'actual'
+          assert q1['value'] == 50_000_000_000 and q1['qualifier'] == 'greater_than' and q1['value_type'] == 'company_guidance'
+          PY
       - name: Run generated data contract tests
         run: uv run python -m pytest -q
       - name: Recalculate LangGraph audit
@@ -88,10 +121,12 @@ jobs:
           npm ci
           npm run build
       - uses: actions/upload-pages-artifact@v4
+        if: github.event_name != 'pull_request'
         with:
           path: site/dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -100,7 +135,7 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify public Pages, research database, NAND extension, and provenance
+      - name: Verify public Pages, daily AI infrastructure, research database, NAND extension, and provenance
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_BUILD_SHA: ${{ github.sha }}
@@ -108,10 +143,12 @@ jobs:
           set -euo pipefail
           test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/model/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/resilience/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/index.json")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/ai-infrastructure/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-profit/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/semiconductor-resilience/index.json")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v1/demand/index.json")" = "200"
@@ -120,14 +157,25 @@ jobs:
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v3/financial-database/financial.db")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
 
+          root_html="$(curl -fsSL "$base/")"
           earnings_html="$(curl -fsSL "$base/earnings/")"
           model_html="$(curl -fsSL "$base/model/")"
           resilience_html="$(curl -fsSL "$base/resilience/")"
+          ai_json="$(curl -fsSL "$base/api/v1/ai-infrastructure/index.json")"
           resilience_json="$(curl -fsSL "$base/api/v1/semiconductor-resilience/index.json")"
           research_json="$(curl -fsSL "$base/api/v2/semiconductor-research/index.json")"
           financial_json="$(curl -fsSL "$base/api/v3/financial-database/index.json")"
           resilience_hash="$(jq -er '.content_hash' <<< "$resilience_json")"
           research_hash="$(jq -er '.content_hash' <<< "$research_json")"
+
+          grep -Fq "AIインフラで、" <<< "$root_html"
+          grep -Fq "actual ≠ guidance" <<< "$(tr '[:upper:]' '[:lower:]' <<< "$root_html")"
+          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$root_html"
+          jq -e '.schema_version == "ai-infrastructure-view.v2"' <<< "$ai_json" >/dev/null
+          jq -e '[.observations[] | select(.concept_id == "capital_expenditures" and .source_tier == "primary_regulatory")] | length == 0' <<< "$ai_json" >/dev/null
+          jq -e 'all(.observations[] | select(.sec_concept == "PaymentsToAcquirePropertyPlantAndEquipment"); .concept_id == "cash_paid_for_property_plant_equipment")' <<< "$ai_json" >/dev/null
+          jq -e 'any(.observations[]; .id == "microsoft:2026-06-30:capital-expenditures:actual" and .value == 41000000000 and .value_type == "actual")' <<< "$ai_json" >/dev/null
+          jq -e 'any(.observations[]; .id == "microsoft:2026-09-30:capital-expenditures:guidance" and .value == 50000000000 and .qualifier == "greater_than" and .value_type == "company_guidance")' <<< "$ai_json" >/dev/null
 
           grep -Fq "高い半導体利益成長は、" <<< "$earnings_html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$earnings_html"
@@ -172,5 +220,6 @@ jobs:
           jq -e '[.observations[].id] | length == (unique | length)' <<< "$financial_json" >/dev/null
 
           printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"quality\"", "id=\"actuals\"", "id=\"peers\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\"", "id=\"ontology\"", "id=\"benchmark\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
+          echo "Published daily AI infrastructure verified: $base/"
           echo "Published research workbench verified: $base/resilience/"
           echo "Published NAND financial database verified: $base/api/v3/financial-database/index.json"
