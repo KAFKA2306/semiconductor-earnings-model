@@ -13,19 +13,19 @@ from pathlib import Path
 from typing import Any
 
 BUCKET = "k4fka/kafka-data-lake"
-PREFIX = "central/investor2/private/yahoo-market-cache/v1"
+PREFIX = "central/investor2/private/yahoo-market-cache/jp-v1"
 INVESTOR2_REPOSITORY = "https://github.com/KAFKA2306/investor2.git"
 MUTATING_SYNC_ACTIONS = {"upload", "download", "delete"}
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Publish the immutable investor2 Yahoo market cache through central HF OIDC.")
+    parser = argparse.ArgumentParser(description="Publish the immutable investor2 Japan Yahoo market cache through central HF OIDC.")
     parser.add_argument("--bucket", default=BUCKET)
     parser.add_argument("--prefix", default=PREFIX)
-    parser.add_argument("--regions", default="all")
+    parser.add_argument("--regions", default="jp")
     parser.add_argument("--start", default="2004-01-01")
     parser.add_argument("--end", default="2025-01-01")
-    parser.add_argument("--benchmark", default="SPY")
+    parser.add_argument("--benchmark", default="1306.T")
     return parser.parse_args()
 
 
@@ -69,20 +69,47 @@ def assert_converged_sync_plan(plan: str) -> None:
         raise AssertionError(f"remote market cache is not converged after sync: {changes[:5]}")
 
 
-def validate_manifest(manifest: dict[str, Any], root: Path) -> None:
+def validate_contract_fields(
+    manifest: dict[str, Any],
+    *,
+    bucket: str,
+    prefix: str,
+    regions: str,
+    start: str,
+    end: str,
+    benchmark: str,
+) -> None:
     if manifest.get("schema_version") != "investor2.market-snapshot.v2":
         raise AssertionError("unexpected market snapshot schema")
     if manifest.get("source") != "Yahoo Finance via yfinance":
         raise AssertionError("unexpected market snapshot source")
     if manifest.get("immutable") is not True:
         raise AssertionError("market snapshot must be immutable")
+    if manifest.get("regions") != [value.strip().lower() for value in regions.split(",") if value.strip()]:
+        raise AssertionError("market snapshot region contract mismatch")
+    if manifest.get("start") != start or manifest.get("end_exclusive") != end:
+        raise AssertionError("market snapshot date contract mismatch")
+    if manifest.get("benchmark") != benchmark:
+        raise AssertionError("market snapshot benchmark contract mismatch")
     storage = manifest.get("storage_contract")
     if not isinstance(storage, dict):
         raise AssertionError("missing storage_contract")
     if storage.get("writer_repository") != "KAFKA2306/semiconductor-earnings-model":
         raise AssertionError("writer authority mismatch")
-    if storage.get("bucket") != BUCKET or storage.get("prefix") != PREFIX:
+    if storage.get("bucket") != bucket or storage.get("prefix") != prefix:
         raise AssertionError("bucket contract mismatch")
+
+
+def validate_manifest(manifest: dict[str, Any], root: Path) -> None:
+    validate_contract_fields(
+        manifest,
+        bucket=BUCKET,
+        prefix=PREFIX,
+        regions="jp",
+        start="2004-01-01",
+        end="2025-01-01",
+        benchmark="1306.T",
+    )
     files = manifest.get("files")
     if not isinstance(files, list) or not files:
         raise AssertionError("snapshot manifest has no files")
@@ -180,16 +207,30 @@ def main() -> None:
     args = parse_args()
     if args.bucket != BUCKET or args.prefix != PREFIX:
         raise AssertionError("publisher is restricted to the canonical owned bucket prefix")
+    if args.regions != "jp" or args.benchmark != "1306.T" or args.start != "2004-01-01" or args.end != "2025-01-01":
+        raise AssertionError("publisher is restricted to the canonical Japan AlphaZeroBeta snapshot contract")
 
     with tempfile.TemporaryDirectory(prefix="investor2-yahoo-market-cache-") as temp_dir_raw:
         temp_dir = Path(temp_dir_raw)
         existing = temp_dir / "existing-manifest.json"
         if remote_manifest(args.bucket, args.prefix, existing):
             manifest = load_manifest(existing)
-            if manifest.get("schema_version") != "investor2.market-snapshot.v2" or manifest.get("immutable") is not True:
-                raise AssertionError("existing remote market cache manifest is invalid")
+            validate_contract_fields(
+                manifest,
+                bucket=args.bucket,
+                prefix=args.prefix,
+                regions=args.regions,
+                start=args.start,
+                end=args.end,
+                benchmark=args.benchmark,
+            )
+            files = manifest.get("files")
+            if not isinstance(files, list) or not files:
+                raise AssertionError("existing remote market cache manifest has no files")
             print("YAHOO_MARKET_CACHE_RESULT=SKIP_ALREADY_PUBLISHED")
             print(f"YAHOO_MARKET_CACHE_TICKERS={manifest.get('ticker_count')}")
+            print(f"YAHOO_MARKET_CACHE_FILES={len(files)}")
+            print(f"YAHOO_MARKET_CACHE_PREFIX={PREFIX}")
             return
 
         investor2 = temp_dir / "investor2"
@@ -209,6 +250,8 @@ def main() -> None:
                 args.end,
                 "--benchmark",
                 args.benchmark,
+                "--storage-prefix",
+                args.prefix,
             ],
             cwd=investor2,
         )
