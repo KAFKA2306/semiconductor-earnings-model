@@ -13,11 +13,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: central-hf-data-lake-publisher-${{ github.event_name }}
+  cancel-in-progress: false
+
 jobs:
   verify:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 360
     permissions:
       contents: read
       id-token: write
@@ -28,12 +32,27 @@ jobs:
       CACHE_PREFIX: central/investor2/private/yahoo-market-cache/v1
       EVIDENCE_ISSUE: "149"
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Install current Hugging Face CLI
         shell: bash
         run: |
           set -euo pipefail
           curl -LsSf https://hf.co/cli/install.sh | bash
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Complete one-shot cache if still absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install pandas pyarrow yfinance
+          python scripts/publish_investor2_yahoo_market_cache.py | tee /tmp/yahoo-market-cache-publish.log
 
       - name: Read back immutable completion manifest
         id: evidence
@@ -42,18 +61,7 @@ jobs:
           set -euo pipefail
           MANIFEST=/tmp/yahoo-market-cache-manifest.json
           REMOTE="hf://buckets/$HF_BUCKET/$CACHE_PREFIX/manifest.json"
-          FOUND=0
-          for attempt in $(seq 1 120); do
-            if hf buckets cp "$REMOTE" "$MANIFEST" >/dev/null 2>&1; then
-              FOUND=1
-              break
-            fi
-            sleep 15
-          done
-          if [ "$FOUND" != "1" ]; then
-            echo "completion manifest was not observable after retry window" >&2
-            exit 1
-          fi
+          hf buckets cp "$REMOTE" "$MANIFEST"
 
           python - "$MANIFEST" "$CACHE_PREFIX" <<'PY' >/tmp/yahoo-market-cache-evidence.env
           import hashlib
