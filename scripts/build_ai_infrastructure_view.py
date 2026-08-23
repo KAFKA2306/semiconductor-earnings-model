@@ -12,6 +12,7 @@ DOMAIN_BY_CONCEPT = {
     "data_center_ssd_revenue": "memory",
     "energy_capacity_added": "power",
     "capital_expenditures": "capital_investment",
+    "cash_paid_for_property_plant_equipment": "capital_investment",
 }
 
 
@@ -19,11 +20,26 @@ def load(path: Path) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8"))["observations"]
 
 
+def validate_comparability(rows: list[dict]) -> None:
+    """Fail closed if SEC cash PP&E is mislabeled as company total CapEx."""
+    for row in rows:
+        if row.get("sec_concept") == "PaymentsToAcquirePropertyPlantAndEquipment":
+            if row.get("concept_id") != "cash_paid_for_property_plant_equipment":
+                raise ValueError(
+                    f"{row.get('id')}: SEC cash PP&E must not use a total-capex concept"
+                )
+        if row.get("concept_id") == "capital_expenditures" and row.get("source_tier") == "primary_regulatory":
+            raise ValueError(
+                f"{row.get('id')}: primary regulatory cash-flow fact cannot be total CapEx"
+            )
+
+
 def build(manual_path: Path, sec_path: Path, output_dir: Path) -> None:
     rows = [*load(manual_path), *load(sec_path)]
     ids = [row["id"] for row in rows]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate AI infrastructure observation id")
+    validate_comparability(rows)
     rows.sort(key=lambda row: (row["period_end"], row["entity"], row["concept_id"], row["id"]))
     domains = sorted({DOMAIN_BY_CONCEPT.get(row["concept_id"], "other") for row in rows})
     companies = sorted({row["entity"] for row in rows})
@@ -31,7 +47,8 @@ def build(manual_path: Path, sec_path: Path, output_dir: Path) -> None:
     actual = [row for row in rows if row["value_type"] == "actual"]
     guidance = [row for row in rows if row["value_type"] == "company_guidance"]
     output = {
-        "schema_version": "ai-infrastructure-view.v1",
+        "schema_version": "ai-infrastructure-view.v2",
+        "comparison_rule": "Only observations with the same concept_id, unit and compatible period definition may be compared. SEC PaymentsToAcquirePropertyPlantAndEquipment is cash PP&E and is not interchangeable with company-reported total CapEx.",
         "observations": rows,
     }
     coverage = {
