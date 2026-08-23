@@ -11,8 +11,10 @@ on:
       - config/edinetdb_quota_plan.json
       - scripts/build_data_lake_bundle.py
       - scripts/publish_investor2_jquants_private.py
+      - scripts/publish_investor2_yahoo_market_cache.py
       - tests/test_build_data_lake_bundle.py
       - tests/test_publish_investor2_jquants_private.py
+      - tests/test_publish_investor2_yahoo_market_cache.py
       - docs/central-data-lake.md
       - .github/workflows/hf-bucket-smoke.yml
   workflow_dispatch:
@@ -35,8 +37,10 @@ on:
       - config/edinetdb_quota_plan.json
       - scripts/build_data_lake_bundle.py
       - scripts/publish_investor2_jquants_private.py
+      - scripts/publish_investor2_yahoo_market_cache.py
       - tests/test_build_data_lake_bundle.py
       - tests/test_publish_investor2_jquants_private.py
+      - tests/test_publish_investor2_yahoo_market_cache.py
       - docs/central-data-lake.md
       - .github/workflows/hf-bucket-smoke.yml
 
@@ -79,7 +83,8 @@ jobs:
           python -m pip install 'pytest>=8,<9'
           python -m pytest \
             tests/test_build_data_lake_bundle.py \
-            tests/test_publish_investor2_jquants_private.py
+            tests/test_publish_investor2_jquants_private.py \
+            tests/test_publish_investor2_yahoo_market_cache.py
           python scripts/build_data_lake_bundle.py \
             --source-revision "$GITHUB_SHA" \
             --output .data_lake_bundle
@@ -88,7 +93,7 @@ jobs:
     needs: validate-contract
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 360
     permissions:
       contents: read
       id-token: write
@@ -159,6 +164,13 @@ jobs:
           echo "HF_SMOKE_RESULT=PASS"
           echo "HF_SMOKE_SHA256=$ACTUAL_SHA"
           echo "HF_SMOKE_CLEANUP=PASS"
+
+      - name: Publish immutable investor2 Yahoo market cache once
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install pandas pyarrow yfinance
+          python scripts/publish_investor2_yahoo_market_cache.py
 
       - name: Publish investor2 J-Quants data to private bucket only
         shell: bash
