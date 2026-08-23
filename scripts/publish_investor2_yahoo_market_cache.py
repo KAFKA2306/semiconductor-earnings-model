@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 BUCKET = "k4fka/kafka-data-lake"
-PREFIX = "central/investor2/private/yahoo-market-cache/jp-v1"
+PREFIX = "central/investor2/private/yahoo-market-cache/v1"
 INVESTOR2_REPOSITORY = "https://github.com/KAFKA2306/investor2.git"
 MUTATING_SYNC_ACTIONS = {"upload", "download", "delete"}
 
