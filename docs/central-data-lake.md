@@ -64,8 +64,10 @@ The authenticated central publisher owns only the storage transition. `scripts/p
 
 ```text
 hf://buckets/k4fka/kafka-data-lake/
-  central/investor2/private/yahoo-market-cache/jp-v1/manifest.json
+  central/investor2/private/yahoo-market-cache/v1/manifest.json
 ```
+
+The earlier worldwide bootstrap attempt failed during Yahoo discovery before any market-cache sync began, so this prefix had no completed or partial snapshot from that run and is reused for the narrower Japan contract. The manifest itself fail-closes the contract to `regions=["jp"]`, `benchmark=1306.T`, the declared date range, writer repository, bucket and prefix.
 
 If the manifest already exists and validates as the canonical immutable Japan `investor2.market-snapshot.v2` snapshot, the publisher exits with `SKIP_ALREADY_PUBLISHED` and does not call Yahoo. If absent, it clones the exact current `investor2/main`, runs the one-shot builder with the storage prefix passed explicitly, validates every local object, syncs only the owned cache prefix, verifies convergence, downloads the published bytes again, compares every declared size/SHA-256, and uploads `manifest.json` last. The manifest therefore acts as the completion marker; a partial upload cannot be mistaken for a completed cache.
 
@@ -107,7 +109,7 @@ hf://buckets/k4fka/kafka-data-lake/
     investor2/
       private/
         yahoo-market-cache/
-          jp-v1/
+          v1/
             manifest.json
             universe.parquet
             benchmark.parquet
