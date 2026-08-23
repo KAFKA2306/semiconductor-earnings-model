@@ -58,7 +58,7 @@ def test_publisher_defaults_are_japan_only(monkeypatch: pytest.MonkeyPatch) -> N
 
     args = parse_args()
 
-    assert PREFIX.endswith("/yahoo-market-cache/jp-v1")
+    assert PREFIX.endswith("/yahoo-market-cache/v1")
     assert args.prefix == PREFIX
     assert args.regions == "jp"
     assert args.start == "2004-01-01"
