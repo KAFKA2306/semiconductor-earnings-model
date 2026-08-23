@@ -15,6 +15,7 @@ from typing import Any
 BUCKET = "k4fka/kafka-data-lake"
 PREFIX = "central/investor2/private/yahoo-market-cache/v1"
 INVESTOR2_REPOSITORY = "https://github.com/KAFKA2306/investor2.git"
+MUTATING_SYNC_ACTIONS = {"upload", "download", "delete"}
 
 
 def parse_args() -> argparse.Namespace:
@@ -47,6 +48,25 @@ def load_manifest(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise AssertionError("market cache manifest must be a JSON object")
     return payload
+
+
+def parse_sync_changes(plan: str) -> list[dict[str, Any]]:
+    changes: list[dict[str, Any]] = []
+    for raw in plan.splitlines():
+        if not raw.strip():
+            continue
+        item = json.loads(raw)
+        if not isinstance(item, dict):
+            raise AssertionError("hf sync plan rows must be JSON objects")
+        if item.get("action") in MUTATING_SYNC_ACTIONS:
+            changes.append(item)
+    return changes
+
+
+def assert_converged_sync_plan(plan: str) -> None:
+    changes = parse_sync_changes(plan)
+    if changes:
+        raise AssertionError(f"remote market cache is not converged after sync: {changes[:5]}")
 
 
 def validate_manifest(manifest: dict[str, Any], root: Path) -> None:
@@ -135,9 +155,11 @@ def publish_snapshot(root: Path, manifest: dict[str, Any], *, bucket: str, prefi
     try:
         run(["hf", "buckets", "sync", str(root), remote_root, "--delete", "--dry-run"])
         run(["hf", "buckets", "sync", str(root), remote_root, "--delete"])
-        post_plan = run(["hf", "buckets", "sync", str(root), remote_root, "--delete", "--dry-run"], capture=True)
-        if '"action":"upload"' in post_plan or '"action":"delete"' in post_plan or '"action":"download"' in post_plan:
-            raise AssertionError("remote market cache is not converged after sync")
+        post_plan = run(
+            ["hf", "buckets", "sync", str(root), remote_root, "--delete", "--ignore-times", "--dry-run"],
+            capture=True,
+        )
+        assert_converged_sync_plan(post_plan)
 
         readback = root.parent / "readback"
         run(["hf", "buckets", "sync", remote_root, str(readback)])
@@ -200,7 +222,9 @@ def main() -> None:
             "publisher_run_id": os.environ.get("GITHUB_RUN_ID", "local"),
             "publisher_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", "local"),
         }
-        manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
         validate_manifest(manifest, output)
         publish_snapshot(output, manifest, bucket=args.bucket, prefix=args.prefix)
 
