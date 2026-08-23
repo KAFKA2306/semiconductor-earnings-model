@@ -76,7 +76,7 @@ def build(manual_path: Path, sec_path: Path, output_dir: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manual", type=Path, default=Path("data/financial_db/ai_infrastructure_observations.json"))
-    parser.add_argument("--sec", type=Path, default=Path("data/financial_db/ai_infrastructure_sec_capex.json"))
+    parser.add_argument("--sec", type=Path, default=Path("data/financial_db/ai_infrastructure_sec_cash_ppe.json"))
     parser.add_argument("--output-dir", type=Path, default=Path("api/v1/ai-infrastructure"))
     args = parser.parse_args()
     build(args.manual, args.sec, args.output_dir)
