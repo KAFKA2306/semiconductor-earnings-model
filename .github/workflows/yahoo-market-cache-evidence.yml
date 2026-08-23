@@ -49,11 +49,19 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Complete one-shot cache if still absent
+        id: bootstrap
         shell: bash
         run: |
           set -euo pipefail
           python -m pip install pandas pyarrow yfinance
           python scripts/publish_investor2_yahoo_market_cache.py | tee /tmp/yahoo-market-cache-publish.log
+          RESULT=$(grep '^YAHOO_MARKET_CACHE_RESULT=' /tmp/yahoo-market-cache-publish.log | tail -1 | cut -d= -f2-)
+          test -n "$RESULT"
+          case "$RESULT" in
+            PUBLISHED|SKIP_ALREADY_PUBLISHED) ;;
+            *) echo "unexpected bootstrap result: $RESULT" >&2; exit 1 ;;
+          esac
+          echo "RESULT=$RESULT" >> "$GITHUB_OUTPUT"
 
       - name: Read back immutable completion manifest
         id: evidence
@@ -102,6 +110,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          BOOTSTRAP_RESULT: ${{ steps.bootstrap.outputs.RESULT }}
           RESULT: ${{ steps.evidence.outputs.RESULT }}
           TICKERS: ${{ steps.evidence.outputs.TICKERS }}
           FILES: ${{ steps.evidence.outputs.FILES }}
@@ -114,6 +123,7 @@ jobs:
         run: |
           set -euo pipefail
           BODY=$(cat <<EOF
+          YAHOO_MARKET_CACHE_BOOTSTRAP_RESULT=$BOOTSTRAP_RESULT
           YAHOO_MARKET_CACHE_RESULT=$RESULT
           YAHOO_MARKET_CACHE_TICKERS=$TICKERS
           YAHOO_MARKET_CACHE_FILES=$FILES
