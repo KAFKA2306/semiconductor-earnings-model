@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Collect quarterly capital expenditure evidence from SEC Company Facts."""
+"""Collect quarterly cash PP&E evidence from SEC Company Facts."""
 from __future__ import annotations
 
 import argparse
@@ -12,6 +12,7 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 CONCEPT = "PaymentsToAcquirePropertyPlantAndEquipment"
+CONCEPT_ID = "cash_paid_for_property_plant_equipment"
 COMPANIES = {
     "MSFT": (789019, "Microsoft Corporation"),
     "GOOGL": (1652044, "Alphabet Inc."),
@@ -63,8 +64,6 @@ def _concept_facts(payload: dict) -> list[dict]:
         key = (fact["start"], fact["end"], fact["form"])
         grouped.setdefault(key, []).append(fact)
 
-    # Later filings frequently repeat comparative facts. Keep the first filing for
-    # each identical duration so the lineage reflects when the value first became public.
     return [
         min(candidates, key=lambda item: (item["filed"], item["accn"]))
         for candidates in grouped.values()
@@ -85,6 +84,12 @@ def quarterly_capex(
     cik: int,
     raw_sha256: str,
 ) -> list[dict]:
+    """Reconstruct quarterly cash paid for PP&E from cumulative SEC facts.
+
+    The SEC concept is a cash-flow fact. It is deliberately not labeled as total
+    capital expenditures because company-reported CapEx may also include finance
+    leases or other non-cash additions.
+    """
     facts = _concept_facts(payload)
     annuals = sorted(
         (
@@ -107,7 +112,6 @@ def quarterly_capex(
             ),
             key=lambda item: item["end"],
         )
-        # A complete fiscal year needs the three year-to-date 10-Q values plus FY.
         if len(cumulative) != 3:
             continue
         q1, q2, q3 = cumulative
@@ -129,12 +133,13 @@ def quarterly_capex(
         for fiscal_period, end, value, inputs, formula in periods:
             rows.append(
                 {
-                    "id": f"{ticker.lower()}:{end}:capital-expenditures:actual",
+                    "id": f"{ticker.lower()}:{end}:cash-paid-for-property-plant-equipment:actual",
                     "entity": entity,
                     "ticker": ticker,
                     "cik": f"{cik:010d}",
-                    "concept_id": "capital_expenditures",
+                    "concept_id": CONCEPT_ID,
                     "sec_concept": CONCEPT,
+                    "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
                     "value_type": "actual",
                     "value": value,
                     "unit": "USD",
@@ -167,14 +172,15 @@ def collect() -> dict:
         rows = quarterly_capex(payload, ticker, entity, cik, digest)
         if len(rows) < 4:
             raise ValueError(
-                f"{ticker}: only {len(rows)} complete quarterly CAPEX observations"
+                f"{ticker}: only {len(rows)} complete quarterly cash-PP&E observations"
             )
         observations.extend(rows)
     return {
-        "schema_version": "ai-infrastructure-sec-capex.v1",
+        "schema_version": "ai-infrastructure-sec-cash-ppe.v2",
         "publisher": "U.S. Securities and Exchange Commission",
         "source_api": "SEC Company Facts",
         "concept": CONCEPT,
+        "concept_id": CONCEPT_ID,
         "company_count": len({row["ticker"] for row in observations}),
         "observations": observations,
         "source_hashes": source_hashes,
@@ -186,7 +192,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("data/financial_db/ai_infrastructure_sec_capex.json"),
+        default=Path("data/financial_db/ai_infrastructure_sec_cash_ppe.json"),
     )
     args = parser.parse_args()
     payload = collect()
