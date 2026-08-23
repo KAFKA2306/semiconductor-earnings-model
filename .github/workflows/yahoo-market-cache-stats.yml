@@ -1,0 +1,87 @@
+name: Yahoo market cache stats audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/yahoo-market-cache-stats
+    paths:
+      - scripts/audit_investor2_yahoo_market_cache.py
+      - tests/test_audit_investor2_yahoo_market_cache.py
+      - .github/workflows/yahoo-market-cache-stats.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
+  HF_BUCKET: k4fka/kafka-data-lake
+  CACHE_PREFIX: central/investor2/private/yahoo-market-cache/v1
+  EVIDENCE_PREFIX: central/investor2/private/yahoo-market-cache/evidence/v1
+  CANONICAL_MANIFEST_SHA256: 2ef25485dff650297d78fac54c46fd3c5c00afa20a7c5c55ba24c69eb648265a
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install audit dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'pytest>=8,<9' pandas pyarrow
+          curl -LsSf https://hf.co/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Unit test stats contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pytest tests/test_audit_investor2_yahoo_market_cache.py
+
+      - name: Read back canonical cache and compute empirical stats
+        shell: bash
+        run: |
+          set -euo pipefail
+          CACHE_ROOT=/tmp/yahoo-market-cache
+          STATS=/tmp/yahoo-market-cache-stats.json
+          REMOTE="hf://buckets/$HF_BUCKET/$CACHE_PREFIX"
+          mkdir -p "$CACHE_ROOT"
+          hf buckets sync "$REMOTE" "$CACHE_ROOT"
+          python scripts/audit_investor2_yahoo_market_cache.py \
+            --root "$CACHE_ROOT" \
+            --expected-manifest-sha256 "$CANONICAL_MANIFEST_SHA256" \
+            --output "$STATS" \
+            | tee /tmp/yahoo-market-cache-stats.log
+          echo "YAHOO_MARKET_CACHE_STATS_SHA256=$(sha256sum "$STATS" | awk '{print $1}')"
+
+      - name: Persist stats outside immutable cache and verify readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATS=/tmp/yahoo-market-cache-stats.json
+          READBACK=/tmp/yahoo-market-cache-stats-readback.json
+          STATS_SHA=$(sha256sum "$STATS" | awk '{print $1}')
+          REMOTE="hf://buckets/$HF_BUCKET/$EVIDENCE_PREFIX/$CANONICAL_MANIFEST_SHA256/cache_stats.json"
+          hf buckets cp "$STATS" "$REMOTE"
+          hf buckets cp "$REMOTE" "$READBACK"
+          READBACK_SHA=$(sha256sum "$READBACK" | awk '{print $1}')
+          test "$STATS_SHA" = "$READBACK_SHA"
+          echo "YAHOO_MARKET_CACHE_STATS_RESULT=VERIFIED"
+          echo "YAHOO_MARKET_CACHE_STATS_SHA256=$STATS_SHA"
+          echo "YAHOO_MARKET_CACHE_STATS_REMOTE=$EVIDENCE_PREFIX/$CANONICAL_MANIFEST_SHA256/cache_stats.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yahoo-market-cache-stats
+          path: /tmp/yahoo-market-cache-stats.json
+          if-no-files-found: error
