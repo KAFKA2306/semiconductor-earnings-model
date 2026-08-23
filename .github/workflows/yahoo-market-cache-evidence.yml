@@ -126,3 +126,19 @@ jobs:
           EOF
           )
           gh issue comment "$EVIDENCE_ISSUE" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+
+      - name: Publish failure ledger entry
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BODY=$(cat <<EOF
+          YAHOO_MARKET_CACHE_RESULT=FAILED
+          YAHOO_MARKET_CACHE_PREFIX=$CACHE_PREFIX
+          EVIDENCE_RUN=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+          Trigger=$GITHUB_EVENT_NAME
+          EOF
+          )
+          gh issue comment "$EVIDENCE_ISSUE" --repo "$GITHUB_REPOSITORY" --body "$BODY"
