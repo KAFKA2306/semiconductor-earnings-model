@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - main
       - research/yahoo-market-cache-stats
     paths:
       - scripts/audit_investor2_yahoo_market_cache.py
