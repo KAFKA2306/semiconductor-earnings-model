@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - ".github/workflows/live-pages-audit.yml"
+  schedule:
+    - cron: "55 2 * * *"
   workflow_dispatch:
 
 permissions:
@@ -39,7 +41,7 @@ jobs:
           curl --fail --silent --show-error --location "https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-resilience/index.json?summary=${GITHUB_SHA}" -o resilience.json
           python -c 'import json; d=json.load(open("resilience.json")); cs=[c for c in d["companies"] if c["years"]]; print(f"SUMMARY generated_at={d[chr(103)+chr(101)+chr(110)+chr(101)+chr(114)+chr(97)+chr(116)+chr(101)+chr(100)+chr(95)+chr(97)+chr(116)]} companies={len(cs)} hash={d[chr(99)+chr(111)+chr(110)+chr(116)+chr(101)+chr(110)+chr(116)+chr(95)+chr(104)+chr(97)+chr(115)+chr(104)]}"); [(lambda r,y: print(f"SEVERE {c[chr(116)+chr(105)+chr(99)+chr(107)+chr(101)+chr(114)]} period={y[chr(112)+chr(101)+chr(114)+chr(105)+chr(111)+chr(100)+chr(95)+chr(101)+chr(110)+chr(100)]} liquid={y[chr(108)+chr(105)+chr(113)+chr(117)+chr(105)+chr(100)+chr(95)+chr(114)+chr(101)+chr(115)+chr(101)+chr(114)+chr(118)+chr(101)][chr(114)+chr(101)+chr(112)+chr(111)+chr(114)+chr(116)+chr(101)+chr(100)+chr(95)+chr(118)+chr(97)+chr(108)+chr(117)+chr(101)]} stressed_fcf={r[chr(115)+chr(116)+chr(114)+chr(101)+chr(115)+chr(115)+chr(101)+chr(100)+chr(95)+chr(102)+chr(114)+chr(101)+chr(101)+chr(95)+chr(99)+chr(97)+chr(115)+chr(104)+chr(95)+chr(102)+chr(108)+chr(111)+chr(119)+chr(95)+chr(117)+chr(115)+chr(100)]} runway={r[chr(108)+chr(105)+chr(113)+chr(117)+chr(105)+chr(100)+chr(95)+chr(114)+chr(101)+chr(115)+chr(101)+chr(114)+chr(118)+chr(101)+chr(95)+chr(114)+chr(117)+chr(110)+chr(119)+chr(97)+chr(121)+chr(95)+chr(121)+chr(101)+chr(97)+chr(114)+chr(115)]} band={r[chr(114)+chr(117)+chr(110)+chr(119)+chr(97)+chr(121)+chr(95)+chr(98)+chr(97)+chr(110)+chr(100)]}"))(next(x for x in c["scenarios"] if x["scenario_id"]=="severe"), c["years"][0]) for c in cs]'
 
-      - name: Verify live resilience view, generated SEC API, and legacy routes
+      - name: Verify live daily root, resilience view, generated APIs, and legacy routes
         shell: bash
         run: |
           set -euo pipefail
@@ -49,15 +51,21 @@ jobs:
           matched=false
           for attempt in $(seq 1 42); do
             curl --fail --silent --show-error --location \
+              "$base/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/root.html" || true
+            curl --fail --silent --show-error --location \
               "$base/resilience/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.html" || true
             curl --fail --silent --show-error --location \
+              "$base/api/v1/ai-infrastructure/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/ai.json" || true
+            curl --fail --silent --show-error --location \
               "$base/api/v1/semiconductor-resilience/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.json" || true
-            if grep -Fq "data-build-sha=\"${MAIN_SHA}\"" "$tmp/resilience.html" 2>/dev/null \
+            if grep -Fq "data-build-sha=\"${MAIN_SHA}\"" "$tmp/root.html" 2>/dev/null \
+              && grep -Fq "data-build-sha=\"${MAIN_SHA}\"" "$tmp/resilience.html" 2>/dev/null \
+              && python -m json.tool "$tmp/ai.json" >/dev/null 2>&1 \
               && python -m json.tool "$tmp/resilience.json" >/dev/null 2>&1; then
               matched=true
               break
             fi
-            echo "Live resilience build has not propagated to ${MAIN_SHA} (attempt ${attempt})."
+            echo "Live build has not propagated to ${MAIN_SHA} (attempt ${attempt})."
             sleep 10
           done
           test "$matched" = true
@@ -69,6 +77,14 @@ jobs:
           curl --fail --silent --show-error --location "$base/api/v1/semiconductor-profit/index.json?smoke=${GITHUB_SHA}" -o "$tmp/profit.json"
           curl --fail --silent --show-error --location "$base/api/v1/demand/index.json?smoke=${GITHUB_SHA}" -o "$tmp/demand.json"
           curl --fail --silent --show-error --location "$base/data/quant-audit.json?smoke=${GITHUB_SHA}" -o "$tmp/audit.json"
+
+          grep -Fq 'AIインフラで、' "$tmp/root.html"
+          grep -Fq 'Latest' "$tmp/root.html" || grep -Fq 'Today' "$tmp/root.html"
+          jq -e '.schema_version == "ai-infrastructure-view.v2"' "$tmp/ai.json" >/dev/null
+          jq -e '[.observations[] | select(.concept_id == "capital_expenditures" and .source_tier == "primary_regulatory")] | length == 0' "$tmp/ai.json" >/dev/null
+          jq -e 'all(.observations[] | select(.sec_concept == "PaymentsToAcquirePropertyPlantAndEquipment"); .concept_id == "cash_paid_for_property_plant_equipment")' "$tmp/ai.json" >/dev/null
+          jq -e 'any(.observations[]; .id == "microsoft:2026-06-30:capital-expenditures:actual" and .value == 41000000000)' "$tmp/ai.json" >/dev/null
+          jq -e 'any(.observations[]; .id == "microsoft:2026-09-30:capital-expenditures:guidance" and .value == 50000000000 and .qualifier == "greater_than")' "$tmp/ai.json" >/dev/null
 
           resilience_hash="$(jq -er '.content_hash' "$tmp/resilience.json")"
           grep -Fq "data-resilience-api-hash=\"${resilience_hash}\"" "$tmp/resilience.html"
@@ -97,13 +113,15 @@ jobs:
           python -m json.tool "$tmp/demand.json" >/dev/null
           python -m json.tool "$tmp/audit.json" >/dev/null
 
-          RESILIENCE="$tmp/resilience.json" AUDIT="$tmp/audit.json" python - <<'PY'
+          RESILIENCE="$tmp/resilience.json" AUDIT="$tmp/audit.json" AI="$tmp/ai.json" python - <<'PY'
           import json
           import os
 
           resilience = json.load(open(os.environ["RESILIENCE"], encoding="utf-8"))
           audit = json.load(open(os.environ["AUDIT"], encoding="utf-8"))
+          ai = json.load(open(os.environ["AI"], encoding="utf-8"))
           assert resilience["schema_version"] == "semiconductor-resilience-api.v1"
+          assert ai["schema_version"] == "ai-infrastructure-view.v2"
           companies = [company for company in resilience["companies"] if company["years"]]
           assert len(companies) >= 10, len(companies)
           assert all(1 <= len(company["years"]) <= 5 for company in companies)
@@ -130,6 +148,7 @@ jobs:
               bands[row["runway_band"]] = bands.get(row["runway_band"], 0) + 1
           print(json.dumps({
               "live_build_sha": os.environ["MAIN_SHA"],
+              "ai_infrastructure_observations": len(ai["observations"]),
               "resilience_content_hash": resilience["content_hash"],
               "generated_at": resilience["generated_at"],
               "companies_with_data": len(companies),
@@ -138,4 +157,5 @@ jobs:
           }, ensure_ascii=False, indent=2))
           PY
 
+          echo "Live Pages daily AI infrastructure audit passed: $base/"
           echo "Live Pages resilience audit passed: $base/resilience/"
