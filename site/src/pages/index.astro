@@ -4,9 +4,34 @@ import path from 'node:path';
 
 const root = process.cwd().endsWith('site') ? path.resolve(process.cwd(), '..') : process.cwd();
 const financial = JSON.parse(fs.readFileSync(path.join(root, 'site/public/api/v3/financial-database/index.json'), 'utf8'));
+const infrastructure = JSON.parse(fs.readFileSync(path.join(root, 'api/v1/ai-infrastructure/index.json'), 'utf8'));
 const base = import.meta.env.BASE_URL;
 const buildSha = import.meta.env.PUBLIC_BUILD_SHA;
 if (!buildSha) throw new Error('PUBLIC_BUILD_SHA is required for provenance');
+
+const observations = infrastructure.observations || [];
+const byAsOf = [...observations].sort((a, b) => (a.as_of || '').localeCompare(b.as_of || '') || (a.period_end || '').localeCompare(b.period_end || ''));
+const latestEvidenceDate = byAsOf.at(-1)?.as_of || '未取得';
+const latest = (concept, valueType = 'actual', entity = null) => observations
+  .filter((row) => row.concept_id === concept && row.value_type === valueType && (!entity || row.entity === entity))
+  .sort((a, b) => (a.period_end || '').localeCompare(b.period_end || '') || (a.as_of || '').localeCompare(b.as_of || ''))
+  .at(-1);
+const all = (concept, valueType = 'actual', entity = null) => observations
+  .filter((row) => row.concept_id === concept && row.value_type === valueType && (!entity || row.entity === entity))
+  .sort((a, b) => (a.period_end || '').localeCompare(b.period_end || '') || (a.as_of || '').localeCompare(b.as_of || ''));
+
+const msftTotalCapex = all('capital_expenditures', 'actual', 'Microsoft Corporation');
+const msftCapexActual = msftTotalCapex.at(-1);
+const msftCapexPrevious = msftTotalCapex.at(-2);
+const msftCapexGuidance = latest('capital_expenditures', 'company_guidance', 'Microsoft Corporation');
+const nvdaCompute = latest('data_center_compute_revenue', 'actual', 'NVIDIA Corporation');
+const nvdaNetwork = latest('data_center_networking_revenue', 'actual', 'NVIDIA Corporation');
+const micronMemory = latest('data_center_ssd_revenue', 'actual', 'Micron Technology, Inc.');
+const msftPower = latest('energy_capacity_added', 'actual', 'Microsoft Corporation');
+
+const usdB = (row) => row?.value == null ? '未取得' : `${row.qualifier === 'greater_than' ? '>' : ''}$${(Number(row.value) / 1e9).toFixed(Number(row.value) % 1e9 === 0 ? 0 : 1)}B`;
+const percent = (value) => `${value >= 0 ? '+' : ''}${(value * 100).toFixed(1)}%`;
+const capexQoq = msftCapexActual && msftCapexPrevious ? Number(msftCapexActual.value) / Number(msftCapexPrevious.value) - 1 : null;
 
 const entityLookup = financial.views?.entity_lookup || {};
 const comparisons = financial.views?.nand_kpi_comparisons || [];
@@ -31,32 +56,84 @@ const interval = (row, digits = 1) => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="半導体・NANDの市況、企業業績、顧客の投資余力、一次資料を順に確認できる公開データサイト。" />
-    <title>半導体業績データ</title>
+    <meta name="description" content="AI計算資源・半導体供給の最新一次情報と、半導体・NANDの市況、企業業績、投資余力を確認できる公開データサイト。" />
+    <title>AI Infrastructure / 半導体業績データ</title>
   </head>
-  <body data-build-sha={buildSha} data-financial-api-hash={financial.content_hash}>
+  <body data-build-sha={buildSha} data-financial-api-hash={financial.content_hash} data-ai-infrastructure-schema={infrastructure.schema_version}>
     <main>
       <header>
-        <a class="brand" href={base}>半導体業績データ</a>
+        <a class="brand" href={base}>AI Infrastructure / 半導体</a>
         <nav aria-label="ページ内ナビゲーション">
+          <a href="#today">Today</a>
           <a href="#market">市況</a>
           <a href="#companies">企業</a>
-          <a href="#demand">需要</a>
           <a href="#evidence">根拠</a>
         </nav>
       </header>
 
       <section class="hero">
-        <p class="eyebrow">PRIMARY DATA / UPDATED CONTINUOUSLY</p>
-        <h1>半導体の今を、<br />数字から読む。</h1>
-        <p class="lead">見る順番は4つだけです。市況 → 企業 → 需要 → 根拠。分析画面の名前や内部のデータ構造を先に覚える必要はありません。</p>
+        <p class="eyebrow">PRIMARY EVIDENCE / ACTUAL ≠ GUIDANCE</p>
+        <h1>AIインフラで、<br />最後に何が変わったか。</h1>
+        <p class="lead">実績、会社予想、SEC cash-flow factを同じ数字として混ぜず、比較できるものだけを比較します。更新がないlaneは、古い値を今日の値として扱いません。</p>
+      </section>
+
+      <section id="today" class="section today">
+        <div class="section-title">
+          <span>00</span>
+          <div>
+            <h2>Today — 最新の確認済み事実。</h2>
+            <p>このviewに入っている一次情報の最新公表日は <strong>{latestEvidenceDate}</strong>。異なる定義・unit・periodを横断した独自scoreは作りません。</p>
+          </div>
+        </div>
+
+        <div class="headline-grid">
+          <article class="headline-card primary">
+            <span class="label">Microsoft total CapEx · actual</span>
+            <strong>{usdB(msftCapexActual)}</strong>
+            <p>{msftCapexActual?.fiscal_period || '—'} FY{msftCapexActual?.fiscal_year || '—'} · period end {msftCapexActual?.period_end || '—'}</p>
+            <p class="delta">{capexQoq == null ? '比較不能' : `${percent(capexQoq)} vs previous actual`}</p>
+            {msftCapexActual?.source_url && <a href={msftCapexActual.source_url}>一次資料 →</a>}
+          </article>
+          <article class="headline-card guidance">
+            <span class="label">Microsoft total CapEx · company guidance</span>
+            <strong>{usdB(msftCapexGuidance)}</strong>
+            <p>{msftCapexGuidance?.fiscal_period || '—'} FY{msftCapexGuidance?.fiscal_year || '—'} · future period {msftCapexGuidance?.period_end || '—'}</p>
+            <p class="delta">guidanceをactualとして扱わない</p>
+            {msftCapexGuidance?.source_url && <a href={msftCapexGuidance.source_url}>一次資料 →</a>}
+          </article>
+          <article class="headline-card">
+            <span class="label">NVIDIA Data Center compute · actual</span>
+            <strong>{usdB(nvdaCompute)}</strong>
+            <p>{nvdaCompute?.fiscal_period || '—'} FY{nvdaCompute?.fiscal_year || '—'} · as-of {nvdaCompute?.as_of || '—'}</p>
+            {nvdaCompute?.source_url && <a href={nvdaCompute.source_url}>一次資料 →</a>}
+          </article>
+          <article class="headline-card">
+            <span class="label">Micron data-center SSD · actual</span>
+            <strong>{usdB(micronMemory)}</strong>
+            <p>{micronMemory?.fiscal_period || '—'} FY{micronMemory?.fiscal_year || '—'} · as-of {micronMemory?.as_of || '—'}</p>
+            {micronMemory?.source_url && <a href={micronMemory.source_url}>一次資料 →</a>}
+          </article>
+        </div>
+
+        <div class="lane-grid" aria-label="AI infrastructure evidence lanes">
+          <div><span>Compute</span><strong>{usdB(nvdaCompute)}</strong><small>NVIDIA DC compute revenue</small></div>
+          <div><span>Network</span><strong>{usdB(nvdaNetwork)}</strong><small>NVIDIA DC networking revenue</small></div>
+          <div><span>Memory</span><strong>{usdB(micronMemory)}</strong><small>Micron data-center SSD revenue</small></div>
+          <div><span>Power</span><strong>{msftPower?.value == null ? '未取得' : `${Number(msftPower.value).toLocaleString('en-US')} MW`}</strong><small>Microsoft capacity added</small></div>
+        </div>
+
+        <div class="definition-warning">
+          <strong>重要な定義境界</strong>
+          <p>Microsoftが会社開示するtotal CapExと、SEC XBRL <code>PaymentsToAcquirePropertyPlantAndEquipment</code>から得るcash paid for PP&amp;Eは別conceptです。finance lease等を含むtotal CapExとcash-flow factを同じ系列で差分計算しません。</p>
+        </div>
+        <p class="coverage-note">現在のcanonical daily coverageは capital investment / compute / memory / network / power。foundry / WFE / EDA / HBM専用laneは、比較可能なcanonical observationが追加されるまで未収録として扱います。</p>
       </section>
 
       <section id="market" class="section">
         <div class="section-title">
           <span>01</span>
           <div>
-            <h2>まず、市況を見る。</h2>
+            <h2>次に、市況を見る。</h2>
             <p>NANDの平均販売価格（ASP）とbit出荷量の変化です。YoYは比較可能な連続四半期から計算しています。</p>
           </div>
         </div>
@@ -96,7 +173,7 @@ const interval = (row, digits = 1) => {
       <section id="companies" class="section split">
         <span class="number">02</span>
         <div>
-          <h2>次に、企業を見る。</h2>
+          <h2>企業の利益と耐久力を見る。</h2>
           <p>売上、営業利益、利益率、フリーキャッシュフロー、流動性を同業で比較します。市場が強くても、利益として残っているかは別に確認します。</p>
           <a class="button" href={`${base}resilience/`}>企業比較を見る →</a>
         </div>
@@ -105,7 +182,7 @@ const interval = (row, digits = 1) => {
       <section id="demand" class="section split">
         <span class="number">03</span>
         <div>
-          <h2>その後、需要を支える資金を見る。</h2>
+          <h2>需要を支える資金を見る。</h2>
           <p>Amazon、Alphabet、Meta、Microsoftなどの営業キャッシュフローと設備投資を確認し、AI・データセンター投資を継続できる資金余力を追います。</p>
           <a class="button" href={`${base}earnings/`}>顧客の資金余力を見る →</a>
         </div>
@@ -114,7 +191,7 @@ const interval = (row, digits = 1) => {
       <section class="section split">
         <span class="number">04</span>
         <div>
-          <h2>最後に、どこまで言えるかを見る。</h2>
+          <h2>どこまで言えるかを見る。</h2>
           <p>観測済みの事実と、まだ係数や因果が不足している区間を分けます。データが足りない将来利益は埋めません。</p>
           <a class="button" href={`${base}model/`}>計算できる範囲を見る →</a>
         </div>
@@ -129,19 +206,22 @@ const interval = (row, digits = 1) => {
           </div>
         </div>
         <div class="links">
-          <a href={`${base}api/v3/financial-database/index.json`}><strong>JSON</strong><span>ブラウザやプログラムから読む</span></a>
+          <a href={`${base}api/v1/ai-infrastructure/index.json`}><strong>AI Infrastructure JSON</strong><span>actual / guidance / concept定義を確認</span></a>
+          <a href={`${base}api/v3/financial-database/index.json`}><strong>Financial DB JSON</strong><span>ブラウザやプログラムから読む</span></a>
           <a href={`${base}api/v3/financial-database/financial.db`}><strong>SQLite</strong><span>まとめて取得して分析する</span></a>
-          <a href={`${base}earnings/`}><strong>一次資料</strong><span>SEC提出書類と原factを見る</span></a>
+          <a href={`${base}earnings/`}><strong>一次資料台帳</strong><span>SEC提出書類と原factを見る</span></a>
         </div>
       </section>
 
       <footer>
         <span>データ監査: {financial.audit?.status || 'UNKNOWN'}</span>
-        <span>観測値: {financial.audit?.counts?.observations ?? financial.observations?.length ?? 0}</span>
+        <span>AI infrastructure observations: {observations.length}</span>
+        <span>最新一次情報: {latestEvidenceDate}</span>
         <details>
           <summary>build情報</summary>
           <code>{buildSha}</code>
           <code>{financial.content_hash}</code>
+          <code>{infrastructure.schema_version}</code>
         </details>
       </footer>
     </main>
@@ -157,16 +237,34 @@ const interval = (row, digits = 1) => {
   .brand { font-weight: 900; text-decoration: none; }
   nav { display: flex; gap: 18px; font-size: .78rem; font-weight: 800; }
   nav a { text-decoration: none; }
-  .hero { max-width: 900px; padding: 96px 0 88px; }
+  .hero { max-width: 900px; padding: 80px 0 64px; }
   .eyebrow { margin: 0 0 18px; color: #69768b; font-size: .68rem; font-weight: 900; letter-spacing: .14em; }
   h1, h2 { margin: 0; font-family: Georgia, "Noto Serif JP", serif; font-weight: 500; letter-spacing: -.035em; }
-  h1 { font-size: clamp(3.2rem, 8vw, 6.5rem); line-height: 1; }
+  h1 { font-size: clamp(3rem, 8vw, 6.3rem); line-height: 1; }
   h2 { font-size: clamp(2rem, 4vw, 3.6rem); line-height: 1.08; }
-  .lead { max-width: 700px; margin: 28px 0 0; color: #69768b; font-size: 1rem; line-height: 1.9; }
+  .lead { max-width: 760px; margin: 28px 0 0; color: #69768b; font-size: 1rem; line-height: 1.9; }
   .section { padding: 72px 0; border-top: 1px solid #dde1e7; }
   .section-title, .split { display: grid; grid-template-columns: 72px 1fr; gap: 28px; }
   .section-title > span, .number { color: #8a6e98; font: 500 2rem Georgia, serif; }
-  .section p { max-width: 760px; color: #69768b; line-height: 1.85; }
+  .section p { max-width: 780px; color: #69768b; line-height: 1.85; }
+  .headline-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 34px; }
+  .headline-card { display: flex; min-height: 230px; flex-direction: column; padding: 20px; border: 1px solid #d8dde5; background: #fff; }
+  .headline-card.primary { border-top: 4px solid #59758e; }
+  .headline-card.guidance { border-top: 4px dashed #8a6e98; }
+  .headline-card .label { min-height: 38px; color: #69768b; font-size: .68rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+  .headline-card > strong { margin-top: 14px; font: 500 clamp(2rem, 4vw, 3.2rem) Georgia, serif; letter-spacing: -.04em; }
+  .headline-card p { margin: 10px 0 0; font-size: .75rem; line-height: 1.5; }
+  .headline-card .delta { color: #243653; font-weight: 850; }
+  .headline-card a { margin-top: auto; padding-top: 18px; font-size: .75rem; font-weight: 850; }
+  .lane-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 18px; background: #d8dde5; border: 1px solid #d8dde5; }
+  .lane-grid > div { min-height: 112px; padding: 16px; background: #fbfaf7; }
+  .lane-grid span, .lane-grid strong, .lane-grid small { display: block; }
+  .lane-grid span { color: #69768b; font-size: .68rem; font-weight: 900; text-transform: uppercase; }
+  .lane-grid strong { margin-top: 7px; font-size: 1.3rem; }
+  .lane-grid small { margin-top: 6px; color: #69768b; line-height: 1.4; }
+  .definition-warning { margin-top: 18px; padding: 18px 20px; border-left: 4px solid #8a6e98; background: #f2eef4; }
+  .definition-warning p { margin-bottom: 0; color: #4f5d70; }
+  .coverage-note { font-size: .78rem; }
   .table-wrap { margin-top: 34px; overflow-x: auto; border: 1px solid #dde1e7; background: #fff; }
   table { width: 100%; min-width: 760px; border-collapse: collapse; }
   th, td { padding: 15px 14px; border-bottom: 1px solid #e7e9ed; text-align: right; white-space: nowrap; font-size: .8rem; }
@@ -176,18 +274,20 @@ const interval = (row, digits = 1) => {
   td small { margin-top: 3px; color: #69768b; }
   .empty { padding: 22px; border: 1px solid #dde1e7; background: #fff; }
   .button { display: inline-block; margin-top: 18px; padding: 12px 16px; border: 1px solid #cfd5de; border-radius: 999px; background: #fff; text-decoration: none; font-size: .82rem; font-weight: 850; }
-  .links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 30px; }
+  .links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 30px; }
   .links a { min-height: 110px; padding: 20px; border: 1px solid #dde1e7; background: #fff; text-decoration: none; }
   .links strong, .links span { display: block; }
   .links span { margin-top: 10px; color: #69768b; font-size: .78rem; line-height: 1.6; }
   footer { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding-top: 24px; border-top: 1px solid #dde1e7; color: #69768b; font-size: .72rem; }
   footer details { margin-left: auto; }
   footer code { display: block; max-width: 420px; margin-top: 6px; overflow-wrap: anywhere; }
+  @media (max-width: 900px) { .headline-grid { grid-template-columns: 1fr 1fr; } .lane-grid { grid-template-columns: 1fr 1fr; } .links { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 720px) {
     nav { gap: 10px; font-size: .7rem; }
-    .hero { padding: 72px 0 64px; }
+    .hero { padding: 64px 0 52px; }
     .section-title, .split { grid-template-columns: 44px 1fr; gap: 14px; }
-    .links { grid-template-columns: 1fr; }
+    .headline-grid, .lane-grid, .links { grid-template-columns: 1fr; }
+    .headline-card { min-height: 0; }
     footer details { width: 100%; margin-left: 0; }
   }
 </style>
