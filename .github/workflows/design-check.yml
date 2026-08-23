@@ -57,6 +57,24 @@ jobs:
         run: uv run python scripts/finalize_semiconductor_research_api.py
       - name: Build Financial Database v3 with NAND operating KPIs
         run: uv run python scripts/build_financial_database_with_nand.py
+      - name: Build canonical AI infrastructure projection
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: |
+          test -n "${SEC_USER_AGENT:-}"
+          uv run python scripts/collect_ai_infrastructure_sec.py
+          uv run python scripts/build_ai_infrastructure_view.py
+          rm -rf site/public/api/v1/ai-infrastructure
+          mkdir -p site/public/api/v1
+          cp -R api/v1/ai-infrastructure site/public/api/v1/ai-infrastructure
+          uv run python - <<'PY'
+          import json
+          from pathlib import Path
+          view=json.loads(Path('site/public/api/v1/ai-infrastructure/index.json').read_text())
+          assert view['schema_version'] == 'ai-infrastructure-view.v2'
+          assert not [r for r in view['observations'] if r.get('concept_id') == 'capital_expenditures' and r.get('source_tier') == 'primary_regulatory']
+          assert all(r['concept_id'] == 'cash_paid_for_property_plant_equipment' for r in view['observations'] if r.get('sec_concept') == 'PaymentsToAcquirePropertyPlantAndEquipment')
+          PY
       - name: Test integrated facts, metrics, evaluations, and peers
         run: uv run python -m pytest tests/test_semiconductor_research_api.py::test_research_api_integrates_facts_metrics_evaluations_and_peers -q
       - name: Test normalized research database traceability
@@ -118,6 +136,7 @@ jobs:
         run: |
           set -euo pipefail
           test -s site/dist/pastel-watercolor.css
+          test -s site/dist/api/v1/ai-infrastructure/index.json
           test -s site/dist/api/v3/financial-database/index.json
           test -s site/dist/api/v3/financial-database/financial.db
           grep -F -- '--kafka-pastel-build: 20260723' site/dist/pastel-watercolor.css
@@ -139,6 +158,7 @@ jobs:
           text = unescape(html)
           api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
           financial = json.loads(Path('site/public/api/v3/financial-database/index.json').read_text(encoding='utf-8'))
+          infrastructure = json.loads(Path('site/public/api/v1/ai-infrastructure/index.json').read_text(encoding='utf-8'))
           assert 'RESEARCH WORKBENCH' in text
           assert '企業検索' in text
           assert 'DATABASE & ONTOLOGY' in text
@@ -147,6 +167,7 @@ jobs:
           assert financial['audit']['status'] == 'PASS'
           assert 'nand-operating-kpis.v1' in financial['extensions']
           assert financial['audit']['counts']['nand_actual_observations'] >= 8
+          assert infrastructure['schema_version'] == 'ai-infrastructure-view.v2'
           markers = [
               'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
               'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
