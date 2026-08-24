@@ -9,6 +9,14 @@
   "investor2_repository": "https://github.com/KAFKA2306/investor2.git",
   "investor2_ref": "main",
   "writer_repository": "KAFKA2306/semiconductor-earnings-model",
+  "collection": {
+    "page_size": 250,
+    "batch_size": 100,
+    "request_pause_seconds": 0.25,
+    "max_request_attempts": 6,
+    "retry_base_seconds": 5.0,
+    "download_timeout_seconds": 30.0
+  },
   "annual_release": {
     "month": 1,
     "day": 7
