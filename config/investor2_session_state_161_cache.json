@@ -1,0 +1,32 @@
+{
+  "schema_version": "investor2.session-state-cache.v1",
+  "bucket": "k4fka/kafka-data-lake",
+  "cache_prefix": "central/investor2/private/session-state/161/us-daily-yahoo/v1",
+  "result_prefix": "central/investor2/private/session-state/161/results/prelaunch-daily/v1",
+  "region": "us",
+  "tickers": ["SPY", "QQQ", "IWM", "DIA", "MU", "COST"],
+  "start": "2000-01-01",
+  "end_exclusive": "2026-08-22",
+  "benchmark": "SPY",
+  "investor2_repository": "https://github.com/KAFKA2306/investor2.git",
+  "investor2_ref": "main",
+  "writer_repository": "KAFKA2306/semiconductor-earnings-model",
+  "collection": {
+    "batch_size": 6,
+    "request_pause_seconds": 0.25,
+    "download_timeout_seconds": 30.0
+  },
+  "evaluation": {
+    "start": "2000-01-01",
+    "end": "2026-08-21",
+    "train_start": "2021-01-01",
+    "test_start": "2025-01-01",
+    "adjustment": "adjusted",
+    "half_life": 126,
+    "min_periods": 126,
+    "trading_days": 252,
+    "costs_bps_per_side": [0.0, 1.0, 5.0],
+    "primary_cost_bps_per_side": 1.0
+  },
+  "evidence_issue": 166
+}
