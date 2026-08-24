@@ -9,6 +9,7 @@ on:
       - data/financial_db/**
       - config/data_lake_publish.json
       - config/edinetdb_quota_plan.json
+      - config/investor2_yahoo_market_cache.json
       - scripts/build_data_lake_bundle.py
       - scripts/publish_investor2_jquants_private.py
       - scripts/publish_investor2_yahoo_market_cache.py
@@ -35,6 +36,7 @@ on:
       - data/financial_db/**
       - config/data_lake_publish.json
       - config/edinetdb_quota_plan.json
+      - config/investor2_yahoo_market_cache.json
       - scripts/build_data_lake_bundle.py
       - scripts/publish_investor2_jquants_private.py
       - scripts/publish_investor2_yahoo_market_cache.py
@@ -171,8 +173,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          CACHE_CONFIG=config/investor2_yahoo_market_cache.json
           python -m pip install pandas pyarrow 'yfinance[repair]'
-          python scripts/publish_investor2_yahoo_market_cache.py | tee /tmp/yahoo-market-cache-publish.log
+          python scripts/publish_investor2_yahoo_market_cache.py \
+            --config "$CACHE_CONFIG" \
+            | tee /tmp/yahoo-market-cache-publish.log
 
       - name: Record verified Yahoo market cache evidence
         if: steps.yahoo_cache.outcome == 'success'
@@ -181,32 +186,56 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          CACHE_PREFIX="central/investor2/private/yahoo-market-cache/v1"
+          CACHE_CONFIG=config/investor2_yahoo_market_cache.json
+          IFS=$'\t' read -r CACHE_BUCKET CACHE_PREFIX CACHE_WRITER EVIDENCE_ISSUE < <(
+            python - "$CACHE_CONFIG" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          config = json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))
+          issue = config.get('evidence_issue')
+          print(
+              config['bucket'],
+              config['base_prefix'],
+              config['writer_repository'],
+              '' if issue is None else issue,
+              sep='\t',
+          )
+          PY
+          )
+          test "$CACHE_BUCKET" = "$HF_BUCKET"
+
           MANIFEST=/tmp/yahoo-market-cache-manifest.json
-          hf buckets cp "hf://buckets/$HF_BUCKET/$CACHE_PREFIX/manifest.json" "$MANIFEST"
+          hf buckets cp "hf://buckets/$CACHE_BUCKET/$CACHE_PREFIX/manifest.json" "$MANIFEST"
           BOOTSTRAP_RESULT=$(grep '^YAHOO_MARKET_CACHE_RESULT=' /tmp/yahoo-market-cache-publish.log | tail -1 | cut -d= -f2-)
           case "$BOOTSTRAP_RESULT" in
             PUBLISHED|SKIP_ALREADY_PUBLISHED) ;;
             *) echo "Unexpected Yahoo cache result: $BOOTSTRAP_RESULT" >&2; exit 1 ;;
           esac
-          python - "$MANIFEST" "$BOOTSTRAP_RESULT" "$CACHE_PREFIX" > /tmp/yahoo-market-cache-evidence.md <<'PY'
+
+          python - "$MANIFEST" "$BOOTSTRAP_RESULT" "$CACHE_CONFIG" > /tmp/yahoo-market-cache-evidence.md <<'PY'
           import hashlib
           import json
           import sys
           from pathlib import Path
 
-          path = Path(sys.argv[1])
+          manifest_path = Path(sys.argv[1])
           bootstrap_result = sys.argv[2]
-          prefix = sys.argv[3]
-          raw = path.read_bytes()
+          config = json.loads(Path(sys.argv[3]).read_text(encoding='utf-8'))
+          raw = manifest_path.read_bytes()
           payload = json.loads(raw)
           assert payload['schema_version'] == 'investor2.market-snapshot.v2'
           assert payload['source'] == 'Yahoo Finance via yfinance'
           assert payload['immutable'] is True
+          assert payload['regions'] == config['regions']
+          assert payload['start'] == config['start']
+          assert payload['end_exclusive'] == config['end_exclusive']
+          assert payload['benchmark'] == config['benchmark']
           storage = payload['storage_contract']
-          assert storage['writer_repository'] == 'KAFKA2306/semiconductor-earnings-model'
-          assert storage['bucket'] == 'k4fka/kafka-data-lake'
-          assert storage['prefix'] == prefix
+          assert storage['writer_repository'] == config['writer_repository']
+          assert storage['bucket'] == config['bucket']
+          assert storage['prefix'] == config['base_prefix']
           files = payload['files']
           assert isinstance(files, list) and files
           provenance = payload.get('provenance', {})
@@ -219,11 +248,13 @@ jobs:
           print(f"YAHOO_MARKET_CACHE_PUBLISHER_REVISION={provenance.get('publisher_revision', 'unknown')}")
           print(f"YAHOO_MARKET_CACHE_PUBLISHER_RUN_ID={provenance.get('publisher_run_id', 'unknown')}")
           print(f'YAHOO_MARKET_CACHE_MANIFEST_SHA256={hashlib.sha256(raw).hexdigest()}')
-          print(f'YAHOO_MARKET_CACHE_PREFIX={prefix}')
+          print(f"YAHOO_MARKET_CACHE_PREFIX={config['base_prefix']}")
           PY
           printf 'EVIDENCE_RUN=https://github.com/%s/actions/runs/%s\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> /tmp/yahoo-market-cache-evidence.md
           cat /tmp/yahoo-market-cache-evidence.md
-          gh issue comment 149 --repo "$GITHUB_REPOSITORY" --body-file /tmp/yahoo-market-cache-evidence.md
+          if [ -n "$EVIDENCE_ISSUE" ]; then
+            gh issue comment "$EVIDENCE_ISSUE" --repo "$GITHUB_REPOSITORY" --body-file /tmp/yahoo-market-cache-evidence.md
+          fi
 
       - name: Record Yahoo market cache failure
         if: failure() && steps.yahoo_cache.outcome == 'failure'
@@ -232,8 +263,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh issue comment 149 --repo "$GITHUB_REPOSITORY" --body "YAHOO_MARKET_CACHE_RESULT=FAILED
+          CACHE_CONFIG=config/investor2_yahoo_market_cache.json
+          EVIDENCE_ISSUE=$(python - "$CACHE_CONFIG" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          issue = json.loads(Path(sys.argv[1]).read_text(encoding='utf-8')).get('evidence_issue')
+          print('' if issue is None else issue)
+          PY
+          )
+          if [ -n "$EVIDENCE_ISSUE" ]; then
+            gh issue comment "$EVIDENCE_ISSUE" --repo "$GITHUB_REPOSITORY" --body "YAHOO_MARKET_CACHE_RESULT=FAILED
           EVIDENCE_RUN=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi
 
       - name: Publish investor2 J-Quants data to private bucket only
         shell: bash
