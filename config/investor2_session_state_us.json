@@ -1,0 +1,34 @@
+{
+  "schema_version": "investor2.session-state-us-publish.v1",
+  "bucket": "k4fka/kafka-data-lake",
+  "snapshot_prefix": "central/investor2/private/session-state-us/prelaunch-v1",
+  "evidence_prefix": "central/investor2/private/session-state-us/evidence/v1",
+  "investor2_repository": "https://github.com/KAFKA2306/investor2.git",
+  "investor2_ref": "main",
+  "writer_repository": "KAFKA2306/semiconductor-earnings-model",
+  "issue_repository": "KAFKA2306/investor2",
+  "issue_number": 161,
+  "region": "us",
+  "tickers": ["SPY", "QQQ", "IWM", "DIA", "MU", "COST"],
+  "benchmark": "SPY",
+  "snapshot_start": "2000-01-01",
+  "snapshot_end_exclusive": "2026-08-22",
+  "train_start": "2021-01-01",
+  "test_start": "2025-01-01",
+  "test_end": "2026-08-21",
+  "trading_days": 252,
+  "costs_bps_per_side": [0.0, 1.0, 5.0],
+  "primary_cost_bps_per_side": 1.0,
+  "collection": {
+    "batch_size": 6,
+    "request_pause_seconds": 0.25,
+    "download_timeout_seconds": 30.0
+  },
+  "specifications": [
+    {"id": "adjusted-h126", "adjustment": "adjusted", "half_life": 126, "min_periods": 126, "primary": true},
+    {"id": "adjusted-h63", "adjustment": "adjusted", "half_life": 63, "min_periods": 63, "primary": false},
+    {"id": "adjusted-h252", "adjustment": "adjusted", "half_life": 252, "min_periods": 252, "primary": false},
+    {"id": "raw-h126", "adjustment": "raw", "half_life": 126, "min_periods": 126, "primary": false}
+  ],
+  "post_23_5_status": "PENDING_FUTURE_DATA"
+}
