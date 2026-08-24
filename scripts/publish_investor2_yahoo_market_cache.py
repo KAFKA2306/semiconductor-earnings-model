@@ -14,8 +14,32 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-DEFAULT_CONFIG_PATH = Path("config/investor2_yahoo_market_cache.json")
 MUTATING_SYNC_ACTIONS = {"upload", "download", "delete"}
+CONFIG_SCHEMA = "investor2.yahoo-market-cache-publish.v1"
+
+
+@dataclass(frozen=True)
+class MarketCollectionConfig:
+    page_size: int
+    batch_size: int
+    request_pause_seconds: float
+    max_request_attempts: int
+    retry_base_seconds: float
+    download_timeout_seconds: float
+
+    def manifest_contract(self) -> dict[str, object]:
+        return {
+            "page_size": self.page_size,
+            "batch_size": self.batch_size,
+            "request_pause_seconds": self.request_pause_seconds,
+            "max_request_attempts": self.max_request_attempts,
+            "retry_base_seconds": self.retry_base_seconds,
+            "download_timeout_seconds": self.download_timeout_seconds,
+            "interval": "1d",
+            "auto_adjust": False,
+            "actions": True,
+            "repair": True,
+        }
 
 
 @dataclass(frozen=True)
@@ -30,8 +54,10 @@ class MarketCacheConfig:
     investor2_repository: str
     investor2_ref: str
     writer_repository: str
+    collection: MarketCollectionConfig
     release_month: int
     release_day: int
+    evidence_issue: int | None
 
     @property
     def regions_csv(self) -> str:
@@ -42,7 +68,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Publish immutable investor2 Yahoo market-cache shards from an explicit JSON contract."
     )
-    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
+    parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--extension-year", type=int)
     return parser.parse_args()
 
@@ -54,10 +80,31 @@ def _required_string(payload: dict[str, Any], key: str) -> str:
     return value.strip()
 
 
+def _required_int(payload: dict[str, Any], key: str, *, minimum: int) -> int:
+    value = payload.get(key)
+    if not isinstance(value, int) or isinstance(value, bool) or value < minimum:
+        raise ValueError(f"config field {key!r} must be an integer >= {minimum}")
+    return value
+
+
+def _required_number(payload: dict[str, Any], key: str, *, minimum: float, strict: bool = False) -> float:
+    value = payload.get(key)
+    if not isinstance(value, int | float) or isinstance(value, bool):
+        raise ValueError(f"config field {key!r} must be numeric")
+    number = float(value)
+    valid = number > minimum if strict else number >= minimum
+    if not valid:
+        comparator = ">" if strict else ">="
+        raise ValueError(f"config field {key!r} must be {comparator} {minimum}")
+    return number
+
+
 def load_config(path: Path) -> MarketCacheConfig:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("market cache config must be a JSON object")
+    if payload.get("schema_version") != CONFIG_SCHEMA:
+        raise ValueError(f"market cache config must declare schema_version={CONFIG_SCHEMA!r}")
 
     regions_raw = payload.get("regions")
     if not isinstance(regions_raw, list) or not regions_raw:
@@ -65,16 +112,43 @@ def load_config(path: Path) -> MarketCacheConfig:
     regions = tuple(str(value).strip().lower() for value in regions_raw if str(value).strip())
     if len(regions) != len(regions_raw):
         raise ValueError("config field 'regions' must contain only non-empty strings")
+    if "all" in regions:
+        raise ValueError("region aliases are not allowed; enumerate region codes explicitly")
+    if len(regions) != len(set(regions)):
+        raise ValueError("config field 'regions' must not contain duplicates")
+
+    collection_raw = payload.get("collection")
+    if not isinstance(collection_raw, dict):
+        raise ValueError("config field 'collection' must be an object")
+    collection = MarketCollectionConfig(
+        page_size=_required_int(collection_raw, "page_size", minimum=1),
+        batch_size=_required_int(collection_raw, "batch_size", minimum=1),
+        request_pause_seconds=_required_number(collection_raw, "request_pause_seconds", minimum=0.0),
+        max_request_attempts=_required_int(collection_raw, "max_request_attempts", minimum=1),
+        retry_base_seconds=_required_number(collection_raw, "retry_base_seconds", minimum=0.0),
+        download_timeout_seconds=_required_number(
+            collection_raw,
+            "download_timeout_seconds",
+            minimum=0.0,
+            strict=True,
+        ),
+    )
 
     release = payload.get("annual_release")
     if not isinstance(release, dict):
         raise ValueError("config field 'annual_release' must be an object")
-    month = release.get("month")
-    day = release.get("day")
-    if not isinstance(month, int) or not 1 <= month <= 12:
-        raise ValueError("annual_release.month must be an integer from 1 to 12")
-    if not isinstance(day, int) or not 1 <= day <= 31:
-        raise ValueError("annual_release.day must be an integer from 1 to 31")
+    month = _required_int(release, "month", minimum=1)
+    day = _required_int(release, "day", minimum=1)
+    if month > 12:
+        raise ValueError("annual_release.month must be <= 12")
+    if day > 31:
+        raise ValueError("annual_release.day must be <= 31")
+
+    evidence_issue_raw = payload.get("evidence_issue")
+    if evidence_issue_raw is not None and (
+        not isinstance(evidence_issue_raw, int) or isinstance(evidence_issue_raw, bool) or evidence_issue_raw < 1
+    ):
+        raise ValueError("evidence_issue must be null or a positive integer")
 
     config = MarketCacheConfig(
         bucket=_required_string(payload, "bucket"),
@@ -87,8 +161,10 @@ def load_config(path: Path) -> MarketCacheConfig:
         investor2_repository=_required_string(payload, "investor2_repository"),
         investor2_ref=_required_string(payload, "investor2_ref"),
         writer_repository=_required_string(payload, "writer_repository"),
+        collection=collection,
         release_month=month,
         release_day=day,
+        evidence_issue=evidence_issue_raw,
     )
     if datetime.fromisoformat(config.start) >= datetime.fromisoformat(config.end_exclusive):
         raise ValueError("config start must be earlier than end_exclusive")
@@ -154,6 +230,22 @@ def assert_converged_sync_plan(plan: str) -> None:
         raise AssertionError(f"remote market cache is not converged after sync: {changes[:5]}")
 
 
+def validate_collection_contract(
+    manifest: dict[str, Any],
+    *,
+    config: MarketCacheConfig,
+    required: bool,
+) -> None:
+    observed = manifest.get("collection_contract")
+    if observed is None and not required:
+        return
+    if not isinstance(observed, dict):
+        raise AssertionError("missing collection_contract")
+    expected = config.collection.manifest_contract()
+    if observed != expected:
+        raise AssertionError(f"market snapshot collection contract mismatch: expected={expected} observed={observed}")
+
+
 def validate_contract_fields(
     manifest: dict[str, Any],
     *,
@@ -161,6 +253,7 @@ def validate_contract_fields(
     prefix: str,
     start: str,
     end: str,
+    require_collection_contract: bool = False,
 ) -> None:
     if manifest.get("schema_version") != "investor2.market-snapshot.v2":
         raise AssertionError("unexpected market snapshot schema")
@@ -174,6 +267,7 @@ def validate_contract_fields(
         raise AssertionError("market snapshot date contract mismatch")
     if manifest.get("benchmark") != config.benchmark:
         raise AssertionError("market snapshot benchmark contract mismatch")
+
     storage = manifest.get("storage_contract")
     if not isinstance(storage, dict):
         raise AssertionError("missing storage_contract")
@@ -181,6 +275,7 @@ def validate_contract_fields(
         raise AssertionError("writer authority mismatch")
     if storage.get("bucket") != config.bucket or storage.get("prefix") != prefix:
         raise AssertionError("bucket contract mismatch")
+    validate_collection_contract(manifest, config=config, required=require_collection_contract)
 
 
 def validate_manifest(
@@ -191,6 +286,7 @@ def validate_manifest(
     prefix: str,
     start: str,
     end: str,
+    require_collection_contract: bool = True,
 ) -> None:
     validate_contract_fields(
         manifest,
@@ -198,6 +294,7 @@ def validate_manifest(
         prefix=prefix,
         start=start,
         end=end,
+        require_collection_contract=require_collection_contract,
     )
     files = manifest.get("files")
     if not isinstance(files, list) or not files:
@@ -223,6 +320,7 @@ def validate_extension_contract(
     config: MarketCacheConfig,
     year: int,
     prefix: str,
+    require_collection_contract: bool = False,
 ) -> None:
     start = f"{year:04d}-01-01"
     end = f"{year + 1:04d}-01-01"
@@ -232,6 +330,7 @@ def validate_extension_contract(
         prefix=prefix,
         start=start,
         end=end,
+        require_collection_contract=require_collection_contract,
     )
     extension = manifest.get("extension_contract")
     if not isinstance(extension, dict):
@@ -347,6 +446,7 @@ def build_snapshot(
         ref=config.investor2_ref,
     )
     output = temp_dir / "snapshot"
+    collection = config.collection
     run(
         [
             sys.executable,
@@ -367,6 +467,18 @@ def build_snapshot(
             config.bucket,
             "--writer-repository",
             config.writer_repository,
+            "--page-size",
+            str(collection.page_size),
+            "--batch-size",
+            str(collection.batch_size),
+            "--request-pause",
+            str(collection.request_pause_seconds),
+            "--max-request-attempts",
+            str(collection.max_request_attempts),
+            "--retry-base-seconds",
+            str(collection.retry_base_seconds),
+            "--download-timeout",
+            str(collection.download_timeout_seconds),
         ],
         cwd=investor2,
     )
@@ -390,9 +502,16 @@ def build_snapshot(
         prefix=prefix,
         start=start,
         end=end,
+        require_collection_contract=True,
     )
     if extension_year is not None:
-        validate_extension_contract(manifest, config=config, year=extension_year, prefix=prefix)
+        validate_extension_contract(
+            manifest,
+            config=config,
+            year=extension_year,
+            prefix=prefix,
+            require_collection_contract=True,
+        )
     return output, manifest, revision
 
 
@@ -408,6 +527,7 @@ def publish_base(config: MarketCacheConfig) -> None:
                 prefix=config.base_prefix,
                 start=config.start,
                 end=config.end_exclusive,
+                require_collection_contract=False,
             )
             files = manifest.get("files")
             if not isinstance(files, list) or not files:
@@ -442,7 +562,13 @@ def publish_extension(config: MarketCacheConfig, year: int) -> None:
         existing = temp_dir / "existing-manifest.json"
         if remote_manifest(config.bucket, prefix, existing):
             manifest = load_manifest(existing)
-            validate_extension_contract(manifest, config=config, year=year, prefix=prefix)
+            validate_extension_contract(
+                manifest,
+                config=config,
+                year=year,
+                prefix=prefix,
+                require_collection_contract=False,
+            )
             files = manifest.get("files")
             if not isinstance(files, list) or not files:
                 raise AssertionError("existing yearly extension manifest has no files")
