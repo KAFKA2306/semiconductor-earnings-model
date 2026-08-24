@@ -1,0 +1,16 @@
+{
+  "bucket": "k4fka/kafka-data-lake",
+  "base_prefix": "central/investor2/private/yahoo-market-cache/v1",
+  "extensions_prefix": "central/investor2/private/yahoo-market-cache/extensions/v1",
+  "regions": ["jp"],
+  "start": "2004-01-01",
+  "end_exclusive": "2025-01-01",
+  "benchmark": "1306.T",
+  "investor2_repository": "https://github.com/KAFKA2306/investor2.git",
+  "investor2_ref": "main",
+  "writer_repository": "KAFKA2306/semiconductor-earnings-model",
+  "annual_release": {
+    "month": 1,
+    "day": 7
+  }
+}
