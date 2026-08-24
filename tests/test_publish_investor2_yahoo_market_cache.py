@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import json
 import sys
 from datetime import UTC, datetime
@@ -362,3 +363,203 @@ def test_validate_extension_contract_rejects_partial_year(tmp_path: Path) -> Non
             prefix=prefix,
             require_collection_contract=True,
         )
+
+
+def make_phase_a_config(tmp_path: Path) -> tuple[object, Path]:
+    research = importlib.import_module("scripts.publish_investor2_session_state_research")
+    path = tmp_path / "phase-a.json"
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": research.CONFIG_SCHEMA,
+                "bucket": "research-bucket",
+                "snapshot_prefix": "research/snapshot/v9",
+                "evidence_prefix": "research/evidence/v9",
+                "region": "zz",
+                "tickers": ["AAA", "BBB"],
+                "benchmark": "BBB",
+                "start": "2010-01-01",
+                "end_exclusive": "2025-01-01",
+                "investor2_repository": "https://example.invalid/investor2.git",
+                "investor2_ref": "frozen-ref",
+                "writer_repository": "example/writer",
+                "future_phase_status": "PENDING_FUTURE_DATA",
+                "evidence_target": {"repository": "example/research", "issue": 77},
+                "collection": {
+                    "batch_size": 2,
+                    "request_pause_seconds": 0.125,
+                    "download_timeout_seconds": 19.0,
+                },
+                "analysis": {
+                    "start": "2010-01-01",
+                    "end": "2024-12-31",
+                    "train_start": "2015-01-01",
+                    "test_start": "2022-01-01",
+                    "adjustment": "adjusted",
+                    "primary_half_life": 17,
+                    "sensitivity_half_lives": [9, 33],
+                    "min_periods": 12,
+                    "trading_days": 240,
+                    "costs_bps_per_side": [0.0, 2.0, 9.0],
+                    "primary_cost_bps_per_side": 2.0,
+                    "stress_cost_bps_per_side": 9.0,
+                    "one_way_turnover_per_asset_day": 1.75,
+                    "minimum_ic": 0.03,
+                    "minimum_mse_improvement": 0.01,
+                    "minimum_positive_ic_tickers": 1,
+                    "minimum_primary_ann_return": 0.02,
+                    "minimum_primary_sharpe": 0.25,
+                    "minimum_stress_ann_return": -0.01,
+                    "minimum_stress_sharpe": -0.1,
+                    "raw_robustness": False,
+                    "recent_descriptive_start": "2020-01-01",
+                },
+                "claim_audit": {
+                    "unresolved_claims": ["missing_universe_claim"],
+                    "descriptive_analogs": [{"claim": "aaa_long_run", "ticker": "AAA"}],
+                    "unresolved_status": "NOT_REPRODUCIBLE_FROM_PUBLISHED_SPEC",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    return research.load_config(path), path
+
+
+def test_phase_a_config_is_fully_runtime_driven(tmp_path: Path) -> None:
+    config, _ = make_phase_a_config(tmp_path)
+    assert config.region == "zz"  # type: ignore[attr-defined]
+    assert config.tickers == ("AAA", "BBB")  # type: ignore[attr-defined]
+    assert config.benchmark == "BBB"  # type: ignore[attr-defined]
+    assert config.analysis.primary_half_life == 17  # type: ignore[attr-defined]
+    assert config.analysis.sensitivity_half_lives == (9, 33)  # type: ignore[attr-defined]
+    assert config.analysis.costs_bps_per_side == (0.0, 2.0, 9.0)  # type: ignore[attr-defined]
+    assert config.analysis.one_way_turnover_per_asset_day == pytest.approx(1.75)  # type: ignore[attr-defined]
+    assert config.analysis.minimum_ic == pytest.approx(0.03)  # type: ignore[attr-defined]
+    assert config.analysis.minimum_positive_ic_tickers == 1  # type: ignore[attr-defined]
+    assert config.evidence_target.repository == "example/research"  # type: ignore[attr-defined]
+
+
+def test_phase_a_snapshot_validation_uses_explicit_universe(tmp_path: Path) -> None:
+    research = importlib.import_module("scripts.publish_investor2_session_state_research")
+    config, _ = make_phase_a_config(tmp_path)
+    manifest = {
+        "schema_version": "investor2.market-snapshot.v2",
+        "source": "Yahoo Finance via yfinance",
+        "immutable": True,
+        "start": config.start,
+        "end_exclusive": config.end_exclusive,
+        "regions": [config.region],
+        "benchmark": config.benchmark,
+        "ticker_count": len(config.tickers),
+        "universe_contract": {"mode": "explicit_tickers", "tickers": list(config.tickers)},
+        "collection_contract": {
+            "batch_size": config.collection.batch_size,
+            "request_pause_seconds": config.collection.request_pause_seconds,
+            "download_timeout_seconds": config.collection.download_timeout_seconds,
+            "interval": "1d",
+            "auto_adjust": False,
+            "actions": True,
+            "repair": True,
+        },
+        "storage_contract": {
+            "writer_repository": config.writer_repository,
+            "bucket": config.bucket,
+            "prefix": config.snapshot_prefix,
+        },
+        "files": [{"path": "prices/zz/part-00000.parquet", "size_bytes": 1, "sha256": "x"}],
+    }
+    research.validate_snapshot_manifest(manifest, config)
+    manifest["benchmark"] = "AAA"
+    with pytest.raises(AssertionError, match="market contract mismatch"):
+        research.validate_snapshot_manifest(manifest, config)
+
+
+def test_phase_a_oos_v2_validation_uses_configured_thresholds(tmp_path: Path) -> None:
+    research = importlib.import_module("scripts.publish_investor2_session_state_research")
+    config, _ = make_phase_a_config(tmp_path)
+    spec = research.expected_oos_spec(config, half_life=17, adjustment="adjusted")
+    payload = {
+        "schema_version": research.OOS_SCHEMA,
+        "decision": "CONDITION",
+        "specification": spec,
+        "predictive": {"ticker_count": 2},
+        "strategies": [{}],
+        "decision_tests": {},
+    }
+    research.validate_oos_payload(payload, config, half_life=17, adjustment="adjusted")
+    spec["minimum_ic"] = 0.99
+    with pytest.raises(AssertionError, match="minimum_ic"):
+        research.validate_oos_payload(payload, config, half_life=17, adjustment="adjusted")
+
+
+def test_phase_a_claim_audit_does_not_hardcode_article_symbols(tmp_path: Path) -> None:
+    research = importlib.import_module("scripts.publish_investor2_session_state_research")
+    config, _ = make_phase_a_config(tmp_path)
+    baseline = {
+        "results": [
+            {"Ticker": "AAA", "overnight_ann_arithmetic": 0.12, "intraday_ann_arithmetic": -0.04},
+            {"Ticker": "BBB", "overnight_ann_arithmetic": 0.03, "intraday_ann_arithmetic": 0.02},
+        ]
+    }
+    audit = research.build_claim_audit(config, baseline)
+    assert audit["claims"]["missing_universe_claim"]["status"] == "NOT_REPRODUCIBLE_FROM_PUBLISHED_SPEC"
+    assert audit["claims"]["aaa_long_run"]["ticker"] == "AAA"
+    assert audit["claims"]["aaa_long_run"]["independent_yahoo_adjusted_analog"]["overnight_ann_arithmetic"] == pytest.approx(0.12)
+
+
+def test_phase_a_existing_evidence_is_bound_to_config_hash(tmp_path: Path) -> None:
+    research = importlib.import_module("scripts.publish_investor2_session_state_research")
+    config, path = make_phase_a_config(tmp_path)
+    manifest = {
+        "schema_version": research.EVIDENCE_SCHEMA,
+        "immutable": True,
+        "config_sha256": research.config_sha256(path),
+        "snapshot_prefix": config.snapshot_prefix,
+        "evidence_prefix": config.evidence_prefix,
+        "primary_result": "oos_adjusted_h17.json",
+        "claim_audit": "article_claim_audit.json",
+        "final_decision": "REJECT",
+        "future_phase_status": config.future_phase_status,
+        "evidence_target": {"repository": "example/research", "issue": 77},
+    }
+    research.validate_existing_evidence(manifest, config, config_hash=research.config_sha256(path))
+    manifest["config_sha256"] = "0" * 64
+    with pytest.raises(AssertionError, match="config changed"):
+        research.validate_existing_evidence(manifest, config, config_hash=research.config_sha256(path))
+
+
+def test_post_publishers_execute_only_repo_local_explicit_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    publisher = importlib.import_module("scripts.publish_investor2_yahoo_market_cache")
+    repo = tmp_path / "repo"
+    scripts = repo / "scripts"
+    configs = repo / "config"
+    scripts.mkdir(parents=True)
+    configs.mkdir(parents=True)
+    driver = scripts / "publish_investor2_yahoo_market_cache.py"
+    driver.write_text("# marker\n", encoding="utf-8")
+    child = scripts / "child.py"
+    child.write_text("# child\n", encoding="utf-8")
+    child_config = configs / "child.json"
+    child_config.write_text("{}\n", encoding="utf-8")
+    parent = configs / "parent.json"
+    parent.write_text(
+        json.dumps({"post_publishers": [{"script": "scripts/child.py", "config": "config/child.json"}]}),
+        encoding="utf-8",
+    )
+    commands: list[tuple[list[str], Path | None]] = []
+    monkeypatch.setattr(publisher, "__file__", str(driver))
+    monkeypatch.setattr(publisher, "run", lambda command, *, cwd=None, capture=False: commands.append((command, cwd)) or "")
+
+    publisher.run_post_publishers(parent)
+
+    assert commands == [([sys.executable, str(child), "--config", str(child_config)], repo)]
+
+    outside = tmp_path / "outside.py"
+    outside.write_text("# outside\n", encoding="utf-8")
+    parent.write_text(
+        json.dumps({"post_publishers": [{"script": "../outside.py", "config": "config/child.json"}]}),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="repository Python file"):
+        publisher.run_post_publishers(parent)
