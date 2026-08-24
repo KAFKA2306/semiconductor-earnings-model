@@ -22,5 +22,9 @@
     "month": 1,
     "day": 7
   },
-  "evidence_issue": 149
+  "evidence_issue": 149,
+  "audit": {
+    "evidence_prefix": "central/investor2/private/yahoo-market-cache/evidence/v1",
+    "canonical_manifest_sha256": "2ef25485dff650297d78fac54c46fd3c5c00afa20a7c5c55ba24c69eb648265a"
+  }
 }
