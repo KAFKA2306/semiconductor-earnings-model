@@ -22,6 +22,12 @@
     "month": 1,
     "day": 7
   },
+  "post_publishers": [
+    {
+      "script": "scripts/publish_investor2_session_state_research.py",
+      "config": "config/investor2_session_state_161_phase_a.json"
+    }
+  ],
   "evidence_issue": 149,
   "audit": {
     "evidence_prefix": "central/investor2/private/yahoo-market-cache/evidence/v1",
