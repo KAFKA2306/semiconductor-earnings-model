@@ -7,6 +7,7 @@ on:
       - main
       - research/yahoo-market-cache-stats
     paths:
+      - config/investor2_yahoo_market_cache.json
       - scripts/audit_investor2_yahoo_market_cache.py
       - tests/test_audit_investor2_yahoo_market_cache.py
       - .github/workflows/yahoo-market-cache-stats.yml
@@ -18,9 +19,6 @@ permissions:
 env:
   HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
   HF_BUCKET: k4fka/kafka-data-lake
-  CACHE_PREFIX: central/investor2/private/yahoo-market-cache/v1
-  EVIDENCE_PREFIX: central/investor2/private/yahoo-market-cache/evidence/v1
-  CANONICAL_MANIFEST_SHA256: 2ef25485dff650297d78fac54c46fd3c5c00afa20a7c5c55ba24c69eb648265a
 
 jobs:
   audit:
@@ -34,6 +32,29 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Load market-cache audit contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_ENV"
+          import json
+          import os
+          from pathlib import Path
+
+          config = json.loads(Path('config/investor2_yahoo_market_cache.json').read_text(encoding='utf-8'))
+          audit = config.get('audit')
+          if not isinstance(audit, dict):
+              raise SystemExit('market-cache config has no audit contract')
+          if config['bucket'] != os.environ['HF_BUCKET']:
+              raise SystemExit('market-cache bucket disagrees with authenticated workflow bucket')
+          manifest_sha = audit.get('canonical_manifest_sha256')
+          if not isinstance(manifest_sha, str) or len(manifest_sha) != 64:
+              raise SystemExit('invalid canonical_manifest_sha256')
+          print(f"CACHE_PREFIX={config['base_prefix']}")
+          print(f"EVIDENCE_PREFIX={audit['evidence_prefix']}")
+          print(f"CANONICAL_MANIFEST_SHA256={manifest_sha}")
+          PY
 
       - name: Install audit dependencies
         shell: bash
