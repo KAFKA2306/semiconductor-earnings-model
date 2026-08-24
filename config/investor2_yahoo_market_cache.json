@@ -1,0 +1,30 @@
+{
+  "schema_version": "investor2.yahoo-market-cache-publish.v1",
+  "bucket": "k4fka/kafka-data-lake",
+  "base_prefix": "central/investor2/private/yahoo-market-cache/v1",
+  "extensions_prefix": "central/investor2/private/yahoo-market-cache/extensions/v1",
+  "regions": ["jp"],
+  "start": "2004-01-01",
+  "end_exclusive": "2025-01-01",
+  "benchmark": "1306.T",
+  "investor2_repository": "https://github.com/KAFKA2306/investor2.git",
+  "investor2_ref": "main",
+  "writer_repository": "KAFKA2306/semiconductor-earnings-model",
+  "collection": {
+    "page_size": 250,
+    "batch_size": 100,
+    "request_pause_seconds": 0.25,
+    "max_request_attempts": 6,
+    "retry_base_seconds": 5.0,
+    "download_timeout_seconds": 30.0
+  },
+  "annual_release": {
+    "month": 1,
+    "day": 7
+  },
+  "evidence_issue": 149,
+  "audit": {
+    "evidence_prefix": "central/investor2/private/yahoo-market-cache/evidence/v1",
+    "canonical_manifest_sha256": "2ef25485dff650297d78fac54c46fd3c5c00afa20a7c5c55ba24c69eb648265a"
+  }
+}
