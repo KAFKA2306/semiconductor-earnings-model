@@ -1,0 +1,60 @@
+{
+  "schema_version": "investor2.session-state-phase-a-publish.v1",
+  "bucket": "k4fka/kafka-data-lake",
+  "snapshot_prefix": "central/investor2/private/session-state/161/us-yahoo-daily/v1",
+  "evidence_prefix": "central/investor2/private/session-state/161/evidence/v1",
+  "region": "us",
+  "tickers": ["SPY", "QQQ", "IWM", "DIA", "MU", "COST"],
+  "benchmark": "SPY",
+  "start": "2000-01-01",
+  "end_exclusive": "2026-08-22",
+  "investor2_repository": "https://github.com/KAFKA2306/investor2.git",
+  "investor2_ref": "main",
+  "writer_repository": "KAFKA2306/semiconductor-earnings-model",
+  "future_phase_status": "PENDING_FUTURE_DATA",
+  "evidence_target": {
+    "repository": "KAFKA2306/investor2",
+    "issue": 161
+  },
+  "collection": {
+    "batch_size": 6,
+    "request_pause_seconds": 0.0,
+    "download_timeout_seconds": 30.0
+  },
+  "analysis": {
+    "start": "2000-01-01",
+    "end": "2026-08-21",
+    "train_start": "2021-01-01",
+    "test_start": "2025-01-01",
+    "adjustment": "adjusted",
+    "primary_half_life": 126,
+    "sensitivity_half_lives": [63, 252],
+    "min_periods": 126,
+    "trading_days": 252,
+    "costs_bps_per_side": [0.0, 1.0, 5.0],
+    "primary_cost_bps_per_side": 1.0,
+    "stress_cost_bps_per_side": 5.0,
+    "one_way_turnover_per_asset_day": 4.0,
+    "minimum_ic": 0.0,
+    "minimum_mse_improvement": 0.0,
+    "minimum_positive_ic_tickers": 4,
+    "minimum_primary_ann_return": 0.0,
+    "minimum_primary_sharpe": 0.0,
+    "minimum_stress_ann_return": 0.0,
+    "minimum_stress_sharpe": 0.0,
+    "raw_robustness": true,
+    "recent_descriptive_start": "2021-01-01"
+  },
+  "claim_audit": {
+    "unresolved_claims": [
+      "us_representative_10_stock_medians",
+      "japan_pair_correlation",
+      "us_japan_lead_lag"
+    ],
+    "descriptive_analogs": [
+      {"claim": "mu_since_2000", "ticker": "MU"},
+      {"claim": "cost_since_2000", "ticker": "COST"}
+    ],
+    "unresolved_status": "NOT_REPRODUCIBLE_FROM_PUBLISHED_SPEC"
+  }
+}

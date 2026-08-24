@@ -595,6 +595,32 @@ def publish_extension(config: MarketCacheConfig, year: int) -> None:
         print(f"YAHOO_MARKET_CACHE_EXTENSION_PREFIX={prefix}")
 
 
+def run_post_publishers(config_path: Path) -> None:
+    payload = json.loads(config_path.read_text(encoding="utf-8"))
+    raw = payload.get("post_publishers", [])
+    if not isinstance(raw, list):
+        raise ValueError("post_publishers must be an array")
+    repo_root = Path(__file__).resolve().parents[1]
+    for index, item in enumerate(raw):
+        if not isinstance(item, dict):
+            raise ValueError(f"post_publishers[{index}] must be an object")
+        script_raw = item.get("script")
+        config_raw = item.get("config")
+        if not isinstance(script_raw, str) or not script_raw.strip():
+            raise ValueError(f"post_publishers[{index}].script must be a non-empty string")
+        if not isinstance(config_raw, str) or not config_raw.strip():
+            raise ValueError(f"post_publishers[{index}].config must be a non-empty string")
+        script = (repo_root / script_raw).resolve()
+        child_config = (repo_root / config_raw).resolve()
+        if repo_root not in script.parents or script.suffix != ".py" or not script.is_file():
+            raise ValueError(f"post publisher script must be a repository Python file: {script_raw}")
+        if repo_root not in child_config.parents or child_config.suffix != ".json" or not child_config.is_file():
+            raise ValueError(f"post publisher config must be a repository JSON file: {config_raw}")
+        print(f"YAHOO_POST_PUBLISHER_START={script.relative_to(repo_root).as_posix()}")
+        run([sys.executable, str(script), "--config", str(child_config)], cwd=repo_root)
+        print(f"YAHOO_POST_PUBLISHER_RESULT=PASS:{script.relative_to(repo_root).as_posix()}")
+
+
 def main() -> None:
     args = parse_args()
     config = load_config(args.config)
@@ -610,6 +636,7 @@ def main() -> None:
 
     publish_base(config)
     publish_extension(config, extension_year)
+    run_post_publishers(args.config)
 
 
 if __name__ == "__main__":
