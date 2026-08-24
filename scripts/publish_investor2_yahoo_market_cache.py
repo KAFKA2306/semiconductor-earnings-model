@@ -6,8 +6,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-from scripts.publish_investor2_yahoo_market_cache_impl import *  # noqa: F403
-from scripts.publish_investor2_yahoo_market_cache_impl import main as _market_cache_main
+if __package__:
+    from scripts.publish_investor2_yahoo_market_cache_impl import *  # noqa: F403
+    from scripts.publish_investor2_yahoo_market_cache_impl import main as _market_cache_main
+else:
+    from publish_investor2_yahoo_market_cache_impl import *  # type: ignore[no-redef] # noqa: F403
+    from publish_investor2_yahoo_market_cache_impl import main as _market_cache_main  # type: ignore[no-redef]
 
 
 def main() -> None:
