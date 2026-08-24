@@ -1,4 +1,5 @@
 {
+  "schema_version": "investor2.yahoo-market-cache-publish.v1",
   "bucket": "k4fka/kafka-data-lake",
   "base_prefix": "central/investor2/private/yahoo-market-cache/v1",
   "extensions_prefix": "central/investor2/private/yahoo-market-cache/extensions/v1",
@@ -20,5 +21,6 @@
   "annual_release": {
     "month": 1,
     "day": 7
-  }
+  },
+  "evidence_issue": 149
 }
