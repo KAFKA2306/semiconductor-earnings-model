@@ -11,6 +11,11 @@
   "investor2_repository": "https://github.com/KAFKA2306/investor2.git",
   "investor2_ref": "main",
   "writer_repository": "KAFKA2306/semiconductor-earnings-model",
+  "future_phase_status": "PENDING_FUTURE_DATA",
+  "evidence_target": {
+    "repository": "KAFKA2306/investor2",
+    "issue": 161
+  },
   "collection": {
     "batch_size": 6,
     "request_pause_seconds": 0.0,
@@ -39,5 +44,17 @@
     "minimum_stress_sharpe": 0.0,
     "raw_robustness": true,
     "recent_descriptive_start": "2021-01-01"
+  },
+  "claim_audit": {
+    "unresolved_claims": [
+      "us_representative_10_stock_medians",
+      "japan_pair_correlation",
+      "us_japan_lead_lag"
+    ],
+    "descriptive_analogs": [
+      {"claim": "mu_since_2000", "ticker": "MU"},
+      {"claim": "cost_since_2000", "ticker": "COST"}
+    ],
+    "unresolved_status": "NOT_REPRODUCIBLE_FROM_PUBLISHED_SPEC"
   }
 }
