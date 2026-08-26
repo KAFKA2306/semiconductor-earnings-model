@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-08-26T17:06:59.923385Z",
+  "run_at": "2026-08-26T20:03:38.517726Z",
   "accepted_events_total": 4,
   "rejected_events_total": 201,
   "source_status": [
@@ -86,7 +86,7 @@
       "source_id": "cadence",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 1
     },
     {
       "source_id": "microsoft",
