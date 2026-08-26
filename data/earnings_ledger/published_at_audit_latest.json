@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-08-26T20:03:38.980665Z",
-  "events_total": 4,
-  "sec_events_total": 4,
+  "run_at": "2026-08-26T23:34:29.070944Z",
+  "events_total": 8,
+  "sec_events_total": 8,
   "non_sec_events_not_independently_reverified": 0,
   "items": [
     {
@@ -50,6 +50,54 @@
       "primary_acceptance_at": "2026-08-20T20:01:46.000Z",
       "ledger_published_at_utc": "2026-08-20T20:01:46Z",
       "primary_acceptance_at_utc": "2026-08-20T20:01:46Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "423c7d5ee9fb43d3653fbcef",
+      "company_id": "nvidia",
+      "accession_number": "0001045810-26-000073",
+      "ledger_published_at": "2026-08-26T16:21:19Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T16:21:19.000Z",
+      "ledger_published_at_utc": "2026-08-26T16:21:19Z",
+      "primary_acceptance_at_utc": "2026-08-26T16:21:19Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "a9a06d96aa77b2985b3a39ff",
+      "company_id": "synopsys",
+      "accession_number": "0001193125-26-368620",
+      "ledger_published_at": "2026-08-26T16:21:49Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T16:21:49.000Z",
+      "ledger_published_at_utc": "2026-08-26T16:21:49Z",
+      "primary_acceptance_at_utc": "2026-08-26T16:21:49Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "368c9e131b767f63eb496bfd",
+      "company_id": "nvidia",
+      "accession_number": "0001045810-26-000075",
+      "ledger_published_at": "2026-08-26T16:36:00Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T16:36:00.000Z",
+      "ledger_published_at_utc": "2026-08-26T16:36:00Z",
+      "primary_acceptance_at_utc": "2026-08-26T16:36:00Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "30f27afcf8a3ddabb7925cf8",
+      "company_id": "synopsys",
+      "accession_number": "0000883241-26-000025",
+      "ledger_published_at": "2026-08-26T17:02:25Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T17:02:25.000Z",
+      "ledger_published_at_utc": "2026-08-26T17:02:25Z",
+      "primary_acceptance_at_utc": "2026-08-26T17:02:25Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

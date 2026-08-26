@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-08-26T20:03:38.681334Z",
-  "events_total": 4,
-  "normalized_events_total": 3,
+  "run_at": "2026-08-26T23:34:28.670222Z",
+  "events_total": 8,
+  "normalized_events_total": 5,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -36,6 +36,32 @@
       "document_type": "10-Q",
       "accession_number": "0001628280-26-058235",
       "period_end": "2026-07-26",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "368c9e131b767f63eb496bfd",
+      "company_id": "nvidia",
+      "document_type": "10-Q",
+      "accession_number": "0001045810-26-000075",
+      "period_end": "2026-07-26",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "30f27afcf8a3ddabb7925cf8",
+      "company_id": "synopsys",
+      "document_type": "10-Q",
+      "accession_number": "0000883241-26-000025",
+      "period_end": "2026-07-31",
       "period_source": "SEC submissions reportDate",
       "period_kind": "INTERIM_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",

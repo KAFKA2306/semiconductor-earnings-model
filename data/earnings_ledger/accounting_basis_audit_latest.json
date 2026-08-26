@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-08-26T20:03:38.729102Z",
-  "events_total": 4,
-  "classified_events_total": 4,
+  "run_at": "2026-08-26T23:34:28.718030Z",
+  "events_total": 8,
+  "classified_events_total": 8,
   "items": [
     {
       "event_id": "110d99434de9ce74bdd7a88d",
@@ -25,8 +25,48 @@
       "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
     },
     {
+      "event_id": "30f27afcf8a3ddabb7925cf8",
+      "company_id": "synopsys",
+      "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "368c9e131b767f63eb496bfd",
+      "company_id": "nvidia",
+      "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "423c7d5ee9fb43d3653fbcef",
+      "company_id": "nvidia",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
       "event_id": "4a6873ba8cec88e2e748da7e",
       "company_id": "applied-materials",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
+      "event_id": "a9a06d96aa77b2985b3a39ff",
+      "company_id": "synopsys",
       "document_type": "8-K",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,
