@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-08-27T09:50:51.211458Z",
-  "window_start": "2026-08-26T09:50:50.650288Z",
-  "window_end": "2026-08-27T09:50:50.650288Z",
-  "verified_events": 6,
+  "verified_at": "2026-08-27T20:31:30.004008Z",
+  "window_start": "2026-08-26T20:31:28.936029Z",
+  "window_end": "2026-08-27T20:31:28.936029Z",
+  "verified_events": 4,
   "required_metric_events": 2,
   "reused_evidence_events": 2,
   "evidence": [
@@ -36,34 +36,6 @@
       "status": "PASS"
     },
     {
-      "event_id": "423c7d5ee9fb43d3653fbcef",
-      "company_id": "nvidia",
-      "document_type": "8-K",
-      "published_at": "2026-08-26T20:21:19Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/0001045810-26-000073-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0001045810.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "64a5368efdc842eb34e4391b008598f9e025f7b6c2f329921bd87198ca9d15c1",
-      "source_content_bytes": 159955,
-      "content_type": "application/json",
-      "verified_at": "2026-08-27T09:50:51.211458Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "a9a06d96aa77b2985b3a39ff",
-      "company_id": "synopsys",
-      "document_type": "8-K",
-      "published_at": "2026-08-26T20:21:49Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/883241/000119312526368620/0001193125-26-368620-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0000883241.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "eea577e5c90b515a151b97583c95712efe1bd4db06c49da0d66fc6b7ed01ca0c",
-      "source_content_bytes": 159416,
-      "content_type": "application/json",
-      "verified_at": "2026-08-27T09:50:51.211458Z",
-      "status": "PASS"
-    },
-    {
       "event_id": "368c9e131b767f63eb496bfd",
       "company_id": "nvidia",
       "document_type": "10-Q",
@@ -74,7 +46,7 @@
       "source_content_sha256": "64a5368efdc842eb34e4391b008598f9e025f7b6c2f329921bd87198ca9d15c1",
       "source_content_bytes": 159955,
       "content_type": "application/json",
-      "verified_at": "2026-08-27T09:50:51.211458Z",
+      "verified_at": "2026-08-27T20:31:30.004008Z",
       "status": "PASS"
     },
     {
@@ -88,7 +60,7 @@
       "source_content_sha256": "eea577e5c90b515a151b97583c95712efe1bd4db06c49da0d66fc6b7ed01ca0c",
       "source_content_bytes": 159416,
       "content_type": "application/json",
-      "verified_at": "2026-08-27T09:50:51.211458Z",
+      "verified_at": "2026-08-27T20:31:30.004008Z",
       "status": "PASS"
     }
   ],
