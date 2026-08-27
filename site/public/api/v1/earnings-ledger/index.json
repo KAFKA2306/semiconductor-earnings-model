@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-08-26T23:34:28.503735Z",
+  "generated_from_run_at": "2026-08-27T09:50:50.650288Z",
   "audit_status": "PASS",
   "accepted_events_total": 4,
   "ledger_accepted_events_total": 8,
@@ -16,7 +16,7 @@
       "company_id": "nvidia",
       "company_name": "NVIDIA",
       "document_type": "8-K",
-      "published_at": "2026-08-26T16:21:19Z",
+      "published_at": "2026-08-26T20:21:19Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/0001045810-26-000073-index.html",
       "freshness": "PASS"
     },
@@ -25,7 +25,7 @@
       "company_id": "synopsys",
       "company_name": "Synopsys",
       "document_type": "8-K",
-      "published_at": "2026-08-26T16:21:49Z",
+      "published_at": "2026-08-26T20:21:49Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/883241/000119312526368620/0001193125-26-368620-index.html",
       "freshness": "PASS"
     },
@@ -34,7 +34,7 @@
       "company_id": "nvidia",
       "company_name": "NVIDIA",
       "document_type": "10-Q",
-      "published_at": "2026-08-26T16:36:00Z",
+      "published_at": "2026-08-26T20:36:00Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/0001045810-26-000075-index.html",
       "freshness": "PASS"
     },
@@ -43,7 +43,7 @@
       "company_id": "synopsys",
       "company_name": "Synopsys",
       "document_type": "10-Q",
-      "published_at": "2026-08-26T17:02:25Z",
+      "published_at": "2026-08-26T21:02:25Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/883241/000088324126000025/0000883241-26-000025-index.html",
       "freshness": "PASS"
     }
