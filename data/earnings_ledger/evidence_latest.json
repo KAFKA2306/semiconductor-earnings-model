@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-08-27T20:31:30.004008Z",
-  "window_start": "2026-08-26T20:31:28.936029Z",
-  "window_end": "2026-08-27T20:31:28.936029Z",
-  "verified_events": 4,
+  "verified_at": "2026-08-28T06:08:01.430963Z",
+  "window_start": "2026-08-27T06:08:01.011070Z",
+  "window_end": "2026-08-28T06:08:01.011070Z",
+  "verified_events": 2,
   "required_metric_events": 2,
   "reused_evidence_events": 2,
   "evidence": [
@@ -33,34 +33,6 @@
       "source_content_bytes": 160098,
       "content_type": "application/json",
       "verified_at": "2026-08-15T18:48:05.227884Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "368c9e131b767f63eb496bfd",
-      "company_id": "nvidia",
-      "document_type": "10-Q",
-      "published_at": "2026-08-26T20:36:00Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/0001045810-26-000075-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0001045810.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "64a5368efdc842eb34e4391b008598f9e025f7b6c2f329921bd87198ca9d15c1",
-      "source_content_bytes": 159955,
-      "content_type": "application/json",
-      "verified_at": "2026-08-27T20:31:30.004008Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "30f27afcf8a3ddabb7925cf8",
-      "company_id": "synopsys",
-      "document_type": "10-Q",
-      "published_at": "2026-08-26T21:02:25Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/883241/000088324126000025/0000883241-26-000025-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0000883241.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "eea577e5c90b515a151b97583c95712efe1bd4db06c49da0d66fc6b7ed01ca0c",
-      "source_content_bytes": 159416,
-      "content_type": "application/json",
-      "verified_at": "2026-08-27T20:31:30.004008Z",
       "status": "PASS"
     }
   ],
