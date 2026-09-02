@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-ledger-state.v1",
-  "last_run_at": "2026-09-02T04:43:00.950998Z",
-  "window_start": "2026-09-01T04:43:00.950998Z",
-  "window_end": "2026-09-02T04:43:00.950998Z",
+  "last_run_at": "2026-09-02T11:20:15.601371Z",
+  "window_start": "2026-09-01T11:20:15.601371Z",
+  "window_end": "2026-09-02T11:20:15.601371Z",
   "audit_status": "PASS",
   "accepted_total": 8,
-  "rejected_total": 261
+  "rejected_total": 282
 }
