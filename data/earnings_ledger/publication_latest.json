@@ -1,16 +1,26 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-09-02T16:35:55.382905Z",
+  "generated_from_run_at": "2026-09-02T21:04:33.276821Z",
   "audit_status": "PASS",
-  "accepted_events_total": 0,
-  "ledger_accepted_events_total": 8,
+  "accepted_events_total": 1,
+  "ledger_accepted_events_total": 9,
   "expired_events_total": 8,
-  "rejected_events_total": 283,
+  "rejected_events_total": 290,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
-  "events": [],
+  "events": [
+    {
+      "event_id": "bc2e9128520915644c571364",
+      "company_id": "broadcom",
+      "company_name": "Broadcom",
+      "document_type": "8-K",
+      "published_at": "2026-09-02T16:26:04Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/0001730168-26-000076-index.html",
+      "freshness": "PASS"
+    }
+  ],
   "audit_artifacts": {
     "ledger": "audit_latest.json",
     "semantic_duplicates": "semantic_duplicate_audit_latest.json",

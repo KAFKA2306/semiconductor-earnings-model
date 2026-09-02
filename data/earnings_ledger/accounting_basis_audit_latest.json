@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-09-02T16:35:55.610515Z",
-  "events_total": 8,
-  "classified_events_total": 8,
+  "run_at": "2026-09-02T21:04:33.494765Z",
+  "events_total": 9,
+  "classified_events_total": 9,
   "items": [
     {
       "event_id": "110d99434de9ce74bdd7a88d",
@@ -67,6 +67,16 @@
     {
       "event_id": "a9a06d96aa77b2985b3a39ff",
       "company_id": "synopsys",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
+      "event_id": "bc2e9128520915644c571364",
+      "company_id": "broadcom",
       "document_type": "8-K",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,
