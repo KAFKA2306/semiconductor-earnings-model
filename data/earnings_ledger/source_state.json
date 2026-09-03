@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-09-03T04:40:29.362724Z",
+  "generated_from_run_at": "2026-09-03T11:16:24.079505Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -8,7 +8,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "f0c55dac3dc7de15c8c20159",
-      "last_seen_published_at": "2026-09-02T18:10:34Z",
+      "last_seen_published_at": "2026-09-02T22:10:34Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -26,7 +26,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "bc2e9128520915644c571364",
-      "last_seen_published_at": "2026-09-02T16:26:04Z",
+      "last_seen_published_at": "2026-09-02T20:26:04Z",
       "last_seen_disposition": "accepted"
     },
     {
@@ -62,7 +62,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "28c2b09b4e7630840569be58",
-      "last_seen_published_at": "2026-09-02T11:51:55Z",
+      "last_seen_published_at": "2026-09-02T15:51:55Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -89,7 +89,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "942bbb7f44b73735c86aff27",
-      "last_seen_published_at": "2026-09-02T18:38:14Z",
+      "last_seen_published_at": "2026-09-02T22:38:14Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -116,7 +116,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "91b5c9eb8efe1756748a7cec",
-      "last_seen_published_at": "2026-09-02T15:48:51Z",
+      "last_seen_published_at": "2026-09-02T19:48:51Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -134,7 +134,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "de627e73262c0787e30c56bd",
-      "last_seen_published_at": "2026-09-02T18:04:41Z",
+      "last_seen_published_at": "2026-09-02T22:04:41Z",
       "last_seen_disposition": "rejected"
     },
     {
