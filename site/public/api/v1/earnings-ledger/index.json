@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-09-03T04:40:29.362724Z",
+  "generated_from_run_at": "2026-09-03T11:16:24.079505Z",
   "audit_status": "PASS",
   "accepted_events_total": 1,
   "ledger_accepted_events_total": 9,
@@ -16,7 +16,7 @@
       "company_id": "broadcom",
       "company_name": "Broadcom",
       "document_type": "8-K",
-      "published_at": "2026-09-02T16:26:04Z",
+      "published_at": "2026-09-02T20:26:04Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/0001730168-26-000076-index.html",
       "freshness": "PASS"
     }
