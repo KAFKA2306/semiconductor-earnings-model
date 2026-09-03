@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-09-03T16:26:54.602830Z",
-  "window_start": "2026-09-02T16:26:53.454538Z",
-  "window_end": "2026-09-03T16:26:53.454538Z",
-  "verified_events": 3,
+  "verified_at": "2026-09-03T21:03:31.161231Z",
+  "window_start": "2026-09-02T21:03:29.993462Z",
+  "window_end": "2026-09-03T21:03:29.993462Z",
+  "verified_events": 2,
   "required_metric_events": 2,
   "reused_evidence_events": 2,
   "evidence": [
@@ -33,20 +33,6 @@
       "source_content_bytes": 160098,
       "content_type": "application/json",
       "verified_at": "2026-08-15T18:48:05.227884Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "bc2e9128520915644c571364",
-      "company_id": "broadcom",
-      "document_type": "8-K",
-      "published_at": "2026-09-02T20:26:04Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/0001730168-26-000076-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0001730168.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "c4364921d7fa8f79cf8349f1c700444467d250bec65018cd7766438d5e6ec1f5",
-      "source_content_bytes": 158376,
-      "content_type": "application/json",
-      "verified_at": "2026-09-03T16:26:54.602830Z",
       "status": "PASS"
     }
   ],
