@@ -1,14 +1,14 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-09-03T21:03:29.993462Z",
+  "run_at": "2026-09-04T00:07:20.857553Z",
   "accepted_events_total": 9,
-  "rejected_events_total": 301,
+  "rejected_events_total": 304,
   "source_status": [
     {
       "source_id": "nvidia",
       "status": "success",
       "accepted": 0,
-      "rejected": 4
+      "rejected": 2
     },
     {
       "source_id": "amd",
@@ -62,7 +62,7 @@
       "source_id": "western-digital",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 0
     },
     {
       "source_id": "seagate",
@@ -92,13 +92,13 @@
       "source_id": "microsoft",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "alphabet",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 2
     },
     {
       "source_id": "amazon",
@@ -116,7 +116,7 @@
       "source_id": "apple",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "oracle",
