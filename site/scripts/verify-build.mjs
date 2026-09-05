@@ -22,6 +22,21 @@ if (!html.includes('<title>AI Infrastructure / 半導体業績データ</title>'
 for (const text of ['Today — 最新の確認済み事実。', '次に、市況を見る。', '企業の利益と耐久力を見る。', '必要なら、根拠まで降りる。']) {
   if (!html.includes(text)) throw new Error(`Pages root reading order is incomplete: ${text}`);
 }
+for (const text of ['前回の比較可能actualからの変化', 'Compute', 'Network', 'Memory', 'Power', 'vs previous actual']) {
+  if (!html.includes(text)) throw new Error(`Pages comparable-change surface is incomplete: ${text}`);
+}
+if (!html.includes('data-change-state=')) {
+  throw new Error('Pages comparable-change state is not machine-readable');
+}
+for (const token of ['#F7F5EF', '#FFFFFF', '#17233F', '#667085', '#D9D6CE', '#2563EB']) {
+  if (!html.includes(token)) throw new Error(`Pages root is missing design foundation token ${token}`);
+}
+if (!html.includes('min-height:44px') && !html.includes('min-height: 44px')) {
+  throw new Error('Pages root is missing the 44px interaction target contract');
+}
+if (!html.includes('focus-visible')) {
+  throw new Error('Pages root is missing visible keyboard focus');
+}
 if (!html.includes('/api/v1/ai-infrastructure/index.json')) {
   throw new Error('Pages root does not expose the canonical AI infrastructure API');
 }
