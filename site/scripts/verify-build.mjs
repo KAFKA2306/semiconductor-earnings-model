@@ -12,6 +12,7 @@ if (!fs.existsSync(financialPath)) throw new Error('Financial Database v3 JSON i
 if (!fs.existsSync(infrastructurePath)) throw new Error('AI Infrastructure JSON is missing from the Pages artifact');
 
 const html = fs.readFileSync(indexPath, 'utf8');
+const normalizedHtml = html.toUpperCase();
 const financial = JSON.parse(fs.readFileSync(financialPath, 'utf8'));
 const infrastructure = JSON.parse(fs.readFileSync(infrastructurePath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
@@ -29,7 +30,7 @@ if (!html.includes('data-change-state=')) {
   throw new Error('Pages comparable-change state is not machine-readable');
 }
 for (const token of ['#F7F5EF', '#FFFFFF', '#17233F', '#667085', '#D9D6CE', '#2563EB']) {
-  if (!html.includes(token)) throw new Error(`Pages root is missing design foundation token ${token}`);
+  if (!normalizedHtml.includes(token)) throw new Error(`Pages root is missing design foundation token ${token}`);
 }
 if (!html.includes('min-height:44px') && !html.includes('min-height: 44px')) {
   throw new Error('Pages root is missing the 44px interaction target contract');
