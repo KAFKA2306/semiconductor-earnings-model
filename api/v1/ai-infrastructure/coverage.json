@@ -1,5 +1,5 @@
 {
-  "observation_count": 84,
+  "observation_count": 92,
   "company_count": 10,
   "companies": [
     "Advanced Micro Devices, Inc.",
@@ -14,14 +14,15 @@
     "Oracle Corporation"
   ],
   "period_start": "2011-05-01",
-  "period_end": "2026-09-30",
-  "actual_count": 82,
-  "guidance_count": 2,
+  "period_end": "2026-11-01",
+  "actual_count": 89,
+  "guidance_count": 3,
   "domains": [
     "capital_investment",
     "compute",
     "memory",
     "network",
+    "other",
     "power"
   ],
   "domain_counts": {
@@ -29,6 +30,7 @@
     "compute": 1,
     "memory": 1,
     "network": 1,
+    "other": 8,
     "power": 1
   }
 }
