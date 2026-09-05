@@ -4,15 +4,17 @@ import path from 'node:path';
 const root = process.cwd();
 const dist = path.join(root, 'dist');
 const indexPath = path.join(dist, 'index.html');
+const sourcePath = path.join(root, 'src/pages/index.astro');
 const financialPath = path.join(dist, 'api/v3/financial-database/index.json');
 const infrastructurePath = path.join(dist, 'api/v1/ai-infrastructure/index.json');
 
 if (!fs.existsSync(indexPath)) throw new Error('GitHub Pages root index.html is missing');
+if (!fs.existsSync(sourcePath)) throw new Error('Pages root Astro source is missing');
 if (!fs.existsSync(financialPath)) throw new Error('Financial Database v3 JSON is missing from the Pages artifact');
 if (!fs.existsSync(infrastructurePath)) throw new Error('AI Infrastructure JSON is missing from the Pages artifact');
 
 const html = fs.readFileSync(indexPath, 'utf8');
-const normalizedHtml = html.toUpperCase();
+const source = fs.readFileSync(sourcePath, 'utf8');
 const financial = JSON.parse(fs.readFileSync(financialPath, 'utf8'));
 const infrastructure = JSON.parse(fs.readFileSync(infrastructurePath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
@@ -30,13 +32,13 @@ if (!html.includes('data-change-state=')) {
   throw new Error('Pages comparable-change state is not machine-readable');
 }
 for (const token of ['#F7F5EF', '#FFFFFF', '#17233F', '#667085', '#D9D6CE', '#2563EB']) {
-  if (!normalizedHtml.includes(token)) throw new Error(`Pages root is missing design foundation token ${token}`);
+  if (!source.includes(token)) throw new Error(`Pages root source is missing design foundation token ${token}`);
 }
-if (!html.includes('min-height:44px') && !html.includes('min-height: 44px')) {
-  throw new Error('Pages root is missing the 44px interaction target contract');
+if (!source.includes('min-height: 44px')) {
+  throw new Error('Pages root source is missing the 44px interaction target contract');
 }
-if (!html.includes('focus-visible')) {
-  throw new Error('Pages root is missing visible keyboard focus');
+if (!source.includes('focus-visible')) {
+  throw new Error('Pages root source is missing visible keyboard focus');
 }
 if (!html.includes('/api/v1/ai-infrastructure/index.json')) {
   throw new Error('Pages root does not expose the canonical AI infrastructure API');
