@@ -4,8 +4,9 @@ import hashlib
 import json
 from pathlib import Path
 
-import pandas as pd
 import pytest
+
+pd = pytest.importorskip("pandas")
 
 from scripts.audit_investor2_yahoo_market_cache import compute_stats
 
