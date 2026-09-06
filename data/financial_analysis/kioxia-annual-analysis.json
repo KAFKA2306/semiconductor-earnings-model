@@ -9,8 +9,8 @@
     "provider": "EDINET DB",
     "source_endpoint": "/v1/companies/E35948/financials",
     "request_fingerprint": "0f4eefa448c82d686bb15db909760186483e13f9d52afd62570a29a1fcd528ad",
-    "response_sha256": "b9c82e2f7d50e769392c4740a6a14545d778f3a73b5efe62f04837d398df8e48",
-    "fetched_at": "2026-09-05T01:03:06Z"
+    "response_sha256": "a36ee337a49d41a17f97527eae9904acbb6b7bb6725e38c1237195d26d493c33",
+    "fetched_at": "2026-09-06T01:03:06Z"
   },
   "metric_definitions": {
     "revenue_yoy": "(revenue_t / revenue_t-1) - 1; only when adjacent records share accounting_standard and basis",
