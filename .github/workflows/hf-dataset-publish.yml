@@ -167,12 +167,13 @@ jobs:
           (release / 'README.md').write_text('\n'.join(lines).strip() + '\n', encoding='utf-8')
           PY
 
-      - name: Install current Hugging Face CLI
+      - name: Install pinned Hugging Face CLI
         shell: bash
         run: |
           set -euo pipefail
-          curl -LsSf https://hf.co/cli/install.sh | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          python -m pip install "huggingface_hub==1.29.0"
+          python -c 'import huggingface_hub; assert huggingface_hub.__version__ == "1.29.0", huggingface_hub.__version__'
+          hf --help >/dev/null
 
       - name: Exact-mirror validated Gold release to private Dataset
         shell: bash
