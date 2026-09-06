@@ -120,12 +120,13 @@ jobs:
             --source-revision "$GITHUB_SHA" \
             --output .data_lake_bundle
 
-      - name: Install current Hugging Face CLI
+      - name: Install pinned Hugging Face CLI
         shell: bash
         run: |
           set -euo pipefail
-          curl -LsSf https://hf.co/cli/install.sh | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          python -m pip install "huggingface_hub==1.29.0"
+          python -c 'import huggingface_hub; assert huggingface_hub.__version__ == "1.29.0", huggingface_hub.__version__'
+          hf --help >/dev/null
 
       - name: Verify private bucket and OIDC round trip with residue-free cleanup
         shell: bash
@@ -356,10 +357,12 @@ jobs:
           HF_CACHE_HUB_REVISION=b41ca5a6601a6ac7724cb09b3fe90554c7356d69
 
           rm -rf "$INVESTOR2_DIR" "$HF_CACHE_HUB_DIR"
+          INVESTOR2_REVISION=b43fcb451d52728008ad1f99064d8ed78a90f25c
           git clone --filter=blob:none --no-checkout https://github.com/KAFKA2306/investor2.git "$INVESTOR2_DIR"
-          git -C "$INVESTOR2_DIR" fetch --depth=1 origin main
-          INVESTOR2_SHA=$(git -C "$INVESTOR2_DIR" rev-parse FETCH_HEAD)
-          git -C "$INVESTOR2_DIR" checkout --detach "$INVESTOR2_SHA"
+          git -C "$INVESTOR2_DIR" fetch --depth=1 origin "$INVESTOR2_REVISION"
+          git -C "$INVESTOR2_DIR" checkout --detach "$INVESTOR2_REVISION"
+          INVESTOR2_SHA=$(git -C "$INVESTOR2_DIR" rev-parse HEAD)
+          test "$INVESTOR2_SHA" = "$INVESTOR2_REVISION"
 
           git clone --filter=blob:none --no-checkout https://github.com/KAFKA2306/hf-cache-hub.git "$HF_CACHE_HUB_DIR"
           git -C "$HF_CACHE_HUB_DIR" fetch --depth=1 origin "$HF_CACHE_HUB_REVISION"
@@ -369,7 +372,7 @@ jobs:
             'requests==2.32.5' \
             'pydantic==2.12.5' \
             'PyYAML>=6,<7' \
-            'huggingface-hub>=1.19,<2'
+            'huggingface-hub==1.29.0'
 
           python "$INVESTOR2_DIR/scripts/polymarket_snapshot.py" \
             --output "$SNAPSHOT" \
