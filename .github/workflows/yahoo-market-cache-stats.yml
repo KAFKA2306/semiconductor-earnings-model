@@ -60,9 +60,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install 'pytest>=8,<9' pandas pyarrow
-          curl -LsSf https://hf.co/cli/install.sh | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          python -m pip install 'pytest>=8,<9' pandas pyarrow "huggingface_hub==1.29.0"
+          python -c 'import huggingface_hub; assert huggingface_hub.__version__ == "1.29.0", huggingface_hub.__version__'
+          hf --help >/dev/null
 
       - name: Unit test stats contract
         shell: bash
