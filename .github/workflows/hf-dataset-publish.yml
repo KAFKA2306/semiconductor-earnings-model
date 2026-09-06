@@ -35,11 +35,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
 
@@ -98,11 +98,11 @@ jobs:
     env:
       HF_OIDC_RESOURCE: datasets/k4fka/kafka-data
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
 
@@ -167,12 +167,13 @@ jobs:
           (release / 'README.md').write_text('\n'.join(lines).strip() + '\n', encoding='utf-8')
           PY
 
-      - name: Install current Hugging Face CLI
+      - name: Install pinned Hugging Face CLI
         shell: bash
         run: |
           set -euo pipefail
-          curl -LsSf https://hf.co/cli/install.sh | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          python -m pip install "huggingface_hub==1.29.0"
+          python -c 'import huggingface_hub; assert huggingface_hub.__version__ == "1.29.0", huggingface_hub.__version__'
+          hf --help >/dev/null
 
       - name: Exact-mirror validated Gold release to private Dataset
         shell: bash
