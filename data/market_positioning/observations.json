@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-04T13:41:39+00:00",
+  "generated_at": "2026-09-07T00:10:57+00:00",
   "observations": [
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2025-07-01",
@@ -17,7 +17,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2025-08-01",
@@ -31,7 +31,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2025-09-01",
@@ -45,7 +45,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2025-10-01",
@@ -59,7 +59,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2025-11-01",
@@ -73,7 +73,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2026-01-01",
@@ -87,7 +87,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2026-02-01",
@@ -101,7 +101,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2026-03-01",
@@ -115,7 +115,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2026-04-01",
@@ -129,7 +129,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2026-05-01",
@@ -143,7 +143,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_mom_pct",
       "observed_date": "2026-06-01",
@@ -154,6 +154,20 @@
       "source_url": "derived://sia_wsts_monthly_sales",
       "unit": "percent",
       "value": 11.52570481
+    },
+    {
+      "entity": "WORLD:semiconductors",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
+      "frequency": "monthly",
+      "metric": "monthly_sales_mom_pct",
+      "observed_date": "2026-07-01",
+      "quality": "derived",
+      "raw_sha256": "16a0da9885922ffa56b10c77b680a174757557ea400517934968390c5de4a88d",
+      "schema_version": "1.0.0",
+      "source_id": "derived_market_positioning",
+      "source_url": "derived://sia_wsts_monthly_sales",
+      "unit": "percent",
+      "value": 9.14498141
     },
     {
       "entity": "WORLD:semiconductors",
@@ -185,7 +199,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2025-08-01",
@@ -199,7 +213,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2025-09-01",
@@ -213,7 +227,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2025-10-01",
@@ -227,7 +241,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2025-11-01",
@@ -241,7 +255,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2026-01-01",
@@ -255,7 +269,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2026-02-01",
@@ -269,7 +283,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2026-03-01",
@@ -283,7 +297,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2026-04-01",
@@ -297,7 +311,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2026-05-01",
@@ -311,7 +325,7 @@
     },
     {
       "entity": "WORLD:semiconductors",
-      "fetched_at": "2026-09-04T13:41:39+00:00",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
       "frequency": "monthly",
       "metric": "monthly_sales_usd_bn_3mma",
       "observed_date": "2026-06-01",
@@ -322,6 +336,20 @@
       "source_url": "https://www.semiconductors.org/global-semiconductor-sales-increase-35-1-from-q1-2026-to-q2-2026/",
       "unit": "USD_billion",
       "value": 134.5
+    },
+    {
+      "entity": "WORLD:semiconductors",
+      "fetched_at": "2026-09-07T00:10:57+00:00",
+      "frequency": "monthly",
+      "metric": "monthly_sales_usd_bn_3mma",
+      "observed_date": "2026-07-01",
+      "quality": "reported",
+      "raw_sha256": "879cbeec8b0b3f089f60078686ef52ffb30df19b2c4359a1e1496809510464b6",
+      "schema_version": "1.0.0",
+      "source_id": "sia_wsts_monthly_sales",
+      "source_url": "https://www.semiconductors.org/global-semiconductor-sales-increase-6-4-month-to-month-in-july/",
+      "unit": "USD_billion",
+      "value": 146.8
     }
   ],
   "schema_version": "1.0.0",
