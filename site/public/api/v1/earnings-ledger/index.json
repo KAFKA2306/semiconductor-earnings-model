@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-09-08T11:21:11.712249Z",
+  "generated_from_run_at": "2026-09-08T16:39:36.469219Z",
   "audit_status": "PASS",
   "accepted_events_total": 0,
   "ledger_accepted_events_total": 9,
   "expired_events_total": 9,
-  "rejected_events_total": 309,
+  "rejected_events_total": 310,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"

@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-09-08T11:21:11.712249Z",
+  "run_at": "2026-09-08T16:39:36.469219Z",
   "accepted_events_total": 9,
-  "rejected_events_total": 309,
+  "rejected_events_total": 310,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -38,7 +38,7 @@
       "source_id": "applied-materials",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "lam-research",
