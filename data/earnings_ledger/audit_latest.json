@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-09-09T16:39:56.194668Z",
+  "run_at": "2026-09-09T20:56:40.565913Z",
   "accepted_events_total": 9,
-  "rejected_events_total": 364,
+  "rejected_events_total": 372,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -44,7 +44,7 @@
       "source_id": "lam-research",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 2
     },
     {
       "source_id": "kla",
@@ -92,7 +92,7 @@
       "source_id": "microsoft",
       "status": "success",
       "accepted": 0,
-      "rejected": 12
+      "rejected": 13
     },
     {
       "source_id": "alphabet",
@@ -104,7 +104,7 @@
       "source_id": "amazon",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 6
     },
     {
       "source_id": "meta",
