@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-sec-inventory.v1",
-  "run_at": "2026-09-10T05:16:14.775520Z",
-  "eligible_events_total": 5,
-  "verified_metrics_total": 5,
+  "run_at": "2026-09-10T11:48:21.536313Z",
+  "eligible_events_total": 6,
+  "verified_metrics_total": 6,
   "metrics": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -102,6 +102,26 @@
       "filed": "2026-08-26",
       "source": "SEC Company Facts API",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000883241.json",
+      "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
+    },
+    {
+      "event_id": "837e53975925d9b420b0dc5e",
+      "company_id": "broadcom",
+      "ticker": "AVGO",
+      "accession_number": "0001730168-26-000080",
+      "period_end": "2026-08-02",
+      "document_type": "10-Q",
+      "metric": "inventory_net",
+      "value": 4523000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet",
+      "frame": "CY2026Q2I",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "filed": "2026-09-10",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
       "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
     }
   ],
