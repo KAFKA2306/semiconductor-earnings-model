@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-09-10T16:25:53.095071Z",
-  "accepted_events_total": 10,
-  "rejected_events_total": 373,
+  "run_at": "2026-09-10T20:53:11.840413Z",
+  "accepted_events_total": 11,
+  "rejected_events_total": 382,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -14,13 +14,13 @@
       "source_id": "amd",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 2
     },
     {
       "source_id": "broadcom",
       "status": "success",
-      "accepted": 1,
-      "rejected": 0
+      "accepted": 0,
+      "rejected": 1
     },
     {
       "source_id": "tsmc",
@@ -44,7 +44,7 @@
       "source_id": "lam-research",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 2
     },
     {
       "source_id": "kla",
@@ -68,13 +68,13 @@
       "source_id": "seagate",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "arm",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 2
     },
     {
       "source_id": "synopsys",
@@ -86,13 +86,13 @@
       "source_id": "cadence",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "microsoft",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "alphabet",
@@ -104,13 +104,13 @@
       "source_id": "amazon",
       "status": "success",
       "accepted": 0,
-      "rejected": 5
+      "rejected": 1
     },
     {
       "source_id": "meta",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "apple",
@@ -121,7 +121,7 @@
     {
       "source_id": "oracle",
       "status": "success",
-      "accepted": 0,
+      "accepted": 1,
       "rejected": 0
     },
     {

@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-09-10T16:25:53.580050Z",
-  "events_total": 10,
-  "sec_events_total": 10,
+  "run_at": "2026-09-10T20:53:12.390968Z",
+  "events_total": 11,
+  "sec_events_total": 11,
   "non_sec_events_not_independently_reverified": 0,
   "items": [
     {
@@ -122,6 +122,18 @@
       "primary_acceptance_at": "2026-09-09T17:56:42.000Z",
       "ledger_published_at_utc": "2026-09-09T17:56:42Z",
       "primary_acceptance_at_utc": "2026-09-09T17:56:42Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "d47fba975be6eebf5d64d944",
+      "company_id": "oracle",
+      "accession_number": "0001193125-26-387905",
+      "ledger_published_at": "2026-09-10T16:16:50Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-09-10T16:16:50.000Z",
+      "ledger_published_at_utc": "2026-09-10T16:16:50Z",
+      "primary_acceptance_at_utc": "2026-09-10T16:16:50Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

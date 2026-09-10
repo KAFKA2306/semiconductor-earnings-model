@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-09-10T16:25:53.308612Z",
-  "events_total": 10,
-  "classified_events_total": 10,
+  "run_at": "2026-09-10T20:53:12.071943Z",
+  "events_total": 11,
+  "classified_events_total": 11,
   "items": [
     {
       "event_id": "110d99434de9ce74bdd7a88d",
@@ -87,6 +87,16 @@
     {
       "event_id": "bc2e9128520915644c571364",
       "company_id": "broadcom",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
+      "event_id": "d47fba975be6eebf5d64d944",
+      "company_id": "oracle",
       "document_type": "8-K",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,

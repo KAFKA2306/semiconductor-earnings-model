@@ -1,23 +1,23 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-09-10T16:25:53.095071Z",
+  "generated_from_run_at": "2026-09-10T20:53:11.840413Z",
   "audit_status": "PASS",
   "accepted_events_total": 1,
-  "ledger_accepted_events_total": 10,
-  "expired_events_total": 9,
-  "rejected_events_total": 373,
+  "ledger_accepted_events_total": 11,
+  "expired_events_total": 10,
+  "rejected_events_total": 382,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
     {
-      "event_id": "837e53975925d9b420b0dc5e",
-      "company_id": "broadcom",
-      "company_name": "Broadcom",
-      "document_type": "10-Q",
-      "published_at": "2026-09-09T17:56:42Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/0001730168-26-000080-index.html",
+      "event_id": "d47fba975be6eebf5d64d944",
+      "company_id": "oracle",
+      "company_name": "Oracle",
+      "document_type": "8-K",
+      "published_at": "2026-09-10T16:16:50Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/0001193125-26-387905-index.html",
       "freshness": "PASS"
     }
   ],

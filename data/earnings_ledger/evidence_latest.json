@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-09-10T16:25:53.667062Z",
-  "window_start": "2026-09-09T16:25:53.095071Z",
-  "window_end": "2026-09-10T16:25:53.095071Z",
+  "verified_at": "2026-09-10T20:53:12.491327Z",
+  "window_start": "2026-09-09T20:53:11.840413Z",
+  "window_end": "2026-09-10T20:53:11.840413Z",
   "verified_events": 3,
   "required_metric_events": 2,
   "reused_evidence_events": 2,
@@ -36,17 +36,17 @@
       "status": "PASS"
     },
     {
-      "event_id": "837e53975925d9b420b0dc5e",
-      "company_id": "broadcom",
-      "document_type": "10-Q",
-      "published_at": "2026-09-09T17:56:42Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/0001730168-26-000080-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0001730168.json",
+      "event_id": "d47fba975be6eebf5d64d944",
+      "company_id": "oracle",
+      "document_type": "8-K",
+      "published_at": "2026-09-10T16:16:50Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/0001193125-26-387905-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0001341439.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "0dab3b765f6c451eb331847bbe84189674967b6abfa8e3cf172bb2d907ef76a2",
-      "source_content_bytes": 158539,
+      "source_content_sha256": "746dd24b895e7074c48d244fb23bdf310ebcd30ad517c30f814ba94302b82c2d",
+      "source_content_bytes": 158736,
       "content_type": "application/json",
-      "verified_at": "2026-09-10T16:25:53.667062Z",
+      "verified_at": "2026-09-10T20:53:12.491327Z",
       "status": "PASS"
     }
   ],
