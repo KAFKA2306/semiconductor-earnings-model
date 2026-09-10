@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-09-10T04:51:51.199861Z",
+  "generated_from_run_at": "2026-09-10T11:22:03.507297Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -25,8 +25,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "bc2e9128520915644c571364",
-      "last_seen_published_at": "2026-09-02T20:26:04Z",
+      "last_seen_id": "837e53975925d9b420b0dc5e",
+      "last_seen_published_at": "2026-09-09T17:56:42Z",
       "last_seen_disposition": "accepted"
     },
     {
@@ -34,8 +34,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "2801694d7ae1f3757d012bcd",
-      "last_seen_published_at": "2026-09-09T10:09:04Z",
+      "last_seen_id": "4c43ef4c4439c0fe656efc3f",
+      "last_seen_published_at": "2026-09-10T06:15:36Z",
       "last_seen_disposition": "rejected"
     },
     {
