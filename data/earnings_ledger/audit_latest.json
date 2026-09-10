@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-09-10T04:51:51.199861Z",
-  "accepted_events_total": 9,
-  "rejected_events_total": 372,
+  "run_at": "2026-09-10T11:22:03.507297Z",
+  "accepted_events_total": 10,
+  "rejected_events_total": 373,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -19,14 +19,14 @@
     {
       "source_id": "broadcom",
       "status": "success",
-      "accepted": 0,
+      "accepted": 1,
       "rejected": 0
     },
     {
       "source_id": "tsmc",
       "status": "success",
       "accepted": 0,
-      "rejected": 30
+      "rejected": 1
     },
     {
       "source_id": "asml",
@@ -104,7 +104,7 @@
       "source_id": "amazon",
       "status": "success",
       "accepted": 0,
-      "rejected": 6
+      "rejected": 5
     },
     {
       "source_id": "meta",

@@ -1,5 +1,5 @@
 {
-  "accepted_events_total": 9,
+  "accepted_events_total": 10,
   "canonical_reason_counts": {},
   "canonical_rejection_reasons": [
     "DUPLICATE",
@@ -14,7 +14,7 @@
   ],
   "detail_reason_counts": {
     "NOT_EARNINGS_RELATED": 365,
-    "SOURCE_FETCH_FAILED": 7
+    "SOURCE_FETCH_FAILED": 8
   },
   "discovery_detail_reasons": [
     "NOT_EARNINGS_RELATED",
@@ -29,7 +29,7 @@
     "424B2": 1,
     "424B3": 1,
     "424B5": 3,
-    "6-K": 7,
+    "6-K": 8,
     "8-K": 14,
     "8-K/A": 3,
     "ARS": 1,
@@ -43,7 +43,7 @@
     "S-4/A": 1,
     "TDNET_DISCLOSURE": 5
   },
-  "generated_at": "2026-09-10T04:51:51.276035Z",
+  "generated_at": "2026-09-10T11:22:03.572616Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
@@ -59,15 +59,15 @@
   },
   "raw_reason_counts": {
     "NOT_EARNINGS_RELATED": 365,
-    "SOURCE_FETCH_FAILED": 7
+    "SOURCE_FETCH_FAILED": 8
   },
-  "rejected_events_total": 372,
+  "rejected_events_total": 373,
   "rejection_stage_counts": {
-    "DISCOVERY_FILTER": 372
+    "DISCOVERY_FILTER": 373
   },
   "schema_version": "earnings-rejection-reason-audit.v3",
   "source_adapter_counts": {
-    "sec_edgar": 367,
+    "sec_edgar": 368,
     "tdnet_public": 5
   },
   "status": "PASS"

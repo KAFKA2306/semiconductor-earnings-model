@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-09-10T04:51:51.853438Z",
-  "events_total": 9,
-  "sec_events_total": 9,
+  "run_at": "2026-09-10T11:22:04.528799Z",
+  "events_total": 10,
+  "sec_events_total": 10,
   "non_sec_events_not_independently_reverified": 0,
   "items": [
     {
@@ -110,6 +110,18 @@
       "primary_acceptance_at": "2026-09-02T20:26:04.000Z",
       "ledger_published_at_utc": "2026-09-02T20:26:04Z",
       "primary_acceptance_at_utc": "2026-09-02T20:26:04Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "837e53975925d9b420b0dc5e",
+      "company_id": "broadcom",
+      "accession_number": "0001730168-26-000080",
+      "ledger_published_at": "2026-09-09T17:56:42Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-09-09T17:56:42.000Z",
+      "ledger_published_at_utc": "2026-09-09T17:56:42Z",
+      "primary_acceptance_at_utc": "2026-09-09T17:56:42Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }
