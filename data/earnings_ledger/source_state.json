@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-09-10T00:15:48.309933Z",
+  "generated_from_run_at": "2026-09-10T04:51:51.199861Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -35,7 +35,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "2801694d7ae1f3757d012bcd",
-      "last_seen_published_at": "2026-09-09T06:09:04Z",
+      "last_seen_published_at": "2026-09-09T10:09:04Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -62,7 +62,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "41e1d26b732b09c378686e86",
-      "last_seen_published_at": "2026-09-09T16:52:10Z",
+      "last_seen_published_at": "2026-09-09T20:52:10Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -98,7 +98,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "425f40e160ed5f82f2447d7b",
-      "last_seen_published_at": "2026-09-09T08:42:48Z",
+      "last_seen_published_at": "2026-09-09T12:42:48Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -134,7 +134,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "47c3ffbe4b5f1397d67c13de",
-      "last_seen_published_at": "2026-09-09T13:31:28Z",
+      "last_seen_published_at": "2026-09-09T17:31:28Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -152,7 +152,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "bdef492e78e54bdb9b7072da",
-      "last_seen_published_at": "2026-09-09T16:54:30Z",
+      "last_seen_published_at": "2026-09-09T20:54:30Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -161,7 +161,7 @@
       "enabled": true,
       "collection_status": "success",
       "last_seen_id": "79bd97de8d78809df9177130",
-      "last_seen_published_at": "2026-09-09T16:06:45Z",
+      "last_seen_published_at": "2026-09-09T20:06:45Z",
       "last_seen_disposition": "rejected"
     },
     {
