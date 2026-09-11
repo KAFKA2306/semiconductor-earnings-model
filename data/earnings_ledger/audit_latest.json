@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-09-10T20:53:11.840413Z",
+  "run_at": "2026-09-11T00:11:42.587951Z",
   "accepted_events_total": 11,
-  "rejected_events_total": 382,
+  "rejected_events_total": 389,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -38,7 +38,7 @@
       "source_id": "applied-materials",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "lam-research",
@@ -68,7 +68,7 @@
       "source_id": "seagate",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 4
     },
     {
       "source_id": "arm",
@@ -92,7 +92,7 @@
       "source_id": "microsoft",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "alphabet",
@@ -104,19 +104,19 @@
       "source_id": "amazon",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "meta",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "apple",
       "status": "success",
       "accepted": 0,
-      "rejected": 0
+      "rejected": 1
     },
     {
       "source_id": "oracle",
