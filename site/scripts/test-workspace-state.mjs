@@ -39,10 +39,22 @@ if(state.inspector.tab!=='raw') throw new Error('Inspector tab state failed');
 api.setInspectorTab(state,'bogus');
 if(state.inspector.tab!=='overview') throw new Error('Invalid tab must fail closed to overview');
 
+state.watchlist.add('JP:285A');
+state.widgets.visible.delete('linked');
+state.widgets.sizes.chartHeight=240;
 const snapshot=api.snapshot(state);
 if(snapshot.schemaVersion!=='workspace-state.v1') throw new Error('Snapshot schema missing');
 if(!(snapshot.table.visibleColumns.includes('company'))) throw new Error('Visible columns snapshot missing');
 if(snapshot.filter.query!=='Kioxia') throw new Error('Filter snapshot missing');
+if(!snapshot.watchlist.includes('JP:285A') || snapshot.widgets.sizes.chartHeight!==240) throw new Error('Workspace presentation snapshot missing');
+
+const restored=api.create({columns:['select','company','status']});
+api.restore(restored,snapshot,{columns:['select','company','status']});
+if(restored.filter.query!=='Kioxia' || !restored.watchlist.has('JP:285A')) throw new Error('Workspace restore failed');
+if(restored.widgets.visible.has('linked') || restored.widgets.sizes.chartHeight!==240) throw new Error('Widget restore failed');
+let incompatible=false;
+try{api.restore(restored,{schemaVersion:'workspace-state.v0'},{columns:['select','company','status']})}catch{incompatible=true}
+if(!incompatible) throw new Error('Incompatible workspace must fail visibly');
 
 api.clearActive(state);
 if(state.activeId!==null || state.active.entityId!==null) throw new Error('ACTIVE clear failed');
