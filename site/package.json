@@ -5,10 +5,11 @@
   "scripts": {
     "prebuild": "node scripts/audit-units.mjs",
     "build": "astro build",
-    "postbuild": "node scripts/verify-build.mjs",
+    "postbuild": "node scripts/test-workspace-state.mjs && node scripts/verify-build.mjs",
     "test:unit-audit": "node scripts/test-unit-audit.mjs",
     "dev": "astro dev",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test:workspace-state": "node scripts/test-workspace-state.mjs"
   },
   "dependencies": {
     "astro": "5.18.2"
