@@ -9,6 +9,8 @@
   const linkedByEntity = payload.linkedByEntity || {};
   const workspaceApi = globalThis.SemiconWorkspaceState;
   if (!workspaceApi) throw new Error('WorkspaceState v1 is required');
+  const chartEngine = globalThis.SemiconChartEngine;
+  if (!chartEngine) throw new Error('Chart engine is required');
   const state = workspaceApi.create({
     columns:columns.map(c=>c.key),
     defaultSort:payload.defaultSort || '',
@@ -37,7 +39,43 @@
   const exportDialog = q('[data-export-dialog]');
   const mobileNavDialog = q('[data-mobile-nav-dialog]');
   const linkedStrip = q('[data-linked-strip]');
+  const chartPanel = q('[data-chart-panel]');
   const crossFilterChips = q('[data-cross-filter-chips]');
+
+  const TABLE_LAYOUT_KEY='semicon:table-layout:' + (payload.view || 'projects');
+  const orderedColumns = () => {
+    const map=new Map(columns.map(col=>[col.key,col]));
+    return state.table.columnOrder.map(key=>map.get(key)).filter(Boolean);
+  };
+  const loadTableLayout = () => {
+    try {
+      const saved=JSON.parse(localStorage.getItem(TABLE_LAYOUT_KEY) || 'null');
+      if(!saved || saved.schema_version!=='table-layout.v1') return;
+      const available=new Set(columns.map(c=>c.key));
+      const order=Array.isArray(saved.order) ? saved.order.filter(key=>available.has(key)) : [];
+      for(const col of columns) if(!order.includes(col.key)) order.push(col.key);
+      state.table.columnOrder=order;
+      state.table.widths=saved.widths && typeof saved.widths==='object' ? saved.widths : {};
+      state.table.pinned=new Set(Array.isArray(saved.pinned) ? saved.pinned.filter(key=>available.has(key)) : ['select','company'].filter(key=>available.has(key)));
+    } catch {}
+  };
+  const saveTableLayout = () => {
+    localStorage.setItem(TABLE_LAYOUT_KEY,JSON.stringify({
+      schema_version:'table-layout.v1',
+      order:[...state.table.columnOrder],
+      widths:{...state.table.widths},
+      pinned:[...state.table.pinned],
+    }));
+  };
+  const moveColumn = (key,delta) => {
+    const order=[...state.table.columnOrder];
+    const index=order.indexOf(key);
+    const target=index+delta;
+    if(index<0 || target<0 || target>=order.length || key==='select' || order[target]==='select') return;
+    [order[index],order[target]]=[order[target],order[index]];
+    state.table.columnOrder=order;
+    saveTableLayout();
+  };
 
   const escapeHtml = value => String(value ?? '')
     .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
@@ -186,6 +224,64 @@
     });
   };
 
+  const applyColumnLayout = () => {
+    const headRow=q('.wb-table thead tr');
+    if(!headRow) return;
+    for(const col of orderedColumns()){
+      const th=q('[data-col="' + col.key + '"]');
+      if(th) headRow.appendChild(th);
+    }
+    let left=0;
+    for(const col of orderedColumns()){
+      const key=col.key;
+      const th=q('[data-col="' + key + '"]');
+      if(!th) continue;
+      const width=Number(state.table.widths[key] || col.width || th.getBoundingClientRect().width || 120);
+      if(state.table.widths[key]){
+        th.style.width=width+'px';th.style.minWidth=width+'px';th.style.maxWidth=width+'px';
+        qa('td[data-cell-key="' + key + '"]').forEach(td=>{td.style.width=width+'px';td.style.minWidth=width+'px';td.style.maxWidth=width+'px'});
+      }
+      const pinned=state.table.pinned.has(key);
+      th.classList.toggle('wb-pinned',pinned);
+      qa('td[data-cell-key="' + key + '"]').forEach(td=>td.classList.toggle('wb-pinned',pinned));
+      if(pinned){
+        th.style.left=left+'px';
+        qa('td[data-cell-key="' + key + '"]').forEach(td=>td.style.left=left+'px');
+        left+=width;
+      } else {
+        th.style.left='';
+        qa('td[data-cell-key="' + key + '"]').forEach(td=>td.style.left='');
+      }
+    }
+  };
+  const ensureColumnResizers = () => {
+    qa('[data-col]').forEach(th=>{
+      const key=th.getAttribute('data-col');
+      if(!key || th.querySelector('[data-resize-col]')) return;
+      const handle=document.createElement('span');
+      handle.className='wb-col-resizer';
+      handle.setAttribute('data-resize-col',key);
+      handle.addEventListener('pointerdown',ev=>{
+        ev.preventDefault();ev.stopPropagation();
+        const startX=ev.clientX;
+        const startWidth=th.getBoundingClientRect().width;
+        const move=e=>{
+          const next=Math.max(34,Math.min(480,startWidth+(e.clientX-startX)));
+          state.table.widths[key]=Math.round(next);
+          applyColumnLayout();
+        };
+        const up=()=>{
+          document.removeEventListener('pointermove',move);
+          document.removeEventListener('pointerup',up);
+          saveTableLayout();
+        };
+        document.addEventListener('pointermove',move);
+        document.addEventListener('pointerup',up);
+      });
+      th.appendChild(handle);
+    });
+  };
+
   const renderTable = () => {
     renderSortState();
     qa('[data-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-col'))));
@@ -213,11 +309,11 @@
     } else if (tableWrap) {
       tableWrap.dataset.virtualized = 'false';
     }
-    const visibleColCount = columns.filter(c => state.visibleColumns.has(c.key)).length;
+    const visibleColCount = orderedColumns().filter(c => state.visibleColumns.has(c.key)).length;
     const rowHtml = renderRows.map(row => {
       const selected = state.activeId === row.id ? ' selected' : '';
       return '<tr class="' + selected.trim() + '" data-row="' + escapeHtml(row.id) + '" tabindex="0">' +
-        columns.filter(c => state.visibleColumns.has(c.key)).map(col => {
+        orderedColumns().filter(c => state.visibleColumns.has(c.key)).map(col => {
           const raw = cellValue(row,col.key);
           return '<td class="' + (col.numeric ? 'num' : '') + '" data-cell-key="' + escapeHtml(col.key) + '" data-cell-value="' + escapeHtml(raw == null ? '' : String(raw)) + '">' + cellHtml(row,col) + '</td>';
         }).join('') +
@@ -245,6 +341,9 @@
       ev.stopPropagation();
       openCellMenu(td, ev.clientX, ev.clientY);
     }));
+    ensureColumnResizers();
+    applyColumnLayout();
+    renderChart();
   };
 
   const renderCrossFilterChips = () => {
@@ -326,16 +425,27 @@
     columnList.innerHTML =
       '<div class="wb-column-presets"><button type="button" data-column-preset="default">Default</button><button type="button" data-column-preset="compact">Compact</button><button type="button" data-column-preset="evidence">Evidence</button></div>' +
       '<div class="wb-column-grid">' +
-      columns.map(col => {
+      orderedColumns().map((col,index) => {
         const locked = col.key === 'select' || col.key === 'company';
-        return '<label class="wb-column-item"><input type="checkbox" data-column-toggle="' + escapeHtml(col.key) + '"' +
-          (state.visibleColumns.has(col.key) ? ' checked' : '') + (locked ? ' disabled' : '') + '><span>' + escapeHtml(col.label || col.key) + '</span></label>';
+        const pinned=state.table.pinned.has(col.key);
+        return '<div class="wb-column-item"><label><input type="checkbox" data-column-toggle="' + escapeHtml(col.key) + '"' +
+          (state.visibleColumns.has(col.key) ? ' checked' : '') + (locked ? ' disabled' : '') + '><span>' + escapeHtml(col.label || col.key) + '</span></label>' +
+          '<span class="wb-column-actions"><button type="button" data-col-up="' + escapeHtml(col.key) + '" aria-label="Move column left"' + (index===0?' disabled':'') + '>←</button>' +
+          '<button type="button" data-col-down="' + escapeHtml(col.key) + '" aria-label="Move column right"' + (index===columns.length-1?' disabled':'') + '>→</button>' +
+          '<button type="button" data-col-pin="' + escapeHtml(col.key) + '" aria-pressed="' + (pinned?'true':'false') + '">' + (pinned?'Unpin':'Pin') + '</button></span></div>';
       }).join('') + '</div>';
     [...columnList.querySelectorAll('[data-column-toggle]')].forEach(input => input.addEventListener('change',() => {
       const key=input.getAttribute('data-column-toggle');
       if(input.checked) state.visibleColumns.add(key); else state.visibleColumns.delete(key);
       state.visibleColumns.add('select'); state.visibleColumns.add('company');
       renderTable(); writeUrl();
+    }));
+    [...columnList.querySelectorAll('[data-col-up]')].forEach(btn=>btn.addEventListener('click',()=>{moveColumn(btn.getAttribute('data-col-up'),-1);renderColumnDialog();renderTable();writeUrl()}));
+    [...columnList.querySelectorAll('[data-col-down]')].forEach(btn=>btn.addEventListener('click',()=>{moveColumn(btn.getAttribute('data-col-down'),1);renderColumnDialog();renderTable();writeUrl()}));
+    [...columnList.querySelectorAll('[data-col-pin]')].forEach(btn=>btn.addEventListener('click',()=>{
+      const key=btn.getAttribute('data-col-pin');
+      if(state.table.pinned.has(key)) state.table.pinned.delete(key); else state.table.pinned.add(key);
+      saveTableLayout();renderColumnDialog();renderTable();
     }));
     [...columnList.querySelectorAll('[data-column-preset]')].forEach(btn=>btn.addEventListener('click',()=>{
       state.visibleColumns = new Set(presets[btn.getAttribute('data-column-preset')] || presets.default);
@@ -358,7 +468,7 @@
     if (!compareDialog || !compareBody) return;
     const selectedRows = rows.filter(r => state.selected.has(r.id));
     if (!selectedRows.length) return;
-    const compareCols = columns.filter(c => !['select','company'].includes(c.key) && state.visibleColumns.has(c.key));
+    const compareCols = orderedColumns().filter(c => !['select','company'].includes(c.key) && state.visibleColumns.has(c.key));
     compareBody.innerHTML = '<table class="wb-compare-table"><thead><tr><th>Metric</th>' +
       selectedRows.map(r=>'<th>' + escapeHtml(r.company || r.name || r.id) + '<br><small>' + escapeHtml(r.project_name || r.ticker || r.entity_id || '') + '</small></th>').join('') +
       '</tr></thead><tbody>' +
@@ -562,7 +672,7 @@
 
   const exportRows = subset => {
     const selectedRows = subset === 'selected' ? rows.filter(r=>state.selected.has(r.id)) : filteredRows();
-    const exportCols = columns.filter(c=>c.key !== 'select' && state.visibleColumns.has(c.key));
+    const exportCols = orderedColumns().filter(c=>c.key !== 'select' && state.visibleColumns.has(c.key));
     const csv = [
       exportCols.map(c=>c.label),
       ...selectedRows.map(row=>exportCols.map(c => {
@@ -605,6 +715,93 @@
   const copyApiUrl = async () => {
     const url=new URL(payload.apiUrl || '',location.origin).href;
     try{await navigator.clipboard.writeText(url);toast('Canonical API URL copied')}catch{toast('Copy failed')}
+  };
+
+  const chartValueText = value => {
+    const n=Number(value);
+    if(!Number.isFinite(n)) return String(value ?? '—');
+    return Math.abs(n)>=1e9 ? (n/1e9).toFixed(1)+'B' : Math.abs(n)>=1e6 ? (n/1e6).toFixed(1)+'M' : n.toLocaleString(undefined,{maximumFractionDigits:2});
+  };
+  const chartMarkAttrs = point => 'data-chart-key="' + escapeHtml(point.filterKey || '') + '" data-chart-value="' + escapeHtml(point.filterValue || '') + '" data-chart-record="' + escapeHtml(point.recordId || '') + '"';
+  const barChartHtml = model => {
+    const max=Math.max(...model.data.map(d=>Math.abs(Number(d.value)||0)),1);
+    return '<div class="wb-bar-chart">' + model.data.map((point,index)=>{
+      const pct=Math.max(2,Math.abs(Number(point.value)||0)/max*100);
+      return '<button type="button" class="wb-bar-row" ' + chartMarkAttrs(point) + '><span class="wb-bar-label">' + escapeHtml(point.label) + '</span><span class="wb-bar-track"><i style="width:' + pct.toFixed(2) + '%;--chart-index:' + (index%6) + '"></i></span><b>' + escapeHtml(chartValueText(point.value)) + '</b></button>';
+    }).join('') + '</div>';
+  };
+  const lineChartHtml = model => {
+    const data=model.data;
+    if(!data.length) return '<div class="wb-empty">No line data.</div>';
+    const values=data.map(d=>Number(d.value));
+    const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
+    const w=560,h=120,p=12;
+    const coords=data.map((d,i)=>({
+      ...d,
+      x:data.length===1?w/2:p+i*((w-p*2)/(data.length-1)),
+      y:h-p-((Number(d.value)-min)/span)*(h-p*2),
+    }));
+    const points=coords.map(d=>d.x.toFixed(1)+','+d.y.toFixed(1)).join(' ');
+    return '<svg class="wb-pastel-line" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+escapeHtml(model.title)+'"><polyline points="'+points+'"></polyline>' +
+      coords.map((d,index)=>'<circle tabindex="0" role="button" cx="'+d.x.toFixed(1)+'" cy="'+d.y.toFixed(1)+'" r="5" '+chartMarkAttrs(d)+' style="--chart-index:'+(index%6)+'"><title>'+escapeHtml(d.label+' '+chartValueText(d.value))+'</title></circle>').join('') +
+      '</svg><div class="wb-chart-axis"><span>'+escapeHtml(data[0]?.label||'')+'</span><span>'+escapeHtml(data[data.length-1]?.label||'')+'</span></div>';
+  };
+  const pieChartHtml = model => {
+    const total=model.data.reduce((sum,d)=>sum+Number(d.value||0),0)||1;
+    let cursor=0;
+    const palette=['var(--chart-0)','var(--chart-1)','var(--chart-2)','var(--chart-3)','var(--chart-4)','var(--chart-5)'];
+    const stops=model.data.map((d,index)=>{
+      const start=cursor;
+      cursor+=Number(d.value||0)/total*100;
+      return palette[index%palette.length]+' '+start.toFixed(2)+'% '+cursor.toFixed(2)+'%';
+    }).join(',');
+    return '<div class="wb-pie-layout"><div class="wb-pie" style="background:conic-gradient('+stops+')" role="img" aria-label="'+escapeHtml(model.title)+'"></div><div class="wb-pie-legend">' +
+      model.data.map((d,index)=>'<button type="button" '+chartMarkAttrs(d)+'><i style="--chart-index:'+(index%6)+'"></i><span>'+escapeHtml(d.label)+'</span><b>'+escapeHtml(chartValueText(d.value))+'</b></button>').join('') +
+      '</div></div>';
+  };
+  const renderChart = () => {
+    if(!chartPanel) return;
+    const activeRow=rows.find(r=>r.id===state.active.rowId) || null;
+    const model=chartEngine.build({view:payload.view,rows:filteredRows(),activeRow,requestedType:state.analysis.chartType});
+    const supported=['auto','bar','pie','line'];
+    chartPanel.innerHTML='<div class="wb-chart-head"><div><strong>'+escapeHtml(model.title)+'</strong><small>'+escapeHtml(model.valueLabel || '')+'</small></div><div class="wb-chart-types">' +
+      supported.map(type=>'<button type="button" data-chart-type="'+type+'" class="'+(state.analysis.chartType===type?'active':'')+'">'+type+'</button>').join('') +
+      '</div></div><div class="wb-chart-body">' +
+      (model.type==='bar'?barChartHtml(model):model.type==='line'?lineChartHtml(model):model.type==='pie'?pieChartHtml(model):'<div class="wb-empty">No chartable data for this screen.</div>') +
+      '</div>';
+    qa('[data-chart-type]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.analysis.chartType=btn.getAttribute('data-chart-type') || 'auto';
+      renderChart();
+    }));
+    qa('[data-chart-key]').forEach(mark=>{
+      const open=ev=>{ev.preventDefault();openChartMenu(mark,ev.clientX||window.innerWidth/2,ev.clientY||140)};
+      mark.addEventListener('click',open);
+      mark.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){open(ev)}});
+    });
+  };
+  const openChartMenu = (mark,x,y) => {
+    closeCellMenu();
+    const key=mark.getAttribute('data-chart-key') || '';
+    const value=mark.getAttribute('data-chart-value') || '';
+    const recordId=mark.getAttribute('data-chart-record') || '';
+    const menu=document.createElement('div');
+    menu.className='wb-cell-menu';
+    menu.style.left=Math.min(x,window.innerWidth-230)+'px';
+    menu.style.top=Math.min(y,window.innerHeight-190)+'px';
+    menu.innerHTML=
+      (key&&value?'<button type="button" data-chart-action="include">Filter by <strong>'+escapeHtml(value)+'</strong></button><button type="button" data-chart-action="exclude">Exclude <strong>'+escapeHtml(value)+'</strong></button>':'') +
+      '<button type="button" data-chart-action="underlying">View underlying record</button>';
+    document.body.appendChild(menu);
+    activeCellMenu=menu;
+    menu.querySelector('[data-chart-action="include"]')?.addEventListener('click',()=>addCrossFilter('include',key,value));
+    menu.querySelector('[data-chart-action="exclude"]')?.addEventListener('click',()=>addCrossFilter('exclude',key,value));
+    menu.querySelector('[data-chart-action="underlying"]')?.addEventListener('click',()=>{
+      closeCellMenu();
+      let row=recordId ? rows.find(r=>r.id===recordId) : null;
+      if(!row && key&&value) row=rows.find(r=>String(cellValue(r,key)??'')===value);
+      if(!row) row=rows.find(r=>r.id===state.active.rowId) || null;
+      if(row) openInspector(row.id); else toast('No underlying record in this slice');
+    });
   };
 
   const getSavedViews = () => {
@@ -665,6 +862,7 @@
     [...commandResults.querySelectorAll('[data-command-row]')].forEach(btn=>btn.addEventListener('click',()=>{ command.close(); openInspector(btn.getAttribute('data-command-row')); }));
   };
 
+  loadTableLayout();
   readUrl();
   hydrateSelect('country',[...new Set(rows.map(r=>r.country))]);
   hydrateSelect('role',[...new Set(rows.map(r=>r.role))]);
@@ -726,7 +924,7 @@
     if(ev.key==='Escape'&&state.activeId){closeInspector();return}
   });
 
-  state.subscribe((_,type)=>{ if(type==='active') renderLinkedStrip(); });
+  state.subscribe((_,type)=>{ if(type==='active'){renderLinkedStrip();renderChart()} });
   renderColumnDialog(); renderSavedViews(); renderSortState(); renderTable(); renderCompare(); renderLinkedStrip();
   if(state.activeId) openInspector(state.activeId);
 })();
