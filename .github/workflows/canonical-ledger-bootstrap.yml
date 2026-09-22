@@ -1,0 +1,55 @@
+name: Bootstrap canonical infrastructure ledger
+
+on:
+  push:
+    branches: [feat/canonical-capex-ledger]
+    paths:
+      - "semicon/**"
+      - "data/raw/google_sheets_import/**"
+      - "data/raw/company_ir/**"
+      - "data/registry/entity_enrichment.json"
+      - ".github/workflows/canonical-ledger-bootstrap.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic environment
+        run: uv sync --frozen
+      - name: Replay archived live Google Sheet into canonical ledger
+        run: |
+          source_xlsx="data/raw/google_sheets_import/1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ/a5ab21206c397dcf7d7603bb32c0a8e7cd6636d2b4efedbe3d88ff5c8a79a8dd/source.xlsx"
+          uv run python -m semicon.ingest.google_sheets --spreadsheet-id 1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ --xlsx "$source_xlsx"
+          uv run python -m semicon.ingest.primary_project_seeds
+          uv run python -m semicon.build_derived
+          uv run python -m semicon.validate_canonical
+          uv run python -m semicon.round_trip
+          uv run python -m semicon.source_round_trip
+          uv run python -m semicon.build_api_v2
+          uv run python -m semicon.export.google_sheets --output-json data/derived/google_sheets_projection.json
+      - name: Commit deterministic seed
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/registry/entities.json data/canonical data/derived data/raw/google_sheets_import data/raw/company_ir site/public/api/v2
+          if [ -d data/conflicts ]; then git add data/conflicts; fi
+          if git diff --cached --quiet; then
+            echo "Canonical seed already current"
+            exit 0
+          fi
+          git commit -m "data: seed canonical infrastructure ledger from archived Sheet"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

@@ -1,0 +1,104 @@
+{
+  "facilities": [
+    {
+      "book_value_total": null,
+      "buildings": null,
+      "country": "Japan",
+      "employees": null,
+      "entity_id": "JP:4186",
+      "facility_id": "FAC-JP4186-ASO-KUMAMOTO",
+      "facility_name": "Aso Kumamoto Site of Aso Plant",
+      "fiscal_year": 2026,
+      "land": null,
+      "land_area_m2": 128000,
+      "location": "987-2 Ninohigashioki, Kyokushikawabe, Kikuchi City, Kumamoto, Japan",
+      "machinery": null,
+      "municipality": "Kikuchi City",
+      "prefecture": "Kumamoto",
+      "provenance": [
+        {
+          "doc_id": "urlsha256:2a46c0ad20e2040e4d3fbb342f972bc306203c7af557a305848047bf4ba903bd",
+          "import_source": "company_ir_seed",
+          "imported_at": "2026-09-22T09:00:00Z",
+          "original_source_url": "https://www.tok.co.jp/eng/news/2026/260608",
+          "raw_snapshot_sha256": null,
+          "sheet_name": "data/raw/company_ir/capex_project_seed_v1.json",
+          "source_ref": "tok-aso-20260608",
+          "source_row": 1,
+          "spreadsheet_id": null
+        }
+      ],
+      "quality_flag": "primary_source_extracted",
+      "source_doc_id": "urlsha256:2a46c0ad20e2040e4d3fbb342f972bc306203c7af557a305848047bf4ba903bd",
+      "source_system": "company_ir",
+      "source_url": "https://www.tok.co.jp/eng/news/2026/260608"
+    },
+    {
+      "book_value_total": null,
+      "buildings": null,
+      "country": "South Korea",
+      "employees": null,
+      "entity_id": "JP:4186",
+      "facility_id": "FAC-JP4186-PYEONGTAEK",
+      "facility_name": "Pyeongtaek Plant",
+      "fiscal_year": 2026,
+      "land": null,
+      "land_area_m2": null,
+      "location": "Pyeongtaek, Gyeonggi Province, South Korea",
+      "machinery": null,
+      "municipality": "Pyeongtaek",
+      "prefecture": "Gyeonggi Province",
+      "provenance": [
+        {
+          "doc_id": "urlsha256:69e2357910947166cca1405adf3cafdf378c4de23df1098aecee6f9b2e94ab8a",
+          "import_source": "company_ir_seed",
+          "imported_at": "2026-09-22T09:00:00Z",
+          "original_source_url": "https://www.tok.co.jp/eng/news/2026/260915",
+          "raw_snapshot_sha256": null,
+          "sheet_name": "data/raw/company_ir/capex_project_seed_v1.json",
+          "source_ref": "tok-pyeongtaek-20260915",
+          "source_row": 2,
+          "spreadsheet_id": null
+        }
+      ],
+      "quality_flag": "primary_source_extracted",
+      "source_doc_id": "urlsha256:69e2357910947166cca1405adf3cafdf378c4de23df1098aecee6f9b2e94ab8a",
+      "source_system": "company_ir",
+      "source_url": "https://www.tok.co.jp/eng/news/2026/260915"
+    },
+    {
+      "book_value_total": null,
+      "buildings": null,
+      "country": "South Korea",
+      "employees": null,
+      "entity_id": "JP:6315",
+      "facility_id": "FAC-JP6315-KOREA-CHEONAN",
+      "facility_name": "TOWA Korea acquired factory asset",
+      "fiscal_year": 2024,
+      "land": null,
+      "land_area_m2": 16136.7,
+      "location": "425 Chaam-dong, Seobuk-gu, Cheonan, Chungcheongnam-do, South Korea",
+      "machinery": null,
+      "municipality": "Cheonan",
+      "prefecture": "Chungcheongnam-do",
+      "provenance": [
+        {
+          "doc_id": "urlsha256:ee3eca57b1d7f40622ace68e41d8cb267a61bfee2eeb5c9879e281af22be54e8",
+          "import_source": "company_ir_seed",
+          "imported_at": "2026-09-22T09:00:00Z",
+          "original_source_url": "https://www.towajapan.co.jp/jp/news/ir_202405104/",
+          "raw_snapshot_sha256": null,
+          "sheet_name": "data/raw/company_ir/capex_project_seed_v1.json",
+          "source_ref": "towa-korea-20240510",
+          "source_row": 3,
+          "spreadsheet_id": null
+        }
+      ],
+      "quality_flag": "primary_source_extracted",
+      "source_doc_id": "urlsha256:ee3eca57b1d7f40622ace68e41d8cb267a61bfee2eeb5c9879e281af22be54e8",
+      "source_system": "company_ir",
+      "source_url": "https://www.towajapan.co.jp/jp/news/ir_202405104/"
+    }
+  ],
+  "schema_version": "canonical-facilities.v1"
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "google-sheets-import-manifest.v1",
+  "spreadsheet_id": "1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ",
+  "captured_at": "2026-09-22T00:16:00Z",
+  "classifications": {
+    "README": "metadata",
+    "Dashboard": "presentation",
+    "Issuer_Master": "canonical",
+    "Index_Membership": "metadata",
+    "CapEx_Events": "canonical",
+    "Financials": "canonical",
+    "Demand_Commitments": "canonical",
+    "Capacity_Metrics": "canonical",
+    "Decision_View": "derived",
+    "Sources": "metadata"
+  },
+  "result": {
+    "sheets_read": 10,
+    "rows_read": 328,
+    "entities_created": 142,
+    "facts_created": 0,
+    "events_created": 5,
+    "projects_created": 5,
+    "facilities_created": 0,
+    "commitments_created": 0,
+    "backlog_rows_created": 0,
+    "duplicates": 0,
+    "conflicts": 0,
+    "invalid_rows": 0,
+    "classifications": {
+      "README": "metadata",
+      "Dashboard": "presentation",
+      "Issuer_Master": "canonical",
+      "Index_Membership": "metadata",
+      "CapEx_Events": "canonical",
+      "Financials": "canonical",
+      "Demand_Commitments": "canonical",
+      "Capacity_Metrics": "canonical",
+      "Decision_View": "derived",
+      "Sources": "metadata"
+    }
+  }
+}

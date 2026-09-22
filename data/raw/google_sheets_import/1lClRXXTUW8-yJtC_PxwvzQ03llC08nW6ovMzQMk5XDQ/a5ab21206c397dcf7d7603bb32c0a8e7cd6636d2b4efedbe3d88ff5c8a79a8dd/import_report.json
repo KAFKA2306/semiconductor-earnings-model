@@ -1,0 +1,68 @@
+{
+  "backlog_rows_created": 0,
+  "commitments_created": 0,
+  "conflicts": 0,
+  "duplicates": 10,
+  "events_created": 5,
+  "facilities_created": 0,
+  "facts_created": 0,
+  "invalid_rows": 0,
+  "projects_created": 5,
+  "rows_read": 328,
+  "schema_version": "google-sheets-import-report.v1",
+  "sheet_classification": [
+    {
+      "classification": "metadata",
+      "rows_read": 10,
+      "sheet_name": "README"
+    },
+    {
+      "classification": "presentation",
+      "rows_read": 6,
+      "sheet_name": "Dashboard"
+    },
+    {
+      "classification": "canonical",
+      "rows_read": 142,
+      "sheet_name": "Issuer_Master"
+    },
+    {
+      "classification": "metadata",
+      "rows_read": 162,
+      "sheet_name": "Index_Membership"
+    },
+    {
+      "classification": "canonical",
+      "rows_read": 5,
+      "sheet_name": "CapEx_Events"
+    },
+    {
+      "classification": "canonical",
+      "rows_read": 0,
+      "sheet_name": "Financials"
+    },
+    {
+      "classification": "canonical",
+      "rows_read": 0,
+      "sheet_name": "Demand_Commitments"
+    },
+    {
+      "classification": "canonical",
+      "rows_read": 0,
+      "sheet_name": "Capacity_Metrics"
+    },
+    {
+      "classification": "derived",
+      "rows_read": 0,
+      "sheet_name": "Decision_View"
+    },
+    {
+      "classification": "metadata",
+      "rows_read": 3,
+      "sheet_name": "Sources"
+    }
+  ],
+  "sheets_read": 10,
+  "source_sha256": "a5ab21206c397dcf7d7603bb32c0a8e7cd6636d2b4efedbe3d88ff5c8a79a8dd",
+  "spreadsheet_id": "1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ"
+}

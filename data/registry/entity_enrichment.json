@@ -1,0 +1,22 @@
+{
+  "schema_version": "entity-enrichment.v1",
+  "source": "migration_handoff_2026-09-22",
+  "source_note": "EDINET codes supplied in the CapEx DB migration handoff. Retained as migration provenance; primary-source recheck remains allowed without overwriting conflicts.",
+  "entities": [
+    {"entity_id":"JP:4021","edinet_code":"E00759"},{"entity_id":"JP:4043","edinet_code":"E00768"},
+    {"entity_id":"JP:4063","edinet_code":"E00776"},{"entity_id":"JP:4186","edinet_code":"E00854"},
+    {"entity_id":"JP:4203","edinet_code":"E00819"},{"entity_id":"JP:4272","edinet_code":"E00836"},
+    {"entity_id":"JP:4401","edinet_code":"E00878"},{"entity_id":"JP:4626","edinet_code":"E00913"},
+    {"entity_id":"JP:4980","edinet_code":"E31633"},{"entity_id":"JP:3436","edinet_code":"E02103"},
+    {"entity_id":"JP:5016","edinet_code":"E01081"},{"entity_id":"JP:6315","edinet_code":"E01708"},
+    {"entity_id":"JP:6323","edinet_code":"E02328"},{"entity_id":"JP:285A","edinet_code":"E35948"},
+    {"entity_id":"JP:6525","edinet_code":"E37488"},{"entity_id":"JP:6526","edinet_code":"E37978"},
+    {"entity_id":"JP:6723","edinet_code":"E02081"},{"entity_id":"JP:6728","edinet_code":"E01589"},
+    {"entity_id":"JP:6758","edinet_code":"E01777"},{"entity_id":"JP:6857","edinet_code":"E01950"},
+    {"entity_id":"JP:6890","edinet_code":"E02024"},{"entity_id":"JP:6920","edinet_code":"E01991"},
+    {"entity_id":"JP:6963","edinet_code":"E01953"},{"entity_id":"JP:7735","edinet_code":"E02288"},
+    {"entity_id":"JP:8035","edinet_code":"E02652"},{"entity_id":"JP:6146","edinet_code":"E01506"},
+    {"entity_id":"JP:7729","edinet_code":"E02289"},{"entity_id":"JP:7741","edinet_code":"E01124"},
+    {"entity_id":"JP:3132","edinet_code":"E31167"},{"entity_id":"JP:8154","edinet_code":"E02676"}
+  ]
+}

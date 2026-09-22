@@ -1,0 +1,21 @@
+{
+  "schema_version": "infrastructure-import-sources.v1",
+  "sources": [
+    {
+      "source_id": "google-sheet-live",
+      "type": "google_sheets",
+      "spreadsheet_id": "1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ",
+      "status": "imported",
+      "semantic_sha256": "a5ab21206c397dcf7d7603bb32c0a8e7cd6636d2b4efedbe3d88ff5c8a79a8dd",
+      "binary_sha256": "101e506d876da0b8794722dd4d99116c2ab91def1c6ed1d44bf6b8a24f631d90",
+      "note": "Google XLSX exports may differ byte-for-byte across identical exports; semantic_sha256 is the deterministic import identity."
+    },
+    {
+      "source_id": "semiconductor-capex-database-v0.4",
+      "type": "xlsx",
+      "expected_path": "/mnt/data/semiconductor_capex_database_v0_4.xlsx",
+      "status": "source_artifact_missing",
+      "policy": "Do not reconstruct or infer rows. Import only after the exact workbook is available and archived."
+    }
+  ]
+}
