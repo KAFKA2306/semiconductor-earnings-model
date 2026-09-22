@@ -208,7 +208,14 @@ const apiPaths = {
   facilities:'api/v2/facilities/index.json', activity:'api/v2/events/index.json',
   evidence:'api/v2/events/index.json', quality:'api/v2/projects/index.json',
 };
-const payload = {view:normalizedView,rows,columns:activeColumns,defaultSort:'company',base,apiUrl:base + apiPaths[normalizedView]};
+const defaultSortByView = {activity:'target_date',quality:'quality'};
+const defaultDirByView = {activity:'desc',quality:'asc'};
+const payload = {
+  view:normalizedView, rows, columns:activeColumns,
+  defaultSort:defaultSortByView[normalizedView] || 'company',
+  defaultDir:defaultDirByView[normalizedView] || 'asc',
+  base, apiUrl:base + apiPaths[normalizedView],
+};
 const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['financials','≡','Financials'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['activity','↻','Activity'],['evidence','◎','Evidence'],['quality','!','Quality']];
 const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 ---
