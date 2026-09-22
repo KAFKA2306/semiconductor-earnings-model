@@ -190,10 +190,12 @@ def semantic_equal(a: Any, b: Any) -> bool:
 
 
 def provenance_identity(item: dict[str, Any]) -> tuple[Any, ...]:
-    """Identity of one imported source row, excluding volatile collection time.
+    """Identity of one imported raw row, excluding volatile/enrichable fields.
 
-    Replaying the same semantic raw snapshot must not append another provenance
-    entry just because imported_at changed.
+    doc_id is deliberately excluded: an old importer may have used the Sheet
+    row as a fallback document id while a newer importer can recover a stable
+    primary-document id from the same source URL. That is a schema upgrade of
+    the same raw row, not a second provenance record.
     """
     return (
         item.get("import_source"),
@@ -201,7 +203,6 @@ def provenance_identity(item: dict[str, Any]) -> tuple[Any, ...]:
         item.get("sheet_name"),
         item.get("source_row"),
         item.get("original_source_url"),
-        item.get("doc_id"),
         item.get("raw_snapshot_sha256"),
     )
 
@@ -214,11 +215,28 @@ def merge_provenance(existing: list[dict[str, Any]] | None, incoming: dict[str, 
         if current is None:
             by_identity[key] = dict(item)
             continue
-        current_time = str(current.get("imported_at") or "")
-        incoming_time = str(item.get("imported_at") or "")
-        if incoming_time and (not current_time or incoming_time < current_time):
-            by_identity[key] = dict(item)
+
+        merged = dict(current)
+        for field, value in item.items():
+            if merged.get(field) in (None, "") and value not in (None, ""):
+                merged[field] = value
+
+        current_doc = str(merged.get("doc_id") or "")
+        incoming_doc = str(item.get("doc_id") or "")
+        if current_doc.startswith("gsheet:") and incoming_doc and not incoming_doc.startswith("gsheet:"):
+            merged["doc_id"] = incoming_doc
+
+        times = [str(value) for value in (current.get("imported_at"), item.get("imported_at")) if value]
+        if times:
+            merged["imported_at"] = min(times)
+        by_identity[key] = merged
     return sorted(by_identity.values(), key=lambda item: tuple("" if value is None else str(value) for value in provenance_identity(item)))
+
+
+def same_import_origin(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    left = {provenance_identity(item) for item in (a.get("provenance") or [])}
+    right = {provenance_identity(item) for item in (b.get("provenance") or [])}
+    return bool(left & right)
 
 
 @dataclass(frozen=True)
@@ -323,6 +341,22 @@ def dedupe_or_conflict(
         equal = all(semantic_equal(current.get(field), incoming.get(field)) for field in compare_fields)
         if equal:
             duplicates += 1
+
+            # The exact same archived raw row may be replayed after the schema
+            # gains a new optional field. Backfill only missing values from
+            # that identical source row; never use this path to combine
+            # unrelated lower-priority evidence.
+            if same_import_origin(current, incoming):
+                for field, value in incoming.items():
+                    if field == "provenance":
+                        continue
+                    if current.get(field) in (None, "") and value not in (None, ""):
+                        current[field] = value
+                current_doc = str(current.get("source_doc_id") or "")
+                incoming_doc = str(incoming.get("source_doc_id") or "")
+                if current_doc.startswith("gsheet:") and incoming_doc and not incoming_doc.startswith("gsheet:"):
+                    current["source_doc_id"] = incoming_doc
+
             for p in incoming.get("provenance") or []:
                 current["provenance"] = merge_provenance(current.get("provenance"), p)
             index[key] = current
