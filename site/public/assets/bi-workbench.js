@@ -31,6 +31,10 @@
   const command = q('[data-command]');
   const commandInput = command?.querySelector('[data-command-input]');
   const commandResults = command?.querySelector('[data-command-results]');
+  const columnDialog = q('[data-column-dialog]');
+  const columnList = q('[data-column-list]');
+  const compareDialog = q('[data-compare-dialog]');
+  const compareBody = q('[data-compare-body]');
 
   const escapeHtml = value => String(value ?? '')
     .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
@@ -100,6 +104,8 @@
     state.activeId = params.get('row') || null;
     const selected = (params.get('compare') || '').split(',').filter(Boolean);
     state.selected = new Set(selected);
+    const cols = (params.get('cols') || '').split(',').filter(Boolean);
+    if (cols.length) state.visibleColumns = new Set(cols.filter(key => columns.some(c => c.key === key)));
     if (searchInput) searchInput.value = state.query;
     for (const key of ['country','role','quality','status']) {
       const el = q('[data-filter="' + key + '"]');
@@ -118,6 +124,9 @@
     if (state.sortDir === 'desc') params.set('dir','desc');
     if (state.activeId) params.set('row', state.activeId);
     if (state.selected.size) params.set('compare',[...state.selected].join(','));
+    const defaultCols = columns.map(c => c.key);
+    const visible = [...state.visibleColumns];
+    if (visible.length !== defaultCols.length || visible.some((key,idx)=>key !== defaultCols[idx])) params.set('cols',visible.join(','));
     const qs = params.toString();
     history.replaceState(null,'',location.pathname + (qs ? '?' + qs : ''));
   };
@@ -151,6 +160,7 @@
   };
 
   const renderTable = () => {
+    qa('[data-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-col'))));
     const visible = filteredRows();
     if (resultCount) resultCount.textContent = visible.length.toLocaleString();
     if (!tableBody) return;
@@ -177,6 +187,45 @@
         if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openInspector(tr.getAttribute('data-row')); }
       });
     });
+  };
+
+  const renderColumnDialog = () => {
+    if (!columnList) return;
+    columnList.innerHTML = columns.map(col => {
+      const locked = col.key === 'select' || col.key === 'company';
+      return '<label class="wb-column-item"><input type="checkbox" data-column-toggle="' + escapeHtml(col.key) + '"' +
+        (state.visibleColumns.has(col.key) ? ' checked' : '') + (locked ? ' disabled' : '') + '><span>' + escapeHtml(col.label || col.key) + '</span></label>';
+    }).join('');
+    [...columnList.querySelectorAll('[data-column-toggle]')].forEach(input => input.addEventListener('change',() => {
+      const key=input.getAttribute('data-column-toggle');
+      if(input.checked) state.visibleColumns.add(key); else state.visibleColumns.delete(key);
+      state.visibleColumns.add('select'); state.visibleColumns.add('company');
+      renderTable(); writeUrl();
+    }));
+  };
+
+  const compareValue = (row, key) => {
+    if (key === 'capex') return formatCapex(row).replace(/<[^>]+>/g,'');
+    if (key === 'capacity') {
+      if (row.capacity_before == null && row.capacity_after == null) return '—';
+      return String(row.capacity_before ?? '—') + ' → ' + String(row.capacity_after ?? '—');
+    }
+    const v = cellValue(row,key);
+    return v == null || v === '' ? '—' : String(v);
+  };
+
+  const openCompare = () => {
+    if (!compareDialog || !compareBody) return;
+    const selectedRows = rows.filter(r => state.selected.has(r.id));
+    if (!selectedRows.length) return;
+    const compareCols = columns.filter(c => !['select','company'].includes(c.key) && state.visibleColumns.has(c.key));
+    compareBody.innerHTML = '<table class="wb-compare-table"><thead><tr><th>Metric</th>' +
+      selectedRows.map(r=>'<th>' + escapeHtml(r.company || r.name || r.id) + '<br><small>' + escapeHtml(r.project_name || r.ticker || r.entity_id || '') + '</small></th>').join('') +
+      '</tr></thead><tbody>' +
+      compareCols.map(col=>'<tr><td class="row-label">' + escapeHtml(col.label) + '</td>' +
+        selectedRows.map(r=>'<td class="' + (col.numeric?'num':'') + '">' + escapeHtml(compareValue(r,col.key)) + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table>';
+    compareDialog.showModal();
   };
 
   const renderCompare = () => {
@@ -317,18 +366,24 @@
     renderTable();writeUrl();
   });
   q('[data-save-view]')?.addEventListener('click',saveView);
-  q('[data-copy-view]')?.addEventListener('click',copyView);
+  qa('[data-copy-view]').forEach(btn=>btn.addEventListener('click',copyView));
+  q('[data-open-columns]')?.addEventListener('click',()=>{renderColumnDialog();columnDialog?.showModal()});
+  q('[data-close-columns]')?.addEventListener('click',()=>columnDialog?.close());
+  q('[data-open-compare]')?.addEventListener('click',openCompare);
+  q('[data-close-compare]')?.addEventListener('click',()=>compareDialog?.close());
   q('[data-export-visible]')?.addEventListener('click',()=>exportRows('visible'));
   q('[data-export-selected]')?.addEventListener('click',()=>exportRows('selected'));
   q('[data-clear-selection]')?.addEventListener('click',()=>{state.selected.clear();renderCompare();renderTable();writeUrl()});
   q('[data-open-command]')?.addEventListener('click',()=>{renderCommand('');command?.showModal();commandInput?.focus()});
   commandInput?.addEventListener('input',()=>renderCommand(commandInput.value));
   command?.addEventListener('click',ev=>{if(ev.target===command)command.close()});
+  columnDialog?.addEventListener('click',ev=>{if(ev.target===columnDialog)columnDialog.close()});
+  compareDialog?.addEventListener('click',ev=>{if(ev.target===compareDialog)compareDialog.close()});
   document.addEventListener('keydown',ev=>{
     if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==='k'){ev.preventDefault();renderCommand('');command?.showModal();commandInput?.focus()}
     if(ev.key==='Escape'&&state.activeId)closeInspector();
   });
 
-  renderTable(); renderCompare();
+  renderColumnDialog(); renderTable(); renderCompare();
   if(state.activeId) openInspector(state.activeId);
 })();
