@@ -31,11 +31,16 @@ def build_projection(root: Path = ROOT) -> dict[str, list[list[Any]]]:
     economics = (load_json(root / "data/derived/project_economics.json", {}) or {}).get("projects", [])
     decision = (load_json(root / "data/derived/decision_evidence.json", {}) or {}).get("rows", [])
 
-    company_headers = ["entity_id", "company_name", "ticker", "security_code", "cik", "edinet_code", "country", "currency", "role", "index_membership"]
+    company_headers = [
+        "entity_id", "company_name", "aliases", "ticker", "ticker_aliases",
+        "security_code", "security_codes", "cik", "edinet_code", "country",
+        "currency", "role", "role_aliases", "index_membership",
+    ]
     company_rows = []
     for entity in registry.get("entities", []):
         row = dict(entity)
-        row["index_membership"] = json.dumps(entity.get("index_membership", []), ensure_ascii=False, sort_keys=True)
+        for field in ("aliases", "ticker_aliases", "security_codes", "role_aliases", "index_membership"):
+            row[field] = json.dumps(entity.get(field, []), ensure_ascii=False, sort_keys=True)
         company_rows.append(row)
 
     fact_headers = ["fact_id", "entity_id", "metric", "value", "unit", "period_start", "period_end", "fiscal_year", "period_type", "source_system", "source_doc_id", "source_url", "native_concept", "quality_flag", "null_reason"]
