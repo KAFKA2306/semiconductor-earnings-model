@@ -89,3 +89,7 @@ a{color:var(--wb-accent)}button:focus-visible,a:focus-visible,input:focus-visibl
 .wb-history-chart polyline{fill:none;stroke:currentColor;stroke-width:1.6}.wb-history-chart circle{fill:#fff;stroke:currentColor;stroke-width:1.4}
 .wb-history-table-wrap{overflow:auto;border:1px solid var(--wb-line)}.wb-history-table{width:100%;border-collapse:collapse;font-size:10px;font-variant-numeric:tabular-nums}
 .wb-history-table th,.wb-history-table td{padding:6px 7px;border-bottom:1px solid var(--wb-line);text-align:left;white-space:nowrap}.wb-history-table th{background:#f9fafb;color:#667085}.wb-history-table td.num{text-align:right}
+
+.wb-filter-chips{display:flex;align-items:center;gap:4px;min-width:0;overflow-x:auto}
+.wb-filter-chip{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 7px;border:1px solid #84adff;background:#eff4ff;color:#1849a9;white-space:nowrap;cursor:pointer;font-size:10px}
+.wb-filter-chip.exclude{border-color:#f7b27a;background:#fff4ed;color:#b54708}.wb-filter-chip b{font-size:12px}
