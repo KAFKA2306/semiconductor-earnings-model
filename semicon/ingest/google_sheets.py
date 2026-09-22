@@ -821,6 +821,21 @@ def main(argv: list[str] | None = None) -> int:
         blob = fetch_google_sheet_xlsx(args.spreadsheet_id, token)
         source_name = "google_sheets"
     snapshot = parse_xlsx_bytes(blob, spreadsheet_id=args.spreadsheet_id, imported_at=imported_at, source_name=source_name)
+
+    # Replaying an already archived semantic snapshot must be byte-stable.
+    # Preserve the first recorded import timestamp instead of turning every
+    # deterministic replay into a new raw-manifest commit.
+    existing_manifest_path = (
+        args.root
+        / "data/raw/google_sheets_import"
+        / str(args.spreadsheet_id)
+        / str(snapshot.get("source_sha256"))
+        / "source_manifest.json"
+    )
+    existing_manifest = load_json(existing_manifest_path, {}) or {}
+    if existing_manifest.get("source_sha256") == snapshot.get("source_sha256") and existing_manifest.get("imported_at"):
+        snapshot["imported_at"] = existing_manifest["imported_at"]
+
     report, payload = build_import(snapshot, root=args.root)
     print(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2))
 
