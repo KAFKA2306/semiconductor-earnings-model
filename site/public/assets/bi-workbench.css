@@ -109,3 +109,23 @@ a{color:var(--wb-accent)}button:focus-visible,a:focus-visible,input:focus-visibl
 .wb-export-grid button:hover{border-color:#84adff;background:#f5f8ff}.wb-export-grid strong,.wb-export-grid small{display:block}
 .wb-export-grid small{margin-top:4px;color:#667085;line-height:1.35}
 @media(max-width:760px){.wb-linked-grid,.wb-export-grid{grid-template-columns:1fr}}
+
+.wb-mobile-menu{display:none}
+.wb-linked-strip{display:flex;align-items:center;gap:12px;min-height:34px;padding:5px 10px;border-bottom:1px solid var(--wb-line);background:#fff;font-size:10px;white-space:nowrap;overflow-x:auto}
+.wb-linked-strip[hidden]{display:none}.wb-linked-strip>strong{font-size:11px;color:var(--wb-ink);margin-right:4px}.wb-linked-strip span{color:var(--wb-muted)}.wb-linked-strip span b{color:var(--wb-ink);font-variant-numeric:tabular-nums}
+.wb-table th[data-sort-dir=asc]::after{content:" ▲";font-size:8px;color:var(--wb-accent)}
+.wb-table th[data-sort-dir=desc]::after{content:" ▼";font-size:8px;color:var(--wb-accent)}
+.wb-raw-record{white-space:pre-wrap;overflow-wrap:anywhere;font:10px/1.5 ui-monospace,monospace;background:#f9fafb;border:1px solid #eaecf0;padding:8px;margin:0}
+.wb-mobile-nav{width:min(360px,calc(100% - 20px));border:1px solid var(--wb-line-strong);padding:0;background:#fff;color:var(--wb-ink)}
+.wb-mobile-nav::backdrop{background:rgba(16,24,40,.45)}
+.wb-mobile-nav-head{display:flex;align-items:center;justify-content:space-between;min-height:46px;padding:0 12px;border-bottom:1px solid var(--wb-line)}
+.wb-mobile-nav nav{display:grid;padding:6px}
+.wb-mobile-nav nav a{display:flex;align-items:center;gap:10px;min-height:42px;padding:0 10px;color:var(--wb-ink);text-decoration:none;border:1px solid transparent;border-radius:4px}
+.wb-mobile-nav nav a:hover,.wb-mobile-nav nav a[aria-current=page]{background:#f2f4f7;border-color:var(--wb-line)}
+.wb-mobile-nav .ico{width:18px;color:var(--wb-muted);font-family:ui-monospace,monospace}
+@media(max-width:760px){
+  .wb-mobile-menu{display:inline-flex;align-items:center}
+  .wb-topbar{gap:5px}
+  .wb-topbar>.wb-top-action:not(.wb-mobile-menu):not([data-copy-view]):not([data-open-export]){display:none}
+  .wb-linked-strip{padding-inline:6px}
+}
