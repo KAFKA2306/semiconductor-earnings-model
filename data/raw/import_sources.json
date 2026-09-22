@@ -16,6 +16,16 @@
       "expected_path": "/mnt/data/semiconductor_capex_database_v0_4.xlsx",
       "status": "source_artifact_missing",
       "policy": "Do not reconstruct or infer rows. Import only after the exact workbook is available and archived."
+    },
+    {
+      "source_id": "zacks-sox-provider-2026-09-23",
+      "type": "provider_snapshot",
+      "path": "data/raw/provider_snapshots/zacks_sox_2026-09-23.json",
+      "provider": "Zacks Investment Research via ChatGPT MCP",
+      "retrieved_at": "2026-09-23",
+      "status": "archived",
+      "scope": "SOX30 latest actuals, annual cash flow, F1/F2 consensus, market snapshot, SOXQ/DRAM holdings",
+      "policy": "Secondary provider. Preserve separately from primary-source actuals; do not silently overwrite issuer/SEC/EDINET facts."
     }
   ]
 }
