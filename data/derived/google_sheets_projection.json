@@ -38,6 +38,7 @@
         "capex_plan_high",
         "capex_actual",
         "currency",
+        "capacity_metric",
         "capacity_before",
         "capacity_after",
         "capacity_change",
@@ -70,6 +71,7 @@
         null,
         null,
         "USD",
+        null,
         1,
         2,
         null,
@@ -105,6 +107,7 @@
         null,
         null,
         null,
+        null,
         "USD mm",
         null,
         null,
@@ -134,6 +137,7 @@
         120000,
         null,
         "JPY",
+        null,
         1,
         7,
         null,
@@ -172,6 +176,7 @@
         null,
         null,
         null,
+        null,
         "Long-term HBM and DRAM demand",
         null,
         null,
@@ -198,6 +203,7 @@
         56000,
         null,
         "USD",
+        null,
         70,
         80,
         null,
@@ -2318,6 +2324,978 @@
         "source_url",
         "source_system",
         "quality_flag"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|285A",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|3132",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|3436",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4021",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4043",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4063",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4186",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4203",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4272",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4401",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4626",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|4980",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|5016",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6146",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6315",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6323",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6525",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6526",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6723",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6728",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6758",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6857",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6890",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6920",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|6963",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|7729",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|7735",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|7741",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|8035",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:Nikkei Semiconductor Stock Index|2026-09-18|8154",
+        "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+        "official_index_or_imported_index_source",
+        "Verified official"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AAPL",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ABNB",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ADBE",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ADI",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|ADI",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ADP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ADSK",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AEP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ALAB",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|ALAB",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ALNY",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|GOOG",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|GOOGL",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AMAT",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|AMAT",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AMD",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|AMD",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AMGN",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AMZN",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|APP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ARM",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|ARM",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ASML",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|ASML",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AVGO",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|AVGO",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|AXON",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|BKNG",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|BKR",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CCEP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CDNS",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CEG",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CMCSA",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|COHR",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|COST",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CPRT",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|CRDO",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CRWD",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CRWV",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CSCO",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CSX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|CTAS",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|DASH",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|DDOG",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|DXCM",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|EA",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|ENTG",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|EXC",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|FANG",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|FAST",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|FER",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|FTNT",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|GEHC",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|GFS",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|GILD",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|HON",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|HONA",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|IDXX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|INTC",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|INTC",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|INTU",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ISRG",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|KDP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|KHC",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|KLAC",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|KLAC",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|LIN",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|LITE",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|LRCX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|LRCX",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MAR",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MCHP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|MCHP",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MDLZ",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MELI",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|META",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MNST",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MPWR",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|MPWR",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MRVL",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|MRVL",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MSFT",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MSTR",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|MTSI",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|MU",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|MU",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|NBIS",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|NFLX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|NVDA",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|NVDA",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:SOX|2026-09-04|NVMI",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|NXPI",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|NXPI",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ODFL",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|ON",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ORLY",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|PANW",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|PAYX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|PCAR",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|PDD",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|PEP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|PLTR",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|PYPL",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|QCOM",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|QCOM",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:SOX|2026-09-04|QRVO",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|REGN",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|RKLB",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|RMBS",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ROP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|ROST",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|SBUX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|SHOP",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|SNDK",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|SNPS",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|STX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|SWKS",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|TER",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|TER",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|TMUS",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|TRI",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|TSLA",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|TSM",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|TTWO",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|TXN",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:SOX|2026-09-04|TXN",
+        "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+        "official_index_or_imported_index_source",
+        "Refresh required: 2026-09-21 effective reconstitution"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|VRTX",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|WBD",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|WDAY",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|WDC",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|WMT",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
+      ],
+      [
+        "index:NASDAQ-100|2026-06-30|XEL",
+        "https://equibles.com/indexes/nasdaq-100",
+        "official_index_or_imported_index_source",
+        "Needs current official check"
       ],
       [
         "gsheet:1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ:CapEx_Events:5",
