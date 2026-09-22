@@ -1,0 +1,235 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+const { view = 'projects' } = Astro.props;
+const cwd = process.cwd();
+const root = cwd.endsWith('site') ? path.resolve(cwd, '..') : cwd;
+const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
+const base = import.meta.env.BASE_URL;
+const buildSha = import.meta.env.PUBLIC_BUILD_SHA || 'local';
+
+const entitiesDoc = read('site/public/api/v2/entities/index.json');
+const projectsDoc = read('site/public/api/v2/projects/index.json');
+const eventsDoc = read('site/public/api/v2/events/index.json');
+const facilitiesDoc = read('site/public/api/v2/facilities/index.json');
+const commitmentsDoc = read('site/public/api/v2/customer-commitments/index.json');
+const backlogDoc = read('site/public/api/v2/orders-backlog/index.json');
+const factsDoc = read('site/public/api/v2/facts/index.json');
+
+const entities = entitiesDoc.entities || [];
+const projects = projectsDoc.projects || [];
+const events = eventsDoc.events || [];
+const facilities = facilitiesDoc.facilities || [];
+const commitments = commitmentsDoc.commitments || [];
+const backlog = backlogDoc.backlog || [];
+const facts = factsDoc.facts || [];
+const entityMap = new Map(entities.map((e) => [e.entity_id || e.id, e]));
+const prov = (row) => row?.provenance?.[0] || {};
+const capexAmount = (project) => project.capex_plan || project.capex_actual || null;
+const qualityLabel = (q) => q === 'primary_source_extracted' ? 'Primary' : q === 'imported_unverified' ? 'Imported' : (q || 'Unknown');
+
+const projectRows = projects.map((p) => {
+  const e = entityMap.get(p.entity_id) || {};
+  const pv = prov(p);
+  return {
+    id: p.project_id, type: 'project', entity_id: p.entity_id,
+    company: e.company_name || e.name || p.entity_id,
+    ticker: e.security_code || e.ticker || p.entity_id,
+    role: e.role || '', country: e.country || '',
+    project_name: p.project_name, product: p.product, technology: p.technology,
+    location: p.location, status: p.status, event_type: p.event_type,
+    capex: capexAmount(p), currency: p.currency,
+    capacity_before: p.capacity_before, capacity_after: p.capacity_after,
+    capacity_metric: p.capacity_metric, capacity_unit: p.capacity_unit,
+    target_date: p.period_end || p.planned_start || p.production_start,
+    period_end: p.period_end, production_start: p.production_start,
+    demand_evidence: p.demand_evidence, customer_commitment: p.customer_commitment,
+    quality: p.quality_flag, quality_label: qualityLabel(p.quality_flag),
+    source_system: p.source_system, source_url: p.source_url, source_doc_id: p.source_doc_id,
+    import_source: pv.import_source, import_record_id: pv.import_record_id, imported_at: pv.imported_at,
+    raw: p,
+  };
+});
+
+const projectByEntity = new Map();
+for (const row of projectRows) {
+  if (!projectByEntity.has(row.entity_id)) projectByEntity.set(row.entity_id, []);
+  projectByEntity.get(row.entity_id).push(row);
+}
+
+const companyRows = entities.map((e) => {
+  const id = e.entity_id || e.id;
+  const ps = projectByEntity.get(id) || [];
+  const primary = ps.filter((p) => p.quality === 'primary_source_extracted').length;
+  const capacity = ps.filter((p) => p.capacity_before != null || p.capacity_after != null).length;
+  const pv = prov(e);
+  return {
+    id, type: 'company', entity_id: id,
+    company: e.company_name || e.name || id, name: e.company_name || e.name || id,
+    ticker: e.security_code || e.ticker || id, role: e.role || '', country: e.country || '',
+    status: ps.length ? 'Tracked' : 'No canonical projects',
+    project_count: ps.length, capacity_projects: capacity, primary_evidence: primary,
+    quality: primary ? 'primary_source_extracted' : (pv.import_source ? 'imported_unverified' : ''),
+    quality_label: primary ? 'Primary' : (pv.import_source ? 'Imported' : 'Unknown'),
+    source_system: pv.import_source || '', source_url: pv.original_source_url || e.index_membership?.[0]?.source_url || null,
+    source_doc_id: pv.doc_id || null, import_source: pv.import_source,
+    import_record_id: pv.import_record_id, imported_at: pv.imported_at, raw: e,
+  };
+});
+
+const capacityRows = projectRows.filter((r) => r.capacity_before != null || r.capacity_after != null || r.capacity_metric);
+const evidenceRows = events.map((ev) => {
+  const e = entityMap.get(ev.entity_id) || {};
+  const pv = prov(ev);
+  return {
+    id: ev.event_id, type: 'evidence', entity_id: ev.entity_id,
+    company: e.company_name || e.name || ev.entity_id, ticker: e.security_code || e.ticker || ev.entity_id,
+    role: e.role || '', country: e.country || '', project_name: ev.project_name,
+    status: ev.status, event_type: ev.event_type, target_date: ev.period_end || ev.announcement_date,
+    evidence: ev.evidence_text, quality: ev.quality_flag, quality_label: qualityLabel(ev.quality_flag),
+    source_system: ev.source_system, source_url: ev.source_url, source_doc_id: ev.source_doc_id,
+    import_source: pv.import_source, import_record_id: pv.import_record_id, imported_at: pv.imported_at, raw: ev,
+  };
+});
+
+const facilityRows = facilities.map((f) => {
+  const e = entityMap.get(f.entity_id) || {};
+  const pv = prov(f);
+  return {
+    id: f.facility_id, type: 'facility', entity_id: f.entity_id,
+    company: e.company_name || e.name || f.entity_id, ticker: e.security_code || e.ticker || f.entity_id,
+    role: e.role || '', country: f.country || e.country || '', project_name: f.facility_name,
+    location: f.location, status: 'Facility', target_date: f.fiscal_year ? String(f.fiscal_year) : '',
+    land_area_m2: f.land_area_m2, quality: f.quality_flag, quality_label: qualityLabel(f.quality_flag),
+    source_system: f.source_system, source_url: f.source_url, source_doc_id: f.source_doc_id,
+    import_source: pv.import_source, imported_at: pv.imported_at, raw: f,
+  };
+});
+
+const qualityRows = [...projectRows, ...evidenceRows, ...facilityRows].sort((a,b) => String(a.quality || '').localeCompare(String(b.quality || '')));
+const columns = {
+  projects: [
+    {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'project_name',label:'Project'},
+    {key:'capex',label:'CapEx',numeric:true},{key:'capacity',label:'Capacity',numeric:true},
+    {key:'status',label:'Status'},{key:'target_date',label:'Target'},{key:'country',label:'Country'},{key:'quality',label:'Evidence'},
+  ],
+  companies: [
+    {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'role',label:'Role'},{key:'country',label:'Country'},
+    {key:'project_count',label:'Projects',numeric:true},{key:'capacity_projects',label:'Capacity Projects',numeric:true},
+    {key:'primary_evidence',label:'Primary Evidence',numeric:true},{key:'status',label:'Coverage'},{key:'quality',label:'Evidence'},
+  ],
+  capacity: [
+    {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'project_name',label:'Project'},
+    {key:'capacity_metric',label:'Metric'},{key:'capacity',label:'Before → After',numeric:true},
+    {key:'capacity_unit',label:'Unit / Definition'},{key:'target_date',label:'Target'},{key:'status',label:'Status'},{key:'quality',label:'Evidence'},
+  ],
+  evidence: [
+    {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'project_name',label:'Event / Project'},
+    {key:'event_type',label:'Type'},{key:'status',label:'Status'},{key:'target_date',label:'Date'},
+    {key:'source_system',label:'Source'},{key:'quality',label:'Quality'},
+  ],
+  quality: [
+    {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'project_name',label:'Record'},
+    {key:'type',label:'Record Type'},{key:'quality',label:'Quality'},{key:'source_system',label:'Source'},
+    {key:'status',label:'Status'},{key:'target_date',label:'Date'},
+  ],
+  facilities: [
+    {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'project_name',label:'Facility'},
+    {key:'country',label:'Country'},{key:'location',label:'Location'},{key:'land_area_m2',label:'Land m²',numeric:true},
+    {key:'target_date',label:'FY'},{key:'quality',label:'Evidence'},
+  ],
+};
+const rowsByView = {projects:projectRows,companies:companyRows,capacity:capacityRows,evidence:evidenceRows,quality:qualityRows,facilities:facilityRows};
+const normalizedView = rowsByView[view] ? view : 'projects';
+const rows = rowsByView[normalizedView];
+const activeColumns = columns[normalizedView];
+const summary = {entities:entities.length,projects:projects.length,facilities:facilities.length,commitments:commitments.length,backlog:backlog.length,facts:facts.length};
+const titles = {
+  projects:['Projects','CapEx / capacity projects with source-level evidence'],
+  companies:['Companies','Canonical entity universe and evidence coverage'],
+  capacity:['Capacity','Physical capacity claims only. Allocation and utilization are not treated as expansion.'],
+  evidence:['Evidence','Events and disclosures, with provenance one click away'],
+  quality:['Data Quality','Primary, imported, missing and conflicting records'],
+  facilities:['Facilities','Canonical production / R&D / expansion locations'],
+};
+const [title, subtitle] = titles[normalizedView];
+const safeJson = (value) => JSON.stringify(value).replaceAll('<','\\u003c').replaceAll('>','\\u003e').replaceAll('&','\\u0026');
+const payload = {view:normalizedView,rows,columns:activeColumns,defaultSort:'company'};
+const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['evidence','◎','Evidence'],['quality','!','Quality']];
+const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
+---
+
+<link rel="stylesheet" href={${base} + 'assets/bi-workbench.css'} />
+<div class="wb-shell" data-workbench data-view={normalizedView} data-build-sha={buildSha}>
+  <aside class="wb-rail" aria-label="Workbench navigation">
+    <a class="wb-brand" href={base}><span>SEMICON LEDGER<small>RESEARCH WORKBENCH</small></span></a>
+    <nav class="wb-nav">
+      {nav.map(([key,icon,label]) => (
+        <a href={hrefFor(key)} aria-current={normalizedView === key ? 'page' : undefined}>
+          <span class="ico">{icon}</span><span class="label">{label}</span>
+        </a>
+      ))}
+    </nav>
+    <div class="wb-rail-foot">Canonical v2<br />NULL ≠ 0<br />Actual ≠ Guidance</div>
+  </aside>
+
+  <main class="wb-main">
+    <header class="wb-topbar">
+      <div class="wb-search">
+        <span aria-hidden="true">⌕</span>
+        <input data-search type="search" placeholder="Search company, ticker, project, technology…" aria-label="Search workbench" />
+        <span class="wb-kbd">/</span>
+      </div>
+      <button class="wb-top-action desktop-only" type="button" data-open-command>Command <span class="wb-kbd">⌘K</span></button>
+      <button class="wb-top-action desktop-only" type="button" data-save-view>Save view</button>
+      <button class="wb-top-action" type="button" data-copy-view>Share</button>
+      <button class="wb-top-action" type="button" data-export-visible>Export</button>
+    </header>
+
+    <section class="wb-context" aria-labelledby="wb-title">
+      <div class="wb-title"><h1 id="wb-title">{title}</h1><p>{subtitle}</p></div>
+      <div class="wb-summary" aria-label="Canonical coverage">
+        <span><b>{summary.entities}</b> entities</span><span><b>{summary.projects}</b> projects</span>
+        <span><b>{summary.facilities}</b> facilities</span><span><b>{summary.commitments}</b> commitments</span><span><b>{summary.facts}</b> facts</span>
+      </div>
+    </section>
+
+    <section class="wb-controls" aria-label="Screener controls">
+      <span class="wb-view-label">Screen</span>
+      <select class="wb-filter" data-filter="country" aria-label="Filter by country"><option value="">All countries</option></select>
+      <select class="wb-filter" data-filter="role" aria-label="Filter by role"><option value="">All roles</option></select>
+      <select class="wb-filter" data-filter="status" aria-label="Filter by status"><option value="">All status</option></select>
+      <select class="wb-filter" data-filter="quality" aria-label="Filter by evidence quality"><option value="">All evidence</option></select>
+      <button class="wb-control-btn" type="button" data-clear-filters>Clear</button>
+      <span class="wb-spacer"></span><span class="wb-view-label"><strong data-result-count>{rows.length}</strong> rows</span>
+    </section>
+
+    <div class="wb-workspace" data-workspace>
+      <section class="wb-grid-panel" aria-label={title + ' data grid'}>
+        <div class="wb-table-wrap">
+          <table class="wb-table">
+            <thead><tr>{activeColumns.map((col) => (
+              <th class={col.numeric ? 'num' : ''} data-sort={col.key === 'select' ? undefined : col.key} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
+            ))}</tr></thead>
+            <tbody data-table-body></tbody>
+          </table>
+        </div>
+      </section>
+      <aside class="wb-inspector" data-inspector aria-label="Record inspector"></aside>
+    </div>
+  </main>
+
+  <div class="wb-bottom" data-compare-bar aria-live="polite">
+    <div class="wb-bottom-inner"><strong><span data-compare-count>0</span> selected</strong>
+      <button type="button" data-export-selected>Export selected</button><button type="button" data-copy-view>Copy view URL</button><button type="button" data-clear-selection>Clear selection</button>
+    </div>
+  </div>
+
+  <dialog class="wb-command" data-command>
+    <input data-command-input type="search" placeholder="Search entity / project / ticker…" aria-label="Command palette search" />
+    <div class="wb-command-results" data-command-results></div>
+  </dialog>
+  <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
+  <script src={${base} + 'assets/bi-workbench.js'} defer></script>
+</div>
