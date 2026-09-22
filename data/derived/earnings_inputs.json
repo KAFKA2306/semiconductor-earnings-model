@@ -1,0 +1,70 @@
+{
+  "inputs": [
+    {
+      "capacity_growth": 1.0,
+      "confidence": "insufficient_for_earnings_projection",
+      "depreciation_increment": null,
+      "entity_id": "US:COHR",
+      "incremental_margin": null,
+      "incremental_revenue": null,
+      "incremental_units": null,
+      "production_start": null,
+      "project_id": "CAPEX-COHR-INP-2026",
+      "scenario": "unmodeled_until_explicit_driver_inputs",
+      "working_capital_increment": null
+    },
+    {
+      "capacity_growth": null,
+      "confidence": "insufficient_for_earnings_projection",
+      "depreciation_increment": null,
+      "entity_id": "US:INTC",
+      "incremental_margin": null,
+      "incremental_revenue": null,
+      "incremental_units": null,
+      "production_start": null,
+      "project_id": "CAPEX-INTC-COMMIT-2026",
+      "scenario": "unmodeled_until_explicit_driver_inputs",
+      "working_capital_increment": null
+    },
+    {
+      "capacity_growth": 6.0,
+      "confidence": "insufficient_for_earnings_projection",
+      "depreciation_increment": null,
+      "entity_id": "JP:5016",
+      "incremental_margin": null,
+      "incremental_revenue": null,
+      "incremental_units": null,
+      "production_start": null,
+      "project_id": "CAPEX-JP5016-20260616",
+      "scenario": "unmodeled_until_explicit_driver_inputs",
+      "working_capital_increment": null
+    },
+    {
+      "capacity_growth": null,
+      "confidence": "insufficient_for_earnings_projection",
+      "depreciation_increment": null,
+      "entity_id": "US:MU",
+      "incremental_margin": null,
+      "incremental_revenue": null,
+      "incremental_units": null,
+      "production_start": null,
+      "project_id": "CAPEX-MU-2026",
+      "scenario": "unmodeled_until_explicit_driver_inputs",
+      "working_capital_increment": null
+    },
+    {
+      "capacity_growth": null,
+      "confidence": "insufficient_for_earnings_projection",
+      "depreciation_increment": null,
+      "entity_id": "US:TSM",
+      "incremental_margin": null,
+      "incremental_revenue": null,
+      "incremental_units": null,
+      "production_start": null,
+      "project_id": "CAPEX-TSM-2026",
+      "scenario": "unmodeled_until_explicit_driver_inputs",
+      "working_capital_increment": null
+    }
+  ],
+  "schema_version": "earnings-inputs.v1"
+}

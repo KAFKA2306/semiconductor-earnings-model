@@ -1,0 +1,22 @@
+{
+  "imported_at": "2026-09-22T00:42:49.545641Z",
+  "native_archive": "source.xlsx",
+  "rows_read": 328,
+  "schema_version": "google-sheets-raw-manifest.v1",
+  "sheet_names": [
+    "README",
+    "Dashboard",
+    "Issuer_Master",
+    "Index_Membership",
+    "CapEx_Events",
+    "Financials",
+    "Demand_Commitments",
+    "Capacity_Metrics",
+    "Decision_View",
+    "Sources"
+  ],
+  "source_binary_sha256": "101e506d876da0b8794722dd4d99116c2ab91def1c6ed1d44bf6b8a24f631d90",
+  "source_name": "google_sheets",
+  "source_sha256": "a5ab21206c397dcf7d7603bb32c0a8e7cd6636d2b4efedbe3d88ff5c8a79a8dd",
+  "spreadsheet_id": "1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ"
+}

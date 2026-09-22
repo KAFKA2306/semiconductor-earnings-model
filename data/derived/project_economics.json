@@ -1,0 +1,81 @@
+{
+  "assumptions": {
+    "incremental_ebit_margin": 0.25,
+    "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+    "simple_payback_years": 5.0,
+    "tax_rate": 0.3
+  },
+  "projects": [
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "USD",
+      "entity_id": "US:COHR",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-COHR-INP-2026",
+      "required_annual_revenue_high": null,
+      "required_annual_revenue_low": null
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "USD",
+      "entity_id": "US:INTC",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-INTC-COMMIT-2026",
+      "required_annual_revenue_high": 10400.0,
+      "required_annual_revenue_low": 10400.0
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:5016",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP5016-20260616",
+      "required_annual_revenue_high": 137142.85714285716,
+      "required_annual_revenue_low": null
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "USD",
+      "entity_id": "US:MU",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-MU-2026",
+      "required_annual_revenue_high": 30857.14285714286,
+      "required_annual_revenue_low": 30857.14285714286
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "USD",
+      "entity_id": "US:TSM",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-TSM-2026",
+      "required_annual_revenue_high": 64000.00000000001,
+      "required_annual_revenue_low": 59428.571428571435
+    }
+  ],
+  "schema_version": "project-economics.v1"
+}
