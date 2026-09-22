@@ -19,3 +19,29 @@ This repository is a reproducible primary-financial-facts system.
 A successful command is not the business postcondition. Verify the ledger row, manifest/hash, audit result, generated artifact, API, or deployed surface that owns the claim.
 
 Repository merge and product/data release are separate. Release requires direct verification of the merged revision and actual published/live artifact or surface.
+
+
+## 1. Fixed Point
+
+A claim becomes work only when deleting it makes one acceptance criterion unprovable.
+
+### Functional Contract
+
+- Data provenance is reproducible.
+- Canonical source identity and schema ownership remain explicit.
+- Derived values never overwrite observed facts.
+
+### Non-Functional Contract
+
+- Audit results can be replayed.
+- Observability is preserved.
+- NULL remains distinct from zero and undisclosed remains explicit.
+
+### Operational Contract
+
+- Rollback remains possible.
+- Verify data contracts with `pytest` and repository checks before merge.
+- Preserve `data/earnings_ledger/` as the canonical earnings evidence boundary.
+- Preserve generated `audit_latest.json` evidence where the owning workflow requires it.
+- CI evidence lives under `.github/workflows/`.
+- Reversible changes must remain recoverable with normal Git history, including `git revert`.
