@@ -282,6 +282,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 
   <main class="wb-main">
     <header class="wb-topbar">
+      <button class="wb-top-action wb-mobile-menu" type="button" data-open-mobile-nav aria-label="Open navigation">Menu</button>
       <div class="wb-search">
         <span aria-hidden="true">⌕</span>
         <input data-search type="search" placeholder="Search company, ticker, project, technology…" aria-label="Search workbench" />
@@ -315,12 +316,14 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <span class="wb-spacer"></span><span class="wb-view-label"><strong data-result-count>{rows.length}</strong> rows</span>
     </section>
 
+    <section class="wb-linked-strip" data-linked-strip aria-label="Linked active context" hidden></section>
+
     <div class="wb-workspace" data-workspace>
       <section class="wb-grid-panel" aria-label={title + ' data grid'}>
         <div class="wb-table-wrap">
           <table class="wb-table">
             <thead><tr>{activeColumns.map((col) => (
-              <th class={col.numeric ? 'num' : ''} data-col={col.key} data-sort={col.key === 'select' ? undefined : col.key} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
+              <th class={col.numeric ? 'num' : ''} data-col={col.key} data-sort={col.key === 'select' ? undefined : col.key} aria-sort={col.key === 'select' ? undefined : 'none'} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
             ))}</tr></thead>
             <tbody data-table-body></tbody>
           </table>
@@ -336,6 +339,14 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
     </div>
   </div>
 
+  <dialog class="wb-mobile-nav" data-mobile-nav-dialog>
+    <div class="wb-mobile-nav-head"><strong>Research Workbench</strong><button class="wb-close" type="button" data-close-mobile-nav aria-label="Close navigation">×</button></div>
+    <nav aria-label="Mobile workbench navigation">
+      {nav.map(([key,icon,label]) => (
+        <a href={hrefFor(key)} aria-current={normalizedView === key ? 'page' : undefined}><span class="ico">{icon}</span><span>{label}</span></a>
+      ))}
+    </nav>
+  </dialog>
   <dialog class="wb-command" data-command>
     <input data-command-input type="search" placeholder="Search entity / project / ticker…" aria-label="Command palette search" />
     <div class="wb-command-results" data-command-results></div>
@@ -365,5 +376,6 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
     </div>
   </dialog>
   <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
+  <script src={base + 'assets/workspace-state.js'} defer></script>
   <script src={base + 'assets/bi-workbench.js'} defer></script>
 </div>
