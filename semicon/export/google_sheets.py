@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -121,17 +125,95 @@ def build_projection(root: Path = ROOT) -> dict[str, list[list[Any]]]:
     }
 
 
+def _google_json(url: str, token: str, *, method: str = "GET", payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+    if data is not None:
+        headers["Content-Type"] = "application/json; charset=utf-8"
+    request = urllib.request.Request(url, data=data, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            body = response.read()
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Google Sheets API failed: HTTP {exc.code}: {detail[:1000]}") from exc
+    return json.loads(body.decode("utf-8")) if body else {}
+
+
+def apply_projection(spreadsheet_id: str, projection: dict[str, list[list[Any]]], token: str) -> dict[str, Any]:
+    """Replace generated view tabs from canonical data using Google Sheets API v4."""
+    sid = urllib.parse.quote(spreadsheet_id, safe="")
+    base = f"https://sheets.googleapis.com/v4/spreadsheets/{sid}"
+    metadata = _google_json(base + "?fields=sheets.properties.title", token)
+    existing = {
+        str(sheet.get("properties", {}).get("title"))
+        for sheet in metadata.get("sheets", [])
+        if sheet.get("properties", {}).get("title")
+    }
+    missing = [name for name in GENERATED_TABS if name not in existing]
+    if missing:
+        _google_json(
+            base + ":batchUpdate",
+            token,
+            method="POST",
+            payload={"requests": [{"addSheet": {"properties": {"title": name}}} for name in missing]},
+        )
+
+    ranges = [f"{name}!A:ZZ" for name in GENERATED_TABS]
+    _google_json(base + "/values:batchClear", token, method="POST", payload={"ranges": ranges})
+
+    data = [
+        {
+            "range": f"{name}!A1",
+            "majorDimension": "ROWS",
+            "values": projection.get(name, [[]]),
+        }
+        for name in GENERATED_TABS
+    ]
+    result = _google_json(
+        base + "/values:batchUpdate",
+        token,
+        method="POST",
+        payload={"valueInputOption": "RAW", "includeValuesInResponse": False, "data": data},
+    )
+    return {
+        "spreadsheet_id": spreadsheet_id,
+        "tabs_created": missing,
+        "tabs_written": list(GENERATED_TABS),
+        "updated_cells": result.get("totalUpdatedCells", 0),
+        "updated_rows": result.get("totalUpdatedRows", 0),
+    }
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate Google Sheets view payload from canonical ledger.")
+    parser = argparse.ArgumentParser(description="Generate Google Sheets views from the canonical infrastructure ledger.")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--output-json", type=Path, default=Path("data/derived/google_sheets_projection.json"))
+    parser.add_argument("--spreadsheet-id", help="Target spreadsheet for --apply. The canonical ledger remains the source of truth.")
+    parser.add_argument("--apply", action="store_true", help="Replace generated tabs in the target Google Sheet.")
+    parser.add_argument("--access-token-env", default="GOOGLE_OAUTH_ACCESS_TOKEN")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
+
+    if args.apply and args.dry_run:
+        parser.error("--apply and --dry-run are mutually exclusive")
+    if args.apply and not args.spreadsheet_id:
+        parser.error("--spreadsheet-id is required with --apply")
+
     projection = build_projection(args.root)
-    summary = {name: max(len(rows) - 1, 0) for name, rows in projection.items()}
-    print(json.dumps(summary, ensure_ascii=False, sort_keys=True, indent=2))
+    summary: dict[str, Any] = {name: max(len(rows) - 1, 0) for name, rows in projection.items()}
     if not args.dry_run:
         write_json(args.output_json, {"schema_version": "google-sheets-projection.v1", "tabs": projection})
+
+    if args.apply:
+        token = os.getenv(args.access_token_env) or os.getenv("GOOGLE_SHEETS_BEARER_TOKEN")
+        if not token:
+            raise SystemExit(
+                f"Missing OAuth token. Set {args.access_token_env} or GOOGLE_SHEETS_BEARER_TOKEN with Sheets write scope."
+            )
+        summary["apply"] = apply_projection(args.spreadsheet_id, projection, token)
+
+    print(json.dumps(summary, ensure_ascii=False, sort_keys=True, indent=2))
     return 0
 
 
