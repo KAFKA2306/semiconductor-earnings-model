@@ -1,11 +1,11 @@
 {
   "commitment_count": 1,
   "conflicts": 0,
-  "duplicates": 0,
+  "duplicates": 26,
   "event_count": 16,
   "facility_count": 3,
   "project_count": 16,
-  "records_created": 26,
+  "records_created": 0,
   "schema_version": "company-ir-capex-seed-report.v1",
   "source_file": "data/raw/company_ir/capex_project_seed_v1.json",
   "sources": 8
