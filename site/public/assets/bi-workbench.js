@@ -235,6 +235,17 @@
   };
 
   const metric = (label,value) => '<div class="wb-metric"><span>' + escapeHtml(label) + '</span><strong>' + (value || '<span class="wb-null">—</span>') + '</strong></div>';
+  const formatFinancialValue = row => {
+    if (row.value == null) return '<span class="wb-null">—</span>';
+    const n=Number(row.value);
+    if(!Number.isFinite(n)) return escapeHtml(row.value);
+    if(row.unit==='USD' || row.unit==='JPY'){
+      if(Math.abs(n)>=1e9) return escapeHtml(row.unit) + ' ' + (n/1e9).toLocaleString(undefined,{maximumFractionDigits:2}) + 'B';
+      if(Math.abs(n)>=1e6) return escapeHtml(row.unit) + ' ' + (n/1e6).toLocaleString(undefined,{maximumFractionDigits:2}) + 'M';
+    }
+    if(row.unit==='ratio') return (n*100).toFixed(1) + '%';
+    return n.toLocaleString();
+  };
 
   const inspectorHtml = row => {
     const src = row.source_url ? '<a class="wb-source-link" href="' + escapeHtml(row.source_url) + '" target="_blank" rel="noreferrer"><span><strong>Open primary evidence ↗</strong><small>' + escapeHtml(row.source_system || 'source') + '</small></span><span>↗</span></a>' : '<div class="wb-source-link"><span><strong>No source URL</strong><small>Missing source link</small></span></div>';
@@ -248,13 +259,13 @@
     if (row.capex && (row.capex.low != null || row.capex.high != null)) active.add('CapEx');
     if (/build|construction|facility|plant/i.test((row.status || '') + ' ' + (row.project_name || ''))) active.add('Build');
     if (row.production_start || /operational|production|realized|ramping/i.test(row.status || '')) active.add('Prod');
-    return '<div class="wb-inspector-head"><div class="wb-inspector-headline"><div><div class="eyebrow">' + escapeHtml(row.entity_id || row.type || 'record') + '</div><h2>' + escapeHtml(row.project_name || row.company || row.name || row.id) + '</h2></div><button class="wb-close" type="button" data-close-inspector aria-label="Close inspector">×</button></div>' +
+    const metrics = row.type === 'financial'
+      ? metric('Value',formatFinancialValue(row)) + metric('Unit',escapeHtml(row.unit || '')) + metric('Value type',escapeHtml(row.value_type || '')) + metric('Period',escapeHtml(row.target_date || ''))
+      : metric('CapEx',capex) + metric('Capacity',capacity) + metric('Status',row.status ? escapeHtml(row.status) : '') + metric('Target',escapeHtml(row.target_date || row.period_end || row.production_start || ''));
+    return '<div class="wb-inspector-head"><div class="wb-inspector-headline"><div><div class="eyebrow">' + escapeHtml(row.entity_id || row.type || 'record') + '</div><h2>' + escapeHtml(row.project_name || row.concept_id || row.company || row.name || row.id) + '</h2></div><button class="wb-close" type="button" data-close-inspector aria-label="Close inspector">×</button></div>' +
       '<div class="wb-tabs"><button class="active" type="button">Overview</button><button type="button" data-tab-evidence>Evidence</button><button type="button" data-tab-raw>Raw</button></div></div>' +
       '<div class="wb-inspector-body">' +
-      '<div class="wb-metric-grid">' +
-      metric('CapEx',capex) + metric('Capacity',capacity) +
-      metric('Status',row.status ? escapeHtml(row.status) : '') + metric('Target',escapeHtml(row.target_date || row.period_end || row.production_start || '')) +
-      '</div>' +
+      '<div class="wb-metric-grid">' + metrics + '</div>' +
       '<div class="wb-stage">' + stages.map(s => '<span class="' + (active.has(s) ? 'on' : '') + '">' + s + '</span>').join('') + '</div>' +
       '<div class="wb-section"><h3>Company</h3><p><strong>' + escapeHtml(row.company || row.name || row.entity_id || '') + '</strong> · ' + escapeHtml(row.role || '') + (row.country ? ' · ' + escapeHtml(row.country) : '') + '</p></div>' +
       (row.product ? '<div class="wb-section"><h3>Product / Technology</h3><p>' + escapeHtml(row.product) + (row.technology ? ' · ' + escapeHtml(row.technology) : '') + '</p></div>' : '') +
