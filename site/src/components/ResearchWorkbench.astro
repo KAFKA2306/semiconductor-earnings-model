@@ -141,7 +141,19 @@ const financialRows = (financialDoc.views?.latest_actuals || []).map((o) => {
     raw: o,
   };
 });
-const activityRows = [...evidenceRows].sort((a,b) => String(b.target_date || '').localeCompare(String(a.target_date || '')) || String(b.imported_at || '').localeCompare(String(a.imported_at || '')));
+const classifyChange = (row) => {
+  const text = [row.event_type,row.status,row.project_name,row.evidence].filter(Boolean).join(' ').toLowerCase();
+  if (/guidance|forecast|outlook/.test(text)) return 'new_guidance';
+  if (/commitment|agreement|lta|customer/.test(text)) return 'customer_commitment';
+  if (/capacity|wafer|production capacity/.test(text)) return 'capacity_change';
+  if (/facility|fab|plant|site/.test(text)) return 'facility_change';
+  if (/stale|refresh|supersed/.test(text)) return 'source_refresh';
+  if (/conflict|reject/.test(text)) return 'quality_change';
+  if (/project|construction|build|ramp|production/.test(text)) return 'project_update';
+  return 'disclosure_update';
+};
+const activityRows = evidenceRows.map(row => ({...row,change_type:classifyChange(row)}))
+  .sort((a,b) => String(b.target_date || '').localeCompare(String(a.target_date || '')) || String(b.imported_at || '').localeCompare(String(a.imported_at || '')));
 const qualityRows = [...projectRows, ...evidenceRows, ...facilityRows].sort((a,b) => String(a.quality || '').localeCompare(String(b.quality || '')));
 const columns = {
   projects: [
@@ -165,7 +177,7 @@ const columns = {
     {key:'source_system',label:'Source'},{key:'quality',label:'Quality'},
   ],
   activity: [
-    {key:'select',label:'',width:34},{key:'target_date',label:'Date'},{key:'company',label:'Company'},
+    {key:'select',label:'',width:34},{key:'target_date',label:'Date'},{key:'change_type',label:'Canonical Change'},{key:'company',label:'Company'},
     {key:'project_name',label:'Event / Project'},{key:'event_type',label:'Type'},{key:'status',label:'Status'},
     {key:'source_system',label:'Source'},{key:'quality',label:'Quality'},
   ],
@@ -194,7 +206,7 @@ const titles = {
   projects:['Projects','CapEx / capacity projects with source-level evidence'],
   companies:['Companies','Canonical entity universe and evidence coverage'],
   capacity:['Capacity','Physical capacity claims only. Allocation and utilization are not treated as expansion.'],
-  activity:['Activity','Canonical disclosure and project events, newest first.'],
+  activity:['Activity','Canonical change semantics over source-traceable disclosures, newest first.'],
   evidence:['Evidence','Events and disclosures, with provenance one click away'],
   quality:['Data Quality','Primary, imported, missing and conflicting records'],
   facilities:['Facilities','Canonical production / R&D / expansion locations'],
@@ -290,7 +302,8 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       </div>
       <button class="wb-top-action desktop-only" type="button" data-open-command>Command <span class="wb-kbd">⌘K</span></button>
       <button class="wb-top-action desktop-only" type="button" data-open-views>Views</button>
-      <button class="wb-top-action desktop-only" type="button" data-save-view>Save view</button>
+      <button class="wb-top-action desktop-only" type="button" data-open-workspaces>Workspaces</button>
+      <button class="wb-top-action desktop-only" type="button" data-save-workspace>Save workspace</button>
       <button class="wb-top-action" type="button" data-copy-view>Share</button>
       <a class="wb-top-action" href={base + apiPaths[normalizedView]} target="_blank" rel="noreferrer">API</a>
       <button class="wb-top-action" type="button" data-open-export>Export</button>
@@ -312,6 +325,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <select class="wb-filter" data-filter="quality" aria-label="Filter by evidence quality"><option value="">All evidence</option></select>
       <button class="wb-control-btn" type="button" data-clear-filters>Clear</button>
       <button class="wb-control-btn" type="button" data-open-columns>Columns</button>
+      <button class="wb-control-btn" type="button" data-watchlist-filter>Watchlist <span data-watchlist-count>0</span></button>
       <div class="wb-filter-chips" data-cross-filter-chips aria-label="Active cross filters"></div>
       <span class="wb-spacer"></span><span class="wb-view-label"><strong data-result-count>{rows.length}</strong> rows</span>
     </section>
@@ -336,7 +350,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 
   <div class="wb-bottom" data-compare-bar aria-live="polite">
     <div class="wb-bottom-inner"><strong><span data-compare-count>0</span> selected</strong>
-      <button type="button" data-open-compare>Compare</button><button type="button" data-export-selected>Export selected</button><button type="button" data-copy-view>Copy view URL</button><button type="button" data-clear-selection>Clear selection</button>
+      <button type="button" data-open-compare>Compare</button><button type="button" data-add-watchlist>Add to watchlist</button><button type="button" data-export-selected>Export selected</button><button type="button" data-copy-view>Copy view URL</button><button type="button" data-clear-selection>Clear selection</button>
     </div>
   </div>
 
@@ -364,6 +378,18 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
     <div class="wb-modal-head"><h2>Saved views</h2><button class="wb-close" type="button" data-close-views aria-label="Close saved views">×</button></div>
     <div class="wb-modal-body" data-views-body></div>
   </dialog>
+  <dialog class="wb-modal" data-workspace-dialog>
+    <div class="wb-modal-head"><h2>Saved workspaces</h2><button class="wb-close" type="button" data-close-workspaces aria-label="Close workspaces">×</button></div>
+    <div class="wb-modal-body">
+      <div class="wb-workspace-controls">
+        <label><input type="checkbox" data-widget-visible="chart" checked /> Chart</label>
+        <label><input type="checkbox" data-widget-visible="linked" checked /> Linked context</label>
+        <label>Chart height <select data-widget-size="chartHeight"><option value="150">150</option><option value="170">170</option><option value="220">220</option><option value="300">300</option></select></label>
+        <label>Inspector width <select data-widget-size="inspectorWidth"><option value="320">320</option><option value="360">360</option><option value="390">390</option><option value="440">440</option></select></label>
+      </div>
+      <div data-workspace-list></div>
+    </div>
+  </dialog>
   <dialog class="wb-modal" data-export-dialog>
     <div class="wb-modal-head"><h2>Export reproducible slice</h2><button class="wb-close" type="button" data-close-export aria-label="Close export">×</button></div>
     <div class="wb-modal-body">
@@ -371,6 +397,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
         <button type="button" data-export-visible><strong>Displayed CSV</strong><small>Current filters, sort and visible columns</small></button>
         <button type="button" data-export-selected><strong>Selected CSV</strong><small>Only selected rows and visible columns</small></button>
         <button type="button" data-export-json><strong>Displayed JSON</strong><small>Current filtered records with canonical fields</small></button>
+        <button type="button" data-export-full><strong>Full canonical JSON</strong><small>All records in the canonical slice behind this view</small></button>
         <button type="button" data-export-meta><strong>Metadata JSON</strong><small>View schema, source API and semantic contract</small></button>
         <button type="button" data-copy-api><strong>Copy API URL</strong><small>Canonical source endpoint for this view</small></button>
       </div>
