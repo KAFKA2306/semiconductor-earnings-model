@@ -7,6 +7,7 @@ from semicon.export.google_sheets import build_projection
 from semicon.ingest.google_sheets import build_import, classify_sheet, persist_import
 from semicon.ledger import DERIVED_METRICS, dedupe_or_conflict, write_json
 from semicon.round_trip import validate_round_trip
+from semicon.source_round_trip import validate_source_round_trip
 from semicon.validate_canonical import validate
 
 
@@ -109,3 +110,45 @@ def test_archived_live_google_sheet_is_replayable():
     snap = parse_xlsx_bytes(matches[0].read_bytes(), spreadsheet_id="replay", imported_at="1970-01-01T00:00:00Z")
     assert len(snap["sheets"]) == 10
     assert sum(max(len(s["rows"]) - 1, 0) for s in snap["sheets"]) == 328
+
+
+def test_replay_same_sheet_row_does_not_multiply_provenance(tmp_path: Path):
+    root = empty_root(tmp_path)
+    first = snapshot()
+    report, payload = build_import(first, root=root)
+    assert report["conflicts"] == 0
+    persist_import(first, payload, root=root)
+
+    second = snapshot()
+    second["imported_at"] = "2026-09-22T09:00:00Z"
+    report2, payload2 = build_import(second, root=root)
+    assert report2["conflicts"] == 0
+    event = next(row for row in payload2["events"] if row["event_id"] == "E1")
+    project = next(row for row in payload2["projects"] if row["project_id"] == "P1")
+    assert len(event["provenance"]) == 1
+    assert len(project["provenance"]) == 1
+
+
+def test_source_url_generates_stable_primary_document_identity(tmp_path: Path):
+    root = empty_root(tmp_path)
+    source = snapshot()
+    # Remove an explicit document id while retaining the primary source URL.
+    header = source["sheets"][2]["rows"][0]
+    row = source["sheets"][2]["rows"][1]
+    row[header.index("source_doc_id")] = None
+    report, payload = build_import(source, root=root)
+    assert report["conflicts"] == 0
+    event = next(row for row in payload["events"] if row["event_id"] == "E1")
+    project = next(row for row in payload["projects"] if row["project_id"] == "P1")
+    assert event["source_doc_id"].startswith("urlsha256:")
+    assert project["source_doc_id"] == event["source_doc_id"]
+    assert event["provenance"][0]["import_record_id"] == "gsheet:test-sheet:CapEx_Projects:2"
+
+
+def test_live_source_semantics_survive_regeneration():
+    root = Path(__file__).resolve().parents[1]
+    matches = list((root / "data/raw/google_sheets_import").glob("*/**/source.xlsx"))
+    if not matches:
+        return
+    result = validate_source_round_trip(root)
+    assert result["status"] == "PASS", result
