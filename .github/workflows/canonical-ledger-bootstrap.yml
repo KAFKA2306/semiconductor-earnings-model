@@ -1,6 +1,13 @@
 name: Bootstrap canonical infrastructure ledger
 
 on:
+  push:
+    branches: [feat/canonical-capex-ledger]
+    paths:
+      - "semicon/**"
+      - "data/raw/google_sheets_import/**"
+      - "data/registry/entity_enrichment.json"
+      - ".github/workflows/canonical-ledger-bootstrap.yml"
   workflow_dispatch:
 
 permissions:
