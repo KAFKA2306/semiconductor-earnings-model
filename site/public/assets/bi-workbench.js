@@ -6,6 +6,7 @@
   const payload = payloadEl ? JSON.parse(payloadEl.textContent || '{}') : {};
   const rows = Array.isArray(payload.rows) ? payload.rows : [];
   const columns = Array.isArray(payload.columns) ? payload.columns : [];
+  const linkedByEntity = payload.linkedByEntity || {};
   const state = {
     query: '',
     country: '',
@@ -40,6 +41,7 @@
   const compareBody = q('[data-compare-body]');
   const viewsDialog = q('[data-views-dialog]');
   const viewsBody = q('[data-views-body]');
+  const exportDialog = q('[data-export-dialog]');
   const crossFilterChips = q('[data-cross-filter-chips]');
 
   const escapeHtml = value => String(value ?? '')
@@ -277,6 +279,8 @@
     const key=td.getAttribute('data-cell-key') || '';
     const value=td.getAttribute('data-cell-value') || '';
     const rowId=td.closest('[data-row]')?.getAttribute('data-row') || '';
+    const rowObj=rows.find(r=>r.id===rowId);
+    const entityId=rowObj?.entity_id || '';
     if(key === 'select') return;
     const menu=document.createElement('div');
     menu.className='wb-cell-menu';
@@ -286,6 +290,7 @@
       '<button type="button" data-cell-action="include">Filter by <strong>' + escapeHtml(value || 'blank') + '</strong></button>' +
       '<button type="button" data-cell-action="exclude">Exclude <strong>' + escapeHtml(value || 'blank') + '</strong></button>' +
       '<button type="button" data-cell-action="open">Open underlying row</button>' +
+      (entityId ? '<button type="button" data-cell-action="projects">Related projects</button><button type="button" data-cell-action="financials">Related financials</button><button type="button" data-cell-action="evidence">Related evidence</button>' : '') +
       '<button type="button" data-cell-action="copy">Copy value</button>' +
       ((state.includeFilters.length || state.excludeFilters.length) ? '<button type="button" data-cell-action="clear">Clear cross-filters</button>' : '');
     document.body.appendChild(menu);
@@ -293,6 +298,13 @@
     menu.querySelector('[data-cell-action="include"]')?.addEventListener('click',()=>addCrossFilter('include',key,value));
     menu.querySelector('[data-cell-action="exclude"]')?.addEventListener('click',()=>addCrossFilter('exclude',key,value));
     menu.querySelector('[data-cell-action="open"]')?.addEventListener('click',()=>{closeCellMenu();openInspector(rowId)});
+    for (const kind of ['projects','financials','evidence']) {
+      menu.querySelector('[data-cell-action="' + kind + '"]')?.addEventListener('click',()=>{
+        closeCellMenu();
+        const target = kind === 'projects' ? '' : kind + '/';
+        location.href=(payload.base || '/') + target + '?q=' + encodeURIComponent(entityId);
+      });
+    }
     menu.querySelector('[data-cell-action="copy"]')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(value);toast('Value copied')}catch{toast('Copy failed')}closeCellMenu()});
     menu.querySelector('[data-cell-action="clear"]')?.addEventListener('click',()=>{state.includeFilters=[];state.excludeFilters=[];closeCellMenu();renderCrossFilterChips();renderTable();writeUrl();toast('Cross-filters cleared')});
   };
@@ -395,6 +407,28 @@
       '<div class="wb-history-table-wrap"><table class="wb-history-table"><thead><tr><th>Period</th><th>Value</th><th>Source</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div></div>';
   };
 
+  const linkedWorkspaceHtml = row => {
+    const linked = linkedByEntity[row.entity_id] || {};
+    const specs = [
+      ['projects','Projects',''],
+      ['financials','Financials','financials/'],
+      ['facilities','Facilities','facilities/'],
+      ['evidence','Evidence','evidence/'],
+      ['commitments','Commitments','evidence/'],
+    ];
+    const cards = specs.map(([key,label,route]) => {
+      const items = Array.isArray(linked[key]) ? linked[key] : [];
+      const preview = items.slice(0,3).map(item => {
+        const name = item.project_name || item.concept_id || item.facility_name || item.customer_name || item.event_type || item.id || item.commitment_id || 'record';
+        const meta = item.target_date || item.period_end || item.status || item.quality || '';
+        return '<li><strong>' + escapeHtml(name) + '</strong>' + (meta ? '<small>' + escapeHtml(meta) + '</small>' : '') + '</li>';
+      }).join('');
+      return '<section class="wb-linked-card"><button type="button" data-linked-route="' + escapeHtml(route) + '" data-linked-entity="' + escapeHtml(row.entity_id || '') + '"><span>' + escapeHtml(label) + '</span><b>' + items.length + ' ↗</b></button>' +
+        (preview ? '<ul>' + preview + '</ul>' : '<p class="wb-null">No canonical records</p>') + '</section>';
+    }).join('');
+    return '<div class="wb-section wb-linked"><h3>Linked workspace</h3><div class="wb-linked-grid">' + cards + '</div></div>';
+  };
+
   const inspectorHtml = row => {
     const src = row.source_url ? '<a class="wb-source-link" href="' + escapeHtml(row.source_url) + '" target="_blank" rel="noreferrer"><span><strong>Open primary evidence ↗</strong><small>' + escapeHtml(row.source_system || 'source') + '</small></span><span>↗</span></a>' : '<div class="wb-source-link"><span><strong>No source URL</strong><small>Missing source link</small></span></div>';
     const capex = formatCapex(row);
@@ -417,6 +451,7 @@
       financialHistoryHtml(row) +
       '<div class="wb-stage">' + stages.map(s => '<span class="' + (active.has(s) ? 'on' : '') + '">' + s + '</span>').join('') + '</div>' +
       '<div class="wb-section"><h3>Company</h3><p><strong>' + escapeHtml(row.company || row.name || row.entity_id || '') + '</strong> · ' + escapeHtml(row.role || '') + (row.country ? ' · ' + escapeHtml(row.country) : '') + '</p></div>' +
+      linkedWorkspaceHtml(row) +
       (row.product ? '<div class="wb-section"><h3>Product / Technology</h3><p>' + escapeHtml(row.product) + (row.technology ? ' · ' + escapeHtml(row.technology) : '') + '</p></div>' : '') +
       ((row.demand_evidence || row.evidence) ? '<div class="wb-section"><h3>Evidence</h3><p>' + escapeHtml(row.demand_evidence || row.evidence) + '</p></div>' : '') +
       '<div class="wb-section"><h3>Provenance</h3>' + src +
@@ -432,6 +467,11 @@
     inspector.innerHTML = inspectorHtml(row);
     workspace.classList.add('has-inspector');
     q('[data-close-inspector]')?.addEventListener('click',closeInspector);
+    qa('[data-linked-route]').forEach(btn=>btn.addEventListener('click',()=>{
+      const route=btn.getAttribute('data-linked-route') || '';
+      const entity=btn.getAttribute('data-linked-entity') || '';
+      location.href=(payload.base || '/') + route + '?q=' + encodeURIComponent(entity);
+    }));
     renderTable();
     writeUrl();
   };
@@ -482,6 +522,37 @@
     const blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='semiconductor-' + payload.view + '-' + subset + '.csv'; a.click(); URL.revokeObjectURL(a.href);
     toast('CSV exported: ' + selectedRows.length + ' rows');
+  };
+
+  const downloadText = (filename,text,type='application/json;charset=utf-8') => {
+    const blob=new Blob([text],{type});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href);
+  };
+  const exportJson = () => {
+    const data=filteredRows().map(row=>row.raw || row);
+    downloadText('semiconductor-' + payload.view + '-displayed.json',JSON.stringify(data,null,2));
+    toast('Displayed JSON exported: ' + data.length + ' rows');
+  };
+  const exportMetadata = () => {
+    const metadata={
+      ...(payload.exportMeta || {}),
+      source_api:payload.apiUrl,
+      current_view:location.pathname + location.search,
+      filters:{
+        query:state.query,country:state.country,role:state.role,quality:state.quality,status:state.status,
+        include:state.includeFilters,exclude:state.excludeFilters,sort:state.sortKey,dir:state.sortDir,
+        visible_columns:[...state.visibleColumns],
+      },
+      displayed_row_count:filteredRows().length,
+      exported_at:new Date().toISOString(),
+    };
+    downloadText('semiconductor-' + payload.view + '-metadata.json',JSON.stringify(metadata,null,2));
+    toast('Metadata exported');
+  };
+  const copyApiUrl = async () => {
+    const url=new URL(payload.apiUrl || '',location.origin).href;
+    try{await navigator.clipboard.writeText(url);toast('Canonical API URL copied')}catch{toast('Copy failed')}
   };
 
   const getSavedViews = () => {
@@ -560,6 +631,8 @@
     for(const key of ['country','role','quality','status']){const el=q('[data-filter="'+key+'"]');if(el)el.value=''}
     renderTable();writeUrl();
   });
+  q('[data-open-export]')?.addEventListener('click',()=>exportDialog?.showModal());
+  q('[data-close-export]')?.addEventListener('click',()=>exportDialog?.close());
   q('[data-save-view]')?.addEventListener('click',saveView);
   q('[data-open-views]')?.addEventListener('click',()=>{renderSavedViews();viewsDialog?.showModal()});
   q('[data-close-views]')?.addEventListener('click',()=>viewsDialog?.close());
@@ -569,7 +642,10 @@
   q('[data-open-compare]')?.addEventListener('click',openCompare);
   q('[data-close-compare]')?.addEventListener('click',()=>compareDialog?.close());
   q('[data-export-visible]')?.addEventListener('click',()=>exportRows('visible'));
-  q('[data-export-selected]')?.addEventListener('click',()=>exportRows('selected'));
+  qa('[data-export-selected]').forEach(btn=>btn.addEventListener('click',()=>exportRows('selected')));
+  q('[data-export-json]')?.addEventListener('click',exportJson);
+  q('[data-export-meta]')?.addEventListener('click',exportMetadata);
+  q('[data-copy-api]')?.addEventListener('click',copyApiUrl);
   q('[data-clear-selection]')?.addEventListener('click',()=>{state.selected.clear();renderCompare();renderTable();writeUrl()});
   q('[data-open-command]')?.addEventListener('click',()=>{renderCommand('');command?.showModal();commandInput?.focus()});
   commandInput?.addEventListener('input',()=>renderCommand(commandInput.value));
@@ -577,6 +653,7 @@
   columnDialog?.addEventListener('click',ev=>{if(ev.target===columnDialog)columnDialog.close()});
   compareDialog?.addEventListener('click',ev=>{if(ev.target===compareDialog)compareDialog.close()});
   viewsDialog?.addEventListener('click',ev=>{if(ev.target===viewsDialog)viewsDialog.close()});
+  exportDialog?.addEventListener('click',ev=>{if(ev.target===exportDialog)exportDialog.close()});
   let virtualScrollFrame = 0;
   tableWrap?.addEventListener('scroll',()=>{
     if (tableWrap.dataset.virtualized !== 'true') return;
