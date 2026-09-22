@@ -6,6 +6,10 @@ const { view = 'projects' } = Astro.props;
 const cwd = process.cwd();
 const root = cwd.endsWith('site') ? path.resolve(cwd, '..') : cwd;
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
+const readOptional = (p, fallback) => {
+  const file = path.join(root, p);
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : fallback;
+};
 const base = import.meta.env.BASE_URL;
 const buildSha = import.meta.env.PUBLIC_BUILD_SHA || 'local';
 
@@ -16,6 +20,7 @@ const facilitiesDoc = read('site/public/api/v2/facilities/index.json');
 const commitmentsDoc = read('site/public/api/v2/customer-commitments/index.json');
 const backlogDoc = read('site/public/api/v2/orders-backlog/index.json');
 const factsDoc = read('site/public/api/v2/facts/index.json');
+const financialDoc = readOptional('site/public/api/v3/financial-database/index.json', {entities:[],views:{latest_actuals:[]},audit:{counts:{}}});
 
 const entities = entitiesDoc.entities || [];
 const projects = projectsDoc.projects || [];
@@ -24,6 +29,8 @@ const facilities = facilitiesDoc.facilities || [];
 const commitments = commitmentsDoc.commitments || [];
 const backlog = backlogDoc.backlog || [];
 const facts = factsDoc.facts || [];
+const financialEntities = financialDoc.entities || [];
+const financialEntityMap = new Map(financialEntities.map((e) => [e.id, e]));
 const entityMap = new Map(entities.map((e) => [e.entity_id || e.id, e]));
 const prov = (row) => row?.provenance?.[0] || {};
 const capexAmount = (project) => project.capex_plan || project.capex_actual || null;
@@ -107,6 +114,20 @@ const facilityRows = facilities.map((f) => {
   };
 });
 
+const financialRows = (financialDoc.views?.latest_actuals || []).map((o) => {
+  const e = financialEntityMap.get(o.entity_id) || {};
+  return {
+    id: o.id, type: 'financial', entity_id: o.entity_id,
+    company: e.name || e.company_name || o.entity_id, name: e.name || e.company_name || o.entity_id,
+    ticker: e.ticker || e.stock_code || o.entity_id, role: e.role || '', country: e.country || '',
+    concept_id: o.concept_id, value: o.value ?? o.value_low ?? o.value_high ?? null, unit: o.unit,
+    value_type: o.value_type, status: o.value_type, target_date: o.period_end || o.as_of,
+    period_end: o.period_end, source_system: o.source_tier, source_url: o.source_url,
+    source_doc_id: o.id, quality: o.source_tier === 'primary_regulatory' || o.source_tier === 'primary_company' ? 'primary_source_extracted' : o.source_tier,
+    quality_label: o.source_tier || 'Unknown', evidence: o.reported_text || '',
+    raw: o,
+  };
+});
 const qualityRows = [...projectRows, ...evidenceRows, ...facilityRows].sort((a,b) => String(a.quality || '').localeCompare(String(b.quality || '')));
 const columns = {
   projects: [
@@ -139,8 +160,13 @@ const columns = {
     {key:'country',label:'Country'},{key:'location',label:'Location'},{key:'land_area_m2',label:'Land m²',numeric:true},
     {key:'target_date',label:'FY'},{key:'quality',label:'Evidence'},
   ],
+  financials: [
+    {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'concept_id',label:'Metric'},
+    {key:'value',label:'Value',numeric:true},{key:'unit',label:'Unit'},{key:'value_type',label:'Value Type'},
+    {key:'target_date',label:'Period'},{key:'source_system',label:'Source Tier'},{key:'quality',label:'Evidence'},
+  ],
 };
-const rowsByView = {projects:projectRows,companies:companyRows,capacity:capacityRows,evidence:evidenceRows,quality:qualityRows,facilities:facilityRows};
+const rowsByView = {projects:projectRows,companies:companyRows,capacity:capacityRows,evidence:evidenceRows,quality:qualityRows,facilities:facilityRows,financials:financialRows};
 const normalizedView = rowsByView[view] ? view : 'projects';
 const rows = rowsByView[normalizedView];
 const activeColumns = columns[normalizedView];
@@ -152,11 +178,12 @@ const titles = {
   evidence:['Evidence','Events and disclosures, with provenance one click away'],
   quality:['Data Quality','Primary, imported, missing and conflicting records'],
   facilities:['Facilities','Canonical production / R&D / expansion locations'],
+  financials:['Financials','Latest source-traceable observations. Actual, guidance and derived values remain separate.'],
 };
 const [title, subtitle] = titles[normalizedView];
 const safeJson = (value) => JSON.stringify(value).replaceAll('<','\\u003c').replaceAll('>','\\u003e').replaceAll('&','\\u0026');
 const payload = {view:normalizedView,rows,columns:activeColumns,defaultSort:'company'};
-const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['evidence','◎','Evidence'],['quality','!','Quality']];
+const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['financials','≡','Financials'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['evidence','◎','Evidence'],['quality','!','Quality']];
 const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 ---
 
