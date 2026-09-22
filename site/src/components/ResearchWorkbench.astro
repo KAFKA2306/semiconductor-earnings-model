@@ -210,11 +210,49 @@ const apiPaths = {
 };
 const defaultSortByView = {activity:'target_date',quality:'quality'};
 const defaultDirByView = {activity:'desc',quality:'asc'};
+const financialByEntity = new Map();
+for (const row of financialRows) {
+  if (!financialByEntity.has(row.entity_id)) financialByEntity.set(row.entity_id, []);
+  financialByEntity.get(row.entity_id).push(row);
+}
+const evidenceByEntity = new Map();
+for (const row of evidenceRows) {
+  if (!evidenceByEntity.has(row.entity_id)) evidenceByEntity.set(row.entity_id, []);
+  evidenceByEntity.get(row.entity_id).push(row);
+}
+const facilityByEntity = new Map();
+for (const row of facilityRows) {
+  if (!facilityByEntity.has(row.entity_id)) facilityByEntity.set(row.entity_id, []);
+  facilityByEntity.get(row.entity_id).push(row);
+}
+const commitmentsByEntity = new Map();
+for (const row of commitments) {
+  if (!commitmentsByEntity.has(row.entity_id)) commitmentsByEntity.set(row.entity_id, []);
+  commitmentsByEntity.get(row.entity_id).push(row);
+}
+const linkedByEntity = Object.fromEntries(entities.map((e) => {
+  const id = e.entity_id || e.id;
+  return [id, {
+    projects:(projectByEntity.get(id) || []).slice(0,12),
+    evidence:(evidenceByEntity.get(id) || []).slice(0,12),
+    facilities:(facilityByEntity.get(id) || []).slice(0,12),
+    financials:(financialByEntity.get(id) || []).slice(0,24),
+    commitments:(commitmentsByEntity.get(id) || []).slice(0,12),
+  }];
+}));
 const payload = {
   view:normalizedView, rows, columns:activeColumns,
   defaultSort:defaultSortByView[normalizedView] || 'company',
   defaultDir:defaultDirByView[normalizedView] || 'asc',
   base, apiUrl:base + apiPaths[normalizedView],
+  linkedByEntity,
+  exportMeta:{
+    schema_version:'semiconductor-workbench-export.v1',
+    view:normalizedView,
+    generated_from:apiPaths[normalizedView],
+    build_sha:buildSha,
+    semantics:['NULL != 0','Actual != Guidance','Derived != Observed'],
+  },
 };
 const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['financials','≡','Financials'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['activity','↻','Activity'],['evidence','◎','Evidence'],['quality','!','Quality']];
 const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
@@ -246,7 +284,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <button class="wb-top-action desktop-only" type="button" data-save-view>Save view</button>
       <button class="wb-top-action" type="button" data-copy-view>Share</button>
       <a class="wb-top-action" href={base + apiPaths[normalizedView]} target="_blank" rel="noreferrer">API</a>
-      <button class="wb-top-action" type="button" data-export-visible>Export</button>
+      <button class="wb-top-action" type="button" data-open-export>Export</button>
     </header>
 
     <section class="wb-context" aria-labelledby="wb-title">
@@ -305,6 +343,18 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
   <dialog class="wb-modal" data-views-dialog>
     <div class="wb-modal-head"><h2>Saved views</h2><button class="wb-close" type="button" data-close-views aria-label="Close saved views">×</button></div>
     <div class="wb-modal-body" data-views-body></div>
+  </dialog>
+  <dialog class="wb-modal" data-export-dialog>
+    <div class="wb-modal-head"><h2>Export reproducible slice</h2><button class="wb-close" type="button" data-close-export aria-label="Close export">×</button></div>
+    <div class="wb-modal-body">
+      <div class="wb-export-grid">
+        <button type="button" data-export-visible><strong>Displayed CSV</strong><small>Current filters, sort and visible columns</small></button>
+        <button type="button" data-export-selected><strong>Selected CSV</strong><small>Only selected rows and visible columns</small></button>
+        <button type="button" data-export-json><strong>Displayed JSON</strong><small>Current filtered records with canonical fields</small></button>
+        <button type="button" data-export-meta><strong>Metadata JSON</strong><small>View schema, source API and semantic contract</small></button>
+        <button type="button" data-copy-api><strong>Copy API URL</strong><small>Canonical source endpoint for this view</small></button>
+      </div>
+    </div>
   </dialog>
   <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
   <script src={base + 'assets/bi-workbench.js'} defer></script>
