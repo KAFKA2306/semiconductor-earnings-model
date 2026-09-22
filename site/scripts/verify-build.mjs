@@ -40,6 +40,8 @@ for (const marker of [
   'data-export-json',
   'data-export-meta',
   'data-copy-api',
+  'Displayed JSON',
+  'Metadata JSON',
   'Save view',
   'Export',
 ]) {
@@ -79,8 +81,6 @@ for (const marker of [
   'data-linked-route',
   'exportMetadata',
   'copyApiUrl',
-  'Displayed JSON',
-  'Metadata JSON',
   'Built-in screens',
   'data-column-preset',
   'financialHistoryHtml',
