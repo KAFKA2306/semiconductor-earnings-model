@@ -1,0 +1,56 @@
+name: Canonical infrastructure ledger
+
+on:
+  pull_request:
+    paths:
+      - "semicon/**"
+      - "data/registry/**"
+      - "data/canonical/**"
+      - "data/derived/**"
+      - "data/raw/google_sheets_import/**"
+      - "data/conflicts/**"
+      - "tests/test_semicon_canonical_ledger.py"
+      - "docs/semiconductor-infrastructure-ledger.md"
+      - ".github/workflows/canonical-ledger.yml"
+  push:
+    branches: [main]
+    paths:
+      - "semicon/**"
+      - "data/registry/**"
+      - "data/canonical/**"
+      - "data/derived/**"
+      - "data/raw/google_sheets_import/**"
+      - "data/conflicts/**"
+      - "tests/test_semicon_canonical_ledger.py"
+      - ".github/workflows/canonical-ledger.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic environment
+        run: uv sync --frozen
+      - name: Replay archived source before validation
+        run: |
+          source_xlsx="data/raw/google_sheets_import/1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ/a5ab21206c397dcf7d7603bb32c0a8e7cd6636d2b4efedbe3d88ff5c8a79a8dd/source.xlsx"
+          uv run python -m semicon.ingest.google_sheets --spreadsheet-id 1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ --xlsx "$source_xlsx"
+          uv run python -m semicon.build_derived
+      - name: Test canonical ingest invariants
+        run: uv run python -m pytest -q tests/test_semicon_canonical_ledger.py
+      - name: Validate schema, provenance, duplicates and NULL policy
+        run: uv run python -m semicon.validate_canonical
+      - name: Validate canonical to Sheets to canonical round-trip
+        run: uv run python -m semicon.round_trip
+      - name: Build API v2 projection
+        run: uv run python -m semicon.build_api_v2
