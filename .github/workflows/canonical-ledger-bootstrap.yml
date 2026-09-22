@@ -35,6 +35,7 @@ jobs:
           uv run python -m semicon.build_derived
           uv run python -m semicon.validate_canonical
           uv run python -m semicon.round_trip
+          uv run python -m semicon.source_round_trip
           uv run python -m semicon.build_api_v2
           uv run python -m semicon.export.google_sheets --output-json data/derived/google_sheets_projection.json
       - name: Commit deterministic seed
