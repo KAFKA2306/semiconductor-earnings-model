@@ -839,9 +839,19 @@ def build_import(snapshot: dict[str, Any], *, root: Path = ROOT) -> tuple[dict[s
                 entities_by_id[entity_id] = _merge_entities(current, shell, conflicts)
         elif normalized in {"financials", "annual_financials", "latest_capex"}:
             facts.extend(_fact_records(sheet, snapshot, invalid))
-        elif normalized in {"capex_events", "capex_plans", "project_capex", "capex_projects"}:
+        elif normalized in {"capex_events", "capex_plans", "project_capex"}:
             e, p = _event_and_project_records(sheet, snapshot, invalid)
-            events.extend(e); projects.extend(p)
+            events.extend(e)
+            projects.extend(p)
+        elif normalized == "capex_projects":
+            # In regenerated canonical views, CapEx_Projects owns project state
+            # only. Event/lifecycle state is restored from Project_Lifecycle so
+            # project-specific status cannot overwrite the event's status.
+            _, p = _event_and_project_records(sheet, snapshot, invalid)
+            projects.extend(p)
+        elif normalized == "project_lifecycle":
+            e, _ = _event_and_project_records(sheet, snapshot, invalid)
+            events.extend(e)
         elif normalized == "facilities":
             facilities.extend(_facility_records(sheet, snapshot, invalid))
         elif normalized in {"demand_commitments", "customer_commitments"}:
