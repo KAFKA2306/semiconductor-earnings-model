@@ -37,12 +37,35 @@
   const viewsDialog = q('[data-views-dialog]');
   const viewsBody = q('[data-views-body]');
   const exportDialog = q('[data-export-dialog]');
+  const workspaceDialog = q('[data-workspace-dialog]');
+  const workspaceList = q('[data-workspace-list]');
   const mobileNavDialog = q('[data-mobile-nav-dialog]');
   const linkedStrip = q('[data-linked-strip]');
   const chartPanel = q('[data-chart-panel]');
+  const watchlistCount = q('[data-watchlist-count]');
+  const watchlistFilterButton = q('[data-watchlist-filter]');
   const crossFilterChips = q('[data-cross-filter-chips]');
 
   const TABLE_LAYOUT_KEY='semicon:table-layout:' + (payload.view || 'projects');
+  const WATCHLIST_KEY='semicon:watchlist';
+  const WORKSPACE_KEY='semicon:saved-workspaces';
+  const loadWatchlist = () => {
+    try {
+      const saved=JSON.parse(localStorage.getItem(WATCHLIST_KEY) || '[]');
+      state.watchlist=new Set(Array.isArray(saved)?saved:[]);
+    } catch { state.watchlist=new Set(); }
+  };
+  const saveWatchlist = () => {
+    localStorage.setItem(WATCHLIST_KEY,JSON.stringify([...state.watchlist]));
+  };
+  const getSavedWorkspaces = () => {
+    try {
+      const saved=JSON.parse(localStorage.getItem(WORKSPACE_KEY) || '{}');
+      return saved && typeof saved==='object' ? saved : {};
+    } catch { return {}; }
+  };
+  const saveSavedWorkspaces = all => localStorage.setItem(WORKSPACE_KEY,JSON.stringify(all));
+
   const orderedColumns = () => {
     const map=new Map(columns.map(col=>[col.key,col]));
     return state.table.columnOrder.map(key=>map.get(key)).filter(Boolean);
@@ -140,6 +163,7 @@
     state.role = params.get('role') || '';
     state.quality = params.get('quality') || '';
     state.status = params.get('status') || '';
+    state.watchlistOnly = params.get('watchlist') === '1';
     state.sortKey = params.get('sort') || state.sortKey;
     state.sortDir = params.has('dir') ? (params.get('dir') === 'desc' ? 'desc' : 'asc') : (payload.defaultDir === 'desc' ? 'desc' : 'asc');
     state.activeId = params.get('row') || null;
@@ -167,6 +191,7 @@
     if (state.role) params.set('role', state.role);
     if (state.quality) params.set('quality', state.quality);
     if (state.status) params.set('status', state.status);
+    if (state.watchlistOnly) params.set('watchlist','1');
     if (state.sortKey) params.set('sort', state.sortKey);
     if (state.sortDir === 'desc') params.set('dir','desc');
     if (state.activeId) params.set('row', state.activeId);
@@ -187,6 +212,7 @@
       if (state.role && row.role !== state.role) return false;
       if (state.quality && row.quality !== state.quality) return false;
       if (state.status && row.status !== state.status) return false;
+      if (state.watchlistOnly && !state.watchlist.has(row.entity_id)) return false;
       for (const item of state.includeFilters) {
         if (String(cellValue(row,item.key) ?? '') !== item.value) return false;
       }
@@ -547,6 +573,9 @@
 
   const renderLinkedStrip = () => {
     if (!linkedStrip) return;
+    if (!state.widgets.visible.has('linked')) {
+      linkedStrip.hidden=true;linkedStrip.innerHTML='';return;
+    }
     const row = rows.find(r=>r.id===state.active.rowId);
     if (!row?.entity_id) {
       linkedStrip.hidden = true;
@@ -696,13 +725,18 @@
     downloadText('semiconductor-' + payload.view + '-displayed.json',JSON.stringify(data,null,2));
     toast('Displayed JSON exported: ' + data.length + ' rows');
   };
+  const exportFullCanonical = () => {
+    const data=rows.map(row=>row.raw || row);
+    downloadText('semiconductor-' + payload.view + '-full-canonical.json',JSON.stringify(data,null,2));
+    toast('Full canonical slice exported: ' + data.length + ' rows');
+  };
   const exportMetadata = () => {
     const metadata={
       ...(payload.exportMeta || {}),
       source_api:payload.apiUrl,
       current_view:location.pathname + location.search,
       filters:{
-        query:state.query,country:state.country,role:state.role,quality:state.quality,status:state.status,
+        query:state.query,country:state.country,role:state.role,quality:state.quality,status:state.status,watchlist_only:state.watchlistOnly,
         include:state.includeFilters,exclude:state.excludeFilters,sort:state.sortKey,dir:state.sortDir,
         visible_columns:[...state.visibleColumns],
       },
@@ -761,6 +795,12 @@
   };
   const renderChart = () => {
     if(!chartPanel) return;
+    const chartVisible=state.widgets.visible.has('chart');
+    chartPanel.hidden=!chartVisible;
+    if(!chartVisible) return;
+    chartPanel.style.minHeight=Number(state.widgets.sizes.chartHeight || 170)+'px';
+    chartPanel.style.height=Number(state.widgets.sizes.chartHeight || 170)+'px';
+    root.style.setProperty('--wb-inspector',Number(state.widgets.sizes.inspectorWidth || 390)+'px');
     const activeRow=rows.find(r=>r.id===state.active.rowId) || null;
     const model=chartEngine.build({view:payload.view,rows:filteredRows(),activeRow,requestedType:state.analysis.chartType});
     const supported=['auto','bar','pie','line'];
@@ -801,6 +841,86 @@
       if(!row && key&&value) row=rows.find(r=>String(cellValue(r,key)??'')===value);
       if(!row) row=rows.find(r=>r.id===state.active.rowId) || null;
       if(row) openInspector(row.id); else toast('No underlying record in this slice');
+    });
+  };
+
+  const renderWatchlistState = () => {
+    if(watchlistCount) watchlistCount.textContent=String(state.watchlist.size);
+    watchlistFilterButton?.classList.toggle('active',state.watchlistOnly);
+    watchlistFilterButton?.setAttribute('aria-pressed',state.watchlistOnly?'true':'false');
+  };
+  const addSelectedToWatchlist = () => {
+    const selectedRows=rows.filter(r=>state.selected.has(r.id));
+    for(const row of selectedRows) if(row.entity_id) state.watchlist.add(row.entity_id);
+    saveWatchlist();
+    renderWatchlistState();
+    renderTable();
+    toast('Watchlist: ' + state.watchlist.size + ' entities');
+  };
+  const applyWidgetState = () => {
+    renderLinkedStrip();
+    renderChart();
+    root.style.setProperty('--wb-inspector',Number(state.widgets.sizes.inspectorWidth || 390)+'px');
+  };
+  const syncControlsFromState = () => {
+    if(searchInput) searchInput.value=state.query;
+    for(const key of ['country','role','quality','status']){
+      const el=q('[data-filter="' + key + '"]');
+      if(el) el.value=state[key] || '';
+    }
+    renderWatchlistState();
+    renderColumnDialog();
+    renderSortState();
+    renderTable();
+    renderCompare();
+    applyWidgetState();
+  };
+  const renderSavedWorkspaces = () => {
+    if(!workspaceList) return;
+    const all=getSavedWorkspaces();
+    const entries=Object.entries(all).sort((a,b)=>String(b[1]?.saved_at||'').localeCompare(String(a[1]?.saved_at||'')));
+    workspaceList.innerHTML='<div class="wb-saved-group"><h3>Saved workspaces</h3>' +
+      (entries.length ? entries.map(([name,item])=>'<div class="wb-saved-row"><button type="button" data-load-workspace="' + escapeHtml(name) + '"><span><strong>' + escapeHtml(name) + '</strong><small>' + escapeHtml(item.state?.schemaVersion || 'unknown schema') + '</small></span><small>' + escapeHtml((item.saved_at||'').slice(0,19).replace('T',' ')) + '</small></button><button type="button" class="danger" data-delete-workspace="' + escapeHtml(name) + '">Delete</button></div>').join('') : '<div class="wb-empty">No saved workspaces yet.</div>') +
+      '</div>';
+    [...workspaceList.querySelectorAll('[data-load-workspace]')].forEach(btn=>btn.addEventListener('click',()=>{
+      const name=btn.getAttribute('data-load-workspace');
+      const item=getSavedWorkspaces()[name];
+      try{
+        workspaceApi.restore(state,item?.state,{columns:columns.map(c=>c.key)});
+        saveWatchlist();
+        saveTableLayout();
+        syncControlsFromState();
+        if(state.active.rowId && rows.some(r=>r.id===state.active.rowId)) openInspector(state.active.rowId);
+        else closeInspector();
+        writeUrl();
+        toast('Workspace restored: ' + name);
+        workspaceDialog?.close();
+      }catch(error){
+        toast('Workspace incompatible: ' + (error?.message || 'unknown schema'));
+      }
+    }));
+    [...workspaceList.querySelectorAll('[data-delete-workspace]')].forEach(btn=>btn.addEventListener('click',()=>{
+      const name=btn.getAttribute('data-delete-workspace');
+      const allNow=getSavedWorkspaces();delete allNow[name];saveSavedWorkspaces(allNow);renderSavedWorkspaces();toast('Deleted workspace: '+name);
+    }));
+  };
+  const saveWorkspace = () => {
+    const name=prompt('Workspace name');
+    if(!name) return;
+    const all=getSavedWorkspaces();
+    all[name]={state:workspaceApi.snapshot(state),saved_at:new Date().toISOString()};
+    saveSavedWorkspaces(all);
+    renderSavedWorkspaces();
+    toast('Workspace saved: ' + name);
+  };
+  const syncWorkspaceControls = () => {
+    qa('[data-widget-visible]').forEach(input=>{
+      const key=input.getAttribute('data-widget-visible');
+      input.checked=state.widgets.visible.has(key);
+    });
+    qa('[data-widget-size]').forEach(select=>{
+      const key=select.getAttribute('data-widget-size');
+      select.value=String(state.widgets.sizes[key] || '');
     });
   };
 
@@ -862,6 +982,7 @@
     [...commandResults.querySelectorAll('[data-command-row]')].forEach(btn=>btn.addEventListener('click',()=>{ command.close(); openInspector(btn.getAttribute('data-command-row')); }));
   };
 
+  loadWatchlist();
   loadTableLayout();
   readUrl();
   hydrateSelect('country',[...new Set(rows.map(r=>r.country))]);
@@ -882,6 +1003,21 @@
     renderTable();writeUrl();
   });
   q('[data-open-mobile-nav]')?.addEventListener('click',()=>mobileNavDialog?.showModal());
+  q('[data-open-workspaces]')?.addEventListener('click',()=>{renderSavedWorkspaces();syncWorkspaceControls();workspaceDialog?.showModal()});
+  q('[data-close-workspaces]')?.addEventListener('click',()=>workspaceDialog?.close());
+  q('[data-save-workspace]')?.addEventListener('click',saveWorkspace);
+  q('[data-add-watchlist]')?.addEventListener('click',addSelectedToWatchlist);
+  watchlistFilterButton?.addEventListener('click',()=>{state.watchlistOnly=!state.watchlistOnly;renderWatchlistState();renderTable();writeUrl()});
+  qa('[data-widget-visible]').forEach(input=>input.addEventListener('change',()=>{
+    const key=input.getAttribute('data-widget-visible');
+    if(input.checked) state.widgets.visible.add(key); else state.widgets.visible.delete(key);
+    applyWidgetState();
+  }));
+  qa('[data-widget-size]').forEach(select=>select.addEventListener('change',()=>{
+    const key=select.getAttribute('data-widget-size');
+    state.widgets.sizes[key]=Number(select.value);
+    applyWidgetState();
+  }));
   q('[data-close-mobile-nav]')?.addEventListener('click',()=>mobileNavDialog?.close());
   q('[data-open-export]')?.addEventListener('click',()=>exportDialog?.showModal());
   q('[data-close-export]')?.addEventListener('click',()=>exportDialog?.close());
@@ -896,6 +1032,7 @@
   q('[data-export-visible]')?.addEventListener('click',()=>exportRows('visible'));
   qa('[data-export-selected]').forEach(btn=>btn.addEventListener('click',()=>exportRows('selected')));
   q('[data-export-json]')?.addEventListener('click',exportJson);
+  q('[data-export-full]')?.addEventListener('click',exportFullCanonical);
   q('[data-export-meta]')?.addEventListener('click',exportMetadata);
   q('[data-copy-api]')?.addEventListener('click',copyApiUrl);
   q('[data-clear-selection]')?.addEventListener('click',()=>{state.selected.clear();renderCompare();renderTable();writeUrl()});
@@ -906,6 +1043,7 @@
   compareDialog?.addEventListener('click',ev=>{if(ev.target===compareDialog)compareDialog.close()});
   viewsDialog?.addEventListener('click',ev=>{if(ev.target===viewsDialog)viewsDialog.close()});
   exportDialog?.addEventListener('click',ev=>{if(ev.target===exportDialog)exportDialog.close()});
+  workspaceDialog?.addEventListener('click',ev=>{if(ev.target===workspaceDialog)workspaceDialog.close()});
   mobileNavDialog?.addEventListener('click',ev=>{if(ev.target===mobileNavDialog)mobileNavDialog.close()});
   let virtualScrollFrame = 0;
   tableWrap?.addEventListener('scroll',()=>{
@@ -925,6 +1063,6 @@
   });
 
   state.subscribe((_,type)=>{ if(type==='active'){renderLinkedStrip();renderChart()} });
-  renderColumnDialog(); renderSavedViews(); renderSortState(); renderTable(); renderCompare(); renderLinkedStrip();
+  renderColumnDialog(); renderSavedViews(); renderSavedWorkspaces(); renderSortState(); renderWatchlistState(); renderTable(); renderCompare(); renderLinkedStrip(); applyWidgetState();
   if(state.activeId) openInspector(state.activeId);
 })();
