@@ -596,6 +596,148 @@ def _commitment_records(sheet: dict[str, Any], snapshot: dict[str, Any], invalid
     return out
 
 
+def _capacity_metric_records(
+    sheet: dict[str, Any],
+    snapshot: dict[str, Any],
+    invalid: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    facts: list[dict[str, Any]] = []
+    events: list[dict[str, Any]] = []
+    projects: list[dict[str, Any]] = []
+
+    for source_row, row in _rows_as_dicts(sheet):
+        entity_id = _entity_id(row)
+        as_of_date = normalize_date(_get(row, "as_of_date", "period_end"))
+        metric_label = _get(row, "metric")
+        unit = _get(row, "unit")
+        source_url = _source_url(row)
+        source_system = _source_system(row, snapshot)
+        provenance = _provenance(snapshot, sheet["name"], source_row, row)
+        source_doc_id = str(_get(row, "source_doc_id", "doc_id") or provenance["doc_id"])
+
+        if entity_id is None or as_of_date is None or metric_label is None:
+            invalid.append({
+                "sheet": sheet["name"],
+                "row": source_row,
+                "errors": ["missing entity_id/as_of_date/metric"],
+                "record": row,
+            })
+            continue
+
+        current = coerce_number(_get(row, "current_value"))
+        fiscal_year = fiscal_year_from_value(as_of_date)
+        business = _get(row, "business_or_process")
+        site = _get(row, "site")
+        native_prefix = ":".join(
+            part for part in ("capacity_metric", str(business or ""), str(site or ""), str(metric_label)) if part
+        )
+
+        def append_point_fact(metric: str, value: Any, fact_unit: Any, native_concept: str) -> None:
+            if value is None:
+                return
+            rec = _make_fact(
+                entity_id,
+                metric,
+                value,
+                fact_unit,
+                as_of_date,
+                as_of_date,
+                fiscal_year,
+                "point_in_time",
+                source_system,
+                source_url,
+                native_concept,
+                provenance,
+                row,
+            )
+            errs = validate_fact(rec)
+            if errs:
+                invalid.append({"sheet": sheet["name"], "row": source_row, "errors": errs, "record": rec})
+            else:
+                facts.append(rec)
+
+        append_point_fact("capacity", current, unit, native_prefix)
+        append_point_fact("utilization", coerce_number(_get(row, "utilization_pct")), "percent", native_prefix + ":utilization_pct")
+        append_point_fact("yield", coerce_number(_get(row, "yield_pct")), "percent", native_prefix + ":yield_pct")
+
+        target = coerce_number(_get(row, "target_value"))
+        metric_text = str(metric_label or "").lower()
+        unit_text = str(unit or "").lower()
+        is_physical_capacity = (
+            target is not None
+            and "utilization" not in metric_text
+            and "yield" not in metric_text
+            and "allocation" not in metric_text
+            and not unit_text.startswith("%")
+            and "percent" not in unit_text
+        )
+        is_expansion = is_physical_capacity and (current is None or target > current)
+        if not is_expansion:
+            continue
+
+        capacity_id = str(
+            _get(row, "capacity_id")
+            or f"capacity:{stable_hash([entity_id, business, site, metric_label, as_of_date, _get(row, 'target_date')])}"
+        )
+        project_name = " / ".join(str(x) for x in (business, site, metric_label) if x) or capacity_id
+        event = {
+            "event_id": capacity_id,
+            "entity_id": entity_id,
+            "event_type": "capacity_expansion",
+            "announcement_date": as_of_date,
+            "period_start": as_of_date,
+            "period_end": normalize_date(_get(row, "target_date")),
+            "project_name": project_name,
+            "status": "capacity_target_disclosed",
+            "evidence_text": _get(row, "bottleneck", "source_note"),
+            "source_system": source_system,
+            "source_doc_id": source_doc_id,
+            "source_url": source_url,
+            "quality_flag": _get(row, "quality_flag") or "imported_unverified",
+            "provenance": [provenance],
+        }
+        events.append(event)
+        projects.append({
+            "project_id": capacity_id,
+            "event_id": capacity_id,
+            "event_type": "capacity_expansion",
+            "entity_id": entity_id,
+            "project_name": project_name,
+            "product": business,
+            "technology": None,
+            "facility_id": None,
+            "location": site,
+            "announcement_date": as_of_date,
+            "period_start": as_of_date,
+            "period_end": normalize_date(_get(row, "target_date")),
+            "capex_plan": None,
+            "capex_actual": None,
+            "currency": None,
+            "capacity_metric": metric_label,
+            "capacity_before": current,
+            "capacity_after": target,
+            "capacity_change": None if current is None else target - current,
+            "capacity_unit": unit,
+            "planned_start": None,
+            "production_start": None,
+            "demand_evidence": _get(row, "bottleneck", "source_note"),
+            "customer_commitment": None,
+            "orders_backlog_reference": None,
+            "funding_source": None,
+            "subsidy": None,
+            "debt": None,
+            "customer_deposit": None,
+            "status": "capacity_target_disclosed",
+            "source_system": source_system,
+            "source_doc_id": source_doc_id,
+            "source_url": source_url,
+            "quality_flag": _get(row, "quality_flag") or "imported_unverified",
+            "provenance": [provenance],
+        })
+
+    return facts, events, projects
+
+
 def _backlog_records(sheet: dict[str, Any], snapshot: dict[str, Any], invalid: list[dict[str, Any]]) -> list[dict[str, Any]]:
     out = []
     for source_row, row in _rows_as_dicts(sheet):
@@ -708,6 +850,11 @@ def build_import(snapshot: dict[str, Any], *, root: Path = ROOT) -> tuple[dict[s
             commitments.extend(_commitment_records(sheet, snapshot, invalid, default_type="major_customer"))
         elif normalized == "orders_backlog":
             backlog.extend(_backlog_records(sheet, snapshot, invalid))
+        elif normalized == "capacity_metrics":
+            capacity_facts, capacity_events, capacity_projects = _capacity_metric_records(sheet, snapshot, invalid)
+            facts.extend(capacity_facts)
+            events.extend(capacity_events)
+            projects.extend(capacity_projects)
         elif classify_sheet(name, (sheet.get("rows") or [[]])[0] if sheet.get("rows") else []) == "derived":
             derived_source_rows[name] = [{"source_row": n, **row} for n, row in rows]
 
