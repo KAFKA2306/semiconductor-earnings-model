@@ -93,3 +93,5 @@ a{color:var(--wb-accent)}button:focus-visible,a:focus-visible,input:focus-visibl
 .wb-filter-chips{display:flex;align-items:center;gap:4px;min-width:0;overflow-x:auto}
 .wb-filter-chip{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 7px;border:1px solid #84adff;background:#eff4ff;color:#1849a9;white-space:nowrap;cursor:pointer;font-size:10px}
 .wb-filter-chip.exclude{border-color:#f7b27a;background:#fff4ed;color:#b54708}.wb-filter-chip b{font-size:12px}
+
+.wb-virtual-spacer td{padding:0!important;border:0!important;background:transparent!important;position:static!important}
