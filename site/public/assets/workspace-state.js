@@ -17,7 +17,7 @@
       active: {rowId:null, entityId:null, projectId:null, recordId:null},
       selected: new Set(),
       filter: {
-        query:'', country:'', role:'', quality:'', status:'',
+        query:'', country:'', role:'', quality:'', status:'', watchlistOnly:false,
         include:[], exclude:[],
       },
       table: {
@@ -46,7 +46,7 @@
       },
     };
 
-    for (const key of ['query','country','role','quality','status']) defineAlias(state,key,'filter',key);
+    for (const key of ['query','country','role','quality','status','watchlistOnly']) defineAlias(state,key,'filter',key);
     defineAlias(state,'includeFilters','filter','include');
     defineAlias(state,'excludeFilters','filter','exclude');
     defineAlias(state,'sortKey','table','sortKey');
@@ -121,6 +121,7 @@
       role:String(filter.role || ''),
       quality:String(filter.quality || ''),
       status:String(filter.status || ''),
+      watchlistOnly:Boolean(filter.watchlistOnly),
       include:Array.isArray(filter.include)?filter.include.map(item=>({...item})):[],
       exclude:Array.isArray(filter.exclude)?filter.exclude.map(item=>({...item})):[],
     };
