@@ -2,7 +2,7 @@
   "backlog_rows_created": 0,
   "commitments_created": 0,
   "conflicts": 0,
-  "duplicates": 0,
+  "duplicates": 10,
   "events_created": 5,
   "facilities_created": 0,
   "facts_created": 0,
