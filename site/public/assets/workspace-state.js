@@ -24,7 +24,11 @@
         sortKey:defaultSort,
         sortDir:defaultDir === 'desc' ? 'desc' : 'asc',
         visibleColumns:new Set(columns),
+        columnOrder:[...columns],
+        widths:{},
+        pinned:new Set(['select','company'].filter(key=>columns.includes(key))),
       },
+      analysis: {chartType:'auto', metric:null},
       inspector: {tab:'overview'},
       subscribe(listener) {
         listeners.add(listener);
@@ -85,7 +89,11 @@
       sortKey:state.table.sortKey,
       sortDir:state.table.sortDir,
       visibleColumns:[...state.table.visibleColumns],
+      columnOrder:[...state.table.columnOrder],
+      widths:{...state.table.widths},
+      pinned:[...state.table.pinned],
     },
+    analysis:{...state.analysis},
     inspector:{...state.inspector},
   });
 
