@@ -202,6 +202,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <select class="wb-filter" data-filter="status" aria-label="Filter by status"><option value="">All status</option></select>
       <select class="wb-filter" data-filter="quality" aria-label="Filter by evidence quality"><option value="">All evidence</option></select>
       <button class="wb-control-btn" type="button" data-clear-filters>Clear</button>
+      <button class="wb-control-btn" type="button" data-open-columns>Columns</button>
       <span class="wb-spacer"></span><span class="wb-view-label"><strong data-result-count>{rows.length}</strong> rows</span>
     </section>
 
@@ -210,7 +211,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
         <div class="wb-table-wrap">
           <table class="wb-table">
             <thead><tr>{activeColumns.map((col) => (
-              <th class={col.numeric ? 'num' : ''} data-sort={col.key === 'select' ? undefined : col.key} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
+              <th class={col.numeric ? 'num' : ''} data-col={col.key} data-sort={col.key === 'select' ? undefined : col.key} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
             ))}</tr></thead>
             <tbody data-table-body></tbody>
           </table>
@@ -222,13 +223,21 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 
   <div class="wb-bottom" data-compare-bar aria-live="polite">
     <div class="wb-bottom-inner"><strong><span data-compare-count>0</span> selected</strong>
-      <button type="button" data-export-selected>Export selected</button><button type="button" data-copy-view>Copy view URL</button><button type="button" data-clear-selection>Clear selection</button>
+      <button type="button" data-open-compare>Compare</button><button type="button" data-export-selected>Export selected</button><button type="button" data-copy-view>Copy view URL</button><button type="button" data-clear-selection>Clear selection</button>
     </div>
   </div>
 
   <dialog class="wb-command" data-command>
     <input data-command-input type="search" placeholder="Search entity / project / ticker…" aria-label="Command palette search" />
     <div class="wb-command-results" data-command-results></div>
+  </dialog>
+  <dialog class="wb-modal" data-column-dialog>
+    <div class="wb-modal-head"><h2>Column set</h2><button class="wb-close" type="button" data-close-columns aria-label="Close columns">×</button></div>
+    <div class="wb-modal-body"><div class="wb-column-list" data-column-list></div></div>
+  </dialog>
+  <dialog class="wb-modal" data-compare-dialog>
+    <div class="wb-modal-head"><h2>Compare selected</h2><button class="wb-close" type="button" data-close-compare aria-label="Close comparison">×</button></div>
+    <div class="wb-modal-body" data-compare-body></div>
   </dialog>
   <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
   <script src={base + 'assets/bi-workbench.js'} defer></script>
