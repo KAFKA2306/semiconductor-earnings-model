@@ -189,12 +189,36 @@ def semantic_equal(a: Any, b: Any) -> bool:
     return str(a).strip() == str(b).strip()
 
 
+def provenance_identity(item: dict[str, Any]) -> tuple[Any, ...]:
+    """Identity of one imported source row, excluding volatile collection time.
+
+    Replaying the same semantic raw snapshot must not append another provenance
+    entry just because imported_at changed.
+    """
+    return (
+        item.get("import_source"),
+        item.get("spreadsheet_id"),
+        item.get("sheet_name"),
+        item.get("source_row"),
+        item.get("original_source_url"),
+        item.get("doc_id"),
+        item.get("raw_snapshot_sha256"),
+    )
+
+
 def merge_provenance(existing: list[dict[str, Any]] | None, incoming: dict[str, Any]) -> list[dict[str, Any]]:
-    values = list(existing or [])
-    key = json_dumps(incoming)
-    if all(json_dumps(item) != key for item in values):
-        values.append(incoming)
-    return sorted(values, key=json_dumps)
+    by_identity: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for item in [*(existing or []), incoming]:
+        key = provenance_identity(item)
+        current = by_identity.get(key)
+        if current is None:
+            by_identity[key] = dict(item)
+            continue
+        current_time = str(current.get("imported_at") or "")
+        incoming_time = str(item.get("imported_at") or "")
+        if incoming_time and (not current_time or incoming_time < current_time):
+            by_identity[key] = dict(item)
+    return sorted(by_identity.values(), key=lambda item: tuple("" if value is None else str(value) for value in provenance_identity(item)))
 
 
 @dataclass(frozen=True)
