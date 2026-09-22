@@ -28,6 +28,22 @@ const pastelWatercolorSystem = {
       const marker = '2026-07-23-pastel-watercolor-1';
       for (const file of await htmlFiles(outputDirectory)) {
         const html = await fs.readFile(file, 'utf8');
+        if (html.includes('data-workbench')) {
+          let enhanced = html;
+          if (!enhanced.includes(accessibilityStylesheet)) {
+            enhanced = enhanced.replace('</head>', `<link rel="stylesheet" href="${accessibilityStylesheet}"></head>`);
+          }
+          if (enhanced.includes('<main') && !enhanced.includes('id="main-content"')) {
+            enhanced = enhanced.replace('<main', '<main id="main-content"');
+          }
+          if (enhanced.includes('<main') && !enhanced.includes('class="skip-link"')) {
+            const bodyPattern = /<body([^>]*)>/;
+            if (!bodyPattern.test(enhanced)) throw new Error(`Missing body element in ${file}`);
+            enhanced = enhanced.replace(bodyPattern, '<body$1><a class="skip-link" href="#main-content">本文へ移動</a>');
+          }
+          await fs.writeFile(file, enhanced);
+          continue;
+        }
         if (html.includes(`name="app-build" content="${marker}"`)) continue;
         const modelCompatibilityMarker = file.endsWith(`${path.sep}model${path.sep}index.html`)
           ? '<!-- deploy-contract compatibility: 入力 → 式 → 中間値 → 判定 -->'
