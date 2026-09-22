@@ -35,6 +35,7 @@ for (const marker of [
   'data-command',
   'data-open-columns',
   'data-open-compare',
+  'data-open-views',
   'Save view',
   'Export',
 ]) {
@@ -69,6 +70,7 @@ for (const marker of [
   "exportRows('visible')",
   'openCompare',
   'renderColumnDialog',
+  'renderSavedViews',
   "ev.key.toLowerCase()==='k'",
   'openInspector',
 ]) {
