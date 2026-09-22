@@ -36,6 +36,10 @@ for (const marker of [
   'data-open-columns',
   'data-open-compare',
   'data-open-views',
+  'data-open-export',
+  'data-export-json',
+  'data-export-meta',
+  'data-copy-api',
   'Save view',
   'Export',
 ]) {
@@ -71,6 +75,12 @@ for (const marker of [
   'openCompare',
   'renderColumnDialog',
   'renderSavedViews',
+  'linkedWorkspaceHtml',
+  'data-linked-route',
+  'exportMetadata',
+  'copyApiUrl',
+  'Displayed JSON',
+  'Metadata JSON',
   'Built-in screens',
   'data-column-preset',
   'financialHistoryHtml',
@@ -93,6 +103,8 @@ for (const marker of [
   "site/public/api/v2/entities/index.json",
   "site/public/api/v2/events/index.json",
   "site/public/api/v3/financial-database/index.json",
+  "linkedByEntity",
+  "semiconductor-workbench-export.v1",
 ]) {
   if (!component.includes(marker)) throw new Error('Canonical workbench contract is missing: ' + marker);
 }
