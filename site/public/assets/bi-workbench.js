@@ -16,6 +16,8 @@
     sortDir: 'asc',
     selected: new Set(),
     activeId: null,
+    includeFilters: [],
+    excludeFilters: [],
     visibleColumns: new Set(columns.map(c => c.key)),
   };
 
@@ -108,6 +110,12 @@
     state.selected = new Set(selected);
     const cols = (params.get('cols') || '').split(',').filter(Boolean);
     if (cols.length) state.visibleColumns = new Set(cols.filter(key => columns.some(c => c.key === key)));
+    const parsePair = value => {
+      const idx = value.indexOf('=');
+      return idx > 0 ? {key:value.slice(0,idx), value:value.slice(idx+1)} : null;
+    };
+    state.includeFilters = params.getAll('f').map(parsePair).filter(Boolean);
+    state.excludeFilters = params.getAll('x').map(parsePair).filter(Boolean);
     if (searchInput) searchInput.value = state.query;
     for (const key of ['country','role','quality','status']) {
       const el = q('[data-filter="' + key + '"]');
@@ -129,6 +137,8 @@
     const defaultCols = columns.map(c => c.key);
     const visible = [...state.visibleColumns];
     if (visible.length !== defaultCols.length || visible.some((key,idx)=>key !== defaultCols[idx])) params.set('cols',visible.join(','));
+    for (const item of state.includeFilters) params.append('f',item.key + '=' + item.value);
+    for (const item of state.excludeFilters) params.append('x',item.key + '=' + item.value);
     const qs = params.toString();
     history.replaceState(null,'',location.pathname + (qs ? '?' + qs : ''));
   };
@@ -140,6 +150,12 @@
       if (state.role && row.role !== state.role) return false;
       if (state.quality && row.quality !== state.quality) return false;
       if (state.status && row.status !== state.status) return false;
+      for (const item of state.includeFilters) {
+        if (String(cellValue(row,item.key) ?? '') !== item.value) return false;
+      }
+      for (const item of state.excludeFilters) {
+        if (String(cellValue(row,item.key) ?? '') === item.value) return false;
+      }
       if (!needle) return true;
       const haystack = [
         row.company,row.name,row.ticker,row.entity_id,row.project_name,row.product,row.technology,
@@ -173,7 +189,10 @@
     tableBody.innerHTML = visible.map(row => {
       const selected = state.activeId === row.id ? ' selected' : '';
       return '<tr class="' + selected.trim() + '" data-row="' + escapeHtml(row.id) + '" tabindex="0">' +
-        columns.filter(c => state.visibleColumns.has(c.key)).map(col => '<td class="' + (col.numeric ? 'num' : '') + '">' + cellHtml(row,col) + '</td>').join('') +
+        columns.filter(c => state.visibleColumns.has(c.key)).map(col => {
+          const raw = cellValue(row,col.key);
+          return '<td class="' + (col.numeric ? 'num' : '') + '" data-cell-key="' + escapeHtml(col.key) + '" data-cell-value="' + escapeHtml(raw == null ? '' : String(raw)) + '">' + cellHtml(row,col) + '</td>';
+        }).join('') +
         '</tr>';
     }).join('');
     qa('[data-select-row]').forEach(box => box.addEventListener('click', ev => {
@@ -189,6 +208,50 @@
         if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openInspector(tr.getAttribute('data-row')); }
       });
     });
+    qa('td[data-cell-key]').forEach(td => td.addEventListener('contextmenu', ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      openCellMenu(td, ev.clientX, ev.clientY);
+    }));
+  };
+
+  let activeCellMenu = null;
+  const closeCellMenu = () => {
+    activeCellMenu?.remove();
+    activeCellMenu = null;
+  };
+  const addCrossFilter = (mode,key,value) => {
+    if (!key || key === 'select' || value === '') return;
+    const target = mode === 'exclude' ? state.excludeFilters : state.includeFilters;
+    if (!target.some(item => item.key === key && item.value === value)) target.push({key,value});
+    closeCellMenu();
+    renderTable();
+    writeUrl();
+    toast((mode === 'exclude' ? 'Excluded ' : 'Filtered ') + key + ': ' + value);
+  };
+  const openCellMenu = (td,x,y) => {
+    closeCellMenu();
+    const key=td.getAttribute('data-cell-key') || '';
+    const value=td.getAttribute('data-cell-value') || '';
+    const rowId=td.closest('[data-row]')?.getAttribute('data-row') || '';
+    if(key === 'select') return;
+    const menu=document.createElement('div');
+    menu.className='wb-cell-menu';
+    menu.style.left=Math.min(x,window.innerWidth-230)+'px';
+    menu.style.top=Math.min(y,window.innerHeight-190)+'px';
+    menu.innerHTML=
+      '<button type="button" data-cell-action="include">Filter by <strong>' + escapeHtml(value || 'blank') + '</strong></button>' +
+      '<button type="button" data-cell-action="exclude">Exclude <strong>' + escapeHtml(value || 'blank') + '</strong></button>' +
+      '<button type="button" data-cell-action="open">Open underlying row</button>' +
+      '<button type="button" data-cell-action="copy">Copy value</button>' +
+      ((state.includeFilters.length || state.excludeFilters.length) ? '<button type="button" data-cell-action="clear">Clear cross-filters</button>' : '');
+    document.body.appendChild(menu);
+    activeCellMenu=menu;
+    menu.querySelector('[data-cell-action="include"]')?.addEventListener('click',()=>addCrossFilter('include',key,value));
+    menu.querySelector('[data-cell-action="exclude"]')?.addEventListener('click',()=>addCrossFilter('exclude',key,value));
+    menu.querySelector('[data-cell-action="open"]')?.addEventListener('click',()=>{closeCellMenu();openInspector(rowId)});
+    menu.querySelector('[data-cell-action="copy"]')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(value);toast('Value copied')}catch{toast('Copy failed')}closeCellMenu()});
+    menu.querySelector('[data-cell-action="clear"]')?.addEventListener('click',()=>{state.includeFilters=[];state.excludeFilters=[];closeCellMenu();renderTable();writeUrl();toast('Cross-filters cleared')});
   };
 
   const renderColumnDialog = () => {
@@ -420,6 +483,9 @@
   columnDialog?.addEventListener('click',ev=>{if(ev.target===columnDialog)columnDialog.close()});
   compareDialog?.addEventListener('click',ev=>{if(ev.target===compareDialog)compareDialog.close()});
   viewsDialog?.addEventListener('click',ev=>{if(ev.target===viewsDialog)viewsDialog.close()});
+  document.addEventListener('click',ev=>{if(activeCellMenu && !ev.target.closest('.wb-cell-menu')) closeCellMenu()});
+  window.addEventListener('scroll',closeCellMenu,true);
+  window.addEventListener('resize',closeCellMenu);
   document.addEventListener('keydown',ev=>{
     if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==='k'){ev.preventDefault();renderCommand('');command?.showModal();commandInput?.focus()}
     if(ev.key==='Escape'&&state.activeId)closeInspector();
