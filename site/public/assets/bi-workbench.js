@@ -256,16 +256,30 @@
 
   const renderColumnDialog = () => {
     if (!columnList) return;
-    columnList.innerHTML = columns.map(col => {
-      const locked = col.key === 'select' || col.key === 'company';
-      return '<label class="wb-column-item"><input type="checkbox" data-column-toggle="' + escapeHtml(col.key) + '"' +
-        (state.visibleColumns.has(col.key) ? ' checked' : '') + (locked ? ' disabled' : '') + '><span>' + escapeHtml(col.label || col.key) + '</span></label>';
-    }).join('');
+    const available = new Set(columns.map(c=>c.key));
+    const presets = {
+      default: columns.map(c=>c.key),
+      compact: ['select','company','project_name','concept_id','capex','capacity','status','target_date','value','unit'].filter(k=>available.has(k)),
+      evidence: ['select','company','project_name','concept_id','event_type','status','target_date','source_system','quality'].filter(k=>available.has(k)),
+    };
+    columnList.innerHTML =
+      '<div class="wb-column-presets"><button type="button" data-column-preset="default">Default</button><button type="button" data-column-preset="compact">Compact</button><button type="button" data-column-preset="evidence">Evidence</button></div>' +
+      '<div class="wb-column-grid">' +
+      columns.map(col => {
+        const locked = col.key === 'select' || col.key === 'company';
+        return '<label class="wb-column-item"><input type="checkbox" data-column-toggle="' + escapeHtml(col.key) + '"' +
+          (state.visibleColumns.has(col.key) ? ' checked' : '') + (locked ? ' disabled' : '') + '><span>' + escapeHtml(col.label || col.key) + '</span></label>';
+      }).join('') + '</div>';
     [...columnList.querySelectorAll('[data-column-toggle]')].forEach(input => input.addEventListener('change',() => {
       const key=input.getAttribute('data-column-toggle');
       if(input.checked) state.visibleColumns.add(key); else state.visibleColumns.delete(key);
       state.visibleColumns.add('select'); state.visibleColumns.add('company');
       renderTable(); writeUrl();
+    }));
+    [...columnList.querySelectorAll('[data-column-preset]')].forEach(btn=>btn.addEventListener('click',()=>{
+      state.visibleColumns = new Set(presets[btn.getAttribute('data-column-preset')] || presets.default);
+      state.visibleColumns.add('select'); state.visibleColumns.add('company');
+      renderColumnDialog(); renderTable(); writeUrl();
     }));
   };
 
@@ -406,15 +420,25 @@
   };
   const renderSavedViews = () => {
     if (!viewsBody) return;
+    const base = payload.base || '/';
+    const presets = [
+      ['Primary source only', location.pathname + '?quality=primary_source_extracted'],
+      ['Japan', location.pathname + '?country=Japan'],
+      ['Capacity expansion', base + 'capacity/'],
+      ['Financials', base + 'financials/'],
+      ['Imported / unverified audit', base + 'quality/?quality=imported_unverified'],
+      ['Canonical activity', base + 'activity/'],
+    ];
     const all = getSavedViews();
     const entries = Object.entries(all).sort((a,b)=>String(b[1]?.saved_at||'').localeCompare(String(a[1]?.saved_at||'')));
-    if (!entries.length) {
-      viewsBody.innerHTML = '<div class="wb-empty">No saved views yet.</div>';
-      return;
-    }
-    viewsBody.innerHTML = entries.map(([name,item]) =>
-      '<div class="wb-saved-row"><button type="button" data-load-view="' + escapeHtml(name) + '"><span><strong>' + escapeHtml(name) + '</strong><small>' + escapeHtml(item.url || '') + '</small></span><small>' + escapeHtml((item.saved_at || '').slice(0,19).replace('T',' ')) + '</small></button><button type="button" class="danger" data-delete-view="' + escapeHtml(name) + '">Delete</button></div>'
-    ).join('');
+    viewsBody.innerHTML =
+      '<div class="wb-saved-group"><h3>Built-in screens</h3>' +
+      presets.map(([name,url])=>'<button class="wb-preset-link" type="button" data-preset-url="' + escapeHtml(url) + '"><strong>' + escapeHtml(name) + '</strong><small>' + escapeHtml(url) + '</small></button>').join('') +
+      '</div><div class="wb-saved-group"><h3>Saved views</h3>' +
+      (entries.length ? entries.map(([name,item]) =>
+        '<div class="wb-saved-row"><button type="button" data-load-view="' + escapeHtml(name) + '"><span><strong>' + escapeHtml(name) + '</strong><small>' + escapeHtml(item.url || '') + '</small></span><small>' + escapeHtml((item.saved_at || '').slice(0,19).replace('T',' ')) + '</small></button><button type="button" class="danger" data-delete-view="' + escapeHtml(name) + '">Delete</button></div>'
+      ).join('') : '<div class="wb-empty">No saved views yet.</div>') + '</div>';
+    [...viewsBody.querySelectorAll('[data-preset-url]')].forEach(btn=>btn.addEventListener('click',()=>{ location.href=btn.getAttribute('data-preset-url') || location.pathname; }));
     [...viewsBody.querySelectorAll('[data-load-view]')].forEach(btn=>btn.addEventListener('click',()=>{
       const allNow=getSavedViews(); const item=allNow[btn.getAttribute('data-load-view')];
       if(item?.url) location.href=item.url;
