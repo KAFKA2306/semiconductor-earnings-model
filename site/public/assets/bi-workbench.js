@@ -35,6 +35,8 @@
   const columnList = q('[data-column-list]');
   const compareDialog = q('[data-compare-dialog]');
   const compareBody = q('[data-compare-body]');
+  const viewsDialog = q('[data-views-dialog]');
+  const viewsBody = q('[data-views-body]');
 
   const escapeHtml = value => String(value ?? '')
     .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
@@ -335,13 +337,38 @@
     toast('CSV exported: ' + selectedRows.length + ' rows');
   };
 
+  const getSavedViews = () => {
+    try { return JSON.parse(localStorage.getItem('semicon:saved-views') || '{}'); }
+    catch { return {}; }
+  };
+  const renderSavedViews = () => {
+    if (!viewsBody) return;
+    const all = getSavedViews();
+    const entries = Object.entries(all).sort((a,b)=>String(b[1]?.saved_at||'').localeCompare(String(a[1]?.saved_at||'')));
+    if (!entries.length) {
+      viewsBody.innerHTML = '<div class="wb-empty">No saved views yet.</div>';
+      return;
+    }
+    viewsBody.innerHTML = entries.map(([name,item]) =>
+      '<div class="wb-saved-row"><button type="button" data-load-view="' + escapeHtml(name) + '"><span><strong>' + escapeHtml(name) + '</strong><small>' + escapeHtml(item.url || '') + '</small></span><small>' + escapeHtml((item.saved_at || '').slice(0,19).replace('T',' ')) + '</small></button><button type="button" class="danger" data-delete-view="' + escapeHtml(name) + '">Delete</button></div>'
+    ).join('');
+    [...viewsBody.querySelectorAll('[data-load-view]')].forEach(btn=>btn.addEventListener('click',()=>{
+      const allNow=getSavedViews(); const item=allNow[btn.getAttribute('data-load-view')];
+      if(item?.url) location.href=item.url;
+    }));
+    [...viewsBody.querySelectorAll('[data-delete-view]')].forEach(btn=>btn.addEventListener('click',()=>{
+      const allNow=getSavedViews(); const name=btn.getAttribute('data-delete-view'); delete allNow[name];
+      localStorage.setItem('semicon:saved-views',JSON.stringify(allNow)); renderSavedViews(); toast('Deleted view: ' + name);
+    }));
+  };
   const saveView = () => {
     const name = prompt('Saved View name');
     if (!name) return;
     const data = {url:location.pathname + location.search, saved_at:new Date().toISOString()};
-    const all = JSON.parse(localStorage.getItem('semicon:saved-views') || '{}');
+    const all = getSavedViews();
     all[name] = data;
     localStorage.setItem('semicon:saved-views',JSON.stringify(all));
+    renderSavedViews();
     toast('Saved view: ' + name);
   };
 
@@ -377,6 +404,8 @@
     renderTable();writeUrl();
   });
   q('[data-save-view]')?.addEventListener('click',saveView);
+  q('[data-open-views]')?.addEventListener('click',()=>{renderSavedViews();viewsDialog?.showModal()});
+  q('[data-close-views]')?.addEventListener('click',()=>viewsDialog?.close());
   qa('[data-copy-view]').forEach(btn=>btn.addEventListener('click',copyView));
   q('[data-open-columns]')?.addEventListener('click',()=>{renderColumnDialog();columnDialog?.showModal()});
   q('[data-close-columns]')?.addEventListener('click',()=>columnDialog?.close());
@@ -390,11 +419,12 @@
   command?.addEventListener('click',ev=>{if(ev.target===command)command.close()});
   columnDialog?.addEventListener('click',ev=>{if(ev.target===columnDialog)columnDialog.close()});
   compareDialog?.addEventListener('click',ev=>{if(ev.target===compareDialog)compareDialog.close()});
+  viewsDialog?.addEventListener('click',ev=>{if(ev.target===viewsDialog)viewsDialog.close()});
   document.addEventListener('keydown',ev=>{
     if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==='k'){ev.preventDefault();renderCommand('');command?.showModal();commandInput?.focus()}
     if(ev.key==='Escape'&&state.activeId)closeInspector();
   });
 
-  renderColumnDialog(); renderTable(); renderCompare();
+  renderColumnDialog(); renderSavedViews(); renderTable(); renderCompare();
   if(state.activeId) openInspector(state.activeId);
 })();
