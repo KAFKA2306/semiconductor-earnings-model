@@ -30,7 +30,19 @@ const commitments = commitmentsDoc.commitments || [];
 const backlog = backlogDoc.backlog || [];
 const facts = factsDoc.facts || [];
 const financialEntities = financialDoc.entities || [];
+const financialObservations = financialDoc.observations || [];
 const financialEntityMap = new Map(financialEntities.map((e) => [e.id, e]));
+const financialHistoryMap = new Map();
+for (const o of financialObservations) {
+  if (o.value_type !== 'actual' || o.value == null) continue;
+  const key = String(o.entity_id) + '|' + String(o.concept_id);
+  if (!financialHistoryMap.has(key)) financialHistoryMap.set(key, []);
+  financialHistoryMap.get(key).push({
+    id:o.id, period_end:o.period_end || o.as_of || '', value:o.value, unit:o.unit,
+    source_url:o.source_url, source_tier:o.source_tier, value_type:o.value_type,
+  });
+}
+for (const series of financialHistoryMap.values()) series.sort((a,b)=>String(a.period_end).localeCompare(String(b.period_end)));
 const entityMap = new Map(entities.map((e) => [e.entity_id || e.id, e]));
 const prov = (row) => row?.provenance?.[0] || {};
 const capexAmount = (project) => project.capex_plan || project.capex_actual || null;
@@ -125,6 +137,7 @@ const financialRows = (financialDoc.views?.latest_actuals || []).map((o) => {
     period_end: o.period_end, source_system: o.source_tier, source_url: o.source_url,
     source_doc_id: o.id, quality: o.source_tier === 'primary_regulatory' || o.source_tier === 'primary_company' ? 'primary_source_extracted' : o.source_tier,
     quality_label: o.source_tier || 'Unknown', evidence: o.reported_text || '',
+    history: (financialHistoryMap.get(String(o.entity_id) + '|' + String(o.concept_id)) || []).slice(-12),
     raw: o,
   };
 });
