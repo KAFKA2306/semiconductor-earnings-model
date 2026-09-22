@@ -209,6 +209,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
         <span class="wb-kbd">/</span>
       </div>
       <button class="wb-top-action desktop-only" type="button" data-open-command>Command <span class="wb-kbd">⌘K</span></button>
+      <button class="wb-top-action desktop-only" type="button" data-open-views>Views</button>
       <button class="wb-top-action desktop-only" type="button" data-save-view>Save view</button>
       <button class="wb-top-action" type="button" data-copy-view>Share</button>
       <button class="wb-top-action" type="button" data-export-visible>Export</button>
@@ -265,6 +266,10 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
   <dialog class="wb-modal" data-compare-dialog>
     <div class="wb-modal-head"><h2>Compare selected</h2><button class="wb-close" type="button" data-close-compare aria-label="Close comparison">×</button></div>
     <div class="wb-modal-body" data-compare-body></div>
+  </dialog>
+  <dialog class="wb-modal" data-views-dialog>
+    <div class="wb-modal-head"><h2>Saved views</h2><button class="wb-close" type="button" data-close-views aria-label="Close saved views">×</button></div>
+    <div class="wb-modal-body" data-views-body></div>
   </dialog>
   <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
   <script src={base + 'assets/bi-workbench.js'} defer></script>
