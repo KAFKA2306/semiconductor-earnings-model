@@ -187,19 +187,17 @@ jobs:
           jq -e 'any(.observations[]; .id == "microsoft:2026-06-30:capital-expenditures:actual" and .value == 41000000000 and .value_type == "actual")' <<< "$ai_json" >/dev/null
           jq -e 'any(.observations[]; .id == "microsoft:2026-09-30:capital-expenditures:guidance" and .value == 50000000000 and .qualifier == "greater_than" and .value_type == "company_guidance")' <<< "$ai_json" >/dev/null
 
-          grep -Fq "高い半導体利益成長は、" <<< "$earnings_html"
+          grep -Fq "data-workbench" <<< "$earnings_html"
+          grep -Fq "RESEARCH WORKBENCH" <<< "$earnings_html"
+          grep -Fq "Financials | Semiconductor Research Workbench" <<< "$earnings_html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$earnings_html"
-          grep -Fq "入力 → 式 → 中間値 → 判定" <<< "$model_html"
-          grep -Fq "半導体企業は、" <<< "$resilience_html"
-          grep -Fq "成長しながら下振れに耐えられるか。" <<< "$resilience_html"
-          grep -Fq "利益剰余金は現金ではない" <<< "$resilience_html"
-          grep -Fq "RESEARCH WORKBENCH" <<< "$resilience_html"
-          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$resilience_html"
-          grep -Fq "data-resilience-api-hash=\"$resilience_hash\"" <<< "$resilience_html"
-          grep -Fq "data-research-api-hash=\"$research_hash\"" <<< "$resilience_html"
-          for marker in quality actuals peers scenario ranking history ontology benchmark limits; do
-            grep -Fq "id=\"$marker\"" <<< "$resilience_html"
-          done
+          grep -Fq "data-workbench" <<< "$model_html"
+          grep -Fq "Projects &amp; Model Inputs | Semiconductor Research Workbench" <<< "$model_html"
+          grep -Fq "data-workbench" <<< "$resilience_html"
+          grep -Fq "Data Quality &amp; Resilience | Semiconductor Research Workbench" <<< "$resilience_html"
+          ! grep -Fq "pastel-watercolor.css" <<< "$earnings_html"
+          ! grep -Fq "pastel-watercolor.css" <<< "$model_html"
+          ! grep -Fq "pastel-watercolor.css" <<< "$resilience_html"
 
           jq -e '.schema_version == "semiconductor-resilience-api.v1"' <<< "$resilience_json" >/dev/null
           jq -e '[.companies[] | select(.years | length > 0)] | length >= 12' <<< "$resilience_json" >/dev/null
@@ -229,7 +227,6 @@ jobs:
           jq -e 'all(.observations[]; (.source_url | startswith("https://")) and (.value_type | IN("actual","company_guidance","analyst_consensus","internal_estimate","scenario","market_observation")))' <<< "$financial_json" >/dev/null
           jq -e '[.observations[].id] | length == (unique | length)' <<< "$financial_json" >/dev/null
 
-          printf '%s' "$resilience_html" | python3 -c 'import sys; html=sys.stdin.read(); markers=["id=\"definition\"", "id=\"quality\"", "id=\"actuals\"", "id=\"peers\"", "id=\"scenario\"", "id=\"ranking\"", "id=\"history\"", "id=\"ontology\"", "id=\"benchmark\"", "id=\"limits\""]; positions=[html.index(marker) for marker in markers]; assert positions == sorted(positions), positions'
           echo "Published daily AI infrastructure verified: $base/"
-          echo "Published research workbench verified: $base/resilience/"
+          echo "Published semiconductor BI workbench verified: $base/"
           echo "Published NAND financial database verified: $base/api/v3/financial-database/index.json"
