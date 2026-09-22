@@ -7,7 +7,7 @@ from typing import Any
 
 from semicon.export.google_sheets import build_projection
 from semicon.ingest.google_sheets import DEFAULT_SPREADSHEET_ID, parse_xlsx_bytes
-from semicon.ledger import blank_to_none, normalize_header
+from semicon.ledger import blank_to_none, load_json, normalize_header
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -67,21 +67,39 @@ def validate_source_round_trip(root: Path = ROOT) -> dict[str, Any]:
         for row in _projection_rows(projection, "Company_Master")
         if row.get("entity_id") is not None
     }
+    registry = load_json(root / "data/registry/entities.json", {"entities": []}) or {"entities": []}
+    canonical_entities = {
+        str(row.get("entity_id") or row.get("id")): row
+        for row in registry.get("entities", [])
+        if row.get("entity_id") or row.get("id")
+    }
     for row in source_entities:
         entity_id = _norm(row.get("issuer_id") or row.get("entity_id"))
         target = projected_entities.get(entity_id or "")
-        if target is None:
+        canonical = canonical_entities.get(entity_id or "")
+        if target is None or canonical is None:
             errors.append(f"missing projected entity:{entity_id}")
             continue
-        comparisons = {
-            "company_name": (row.get("company_name"), target.get("company_name")),
-            "country": (row.get("country"), target.get("country")),
-            "currency": (row.get("reporting_currency") or row.get("currency"), target.get("currency")),
-            "role": (row.get("primary_role"), target.get("role")),
-        }
-        for field, (before, after) in comparisons.items():
-            if _norm(before) != _norm(after):
-                errors.append(f"entity:{entity_id}:{field}:{before!r}!={after!r}")
+
+        source_name = _norm(row.get("company_name"))
+        name_values = {_norm(canonical.get("company_name")), _norm(canonical.get("name"))}
+        name_values.update(_norm(value) for value in (canonical.get("aliases") or []))
+        if source_name and source_name not in name_values:
+            errors.append(f"entity:{entity_id}:company_name_not_preserved:{source_name!r}")
+
+        for field, source_field, aliases_field in (
+            ("country", "country", None),
+            ("currency", "reporting_currency", None),
+            ("role", "primary_role", "role_aliases"),
+        ):
+            before = _norm(row.get(source_field) or (row.get("currency") if field == "currency" else None))
+            if before is None:
+                continue
+            values = {_norm(canonical.get(field))}
+            if aliases_field:
+                values.update(_norm(value) for value in (canonical.get(aliases_field) or []))
+            if before not in values:
+                errors.append(f"entity:{entity_id}:{field}_not_preserved:{before!r}")
     checks["source_entities"] = len(source_entities)
 
     # 2) Index membership is canonicalized into Company_Master.index_membership.
