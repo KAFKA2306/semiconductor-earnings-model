@@ -13,7 +13,7 @@
     quality: '',
     status: '',
     sortKey: payload.defaultSort || '',
-    sortDir: 'asc',
+    sortDir: payload.defaultDir === 'desc' ? 'desc' : 'asc',
     selected: new Set(),
     activeId: null,
     includeFilters: [],
@@ -104,7 +104,7 @@
     state.quality = params.get('quality') || '';
     state.status = params.get('status') || '';
     state.sortKey = params.get('sort') || state.sortKey;
-    state.sortDir = params.get('dir') === 'desc' ? 'desc' : 'asc';
+    state.sortDir = params.has('dir') ? (params.get('dir') === 'desc' ? 'desc' : 'asc') : (payload.defaultDir === 'desc' ? 'desc' : 'asc');
     state.activeId = params.get('row') || null;
     const selected = (params.get('compare') || '').split(',').filter(Boolean);
     state.selected = new Set(selected);
