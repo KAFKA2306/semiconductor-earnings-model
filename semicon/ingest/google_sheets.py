@@ -767,6 +767,10 @@ def build_import(snapshot: dict[str, Any], *, root: Path = ROOT) -> tuple[dict[s
     invalid: list[dict[str, Any]] = []
     conflicts: list[dict[str, Any]] = []
     sheets = snapshot.get("sheets") or []
+    has_project_lifecycle = any(
+        normalize_header(sheet.get("name", "")) == "project_lifecycle"
+        for sheet in sheets
+    )
 
     legacy = load_json(root / "data/primary/entities.json", {"entities": []}) or {"entities": []}
     registry_existing = load_json(root / "data/registry/entities.json", {"entities": []}) or {"entities": []}
@@ -845,9 +849,12 @@ def build_import(snapshot: dict[str, Any], *, root: Path = ROOT) -> tuple[dict[s
             projects.extend(p)
         elif normalized == "capex_projects":
             # In regenerated canonical views, CapEx_Projects owns project state
-            # only. Event/lifecycle state is restored from Project_Lifecycle so
-            # project-specific status cannot overwrite the event's status.
-            _, p = _event_and_project_records(sheet, snapshot, invalid)
+            # only when a dedicated Project_Lifecycle tab is present. Legacy
+            # workbooks without that tab still use CapEx_Projects as the shared
+            # event+project source.
+            e, p = _event_and_project_records(sheet, snapshot, invalid)
+            if not has_project_lifecycle:
+                events.extend(e)
             projects.extend(p)
         elif normalized == "project_lifecycle":
             e, _ = _event_and_project_records(sheet, snapshot, invalid)
