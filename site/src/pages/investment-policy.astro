@@ -23,8 +23,9 @@ const sources = sandisk.primary_sources;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Sandiskの売上成長、bit shipment、ASP、mix、利益率、FCFを単位と期間を分離して読む投資方針ページ。" />
     <title>Sandisk Investment Policy / Growth Quality</title>
-  </head>
-  <body data-build-sha={buildSha}>
+    <link rel="stylesheet" href={base + 'assets/aux-workbench.css'} />
+</head>
+  <body data-workbench data-aux-workbench data-build-sha={buildSha}>
     <main>
       <header class="topbar">
         <a class="brand" href={base}>Financial Research Workbench</a>
@@ -157,69 +158,3 @@ const sources = sandisk.primary_sources;
   </body>
 </html>
 
-<style>
-  :global(html) { scroll-behavior: smooth; }
-  :global(body) { margin: 0; background: #fbfaf7; color: #243653; font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
-  :global(a) { color: inherit; }
-  main { width: min(1240px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 72px; }
-  .topbar { min-height: 76px; display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid rgba(76,91,125,.14); }
-  .brand { font-weight:900; text-decoration:none; }
-  nav { display:flex; flex-wrap:wrap; gap:16px; font-size:.75rem; font-weight:850; }
-  nav a { text-decoration:none; color:#69768b; }
-  nav a.active { color:#243653; }
-  .hero { min-height:540px; display:grid; grid-template-columns:1.45fr .55fr; gap:52px; align-items:center; padding:64px 0; }
-  .eyebrow, .heading > div > p { margin:0 0 14px; color:#69768b; font-size:.68rem; letter-spacing:.16em; font-weight:900; }
-  h1, h2 { margin:0; font-family:Georgia,"Noto Serif JP",serif; font-weight:500; letter-spacing:-.04em; }
-  h1 { max-width:850px; font-size:clamp(3rem,6vw,5.7rem); line-height:1.02; }
-  h2 { font-size:clamp(2.2rem,4vw,4rem); line-height:1.07; }
-  h1 em, h2 em { display:block; color:#8a6e98; font-style:normal; }
-  .lead { max-width:800px; margin:28px 0 0; color:#69768b; line-height:1.9; }
-  .verdict { padding:28px; border:1px solid rgba(76,91,125,.13); border-radius:24px; background:linear-gradient(145deg,rgba(185,168,230,.38),rgba(183,219,200,.46)); box-shadow:0 18px 50px rgba(76,91,125,.09); }
-  .verdict span { color:#69768b; font-size:.66rem; letter-spacing:.14em; font-weight:900; }
-  .verdict strong { display:block; margin:12px 0 18px; font-family:Georgia,serif; font-size:2.4rem; line-height:1; }
-  .verdict p { margin:0; color:#56657a; line-height:1.75; font-size:.82rem; }
-  .section { padding:72px 0; border-top:1px solid rgba(76,91,125,.13); }
-  .heading { display:flex; justify-content:space-between; align-items:end; gap:30px; margin-bottom:30px; }
-  .heading > p { max-width:520px; margin:0; color:#69768b; font-size:.82rem; line-height:1.75; }
-  .metric-grid, .driver-grid, .economics-grid, .nbm-grid, .policy-grid { display:grid; gap:12px; }
-  .metric-grid { grid-template-columns:repeat(3,1fr); }
-  .metric, .driver-grid article, .economics-grid article, .nbm-grid article, .policy-grid article { border:1px solid rgba(76,91,125,.12); border-radius:22px; background:rgba(255,255,255,.74); }
-  .metric { padding:24px; }
-  .metric.actual { background:rgba(143,181,236,.25); }
-  .metric.target { background:rgba(183,219,200,.36); }
-  .metric.boundary { background:rgba(243,207,170,.31); }
-  .metric > span, .driver-grid span, .economics-grid span, .nbm-grid span, .policy-grid span, .evidence-callout > span { color:#69768b; font-size:.64rem; letter-spacing:.12em; font-weight:900; }
-  .metric > strong { display:block; margin:18px 0 22px; font-family:Georgia,serif; font-size:2.3rem; font-weight:500; }
-  dl { margin:0; }
-  dl div { display:flex; justify-content:space-between; gap:16px; padding:9px 0; border-top:1px solid rgba(76,91,125,.1); font-size:.72rem; }
-  dt { color:#69768b; }
-  dd { margin:0; text-align:right; font-weight:800; overflow-wrap:anywhere; }
-  .boundary-note, .rule { margin:16px 0 0; padding:16px 18px; border-radius:16px; background:rgba(239,180,193,.18); color:#56657a; line-height:1.7; font-size:.78rem; }
-  code { overflow-wrap:anywhere; }
-  .driver-grid { grid-template-columns:repeat(3,1fr); }
-  .driver-grid article { min-height:190px; padding:24px; }
-  .driver-grid h3 { margin:28px 0 10px; font-family:Georgia,serif; font-size:1.45rem; font-weight:500; }
-  .driver-grid p { color:#69768b; font-size:.77rem; line-height:1.7; }
-  .evidence-callout { margin-top:12px; padding:20px 24px; border-radius:18px; background:#243653; color:white; }
-  .evidence-callout ul { margin:12px 0 0; padding-left:20px; line-height:1.8; font-size:.8rem; }
-  .economics-grid { grid-template-columns:repeat(4,1fr); }
-  .economics-grid article, .nbm-grid article { padding:23px; min-height:145px; }
-  .economics-grid strong, .nbm-grid strong { display:block; margin:24px 0 8px; font-family:Georgia,serif; font-size:2.15rem; font-weight:500; }
-  .economics-grid small, .nbm-grid small { color:#69768b; line-height:1.5; }
-  .nbm-grid { grid-template-columns:repeat(3,1fr); }
-  .policy-grid { grid-template-columns:repeat(2,1fr); }
-  .policy-grid article { padding:24px; }
-  .policy-grid .positive { background:rgba(183,219,200,.34); }
-  .policy-grid .negative { background:rgba(239,180,193,.22); }
-  .policy-grid ul { margin:18px 0 0; padding-left:20px; color:#56657a; font-size:.8rem; line-height:1.85; }
-  .source-list { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-  .source-list a { display:grid; grid-template-columns:1fr auto; gap:6px 18px; padding:18px; border:1px solid rgba(76,91,125,.12); border-radius:16px; background:rgba(255,255,255,.72); text-decoration:none; }
-  .source-list span { color:#69768b; font-size:.66rem; }
-  .source-list strong { font-size:.78rem; }
-  .source-list small { grid-column:2; color:#69768b; }
-  footer { display:grid; grid-template-columns:auto 1fr; gap:7px 14px; padding:18px; border-radius:16px; background:#243653; color:#fff; font-size:.65rem; }
-  footer span { color:#cbd4e2; font-weight:900; }
-  footer code { overflow-wrap:anywhere; }
-  @media (max-width:940px) { .hero { grid-template-columns:1fr; min-height:auto; } .metric-grid,.driver-grid,.economics-grid,.nbm-grid { grid-template-columns:repeat(2,1fr); } .verdict { max-width:560px; } }
-  @media (max-width:650px) { main { width:min(100% - 20px,1240px); } nav { display:none; } .hero { padding:50px 0; } h1 { font-size:2.8rem; } .heading { display:block; } .heading > p { margin-top:18px; } .metric-grid,.driver-grid,.economics-grid,.nbm-grid,.policy-grid,.source-list { grid-template-columns:1fr; } .source-list a { grid-template-columns:1fr; } .source-list small { grid-column:1; } footer { grid-template-columns:1fr; } }
-</style>
