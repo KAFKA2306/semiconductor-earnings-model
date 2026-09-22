@@ -75,6 +75,8 @@ for (const marker of [
   'data-column-preset',
   'financialHistoryHtml',
   'wb-history-chart',
+  'VIRTUALIZE_AT = 200',
+  "dataset.virtualized = 'true'",
   "params.append('f'",
   "params.append('x'",
   'openCellMenu',
