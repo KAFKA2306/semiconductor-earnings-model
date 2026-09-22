@@ -73,3 +73,14 @@ a{color:var(--wb-accent)}button:focus-visible,a:focus-visible,input:focus-visibl
 .wb-cell-menu{position:fixed;z-index:1000;width:220px;padding:4px;border:1px solid var(--wb-line-strong);background:#fff;box-shadow:0 14px 42px rgba(16,24,40,.18)}
 .wb-cell-menu button{display:block;width:100%;min-height:34px;padding:6px 8px;border:0;background:#fff;color:var(--wb-ink);text-align:left;cursor:pointer;font-size:11px}
 .wb-cell-menu button:hover,.wb-cell-menu button:focus-visible{background:#f2f4f7}.wb-cell-menu strong{font-weight:800}
+
+.wb-column-presets{grid-column:1/-1;display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--wb-line);background:#f9fafb}
+.wb-column-presets button,.wb-preset-link{border:1px solid var(--wb-line);background:#fff;color:var(--wb-ink);cursor:pointer}
+.wb-column-presets button{min-height:30px;padding:0 9px}.wb-column-presets button:hover,.wb-preset-link:hover{border-color:#84adff;background:#f5f8ff}
+.wb-column-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--wb-line)}
+.wb-saved-group + .wb-saved-group{margin-top:14px}.wb-saved-group h3{margin:0 0 6px;color:#475467;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.wb-preset-link{display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;min-height:40px;padding:7px 9px;text-align:left}.wb-preset-link + .wb-preset-link{margin-top:4px}
+.wb-preset-link strong,.wb-preset-link small{display:block}.wb-preset-link small{color:#667085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wb-saved-row{display:grid;grid-template-columns:1fr auto;gap:4px;margin-top:4px}.wb-saved-row>button{border:1px solid var(--wb-line);background:#fff;min-height:40px;padding:6px 8px;text-align:left;cursor:pointer}
+.wb-saved-row>button:first-child{display:flex;align-items:center;justify-content:space-between;gap:12px}.wb-saved-row strong,.wb-saved-row small{display:block}.wb-saved-row small{color:#667085}.wb-saved-row .danger{color:var(--wb-bad)}
+@media(max-width:760px){.wb-column-grid{grid-template-columns:1fr}}
