@@ -317,6 +317,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
     </section>
 
     <section class="wb-linked-strip" data-linked-strip aria-label="Linked active context" hidden></section>
+    <section class="wb-chart-panel" data-chart-panel aria-label="Interactive chart"></section>
 
     <div class="wb-workspace" data-workspace>
       <section class="wb-grid-panel" aria-label={title + ' data grid'}>
@@ -377,5 +378,6 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
   </dialog>
   <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
   <script src={base + 'assets/workspace-state.js'} defer></script>
+  <script src={base + 'assets/chart-engine.js'} defer></script>
   <script src={base + 'assets/bi-workbench.js'} defer></script>
 </div>
