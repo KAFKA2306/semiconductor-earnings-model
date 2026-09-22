@@ -26,6 +26,16 @@
       "status": "archived",
       "scope": "SOX30 latest actuals, annual cash flow, F1/F2 consensus, market snapshot, SOXQ/DRAM holdings",
       "policy": "Secondary provider. Preserve separately from primary-source actuals; do not silently overwrite issuer/SEC/EDINET facts."
+    },
+    {
+      "source_id": "zacks-qqq-provider-2026-09-23",
+      "type": "provider_snapshot",
+      "path": "data/raw/provider_snapshots/zacks_qqq_2026-09-23.json",
+      "provider": "Zacks Investment Research via ChatGPT MCP",
+      "retrieved_at": "2026-09-23",
+      "status": "archived",
+      "scope": "QQQ top-100 holdings for NASDAQ-100 working-universe reconciliation",
+      "policy": "Secondary tracking-fund evidence. Preserve the top-100 cap caveat and use Nasdaq corporate-action evidence for additions/removals."
     }
   ]
 }
