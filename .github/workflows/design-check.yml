@@ -1,4 +1,4 @@
-name: Validate pastel Astro design
+name: Validate semiconductor BI workbench
 
 on:
   pull_request:
@@ -132,47 +132,39 @@ jobs:
           npm run build
       - name: Verify ledger page live publication boundary
         run: uv run python scripts/check_ledger_page_publication_boundary.py
-      - name: Verify shared design and research workflow
+      - name: Verify BI workbench and legacy-route retirement
         run: |
           set -euo pipefail
-          test -s site/dist/pastel-watercolor.css
+          test -s site/dist/assets/bi-workbench.css
+          test -s site/dist/assets/bi-workbench.js
           test -s site/dist/api/v1/ai-infrastructure/index.json
           test -s site/dist/api/v3/financial-database/index.json
           test -s site/dist/api/v3/financial-database/financial.db
-          grep -F -- '--kafka-pastel-build: 20260723' site/dist/pastel-watercolor.css
-          for page in site/dist/earnings/index.html site/dist/model/index.html site/dist/resilience/index.html; do
+          for page in \
+            site/dist/index.html \
+            site/dist/companies/index.html \
+            site/dist/financials/index.html \
+            site/dist/capacity/index.html \
+            site/dist/facilities/index.html \
+            site/dist/activity/index.html \
+            site/dist/evidence/index.html \
+            site/dist/quality/index.html \
+            site/dist/earnings/index.html \
+            site/dist/model/index.html \
+            site/dist/resilience/index.html; do
             test -s "$page"
-            grep -F 'name="theme-color" content="#fbfaf7"' "$page"
-            grep -F 'name="app-build" content="2026-07-23-pastel-watercolor-1"' "$page"
-            grep -F 'href="/semiconductor-earnings-model/pastel-watercolor.css"' "$page"
+            grep -Fq 'data-workbench' "$page"
+            grep -Fq 'RESEARCH WORKBENCH' "$page"
+            ! grep -Fq 'pastel-watercolor.css' "$page"
+            ! grep -Fq 'research-context.js' "$page"
+            ! grep -Fq 'research-context.css' "$page"
           done
-          grep -F 'data-aggregation-status="computed"' site/dist/earnings/index.html
-          grep -F 'data-aggregation-status="computed"' site/dist/model/index.html
-          python - <<'PY'
-          from html import unescape
-          from pathlib import Path
-          import json
-          import re
-
-          html = Path('site/dist/resilience/index.html').read_text(encoding='utf-8')
-          text = unescape(html)
-          api = json.loads(Path('site/public/api/v2/semiconductor-research/index.json').read_text(encoding='utf-8'))
-          financial = json.loads(Path('site/public/api/v3/financial-database/index.json').read_text(encoding='utf-8'))
-          infrastructure = json.loads(Path('site/public/api/v1/ai-infrastructure/index.json').read_text(encoding='utf-8'))
-          assert 'RESEARCH WORKBENCH' in text
-          assert '企業検索' in text
-          assert 'DATABASE & ONTOLOGY' in text
-          assert 'MARKET BENCHMARK' in text
-          assert re.search(rf'data-research-api-hash=["\']{api["content_hash"]}["\']', html)
-          assert financial['audit']['status'] == 'PASS'
-          assert 'nand-operating-kpis.v1' in financial['extensions']
-          assert financial['audit']['counts']['nand_actual_observations'] >= 8
-          assert infrastructure['schema_version'] == 'ai-infrastructure-view.v2'
-          markers = [
-              'id="definition"', 'id="quality"', 'id="actuals"', 'id="peers"',
-              'id="scenario"', 'id="ranking"', 'id="history"', 'id="ontology"',
-              'id="benchmark"', 'id="limits"',
-          ]
-          positions = [html.index(marker) for marker in markers]
-          assert positions == sorted(positions), positions
-          PY
+          grep -Fq 'data-view="financials"' site/dist/earnings/index.html
+          grep -Fq 'data-view="projects"' site/dist/model/index.html
+          grep -Fq 'data-view="quality"' site/dist/resilience/index.html
+          grep -Fq 'data-open-columns' site/dist/index.html
+          grep -Fq 'data-open-compare' site/dist/index.html
+          grep -Fq 'data-open-views' site/dist/index.html
+          grep -Fq 'data-command' site/dist/index.html
+          grep -Fq 'data-inspector' site/dist/index.html
+          grep -Fq 'data-compare-bar' site/dist/index.html
