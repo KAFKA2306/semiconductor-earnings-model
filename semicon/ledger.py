@@ -59,6 +59,9 @@ CANONICAL_FACT_METRICS = {
     "inventory",
     "order_backlog",
     "orders_received",
+    "capacity",
+    "utilization",
+    "yield",
     "cash",
     "debt",
 }
