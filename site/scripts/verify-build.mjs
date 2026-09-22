@@ -7,10 +7,11 @@ const indexPath = path.join(dist, 'index.html');
 const componentPath = path.join(root, 'src/components/ResearchWorkbench.astro');
 const cssPath = path.join(dist, 'assets/bi-workbench.css');
 const jsPath = path.join(dist, 'assets/bi-workbench.js');
+const statePath = path.join(dist, 'assets/workspace-state.js');
 const financialPath = path.join(dist, 'api/v3/financial-database/index.json');
 const infrastructurePath = path.join(dist, 'api/v1/ai-infrastructure/index.json');
 
-for (const file of [indexPath, componentPath, cssPath, jsPath, financialPath, infrastructurePath]) {
+for (const file of [indexPath, componentPath, cssPath, jsPath, statePath, financialPath, infrastructurePath]) {
   if (!fs.existsSync(file)) throw new Error('Required Pages artifact is missing: ' + path.relative(root, file));
 }
 
@@ -18,6 +19,7 @@ const html = fs.readFileSync(indexPath, 'utf8');
 const component = fs.readFileSync(componentPath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
 const js = fs.readFileSync(jsPath, 'utf8');
+const workspaceState = fs.readFileSync(statePath, 'utf8');
 const financial = JSON.parse(fs.readFileSync(financialPath, 'utf8'));
 const infrastructure = JSON.parse(fs.readFileSync(infrastructurePath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
@@ -37,6 +39,9 @@ for (const marker of [
   'data-open-compare',
   'data-open-views',
   'data-open-export',
+  'data-open-mobile-nav',
+  'data-mobile-nav-dialog',
+  'data-linked-strip',
   'data-export-json',
   'data-export-meta',
   'data-copy-api',
@@ -64,6 +69,10 @@ for (const marker of [
   '.wb-bottom',
   'font-variant-numeric:tabular-nums',
   '@media(max-width:760px)',
+  '.wb-mobile-nav',
+  '.wb-linked-strip',
+  '[data-sort-dir=asc]',
+  '[data-sort-dir=desc]',
 ]) {
   if (!css.includes(marker)) throw new Error('BI CSS is missing contract marker: ' + marker);
 }
@@ -92,9 +101,28 @@ for (const marker of [
   'openCellMenu',
   'addCrossFilter',
   "ev.key.toLowerCase()==='k'",
+  "ev.key==='/'",
+  'data-inspector-tab',
+  'applyInspectorTab',
+  'renderSortState',
+  'aria-sort',
+  'renderLinkedStrip',
+  'workspaceApi.setActive',
   'openInspector',
 ]) {
   if (!js.includes(marker)) throw new Error('BI interaction contract is missing: ' + marker);
+}
+
+for (const marker of [
+  'workspace-state.v1',
+  'active: {rowId:null, entityId:null, projectId:null, recordId:null}',
+  'selected: new Set()',
+  'filter:',
+  'toggleSelected',
+  'setInspectorTab',
+  'snapshot',
+]) {
+  if (!workspaceState.includes(marker)) throw new Error('WorkspaceState contract is missing: ' + marker);
 }
 for (const marker of [
   "NULL ≠ 0",
