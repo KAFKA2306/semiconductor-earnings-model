@@ -230,14 +230,22 @@ for (const row of commitments) {
   if (!commitmentsByEntity.has(row.entity_id)) commitmentsByEntity.set(row.entity_id, []);
   commitmentsByEntity.get(row.entity_id).push(row);
 }
+const compactLinked = (row, kind) => {
+  if (kind === 'projects') return {id:row.id,project_name:row.project_name,status:row.status,target_date:row.target_date};
+  if (kind === 'evidence') return {id:row.id,project_name:row.project_name,event_type:row.event_type,status:row.status,target_date:row.target_date};
+  if (kind === 'facilities') return {id:row.id,facility_name:row.project_name,location:row.location,target_date:row.target_date};
+  if (kind === 'financials') return {id:row.id,concept_id:row.concept_id,value:row.value,unit:row.unit,target_date:row.target_date};
+  if (kind === 'commitments') return {id:row.commitment_id,customer_name:row.customer_name,commitment_type:row.commitment_type,status:row.contract_status,period_end:row.period_end};
+  return {id:row.id};
+};
 const linkedByEntity = Object.fromEntries(entities.map((e) => {
   const id = e.entity_id || e.id;
   return [id, {
-    projects:(projectByEntity.get(id) || []).slice(0,12),
-    evidence:(evidenceByEntity.get(id) || []).slice(0,12),
-    facilities:(facilityByEntity.get(id) || []).slice(0,12),
-    financials:(financialByEntity.get(id) || []).slice(0,24),
-    commitments:(commitmentsByEntity.get(id) || []).slice(0,12),
+    projects:(projectByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'projects')),
+    evidence:(evidenceByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'evidence')),
+    facilities:(facilityByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'facilities')),
+    financials:(financialByEntity.get(id) || []).slice(0,24).map(row=>compactLinked(row,'financials')),
+    commitments:(commitmentsByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'commitments')),
   }];
 }));
 const payload = {
