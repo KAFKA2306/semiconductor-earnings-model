@@ -8,6 +8,7 @@ on:
       - "data/canonical/**"
       - "data/derived/**"
       - "data/raw/google_sheets_import/**"
+      - "data/raw/company_ir/**"
       - "data/conflicts/**"
       - "tests/test_semicon_canonical_ledger.py"
       - "docs/semiconductor-infrastructure-ledger.md"
@@ -45,6 +46,7 @@ jobs:
         run: |
           source_xlsx="data/raw/google_sheets_import/1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ/a5ab21206c397dcf7d7603bb32c0a8e7cd6636d2b4efedbe3d88ff5c8a79a8dd/source.xlsx"
           uv run python -m semicon.ingest.google_sheets --spreadsheet-id 1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ --xlsx "$source_xlsx"
+          uv run python -m semicon.ingest.primary_project_seeds
           uv run python -m semicon.build_derived
       - name: Test canonical ingest invariants
         run: uv run python -m pytest -q tests/test_semicon_canonical_ledger.py
