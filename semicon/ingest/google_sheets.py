@@ -229,13 +229,16 @@ def parse_xlsx_bytes(blob: bytes, *, spreadsheet_id: str, imported_at: str, sour
         headers = rows[0] if rows else []
         sheets.append({"name": name, "classification": classify_sheet(name, headers), "rows": rows})
 
-    digest = hashlib.sha256(blob).hexdigest()
+    binary_digest = hashlib.sha256(blob).hexdigest()
+    semantic_bytes = json.dumps(sheets, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    semantic_digest = hashlib.sha256(semantic_bytes).hexdigest()
     return {
         "schema_version": "google-sheets-raw.v1",
         "spreadsheet_id": spreadsheet_id,
         "source_name": source_name,
         "imported_at": imported_at,
-        "source_sha256": digest,
+        "source_sha256": semantic_digest,
+        "source_binary_sha256": binary_digest,
         "sheets": sheets,
     }
 
@@ -771,7 +774,9 @@ def persist_import(snapshot: dict[str, Any], payload: dict[str, Any], *, root: P
     write_json(raw_dir / "source_manifest.json", {
         "schema_version": "google-sheets-raw-manifest.v1",
         "spreadsheet_id": snapshot.get("spreadsheet_id"), "source_name": snapshot.get("source_name"),
-        "source_sha256": snapshot.get("source_sha256"), "imported_at": snapshot.get("imported_at"),
+        "source_sha256": snapshot.get("source_sha256"),
+        "source_binary_sha256": snapshot.get("source_binary_sha256"),
+        "imported_at": snapshot.get("imported_at"),
         "sheet_names": [sheet.get("name") for sheet in snapshot.get("sheets", [])],
         "rows_read": sum(max(len(sheet.get("rows") or []) - 1, 0) for sheet in snapshot.get("sheets", [])),
         "native_archive": "source.xlsx",
@@ -805,7 +810,7 @@ def main(argv: list[str] | None = None) -> int:
     imported_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     if args.xlsx:
         blob = args.xlsx.read_bytes()
-        source_name = "xlsx_import"
+        source_name = "google_sheets" if args.spreadsheet_id == DEFAULT_SPREADSHEET_ID else "xlsx_import"
     else:
         token = os.getenv("GOOGLE_OAUTH_ACCESS_TOKEN") or os.getenv("GOOGLE_SHEETS_BEARER_TOKEN")
         blob = fetch_google_sheet_xlsx(args.spreadsheet_id, token)
