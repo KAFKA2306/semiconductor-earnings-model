@@ -326,6 +326,32 @@
     return n.toLocaleString();
   };
 
+  const financialHistoryHtml = row => {
+    const history = Array.isArray(row.history) ? row.history.filter(p => Number.isFinite(Number(p.value))) : [];
+    if (row.type !== 'financial' || !history.length) return '';
+    const values = history.map(p=>Number(p.value));
+    const min = Math.min(...values), max = Math.max(...values), span = max - min || 1;
+    const width=320, height=86, pad=8;
+    const points = history.map((p,i)=>{
+      const x = history.length === 1 ? width/2 : pad + i * ((width-pad*2)/(history.length-1));
+      const y = height-pad - ((Number(p.value)-min)/span)*(height-pad*2);
+      return x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    const rowsHtml = [...history].reverse().map(p=>
+      '<tr><td>' + escapeHtml(p.period_end || '—') + '</td><td class="num">' + formatFinancialValue(p) + '</td><td>' +
+      (p.source_url ? '<a href="' + escapeHtml(p.source_url) + '" target="_blank" rel="noreferrer">' + escapeHtml(p.source_tier || 'source') + ' ↗</a>' : escapeHtml(p.source_tier || '—')) +
+      '</td></tr>'
+    ).join('');
+    return '<div class="wb-section wb-history"><h3>History · chart + underlying observations</h3>' +
+      '<svg class="wb-history-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Financial history chart">' +
+      '<polyline points="' + points + '" vector-effect="non-scaling-stroke"></polyline>' +
+      history.map((p,i)=>{
+        const xy=points.split(' ')[i].split(',');
+        return '<circle cx="'+xy[0]+'" cy="'+xy[1]+'" r="2.5"><title>'+escapeHtml((p.period_end||'')+' '+String(p.value)+' '+(p.unit||''))+'</title></circle>';
+      }).join('') + '</svg>' +
+      '<div class="wb-history-table-wrap"><table class="wb-history-table"><thead><tr><th>Period</th><th>Value</th><th>Source</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div></div>';
+  };
+
   const inspectorHtml = row => {
     const src = row.source_url ? '<a class="wb-source-link" href="' + escapeHtml(row.source_url) + '" target="_blank" rel="noreferrer"><span><strong>Open primary evidence ↗</strong><small>' + escapeHtml(row.source_system || 'source') + '</small></span><span>↗</span></a>' : '<div class="wb-source-link"><span><strong>No source URL</strong><small>Missing source link</small></span></div>';
     const capex = formatCapex(row);
@@ -345,6 +371,7 @@
       '<div class="wb-tabs"><button class="active" type="button">Overview</button><button type="button" data-tab-evidence>Evidence</button><button type="button" data-tab-raw>Raw</button></div></div>' +
       '<div class="wb-inspector-body">' +
       '<div class="wb-metric-grid">' + metrics + '</div>' +
+      financialHistoryHtml(row) +
       '<div class="wb-stage">' + stages.map(s => '<span class="' + (active.has(s) ? 'on' : '') + '">' + s + '</span>').join('') + '</div>' +
       '<div class="wb-section"><h3>Company</h3><p><strong>' + escapeHtml(row.company || row.name || row.entity_id || '') + '</strong> · ' + escapeHtml(row.role || '') + (row.country ? ' · ' + escapeHtml(row.country) : '') + '</p></div>' +
       (row.product ? '<div class="wb-section"><h3>Product / Technology</h3><p>' + escapeHtml(row.product) + (row.technology ? ' · ' + escapeHtml(row.technology) : '') + '</p></div>' : '') +
