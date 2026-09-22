@@ -128,6 +128,7 @@ const financialRows = (financialDoc.views?.latest_actuals || []).map((o) => {
     raw: o,
   };
 });
+const activityRows = [...evidenceRows].sort((a,b) => String(b.target_date || '').localeCompare(String(a.target_date || '')) || String(b.imported_at || '').localeCompare(String(a.imported_at || '')));
 const qualityRows = [...projectRows, ...evidenceRows, ...facilityRows].sort((a,b) => String(a.quality || '').localeCompare(String(b.quality || '')));
 const columns = {
   projects: [
@@ -150,6 +151,11 @@ const columns = {
     {key:'event_type',label:'Type'},{key:'status',label:'Status'},{key:'target_date',label:'Date'},
     {key:'source_system',label:'Source'},{key:'quality',label:'Quality'},
   ],
+  activity: [
+    {key:'select',label:'',width:34},{key:'target_date',label:'Date'},{key:'company',label:'Company'},
+    {key:'project_name',label:'Event / Project'},{key:'event_type',label:'Type'},{key:'status',label:'Status'},
+    {key:'source_system',label:'Source'},{key:'quality',label:'Quality'},
+  ],
   quality: [
     {key:'select',label:'',width:34},{key:'company',label:'Company'},{key:'project_name',label:'Record'},
     {key:'type',label:'Record Type'},{key:'quality',label:'Quality'},{key:'source_system',label:'Source'},
@@ -166,7 +172,7 @@ const columns = {
     {key:'target_date',label:'Period'},{key:'source_system',label:'Source Tier'},{key:'quality',label:'Evidence'},
   ],
 };
-const rowsByView = {projects:projectRows,companies:companyRows,capacity:capacityRows,evidence:evidenceRows,quality:qualityRows,facilities:facilityRows,financials:financialRows};
+const rowsByView = {projects:projectRows,companies:companyRows,financials:financialRows,capacity:capacityRows,facilities:facilityRows,activity:activityRows,evidence:evidenceRows,quality:qualityRows};
 const normalizedView = rowsByView[view] ? view : 'projects';
 const rows = rowsByView[normalizedView];
 const activeColumns = columns[normalizedView];
@@ -175,6 +181,7 @@ const titles = {
   projects:['Projects','CapEx / capacity projects with source-level evidence'],
   companies:['Companies','Canonical entity universe and evidence coverage'],
   capacity:['Capacity','Physical capacity claims only. Allocation and utilization are not treated as expansion.'],
+  activity:['Activity','Canonical disclosure and project events, newest first.'],
   evidence:['Evidence','Events and disclosures, with provenance one click away'],
   quality:['Data Quality','Primary, imported, missing and conflicting records'],
   facilities:['Facilities','Canonical production / R&D / expansion locations'],
@@ -183,7 +190,7 @@ const titles = {
 const [title, subtitle] = titles[normalizedView];
 const safeJson = (value) => JSON.stringify(value).replaceAll('<','\\u003c').replaceAll('>','\\u003e').replaceAll('&','\\u0026');
 const payload = {view:normalizedView,rows,columns:activeColumns,defaultSort:'company'};
-const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['financials','≡','Financials'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['evidence','◎','Evidence'],['quality','!','Quality']];
+const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['financials','≡','Financials'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['activity','↻','Activity'],['evidence','◎','Evidence'],['quality','!','Quality']];
 const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 ---
 
