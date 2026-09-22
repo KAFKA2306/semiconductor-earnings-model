@@ -7,20 +7,13 @@
   const rows = Array.isArray(payload.rows) ? payload.rows : [];
   const columns = Array.isArray(payload.columns) ? payload.columns : [];
   const linkedByEntity = payload.linkedByEntity || {};
-  const state = {
-    query: '',
-    country: '',
-    role: '',
-    quality: '',
-    status: '',
-    sortKey: payload.defaultSort || '',
-    sortDir: payload.defaultDir === 'desc' ? 'desc' : 'asc',
-    selected: new Set(),
-    activeId: null,
-    includeFilters: [],
-    excludeFilters: [],
-    visibleColumns: new Set(columns.map(c => c.key)),
-  };
+  const workspaceApi = globalThis.SemiconWorkspaceState;
+  if (!workspaceApi) throw new Error('WorkspaceState v1 is required');
+  const state = workspaceApi.create({
+    columns:columns.map(c=>c.key),
+    defaultSort:payload.defaultSort || '',
+    defaultDir:payload.defaultDir === 'desc' ? 'desc' : 'asc',
+  });
 
   const q = sel => root.querySelector(sel);
   const qa = sel => [...root.querySelectorAll(sel)];
@@ -42,6 +35,8 @@
   const viewsDialog = q('[data-views-dialog]');
   const viewsBody = q('[data-views-body]');
   const exportDialog = q('[data-export-dialog]');
+  const mobileNavDialog = q('[data-mobile-nav-dialog]');
+  const linkedStrip = q('[data-linked-strip]');
   const crossFilterChips = q('[data-cross-filter-chips]');
 
   const escapeHtml = value => String(value ?? '')
@@ -181,7 +176,18 @@
     return out;
   };
 
+  const renderSortState = () => {
+    qa('[data-sort]').forEach(th => {
+      const key = th.getAttribute('data-sort');
+      const active = key && key === state.sortKey;
+      th.setAttribute('aria-sort', active ? (state.sortDir === 'desc' ? 'descending' : 'ascending') : 'none');
+      if (active) th.setAttribute('data-sort-dir',state.sortDir);
+      else th.removeAttribute('data-sort-dir');
+    });
+  };
+
   const renderTable = () => {
+    renderSortState();
     qa('[data-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-col'))));
     const visible = filteredRows();
     if (resultCount) resultCount.textContent = visible.length.toLocaleString();
@@ -429,6 +435,41 @@
     return '<div class="wb-section wb-linked"><h3>Linked workspace</h3><div class="wb-linked-grid">' + cards + '</div></div>';
   };
 
+  const renderLinkedStrip = () => {
+    if (!linkedStrip) return;
+    const row = rows.find(r=>r.id===state.active.rowId);
+    if (!row?.entity_id) {
+      linkedStrip.hidden = true;
+      linkedStrip.innerHTML = '';
+      return;
+    }
+    const linked = linkedByEntity[row.entity_id] || {};
+    const specs = [
+      ['Projects',linked.projects],
+      ['Financials',linked.financials],
+      ['Facilities',linked.facilities],
+      ['Evidence',linked.evidence],
+      ['Commitments',linked.commitments],
+    ];
+    linkedStrip.innerHTML =
+      '<strong>' + escapeHtml(row.company || row.name || row.entity_id) + '</strong>' +
+      specs.map(([label,items])=>'<span><b>' + (Array.isArray(items)?items.length:0) + '</b> ' + label + '</span>').join('');
+    linkedStrip.hidden = false;
+  };
+
+  const applyInspectorTab = tab => {
+    workspaceApi.setInspectorTab(state,tab);
+    qa('[data-inspector-tab]').forEach(btn=>{
+      const active=btn.getAttribute('data-inspector-tab')===state.inspector.tab;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-selected',active?'true':'false');
+      btn.setAttribute('tabindex',active?'0':'-1');
+    });
+    qa('[data-inspector-pane]').forEach(pane=>{
+      pane.hidden=pane.getAttribute('data-inspector-pane')!==state.inspector.tab;
+    });
+  };
+
   const inspectorHtml = row => {
     const src = row.source_url ? '<a class="wb-source-link" href="' + escapeHtml(row.source_url) + '" target="_blank" rel="noreferrer"><span><strong>Open primary evidence ↗</strong><small>' + escapeHtml(row.source_system || 'source') + '</small></span><span>↗</span></a>' : '<div class="wb-source-link"><span><strong>No source URL</strong><small>Missing source link</small></span></div>';
     const capex = formatCapex(row);
@@ -444,48 +485,59 @@
     const metrics = row.type === 'financial'
       ? metric('Value',formatFinancialValue(row)) + metric('Unit',escapeHtml(row.unit || '')) + metric('Value type',escapeHtml(row.value_type || '')) + metric('Period',escapeHtml(row.target_date || ''))
       : metric('CapEx',capex) + metric('Capacity',capacity) + metric('Status',row.status ? escapeHtml(row.status) : '') + metric('Target',escapeHtml(row.target_date || row.period_end || row.production_start || ''));
+    const provenance =
+      '<div class="wb-section"><h3>Provenance</h3>' + src +
+      '<dl class="wb-kv"><dt>Value type</dt><dd>' + escapeHtml(row.value_type || row.event_type || 'record') + '</dd><dt>Quality</dt><dd>' + escapeHtml(row.quality || 'unknown') + '</dd><dt>Document</dt><dd>' + escapeHtml(row.source_doc_id || '—') + '</dd><dt>Imported via</dt><dd>' + escapeHtml(row.import_source || row.source_system || '—') + '</dd><dt>Imported at</dt><dd>' + escapeHtml(row.imported_at || '—') + '</dd><dt>Record ID</dt><dd>' + escapeHtml(row.import_record_id || row.id || '—') + '</dd></dl></div>';
     return '<div class="wb-inspector-head"><div class="wb-inspector-headline"><div><div class="eyebrow">' + escapeHtml(row.entity_id || row.type || 'record') + '</div><h2>' + escapeHtml(row.project_name || row.concept_id || row.company || row.name || row.id) + '</h2></div><button class="wb-close" type="button" data-close-inspector aria-label="Close inspector">×</button></div>' +
-      '<div class="wb-tabs"><button class="active" type="button">Overview</button><button type="button" data-tab-evidence>Evidence</button><button type="button" data-tab-raw>Raw</button></div></div>' +
+      '<div class="wb-tabs" role="tablist" aria-label="Inspector tabs"><button class="active" type="button" role="tab" data-inspector-tab="overview">Overview</button><button type="button" role="tab" data-inspector-tab="evidence">Evidence</button><button type="button" role="tab" data-inspector-tab="raw">Raw</button></div></div>' +
       '<div class="wb-inspector-body">' +
+      '<section data-inspector-pane="overview">' +
       '<div class="wb-metric-grid">' + metrics + '</div>' +
       financialHistoryHtml(row) +
       '<div class="wb-stage">' + stages.map(s => '<span class="' + (active.has(s) ? 'on' : '') + '">' + s + '</span>').join('') + '</div>' +
       '<div class="wb-section"><h3>Company</h3><p><strong>' + escapeHtml(row.company || row.name || row.entity_id || '') + '</strong> · ' + escapeHtml(row.role || '') + (row.country ? ' · ' + escapeHtml(row.country) : '') + '</p></div>' +
       linkedWorkspaceHtml(row) +
       (row.product ? '<div class="wb-section"><h3>Product / Technology</h3><p>' + escapeHtml(row.product) + (row.technology ? ' · ' + escapeHtml(row.technology) : '') + '</p></div>' : '') +
-      ((row.demand_evidence || row.evidence) ? '<div class="wb-section"><h3>Evidence</h3><p>' + escapeHtml(row.demand_evidence || row.evidence) + '</p></div>' : '') +
-      '<div class="wb-section"><h3>Provenance</h3>' + src +
-      '<dl class="wb-kv"><dt>Value type</dt><dd>' + escapeHtml(row.value_type || row.event_type || 'record') + '</dd><dt>Quality</dt><dd>' + escapeHtml(row.quality || 'unknown') + '</dd><dt>Document</dt><dd>' + escapeHtml(row.source_doc_id || '—') + '</dd><dt>Imported via</dt><dd>' + escapeHtml(row.import_source || row.source_system || '—') + '</dd><dt>Imported at</dt><dd>' + escapeHtml(row.imported_at || '—') + '</dd><dt>Record ID</dt><dd>' + escapeHtml(row.import_record_id || row.id || '—') + '</dd></dl></div>' +
-      '<div class="wb-section"><h3>Raw record</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font:10px/1.5 ui-monospace,monospace;background:#f9fafb;border:1px solid #eaecf0;padding:8px">' + escapeHtml(JSON.stringify(row.raw || row,null,2)) + '</pre></div>' +
+      '</section>' +
+      '<section data-inspector-pane="evidence" hidden>' +
+      ((row.demand_evidence || row.evidence) ? '<div class="wb-section"><h3>Evidence</h3><p>' + escapeHtml(row.demand_evidence || row.evidence) + '</p></div>' : '<div class="wb-empty">No evidence text on this record.</div>') +
+      provenance +
+      '</section>' +
+      '<section data-inspector-pane="raw" hidden><div class="wb-section"><h3>Raw record</h3><pre class="wb-raw-record">' + escapeHtml(JSON.stringify(row.raw || row,null,2)) + '</pre></div></section>' +
       '</div>';
   };
 
   const openInspector = id => {
     const row = rows.find(r => r.id === id);
     if (!row || !inspector || !workspace) return;
-    state.activeId = id;
+    workspaceApi.setActive(state,row);
     inspector.innerHTML = inspectorHtml(row);
     workspace.classList.add('has-inspector');
     q('[data-close-inspector]')?.addEventListener('click',closeInspector);
+    qa('[data-inspector-tab]').forEach(btn=>btn.addEventListener('click',()=>applyInspectorTab(btn.getAttribute('data-inspector-tab'))));
     qa('[data-linked-route]').forEach(btn=>btn.addEventListener('click',()=>{
       const route=btn.getAttribute('data-linked-route') || '';
       const entity=btn.getAttribute('data-linked-entity') || '';
       location.href=(payload.base || '/') + route + '?q=' + encodeURIComponent(entity);
     }));
+    applyInspectorTab(state.inspector.tab || 'overview');
+    renderLinkedStrip();
     renderTable();
     writeUrl();
   };
 
   const closeInspector = () => {
-    state.activeId = null;
+    workspaceApi.clearActive(state);
+    workspaceApi.setInspectorTab(state,'overview');
     workspace?.classList.remove('has-inspector');
     if (inspector) inspector.innerHTML = '';
+    renderLinkedStrip();
     renderTable();
     writeUrl();
   };
 
   const toggleSelected = id => {
-    if (state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
+    workspaceApi.toggleSelected(state,id);
     renderCompare(); renderTable(); writeUrl();
   };
 
@@ -631,6 +683,8 @@
     for(const key of ['country','role','quality','status']){const el=q('[data-filter="'+key+'"]');if(el)el.value=''}
     renderTable();writeUrl();
   });
+  q('[data-open-mobile-nav]')?.addEventListener('click',()=>mobileNavDialog?.showModal());
+  q('[data-close-mobile-nav]')?.addEventListener('click',()=>mobileNavDialog?.close());
   q('[data-open-export]')?.addEventListener('click',()=>exportDialog?.showModal());
   q('[data-close-export]')?.addEventListener('click',()=>exportDialog?.close());
   q('[data-save-view]')?.addEventListener('click',saveView);
@@ -654,6 +708,7 @@
   compareDialog?.addEventListener('click',ev=>{if(ev.target===compareDialog)compareDialog.close()});
   viewsDialog?.addEventListener('click',ev=>{if(ev.target===viewsDialog)viewsDialog.close()});
   exportDialog?.addEventListener('click',ev=>{if(ev.target===exportDialog)exportDialog.close()});
+  mobileNavDialog?.addEventListener('click',ev=>{if(ev.target===mobileNavDialog)mobileNavDialog.close()});
   let virtualScrollFrame = 0;
   tableWrap?.addEventListener('scroll',()=>{
     if (tableWrap.dataset.virtualized !== 'true') return;
@@ -664,10 +719,14 @@
   window.addEventListener('scroll',closeCellMenu,true);
   window.addEventListener('resize',closeCellMenu);
   document.addEventListener('keydown',ev=>{
-    if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==='k'){ev.preventDefault();renderCommand('');command?.showModal();commandInput?.focus()}
-    if(ev.key==='Escape'&&state.activeId)closeInspector();
+    const target=ev.target;
+    const typing=target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target?.isContentEditable;
+    if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==='k'){ev.preventDefault();renderCommand('');command?.showModal();commandInput?.focus();return}
+    if(ev.key==='/'&&!typing){ev.preventDefault();searchInput?.focus();return}
+    if(ev.key==='Escape'&&state.activeId){closeInspector();return}
   });
 
-  renderColumnDialog(); renderSavedViews(); renderTable(); renderCompare();
+  state.subscribe((_,type)=>{ if(type==='active') renderLinkedStrip(); });
+  renderColumnDialog(); renderSavedViews(); renderSortState(); renderTable(); renderCompare(); renderLinkedStrip();
   if(state.activeId) openInspector(state.activeId);
 })();
