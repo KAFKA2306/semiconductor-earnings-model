@@ -54,3 +54,14 @@ a{color:var(--wb-accent)}button:focus-visible,a:focus-visible,input:focus-visibl
 @media(max-width:1100px){:root{--wb-rail:58px;--wb-inspector:360px}.wb-brand{padding:0;justify-content:center;font-size:0}.wb-brand:before{content:"SI";font-size:12px}.wb-brand small,.wb-nav .label,.wb-rail-foot{display:none}.wb-nav a{justify-content:center;padding:0}.wb-nav .ico{width:auto}.wb-bottom{left:var(--wb-rail)}}
 @media(max-width:760px){:root{--wb-rail:0px}.wb-shell{display:block}.wb-rail{display:none}.wb-topbar{padding:6px}.wb-search{min-width:0}.wb-topbar .desktop-only{display:none}.wb-context{align-items:flex-start}.wb-summary{display:none}.wb-controls{padding-inline:6px}.wb-workspace.has-inspector{grid-template-columns:1fr}.wb-grid-panel{min-width:100%}.wb-workspace.has-inspector .wb-grid-panel{display:none}.wb-inspector{border-left:0;height:calc(100dvh - 145px)}.wb-table-wrap{height:calc(100dvh - 145px)}.wb-bottom{left:0}.wb-table{min-width:980px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+.wb-modal{width:min(900px,calc(100% - 24px));max-height:82dvh;border:1px solid var(--wb-line-strong);padding:0;background:#fff;color:var(--wb-ink);box-shadow:0 24px 80px rgba(16,24,40,.25)}
+.wb-modal::backdrop{background:rgba(16,24,40,.45)}
+.wb-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--wb-line)}
+.wb-modal-head h2{margin:0;font-size:14px}.wb-modal-body{padding:12px;overflow:auto;max-height:calc(82dvh - 50px)}
+.wb-column-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border:1px solid var(--wb-line);background:var(--wb-line)}
+.wb-column-item{display:flex;align-items:center;gap:8px;min-height:38px;padding:0 10px;background:#fff}.wb-column-item input{width:14px;height:14px}
+.wb-compare-table{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums}
+.wb-compare-table th,.wb-compare-table td{padding:8px;border:1px solid var(--wb-line);text-align:left;vertical-align:top}.wb-compare-table th{background:#f2f4f7;color:#475467}
+.wb-compare-table td.num{text-align:right}.wb-compare-table .row-label{font-weight:800;background:#f9fafb;white-space:nowrap}
+@media(max-width:760px){.wb-column-list{grid-template-columns:1fr}.wb-modal{width:calc(100% - 10px);max-height:90dvh}.wb-modal-body{max-height:calc(90dvh - 50px)}}
