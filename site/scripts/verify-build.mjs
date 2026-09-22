@@ -41,7 +41,7 @@ for (const marker of [
 ]) {
   if (!html.includes(marker)) throw new Error('Workbench root is missing marker: ' + marker);
 }
-for (const route of ['companies','financials','capacity','facilities','evidence','quality']) {
+for (const route of ['companies','financials','capacity','facilities','activity','evidence','quality']) {
   const file = path.join(dist, route, 'index.html');
   if (!fs.existsSync(file)) throw new Error('Workbench route is missing: ' + route);
   const page = fs.readFileSync(file, 'utf8');
@@ -71,6 +71,10 @@ for (const marker of [
   'openCompare',
   'renderColumnDialog',
   'renderSavedViews',
+  "params.append('f'",
+  "params.append('x'",
+  'openCellMenu',
+  'addCrossFilter',
   "ev.key.toLowerCase()==='k'",
   'openInspector',
 ]) {
@@ -106,4 +110,4 @@ if ((financial.views?.nand_kpi_comparisons?.length ?? 0) < 4) {
   throw new Error('NAND comparison view is incomplete');
 }
 
-console.log('pages_root_contract=PASS workbench=screener-first routes=6 ai_schema=' + infrastructure.schema_version + ' hash=' + financial.content_hash);
+console.log('pages_root_contract=PASS workbench=screener-first routes=8 cross_filter=PASS ai_schema=' + infrastructure.schema_version + ' hash=' + financial.content_hash);
