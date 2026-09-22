@@ -145,6 +145,7 @@ jobs:
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/companies/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/financials/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/capacity/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/facilities/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/evidence/")" = "200"
