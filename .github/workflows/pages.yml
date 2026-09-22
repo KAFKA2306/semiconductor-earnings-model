@@ -144,6 +144,11 @@ jobs:
           test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/companies/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/capacity/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/facilities/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/evidence/")" = "200"
+          test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/quality/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/earnings/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/model/")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/resilience/")" = "200"
@@ -168,8 +173,11 @@ jobs:
           resilience_hash="$(jq -er '.content_hash' <<< "$resilience_json")"
           research_hash="$(jq -er '.content_hash' <<< "$research_json")"
 
-          grep -Fq "AIインフラで、" <<< "$root_html"
-          grep -Fq "actual ≠ guidance" <<< "$(tr '[:upper:]' '[:lower:]' <<< "$root_html")"
+          grep -Fq "SEMICON LEDGER" <<< "$root_html"
+          grep -Fq "RESEARCH WORKBENCH" <<< "$root_html"
+          grep -Fq "data-workbench" <<< "$root_html"
+          grep -Fq "data-inspector" <<< "$root_html"
+          grep -Fq "data-compare-bar" <<< "$root_html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$root_html"
           jq -e '.schema_version == "ai-infrastructure-view.v2"' <<< "$ai_json" >/dev/null
           jq -e '[.observations[] | select(.concept_id == "capital_expenditures" and .source_tier == "primary_regulatory")] | length == 0' <<< "$ai_json" >/dev/null
