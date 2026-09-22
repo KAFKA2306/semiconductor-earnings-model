@@ -39,6 +39,7 @@
   const compareBody = q('[data-compare-body]');
   const viewsDialog = q('[data-views-dialog]');
   const viewsBody = q('[data-views-body]');
+  const crossFilterChips = q('[data-cross-filter-chips]');
 
   const escapeHtml = value => String(value ?? '')
     .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
@@ -215,6 +216,24 @@
     }));
   };
 
+  const renderCrossFilterChips = () => {
+    if (!crossFilterChips) return;
+    const items = [
+      ...state.includeFilters.map((item,index)=>({...item,mode:'include',index})),
+      ...state.excludeFilters.map((item,index)=>({...item,mode:'exclude',index})),
+    ];
+    crossFilterChips.innerHTML = items.map(item =>
+      '<button type="button" class="wb-filter-chip ' + item.mode + '" data-filter-chip-mode="' + item.mode + '" data-filter-chip-index="' + item.index + '">' +
+      '<span>' + (item.mode === 'exclude' ? '≠ ' : '= ') + escapeHtml(item.key) + ': ' + escapeHtml(item.value) + '</span><b>×</b></button>'
+    ).join('');
+    [...crossFilterChips.querySelectorAll('[data-filter-chip-mode]')].forEach(btn=>btn.addEventListener('click',()=>{
+      const mode=btn.getAttribute('data-filter-chip-mode');
+      const index=Number(btn.getAttribute('data-filter-chip-index'));
+      if(mode==='exclude') state.excludeFilters.splice(index,1); else state.includeFilters.splice(index,1);
+      renderCrossFilterChips(); renderTable(); writeUrl();
+    }));
+  };
+
   let activeCellMenu = null;
   const closeCellMenu = () => {
     activeCellMenu?.remove();
@@ -225,6 +244,7 @@
     const target = mode === 'exclude' ? state.excludeFilters : state.includeFilters;
     if (!target.some(item => item.key === key && item.value === value)) target.push({key,value});
     closeCellMenu();
+    renderCrossFilterChips();
     renderTable();
     writeUrl();
     toast((mode === 'exclude' ? 'Excluded ' : 'Filtered ') + key + ': ' + value);
@@ -251,7 +271,7 @@
     menu.querySelector('[data-cell-action="exclude"]')?.addEventListener('click',()=>addCrossFilter('exclude',key,value));
     menu.querySelector('[data-cell-action="open"]')?.addEventListener('click',()=>{closeCellMenu();openInspector(rowId)});
     menu.querySelector('[data-cell-action="copy"]')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(value);toast('Value copied')}catch{toast('Copy failed')}closeCellMenu()});
-    menu.querySelector('[data-cell-action="clear"]')?.addEventListener('click',()=>{state.includeFilters=[];state.excludeFilters=[];closeCellMenu();renderTable();writeUrl();toast('Cross-filters cleared')});
+    menu.querySelector('[data-cell-action="clear"]')?.addEventListener('click',()=>{state.includeFilters=[];state.excludeFilters=[];closeCellMenu();renderCrossFilterChips();renderTable();writeUrl();toast('Cross-filters cleared')});
   };
 
   const renderColumnDialog = () => {
