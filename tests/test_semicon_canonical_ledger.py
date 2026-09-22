@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from semicon.build_derived import build as build_derived
-from semicon.export.google_sheets import build_projection
+from semicon.export.google_sheets import GENERATED_TABS, apply_projection, build_projection
 from semicon.ingest.google_sheets import build_import, classify_sheet, persist_import
 from semicon.ledger import DERIVED_METRICS, dedupe_or_conflict, write_json
 from semicon.round_trip import validate_round_trip
@@ -187,3 +187,38 @@ def test_capacity_metrics_normalize_to_facts_and_expansion_project(tmp_path: Pat
     assert project["capacity_before"] == 100
     assert project["capacity_after"] == 150
     assert project["capacity_change"] == 50
+
+
+def test_google_sheets_apply_creates_missing_tabs_and_replaces_generated_views(monkeypatch):
+    calls = []
+
+    def fake_google_json(url, token, *, method="GET", payload=None):
+        calls.append((url, token, method, payload))
+        if method == "GET":
+            return {"sheets": [{"properties": {"title": "Company_Master"}}]}
+        if url.endswith("/values:batchUpdate"):
+            return {"totalUpdatedCells": 42, "totalUpdatedRows": 7}
+        return {}
+
+    monkeypatch.setattr("semicon.export.google_sheets._google_json", fake_google_json)
+    projection = {name: [["header"], [name]] for name in GENERATED_TABS}
+    result = apply_projection("sheet-id", projection, "token")
+
+    assert result["updated_cells"] == 42
+    assert result["updated_rows"] == 7
+    assert "Company_Master" not in result["tabs_created"]
+    assert set(result["tabs_written"]) == set(GENERATED_TABS)
+
+    add_sheet_call = next(call for call in calls if call[0].endswith(":batchUpdate"))
+    added = {
+        request["addSheet"]["properties"]["title"]
+        for request in add_sheet_call[3]["requests"]
+    }
+    assert added == set(GENERATED_TABS) - {"Company_Master"}
+
+    clear_call = next(call for call in calls if call[0].endswith("/values:batchClear"))
+    assert set(clear_call[3]["ranges"]) == {f"{name}!A:ZZ" for name in GENERATED_TABS}
+
+    values_call = next(call for call in calls if call[0].endswith("/values:batchUpdate"))
+    assert values_call[3]["valueInputOption"] == "RAW"
+    assert {item["range"] for item in values_call[3]["data"]} == {f"{name}!A1" for name in GENERATED_TABS}
