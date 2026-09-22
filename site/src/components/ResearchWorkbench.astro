@@ -189,7 +189,13 @@ const titles = {
 };
 const [title, subtitle] = titles[normalizedView];
 const safeJson = (value) => JSON.stringify(value).replaceAll('<','\\u003c').replaceAll('>','\\u003e').replaceAll('&','\\u0026');
-const payload = {view:normalizedView,rows,columns:activeColumns,defaultSort:'company'};
+const apiPaths = {
+  projects:'api/v2/projects/index.json', companies:'api/v2/entities/index.json',
+  financials:'api/v3/financial-database/index.json', capacity:'api/v2/projects/index.json',
+  facilities:'api/v2/facilities/index.json', activity:'api/v2/events/index.json',
+  evidence:'api/v2/events/index.json', quality:'api/v2/projects/index.json',
+};
+const payload = {view:normalizedView,rows,columns:activeColumns,defaultSort:'company',base,apiUrl:base + apiPaths[normalizedView]};
 const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['financials','≡','Financials'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['activity','↻','Activity'],['evidence','◎','Evidence'],['quality','!','Quality']];
 const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 ---
@@ -219,6 +225,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <button class="wb-top-action desktop-only" type="button" data-open-views>Views</button>
       <button class="wb-top-action desktop-only" type="button" data-save-view>Save view</button>
       <button class="wb-top-action" type="button" data-copy-view>Share</button>
+      <a class="wb-top-action" href={base + apiPaths[normalizedView]} target="_blank" rel="noreferrer">API</a>
       <button class="wb-top-action" type="button" data-export-visible>Export</button>
     </header>
 
