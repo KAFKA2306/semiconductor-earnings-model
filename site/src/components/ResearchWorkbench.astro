@@ -160,7 +160,7 @@ const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['cap
 const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 ---
 
-<link rel="stylesheet" href={${base} + 'assets/bi-workbench.css'} />
+<link rel="stylesheet" href={base + 'assets/bi-workbench.css'} />
 <div class="wb-shell" data-workbench data-view={normalizedView} data-build-sha={buildSha}>
   <aside class="wb-rail" aria-label="Workbench navigation">
     <a class="wb-brand" href={base}><span>SEMICON LEDGER<small>RESEARCH WORKBENCH</small></span></a>
@@ -231,5 +231,5 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
     <div class="wb-command-results" data-command-results></div>
   </dialog>
   <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
-  <script src={${base} + 'assets/bi-workbench.js'} defer></script>
+  <script src={base + 'assets/bi-workbench.js'} defer></script>
 </div>
