@@ -52,5 +52,7 @@ jobs:
         run: uv run python -m semicon.validate_canonical
       - name: Validate canonical to Sheets to canonical round-trip
         run: uv run python -m semicon.round_trip
+      - name: Validate original Sheet semantics after regeneration
+        run: uv run python -m semicon.source_round_trip
       - name: Build API v2 projection
         run: uv run python -m semicon.build_api_v2
