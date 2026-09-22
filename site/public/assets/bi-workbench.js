@@ -858,6 +858,7 @@
     toast('Watchlist: ' + state.watchlist.size + ' entities');
   };
   const applyWidgetState = () => {
+    root.dataset.workspaceLayout=state.widgets.layout || 'default';
     renderLinkedStrip();
     renderChart();
     root.style.setProperty('--wb-inspector',Number(state.widgets.sizes.inspectorWidth || 390)+'px');
@@ -922,6 +923,8 @@
       const key=select.getAttribute('data-widget-size');
       select.value=String(state.widgets.sizes[key] || '');
     });
+    const layout=q('[data-widget-layout]');
+    if(layout) layout.value=state.widgets.layout || 'default';
   };
 
   const getSavedViews = () => {
@@ -1018,6 +1021,10 @@
     state.widgets.sizes[key]=Number(select.value);
     applyWidgetState();
   }));
+  q('[data-widget-layout]')?.addEventListener('change',ev=>{
+    state.widgets.layout=ev.target.value || 'default';
+    applyWidgetState();
+  });
   q('[data-close-mobile-nav]')?.addEventListener('click',()=>mobileNavDialog?.close());
   q('[data-open-export]')?.addEventListener('click',()=>exportDialog?.showModal());
   q('[data-close-export]')?.addEventListener('click',()=>exportDialog?.close());
