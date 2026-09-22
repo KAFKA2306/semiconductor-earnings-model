@@ -384,6 +384,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <div class="wb-workspace-controls">
         <label><input type="checkbox" data-widget-visible="chart" checked /> Chart</label>
         <label><input type="checkbox" data-widget-visible="linked" checked /> Linked context</label>
+        <label>Layout <select data-widget-layout><option value="default">Default</option><option value="grid-focus">Grid focus</option><option value="chart-focus">Chart focus</option></select></label>
         <label>Chart height <select data-widget-size="chartHeight"><option value="150">150</option><option value="170">170</option><option value="220">220</option><option value="300">300</option></select></label>
         <label>Inspector width <select data-widget-size="inspectorWidth"><option value="320">320</option><option value="360">360</option><option value="390">390</option><option value="440">440</option></select></label>
       </div>
