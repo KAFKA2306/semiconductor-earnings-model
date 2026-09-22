@@ -58,7 +58,7 @@ for (const marker of [
   'data-copy-api',
   'Displayed JSON',
   'Metadata JSON',
-  'Save view',
+  'Save workspace',
   'Export',
 ]) {
   if (!html.includes(marker)) throw new Error('Workbench root is missing marker: ' + marker);
