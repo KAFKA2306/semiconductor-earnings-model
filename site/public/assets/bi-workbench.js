@@ -24,6 +24,7 @@
   const q = sel => root.querySelector(sel);
   const qa = sel => [...root.querySelectorAll(sel)];
   const tableBody = q('[data-table-body]');
+  const tableWrap = q('.wb-table-wrap');
   const resultCount = q('[data-result-count]');
   const inspector = q('[data-inspector]');
   const workspace = q('[data-workspace]');
@@ -187,7 +188,25 @@
       tableBody.innerHTML = '<tr><td colspan="' + columns.length + '"><div class="wb-empty">No rows match the current screen.</div></td></tr>';
       return;
     }
-    tableBody.innerHTML = visible.map(row => {
+    const VIRTUALIZE_AT = 200;
+    const ROW_HEIGHT = 35;
+    const BUFFER = 12;
+    let renderRows = visible;
+    let topPad = 0;
+    let bottomPad = 0;
+    if (tableWrap && visible.length > VIRTUALIZE_AT) {
+      const viewportRows = Math.ceil(tableWrap.clientHeight / ROW_HEIGHT);
+      const start = Math.max(0, Math.floor(tableWrap.scrollTop / ROW_HEIGHT) - BUFFER);
+      const end = Math.min(visible.length, start + viewportRows + BUFFER * 2);
+      renderRows = visible.slice(start,end);
+      topPad = start * ROW_HEIGHT;
+      bottomPad = (visible.length - end) * ROW_HEIGHT;
+      tableWrap.dataset.virtualized = 'true';
+    } else if (tableWrap) {
+      tableWrap.dataset.virtualized = 'false';
+    }
+    const visibleColCount = columns.filter(c => state.visibleColumns.has(c.key)).length;
+    const rowHtml = renderRows.map(row => {
       const selected = state.activeId === row.id ? ' selected' : '';
       return '<tr class="' + selected.trim() + '" data-row="' + escapeHtml(row.id) + '" tabindex="0">' +
         columns.filter(c => state.visibleColumns.has(c.key)).map(col => {
@@ -196,6 +215,10 @@
         }).join('') +
         '</tr>';
     }).join('');
+    tableBody.innerHTML =
+      (topPad ? '<tr class="wb-virtual-spacer"><td colspan="' + visibleColCount + '" style="height:' + topPad + 'px"></td></tr>' : '') +
+      rowHtml +
+      (bottomPad ? '<tr class="wb-virtual-spacer"><td colspan="' + visibleColCount + '" style="height:' + bottomPad + 'px"></td></tr>' : '');
     qa('[data-select-row]').forEach(box => box.addEventListener('click', ev => {
       ev.stopPropagation();
       toggleSelected(box.getAttribute('data-select-row'));
@@ -554,6 +577,12 @@
   columnDialog?.addEventListener('click',ev=>{if(ev.target===columnDialog)columnDialog.close()});
   compareDialog?.addEventListener('click',ev=>{if(ev.target===compareDialog)compareDialog.close()});
   viewsDialog?.addEventListener('click',ev=>{if(ev.target===viewsDialog)viewsDialog.close()});
+  let virtualScrollFrame = 0;
+  tableWrap?.addEventListener('scroll',()=>{
+    if (tableWrap.dataset.virtualized !== 'true') return;
+    if (virtualScrollFrame) cancelAnimationFrame(virtualScrollFrame);
+    virtualScrollFrame = requestAnimationFrame(()=>{ virtualScrollFrame=0; renderTable(); });
+  },{passive:true});
   document.addEventListener('click',ev=>{if(activeCellMenu && !ev.target.closest('.wb-cell-menu')) closeCellMenu()});
   window.addEventListener('scroll',closeCellMenu,true);
   window.addEventListener('resize',closeCellMenu);
