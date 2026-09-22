@@ -8,10 +8,11 @@ const componentPath = path.join(root, 'src/components/ResearchWorkbench.astro');
 const cssPath = path.join(dist, 'assets/bi-workbench.css');
 const jsPath = path.join(dist, 'assets/bi-workbench.js');
 const statePath = path.join(dist, 'assets/workspace-state.js');
+const chartEnginePath = path.join(dist, 'assets/chart-engine.js');
 const financialPath = path.join(dist, 'api/v3/financial-database/index.json');
 const infrastructurePath = path.join(dist, 'api/v1/ai-infrastructure/index.json');
 
-for (const file of [indexPath, componentPath, cssPath, jsPath, statePath, financialPath, infrastructurePath]) {
+for (const file of [indexPath, componentPath, cssPath, jsPath, statePath, chartEnginePath, financialPath, infrastructurePath]) {
   if (!fs.existsSync(file)) throw new Error('Required Pages artifact is missing: ' + path.relative(root, file));
 }
 
@@ -20,6 +21,7 @@ const component = fs.readFileSync(componentPath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
 const js = fs.readFileSync(jsPath, 'utf8');
 const workspaceState = fs.readFileSync(statePath, 'utf8');
+const chartEngine = fs.readFileSync(chartEnginePath, 'utf8');
 const financial = JSON.parse(fs.readFileSync(financialPath, 'utf8'));
 const infrastructure = JSON.parse(fs.readFileSync(infrastructurePath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
@@ -42,6 +44,8 @@ for (const marker of [
   'data-open-mobile-nav',
   'data-mobile-nav-dialog',
   'data-linked-strip',
+  'data-chart-panel',
+  'assets/chart-engine.js',
   'data-export-json',
   'data-export-meta',
   'data-copy-api',
@@ -73,6 +77,12 @@ for (const marker of [
   '.wb-linked-strip',
   '[data-sort-dir=asc]',
   '[data-sort-dir=desc]',
+  '.wb-chart-panel',
+  '.wb-bar-chart',
+  '.wb-pastel-line',
+  '.wb-pie',
+  '.wb-col-resizer',
+  '.wb-pinned',
 ]) {
   if (!css.includes(marker)) throw new Error('BI CSS is missing contract marker: ' + marker);
 }
@@ -107,12 +117,28 @@ for (const marker of [
   'renderSortState',
   'aria-sort',
   'renderLinkedStrip',
+  'renderChart',
+  'openChartMenu',
+  'TABLE_LAYOUT_KEY',
+  'moveColumn',
+  'ensureColumnResizers',
   'workspaceApi.setActive',
   'openInspector',
 ]) {
   if (!js.includes(marker)) throw new Error('BI interaction contract is missing: ' + marker);
 }
 
+for (const marker of [
+  'SemiconChartEngine',
+  'pieAllowed',
+  "view==='projects'",
+  "view==='financials'",
+  "type:'line'",
+  "type:'bar'",
+  "model.type='pie'",
+]) {
+  if (!chartEngine.includes(marker)) throw new Error('Chart engine contract is missing: ' + marker);
+}
 for (const marker of [
   'workspace-state.v1',
   'active: {rowId:null, entityId:null, projectId:null, recordId:null}',
