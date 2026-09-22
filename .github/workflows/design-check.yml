@@ -153,16 +153,18 @@ jobs:
             site/dist/model/index.html \
             site/dist/resilience/index.html; do
             test -s "$page"
-            grep -F 'data-workbench' "$page"
-            grep -F 'RESEARCH WORKBENCH' "$page"
-            ! grep -F 'pastel-watercolor.css' "$page"
+            grep -Fq 'data-workbench' "$page"
+            grep -Fq 'RESEARCH WORKBENCH' "$page"
+            ! grep -Fq 'pastel-watercolor.css' "$page"
+            ! grep -Fq 'research-context.js' "$page"
+            ! grep -Fq 'research-context.css' "$page"
           done
-          grep -F 'Financials | Semiconductor Research Workbench' site/dist/earnings/index.html
-          grep -F 'Projects &amp; Model Inputs | Semiconductor Research Workbench' site/dist/model/index.html
-          grep -F 'Data Quality &amp; Resilience | Semiconductor Research Workbench' site/dist/resilience/index.html
-          grep -F 'data-open-columns' site/dist/index.html
-          grep -F 'data-open-compare' site/dist/index.html
-          grep -F 'data-open-views' site/dist/index.html
-          grep -F 'data-command' site/dist/index.html
-          grep -F 'data-inspector' site/dist/index.html
-          grep -F 'data-compare-bar' site/dist/index.html
+          grep -Fq 'data-view="financials"' site/dist/earnings/index.html
+          grep -Fq 'data-view="projects"' site/dist/model/index.html
+          grep -Fq 'data-view="quality"' site/dist/resilience/index.html
+          grep -Fq 'data-open-columns' site/dist/index.html
+          grep -Fq 'data-open-compare' site/dist/index.html
+          grep -Fq 'data-open-views' site/dist/index.html
+          grep -Fq 'data-command' site/dist/index.html
+          grep -Fq 'data-inspector' site/dist/index.html
+          grep -Fq 'data-compare-bar' site/dist/index.html
