@@ -75,7 +75,12 @@ def build(root: Path = ROOT) -> dict[str, Any]:
         after = project.get("capacity_after")
         capacity_growth = None
         capacity_unit = str(project.get("capacity_unit") or "").strip().lower()
-        is_physical_capacity = not capacity_unit.startswith("%") and "allocation" not in capacity_unit
+        capacity_metric = str(project.get("capacity_metric") or "").strip().lower()
+        is_physical_capacity = (
+            not capacity_unit.startswith("%")
+            and "allocation" not in capacity_unit
+            and "allocation" not in capacity_metric
+        )
         if is_physical_capacity and isinstance(before, (int, float)) and isinstance(after, (int, float)) and before != 0:
             capacity_growth = after / before - 1
         earnings_inputs.append({
