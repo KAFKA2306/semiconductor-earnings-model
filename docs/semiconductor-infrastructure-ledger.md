@@ -32,13 +32,23 @@ uv run python -m semicon.build_derived
 uv run python -m semicon.build_api_v2
 uv run python -m semicon.validate_canonical
 uv run python -m semicon.round_trip
+uv run python -m semicon.source_round_trip
 uv run python -m pytest -q tests/test_semicon_canonical_ledger.py
 ```
 
 Google Sheets projection:
 ```bash
 uv run python -m semicon.export.google_sheets --output-json data/derived/google_sheets_projection.json
+
+# Apply regenerated view tabs to a target Sheet. The ledger remains canonical.
+GOOGLE_OAUTH_ACCESS_TOKEN=... uv run python -m semicon.export.google_sheets \
+  --spreadsheet-id <target-spreadsheet-id> \
+  --apply
 ```
+
+`semicon.round_trip` checks canonical -> generated Sheet projection -> canonical.
+`semicon.source_round_trip` independently checks that the archived original live Sheet's
+entity/index/CapEx/source semantics survive canonicalization and regeneration.
 
 The deterministic projection contains Company_Master, Annual_Financials, CapEx_Projects, Facilities, Orders_Backlog, Customer_Commitments, Project_Lifecycle, Project_Economics, Decision_Evidence, Sources and Coverage. Authenticated application of this payload to Google Sheets belongs at the connected Google Drive/Sheets boundary.
 
