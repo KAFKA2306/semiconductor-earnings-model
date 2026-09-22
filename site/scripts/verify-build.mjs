@@ -41,13 +41,13 @@ for (const marker of [
 ]) {
   if (!html.includes(marker)) throw new Error('Workbench root is missing marker: ' + marker);
 }
-for (const route of ['companies','financials','capacity','facilities','activity','evidence','quality']) {
+for (const route of ['companies','financials','capacity','facilities','activity','evidence','quality','earnings','model','resilience']) {
   const file = path.join(dist, route, 'index.html');
   if (!fs.existsSync(file)) throw new Error('Workbench route is missing: ' + route);
   const page = fs.readFileSync(file, 'utf8');
   if (!page.includes('data-workbench')) throw new Error(route + ' is not using shared workbench shell');
 }
-for (const forbidden of ['AIインフラで、最後に何が変わったか。','headline-card primary','pastel-watercolor.css']) {
+for (const forbidden of ['AIインフラで、最後に何が変わったか。','headline-card primary','pastel-watercolor.css','research-context.js','research-context.css']) {
   if (html.includes(forbidden)) throw new Error('Legacy marketing UI leaked into root: ' + forbidden);
 }
 for (const marker of [
@@ -71,6 +71,10 @@ for (const marker of [
   'openCompare',
   'renderColumnDialog',
   'renderSavedViews',
+  'Built-in screens',
+  'data-column-preset',
+  'financialHistoryHtml',
+  'wb-history-chart',
   "params.append('f'",
   "params.append('x'",
   'openCellMenu',
