@@ -40,7 +40,7 @@ for (const marker of [
 ]) {
   if (!html.includes(marker)) throw new Error('Workbench root is missing marker: ' + marker);
 }
-for (const route of ['companies','capacity','facilities','evidence','quality']) {
+for (const route of ['companies','financials','capacity','facilities','evidence','quality']) {
   const file = path.join(dist, route, 'index.html');
   if (!fs.existsSync(file)) throw new Error('Workbench route is missing: ' + route);
   const page = fs.readFileSync(file, 'utf8');
@@ -80,6 +80,7 @@ for (const marker of [
   "site/public/api/v2/projects/index.json",
   "site/public/api/v2/entities/index.json",
   "site/public/api/v2/events/index.json",
+  "site/public/api/v3/financial-database/index.json",
 ]) {
   if (!component.includes(marker)) throw new Error('Canonical workbench contract is missing: ' + marker);
 }
