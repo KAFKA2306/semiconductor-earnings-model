@@ -13,6 +13,20 @@
         "simple_payback_years": 5.0,
         "tax_rate": 0.3
       },
+      "currency": "JPY",
+      "entity_id": "JP:3436",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-AVOID-JP3436-DX-2024",
+      "required_annual_revenue_high": null,
+      "required_annual_revenue_low": null
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
       "currency": "USD",
       "entity_id": "US:COHR",
       "model_status": "derived_not_company_guidance",
@@ -42,11 +56,151 @@
         "tax_rate": 0.3
       },
       "currency": "JPY",
+      "entity_id": "JP:285A",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP285A-20260602",
+      "required_annual_revenue_high": 537142.8571428572,
+      "required_annual_revenue_low": 537142.8571428572
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:4021",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP4021-SEMIMAT-PLANT",
+      "required_annual_revenue_high": 16914.285714285714,
+      "required_annual_revenue_low": 16914.285714285714
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:4021",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP4021-SEMIMAT-RD",
+      "required_annual_revenue_high": 9600.0,
+      "required_annual_revenue_low": 9600.0
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:4021",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP4021-VISTA2027-20250515",
+      "required_annual_revenue_high": 90971.42857142858,
+      "required_annual_revenue_low": 90971.42857142858
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:4186",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP4186-ASO-20260608",
+      "required_annual_revenue_high": 14857.142857142859,
+      "required_annual_revenue_low": 14857.142857142859
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:4186",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP4186-MTP2027",
+      "required_annual_revenue_high": 86857.14285714287,
+      "required_annual_revenue_low": 86857.14285714287
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:4186",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP4186-PYEONGTAEK-20260915",
+      "required_annual_revenue_high": 13714.285714285716,
+      "required_annual_revenue_low": 13714.285714285716
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:4980",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP4980-MTP2028",
+      "required_annual_revenue_high": null,
+      "required_annual_revenue_low": null
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
       "entity_id": "JP:5016",
       "model_status": "derived_not_company_guidance",
       "project_id": "CAPEX-JP5016-20260616",
       "required_annual_revenue_high": 137142.85714285716,
       "required_annual_revenue_low": null
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": null,
+      "entity_id": "JP:6315",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP6315-KOREA-20240510",
+      "required_annual_revenue_high": null,
+      "required_annual_revenue_low": null
+    },
+    {
+      "assumptions": {
+        "incremental_ebit_margin": 0.25,
+        "provenance": "analytical assumption migrated from CapEx DB v0.4 handoff; not company guidance",
+        "simple_payback_years": 5.0,
+        "tax_rate": 0.3
+      },
+      "currency": "JPY",
+      "entity_id": "JP:8035",
+      "model_status": "derived_not_company_guidance",
+      "project_id": "CAPEX-JP8035-20250226",
+      "required_annual_revenue_high": null,
+      "required_annual_revenue_low": 800000.0
     },
     {
       "assumptions": {

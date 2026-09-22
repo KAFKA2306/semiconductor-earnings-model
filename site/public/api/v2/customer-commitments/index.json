@@ -1,4 +1,34 @@
 {
-  "commitments": [],
+  "commitments": [
+    {
+      "amount": null,
+      "commitment_id": "COMMIT-JP285A-LTA-20260602",
+      "commitment_type": "long_term_agreement",
+      "contract_status": "Disclosed; counterparties/terms not disclosed",
+      "customer_name": "Undisclosed customers",
+      "entity_id": "JP:285A",
+      "evidence_text": "Kioxia disclosed that it is securing multi-year LTAs to improve revenue visibility and profit quality.",
+      "period_end": null,
+      "period_start": null,
+      "provenance": [
+        {
+          "doc_id": "urlsha256:44ab0f98b9a42df417998964be3ea18a897c726b27744541b99b25dc3ef1938f",
+          "import_source": "company_ir_seed",
+          "imported_at": "2026-09-22T09:00:00Z",
+          "original_source_url": "https://www.kioxia-holdings.com/en-jp/news/2026/20260602-1.html",
+          "raw_snapshot_sha256": null,
+          "sheet_name": "data/raw/company_ir/capex_project_seed_v1.json",
+          "source_ref": "kioxia-investor-day-20260602",
+          "source_row": 1,
+          "spreadsheet_id": null
+        }
+      ],
+      "quality_flag": "primary_source_extracted",
+      "source_doc_id": "urlsha256:44ab0f98b9a42df417998964be3ea18a897c726b27744541b99b25dc3ef1938f",
+      "source_system": "company_ir",
+      "source_url": "https://www.kioxia-holdings.com/en-jp/news/2026/20260602-1.html",
+      "volume": null
+    }
+  ],
   "schema_version": "canonical-customer-commitments.v1"
 }
