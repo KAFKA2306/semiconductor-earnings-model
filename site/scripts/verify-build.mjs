@@ -33,6 +33,8 @@ for (const marker of [
   'data-inspector',
   'data-compare-bar',
   'data-command',
+  'data-open-columns',
+  'data-open-compare',
   'Save view',
   'Export',
 ]) {
@@ -61,9 +63,12 @@ for (const marker of [
 for (const marker of [
   "new URLSearchParams(location.search)",
   "params.set('compare'",
+  "params.set('cols'",
   "localStorage.getItem('semicon:saved-views')",
   "navigator.clipboard.writeText",
   "exportRows('visible')",
+  'openCompare',
+  'renderColumnDialog',
   "ev.key.toLowerCase()==='k'",
   'openInspector',
 ]) {
