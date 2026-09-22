@@ -39,7 +39,7 @@ def build_projection(root: Path = ROOT) -> dict[str, list[list[Any]]]:
         company_rows.append(row)
 
     fact_headers = ["fact_id", "entity_id", "metric", "value", "unit", "period_start", "period_end", "fiscal_year", "period_type", "source_system", "source_doc_id", "source_url", "native_concept", "quality_flag", "null_reason"]
-    project_headers = ["project_id", "event_id", "event_type", "entity_id", "project_name", "product", "technology", "facility_id", "location", "announcement_date", "period_start", "period_end", "capex_plan_low", "capex_plan_high", "capex_actual", "currency", "capacity_before", "capacity_after", "capacity_change", "capacity_unit", "planned_start", "production_start", "demand_evidence", "customer_commitment", "funding_source", "status", "source_system", "source_doc_id", "source_url", "quality_flag"]
+    project_headers = ["project_id", "event_id", "event_type", "entity_id", "project_name", "product", "technology", "facility_id", "location", "announcement_date", "period_start", "period_end", "capex_plan_low", "capex_plan_high", "capex_actual", "currency", "capacity_metric", "capacity_before", "capacity_after", "capacity_change", "capacity_unit", "planned_start", "production_start", "demand_evidence", "customer_commitment", "funding_source", "status", "source_system", "source_doc_id", "source_url", "quality_flag"]
     project_rows = []
     for item in projects:
         row = dict(item)
@@ -58,6 +58,29 @@ def build_projection(root: Path = ROOT) -> dict[str, list[list[Any]]]:
 
     source_rows: list[dict[str, Any]] = []
     seen_sources: set[tuple[str, str]] = set()
+    for entity in registry.get("entities", []):
+        for membership in entity.get("index_membership", []) or []:
+            source_url = membership.get("source_url")
+            if not source_url:
+                continue
+            source_doc_id = "index:" + "|".join(
+                str(value or "")
+                for value in (
+                    membership.get("index_name"),
+                    membership.get("as_of_date"),
+                    membership.get("security_ticker_or_code"),
+                )
+            )
+            key = (source_doc_id, str(source_url))
+            if key in seen_sources:
+                continue
+            seen_sources.add(key)
+            source_rows.append({
+                "source_doc_id": source_doc_id,
+                "source_url": source_url,
+                "source_system": "official_index_or_imported_index_source",
+                "quality_flag": membership.get("verification_status"),
+            })
     for dataset in (facts, projects, facilities, backlog, commitments, events):
         for row in dataset:
             key = (str(row.get("source_doc_id") or ""), str(row.get("source_url") or ""))
