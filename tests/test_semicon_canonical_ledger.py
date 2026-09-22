@@ -222,3 +222,29 @@ def test_google_sheets_apply_creates_missing_tabs_and_replaces_generated_views(m
     values_call = next(call for call in calls if call[0].endswith("/values:batchUpdate"))
     assert values_call[3]["valueInputOption"] == "RAW"
     assert {item["range"] for item in values_call[3]["data"]} == {f"{name}!A1" for name in GENERATED_TABS}
+
+
+def test_dedicated_project_lifecycle_preserves_event_status_separately(tmp_path: Path):
+    root = empty_root(tmp_path)
+    source = snapshot()
+    source["sheets"].append({
+        "name": "Project_Lifecycle",
+        "rows": [
+            [
+                "event_id", "entity_id", "event_type", "announcement_date",
+                "period_start", "period_end", "project_name", "status",
+                "evidence_text", "source_doc_id", "source_url", "quality_flag",
+            ],
+            [
+                "E1", "US:AAA", "capacity_expansion", "2026-01-01",
+                None, None, "Fab A", "event-status",
+                "event evidence", "ir-1", "https://example.com/ir", "primary_source_extracted",
+            ],
+        ],
+    })
+    report, payload = build_import(source, root=root)
+    assert report["conflicts"] == 0 and report["invalid_rows"] == 0
+    event = next(row for row in payload["events"] if row["event_id"] == "E1")
+    project = next(row for row in payload["projects"] if row["project_id"] == "P1")
+    assert event["status"] == "event-status"
+    assert project["status"] == "announced"
