@@ -26,6 +26,7 @@ from semicon.ledger import (
     fiscal_year_from_value,
     load_json,
     load_jsonl,
+    merge_provenance,
     normalize_date,
     normalize_header,
     stable_hash,
@@ -284,9 +285,12 @@ def _source_url(row: dict[str, Any]) -> str | None:
 
 def _provenance(snapshot: dict[str, Any], sheet: str, source_row: int, row: dict[str, Any]) -> dict[str, Any]:
     original_url = _source_url(row)
+    import_record_id = f"gsheet:{snapshot['spreadsheet_id']}:{sheet}:{source_row}"
     doc_id = _get(row, "source_doc_id", "doc_id", "accession", "edinet_doc_id")
+    if doc_id is None and original_url:
+        doc_id = "urlsha256:" + hashlib.sha256(str(original_url).encode("utf-8")).hexdigest()
     if doc_id is None:
-        doc_id = f"gsheet:{snapshot['spreadsheet_id']}:{sheet}:{source_row}"
+        doc_id = import_record_id
     return {
         "import_source": "google_sheets" if snapshot.get("source_name") == "google_sheets" else "xlsx_import",
         "spreadsheet_id": snapshot.get("spreadsheet_id"),
@@ -295,6 +299,7 @@ def _provenance(snapshot: dict[str, Any], sheet: str, source_row: int, row: dict
         "imported_at": snapshot.get("imported_at"),
         "original_source_url": original_url,
         "doc_id": str(doc_id),
+        "import_record_id": import_record_id,
         "raw_snapshot_sha256": snapshot.get("source_sha256"),
     }
 
@@ -400,8 +405,7 @@ def _merge_entities(existing: dict[str, Any], incoming: dict[str, Any], conflict
     out["index_membership"] = sorted(memberships, key=lambda x: (str(x.get("index_name")), str(x.get("as_of_date")), str(x.get("security_ticker_or_code"))))
     provenance = list(out.get("provenance") or [])
     for item in incoming.get("provenance") or []:
-        if item not in provenance:
-            provenance.append(item)
+        provenance = merge_provenance(provenance, item)
     out["provenance"] = provenance
     return out
 
@@ -518,6 +522,7 @@ def _event_and_project_records(sheet: dict[str, Any], snapshot: dict[str, Any], 
                 "project_id": project_id, "event_id": event_id, "event_type": event_type,
                 "entity_id": entity_id, "project_name": _get(row, "project_name", "project") or event_id,
                 "product": _get(row, "product", "business_or_process"), "technology": _get(row, "technology"),
+                "capacity_metric": _get(row, "capacity_metric", "metric"),
                 "facility_id": _get(row, "facility_id"), "location": _get(row, "region", "location", "site"),
                 "announcement_date": event["announcement_date"], "period_start": normalize_date(_get(row, "period_start")),
                 "period_end": normalize_date(_get(row, "period_end", "target_date")),
