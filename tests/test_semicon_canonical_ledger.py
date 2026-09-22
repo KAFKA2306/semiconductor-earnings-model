@@ -152,3 +152,38 @@ def test_live_source_semantics_survive_regeneration():
         return
     result = validate_source_round_trip(root)
     assert result["status"] == "PASS", result
+
+
+def test_capacity_metrics_normalize_to_facts_and_expansion_project(tmp_path: Path):
+    root = empty_root(tmp_path)
+    source = snapshot()
+    source["sheets"].append({
+        "name": "Capacity_Metrics",
+        "rows": [
+            [
+                "capacity_id", "issuer_id", "as_of_date", "business_or_process", "site",
+                "metric", "current_value", "target_value", "unit", "target_date",
+                "utilization_pct", "yield_pct", "bottleneck", "source_url", "source_note",
+            ],
+            [
+                "CAP-AAA-FAB", "US:AAA", "2026-09-22", "advanced process", "Fab A",
+                "wafer output", 100, 150, "wafers/month", "2027-12-31",
+                92, 88, "tool constraint", "https://example.com/ir/capacity", "disclosed target",
+            ],
+        ],
+    })
+    report, payload = build_import(source, root=root)
+    assert report["conflicts"] == 0 and report["invalid_rows"] == 0
+
+    metrics = {(row["metric"], row["value"], row["unit"]) for row in payload["facts"]}
+    assert ("capacity", 100, "wafers/month") in metrics
+    assert ("utilization", 92, "percent") in metrics
+    assert ("yield", 88, "percent") in metrics
+
+    event = next(row for row in payload["events"] if row["event_id"] == "CAP-AAA-FAB")
+    project = next(row for row in payload["projects"] if row["project_id"] == "CAP-AAA-FAB")
+    assert event["event_type"] == "capacity_expansion"
+    assert project["capacity_metric"] == "wafer output"
+    assert project["capacity_before"] == 100
+    assert project["capacity_after"] == 150
+    assert project["capacity_change"] == 50
