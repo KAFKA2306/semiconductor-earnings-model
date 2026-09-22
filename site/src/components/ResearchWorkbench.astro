@@ -265,6 +265,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <select class="wb-filter" data-filter="quality" aria-label="Filter by evidence quality"><option value="">All evidence</option></select>
       <button class="wb-control-btn" type="button" data-clear-filters>Clear</button>
       <button class="wb-control-btn" type="button" data-open-columns>Columns</button>
+      <div class="wb-filter-chips" data-cross-filter-chips aria-label="Active cross filters"></div>
       <span class="wb-spacer"></span><span class="wb-view-label"><strong data-result-count>{rows.length}</strong> rows</span>
     </section>
 
