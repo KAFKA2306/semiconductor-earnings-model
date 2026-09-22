@@ -138,6 +138,30 @@
       "evidence_text": "FY2025-FY2027 total CapEx JPY79.6bn; includes JPY14.8bn semiconductor materials plant equipment and JPY8.4bn semiconductor materials R&D equipment."
     },
     {
+      "source_ref": "nissan-vista2027-20250515",
+      "event_id": "CAPEX-JP4021-SEMIMAT-RD",
+      "entity_id": "JP:4021",
+      "event_type": "capex_plan",
+      "announcement_date": "2025-05-15",
+      "period_start": null,
+      "period_end": null,
+      "project_name": "Semiconductor materials R&D equipment",
+      "status": "Subproject of portfolio plan",
+      "evidence_text": "Vista2027 Stage II discloses JPY8.4bn for semiconductor materials R&D equipment."
+    },
+    {
+      "source_ref": "nissan-vista2027-20250515",
+      "event_id": "CAPEX-JP4021-SEMIMAT-PLANT",
+      "entity_id": "JP:4021",
+      "event_type": "capex_plan",
+      "announcement_date": "2025-05-15",
+      "period_start": null,
+      "period_end": null,
+      "project_name": "Semiconductor materials plant equipment",
+      "status": "Subproject of portfolio plan",
+      "evidence_text": "Vista2027 Stage II discloses JPY14.8bn for semiconductor materials plant equipment."
+    },
+    {
       "source_ref": "dexerials-report-2024",
       "event_id": "CAPEX-JP4980-MTP2028",
       "entity_id": "JP:4980",
@@ -427,7 +451,7 @@
     {
       "source_ref": "nissan-vista2027-20250515",
       "project_id": "CAPEX-JP4021-SEMIMAT-PLANT",
-      "event_id": "CAPEX-JP4021-VISTA2027-20250515",
+      "event_id": "CAPEX-JP4021-SEMIMAT-PLANT",
       "event_type": "capex_plan",
       "entity_id": "JP:4021",
       "project_name": "Semiconductor materials plant equipment",
@@ -465,7 +489,7 @@
     {
       "source_ref": "nissan-vista2027-20250515",
       "project_id": "CAPEX-JP4021-SEMIMAT-RD",
-      "event_id": "CAPEX-JP4021-VISTA2027-20250515",
+      "event_id": "CAPEX-JP4021-SEMIMAT-RD",
       "event_type": "capex_plan",
       "entity_id": "JP:4021",
       "project_name": "Semiconductor materials R&D equipment",
