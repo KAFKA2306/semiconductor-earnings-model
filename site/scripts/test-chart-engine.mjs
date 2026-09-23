@@ -40,4 +40,11 @@ const active={
 const line=api.build({view:'financials',rows:[active],activeRow:active});
 if(line.type!=='line' || line.data.length!==2 || line.data[1].value!==120) throw new Error('Financial line mismatch');
 
+const selectedFinancials=[
+  {id:'f1',company:'A',concept_id:'revenue',value:100,unit:'USD'},
+  {id:'f2',company:'B',concept_id:'revenue',value:120,unit:'USD'},
+];
+const financialCompare=api.build({view:'financials',rows:selectedFinancials,activeRow:selectedFinancials[0]});
+if(financialCompare.type!=='bar' || financialCompare.data.length!==2 || financialCompare.data[1].value!==120) throw new Error('Financial selected comparison mismatch');
+
 console.log('chart_engine_contract=PASS');
