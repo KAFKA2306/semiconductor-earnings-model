@@ -11,6 +11,8 @@
   if (!workspaceApi) throw new Error('WorkspaceState v1 is required');
   const chartEngine = globalThis.SemiconChartEngine;
   if (!chartEngine) throw new Error('Chart engine is required');
+  const dataEngine = globalThis.SemiconDataEngine;
+  if (!dataEngine) throw new Error('Workbench data engine is required');
   const state = workspaceApi.create({
     columns:columns.map(c=>c.key),
     defaultSort:payload.defaultSort || '',
@@ -130,17 +132,7 @@
     return escapeHtml(row.capacity_after ?? row.capacity_before);
   };
 
-  const cellValue = (row, key) => {
-    if (key === 'select') return '';
-    if (key === 'company') return row.company || row.name || row.entity_id || '';
-    if (key === 'capex') {
-      const cap = row.capex || {};
-      return cap.high ?? cap.low ?? null;
-    }
-    if (key === 'capacity') return row.capacity_after ?? row.capacity_before ?? null;
-    if (key === 'quality') return row.quality || '';
-    return row[key] ?? '';
-  };
+  const cellValue = dataEngine.cellValue;
 
   const cellHtml = (row, col) => {
     const key = col.key;
@@ -205,40 +197,12 @@
     history.replaceState(null,'',location.pathname + (qs ? '?' + qs : ''));
   };
 
-  const filteredRows = () => {
-    const needle = state.query.trim().toLowerCase();
-    let out = rows.filter(row => {
-      if (state.country && row.country !== state.country) return false;
-      if (state.role && row.role !== state.role) return false;
-      if (state.quality && row.quality !== state.quality) return false;
-      if (state.status && row.status !== state.status) return false;
-      if (state.watchlistOnly && !state.watchlist.has(row.entity_id)) return false;
-      for (const item of state.includeFilters) {
-        if (String(cellValue(row,item.key) ?? '') !== item.value) return false;
-      }
-      for (const item of state.excludeFilters) {
-        if (String(cellValue(row,item.key) ?? '') === item.value) return false;
-      }
-      if (!needle) return true;
-      const haystack = [
-        row.company,row.name,row.ticker,row.entity_id,row.project_name,row.product,row.technology,
-        row.location,row.status,row.event_type,row.evidence,row.customer,row.metric,row.source_system
-      ].filter(Boolean).join(' ').toLowerCase();
-      return haystack.includes(needle);
-    });
-    if (state.sortKey) {
-      out = [...out].sort((a,b) => {
-        const av = cellValue(a,state.sortKey);
-        const bv = cellValue(b,state.sortKey);
-        if (av == null && bv != null) return 1;
-        if (av != null && bv == null) return -1;
-        if (typeof av === 'number' && typeof bv === 'number') return av - bv;
-        return String(av ?? '').localeCompare(String(bv ?? ''),undefined,{numeric:true,sensitivity:'base'});
-      });
-      if (state.sortDir === 'desc') out.reverse();
-    }
-    return out;
-  };
+  const filteredRows = () => dataEngine.filterSortRows(rows,{
+    query:state.query,country:state.country,role:state.role,quality:state.quality,status:state.status,
+    watchlistOnly:state.watchlistOnly,watchlist:state.watchlist,
+    includeFilters:state.includeFilters,excludeFilters:state.excludeFilters,
+    sortKey:state.sortKey,sortDir:state.sortDir,
+  });
 
   const renderSortState = () => {
     qa('[data-sort]').forEach(th => {
@@ -308,6 +272,31 @@
     });
   };
 
+  let keyboardAnchorId=null;
+  const focusRowByOffset = (currentId,delta) => {
+    const visible=filteredRows();
+    const index=visible.findIndex(row=>row.id===currentId);
+    if(index<0) return;
+    const target=visible[Math.max(0,Math.min(visible.length-1,index+delta))];
+    if(!target) return;
+    const tr=q('[data-row="' + CSS.escape(target.id) + '"]');
+    if(tr){tr.focus({preventScroll:true});tr.scrollIntoView({block:'nearest'});return}
+    const absoluteIndex=visible.findIndex(row=>row.id===target.id);
+    if(tableWrap){tableWrap.scrollTop=Math.max(0,absoluteIndex*35-35);renderTable();requestAnimationFrame(()=>q('[data-row="' + CSS.escape(target.id) + '"]')?.focus({preventScroll:true}))}
+  };
+  const selectRange = (fromId,toId) => {
+    const visible=filteredRows();
+    const a=visible.findIndex(row=>row.id===fromId),b=visible.findIndex(row=>row.id===toId);
+    if(a<0||b<0) return;
+    const [start,end]=a<b?[a,b]:[b,a];
+    for(const row of visible.slice(start,end+1)) state.selected.add(row.id);
+    renderCompare();renderTable();writeUrl();
+  };
+  const toggleKeyboardSelection = (id,rangeMode) => {
+    if(rangeMode && keyboardAnchorId) selectRange(keyboardAnchorId,id);
+    else {workspaceApi.toggleSelected(state,id);keyboardAnchorId=id;renderCompare();renderTable();writeUrl()}
+  };
+
   const renderTable = () => {
     renderSortState();
     qa('[data-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-col'))));
@@ -359,7 +348,14 @@
         openInspector(tr.getAttribute('data-row'));
       });
       tr.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openInspector(tr.getAttribute('data-row')); }
+        const id=tr.getAttribute('data-row');
+        if(ev.key==='ArrowDown'||ev.key==='ArrowUp'){ev.preventDefault();focusRowByOffset(id,ev.key==='ArrowDown'?1:-1);return}
+        if(ev.key==='Enter'){ev.preventDefault();openInspector(id);return}
+        if(ev.key===' '){ev.preventDefault();toggleKeyboardSelection(id,ev.shiftKey);return}
+        if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==='c'){
+          const company=rows.find(row=>row.id===id)?.company || '';
+          navigator.clipboard?.writeText(company).then(()=>toast('Row copied')).catch(()=>{});
+        }
       });
     });
     qa('td[data-cell-key]').forEach(td => td.addEventListener('contextmenu', ev => {
@@ -1069,6 +1065,18 @@
     if(ev.key==='Escape'&&state.activeId){closeInspector();return}
   });
 
+  globalThis.SemiconWorkbenchDebug={
+    state,
+    filteredRows,
+    run500RowPerformance:()=>dataEngine.performanceFixture({count:500,iterations:80}),
+    activateFirst:()=>{
+      const first=filteredRows()[0];
+      if(!first) return null;
+      const start=performance.now();
+      openInspector(first.id);
+      return {active_id:first.id,elapsed_ms:performance.now()-start};
+    },
+  };
   state.subscribe((_,type)=>{ if(type==='active'){renderLinkedStrip();renderChart()} });
   renderColumnDialog(); renderSavedViews(); renderSavedWorkspaces(); renderSortState(); renderWatchlistState(); renderTable(); renderCompare(); renderLinkedStrip(); applyWidgetState();
   if(state.activeId) openInspector(state.activeId);
