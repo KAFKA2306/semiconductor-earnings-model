@@ -122,4 +122,5 @@ uv run python -m pytest tests/test_factor_lab.py -q
 4. 1m / 3m / 6m / 12m forward return を生成
 5. IC / Rank IC / quantile test を一括計算
 6. raw price を保存せず Factor Lab JSON だけを commit
-7. その commit を既存 GitHub Pages pipeline が公開
+7. `GITHUB_TOKEN` push では別 workflow が起動しないため、`workflow_dispatch` で Pages pipeline を明示起動
+8. Pages が更新後の `main` から静的サイトを再構築・公開
