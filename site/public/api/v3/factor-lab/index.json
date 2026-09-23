@@ -4839,7 +4839,7 @@
   },
   "market_data": {
     "raw_persisted": false,
-    "raw_sha256": "22080d789c45a8ae84e287201d5e4f9825c199916d58bce66e76111568925798",
+    "raw_sha256": "6598672b552c38c69f0191eed40fc4314e1dabe8d9e971f36fcc1a9b5248dc6a",
     "source": "Yahoo Finance via yfinance",
     "symbols": {
       "alphabet": "GOOGL",
@@ -4852,7 +4852,7 @@
       "digital-realty": "DLR",
       "equinix": "EQIX",
       "intel": "INTC",
-      "kioxia-holdings": "285A",
+      "kioxia-holdings": "285A.T",
       "kla": "KLAC",
       "lam-research": "LRCX",
       "marvell": "MRVL",
