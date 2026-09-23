@@ -527,6 +527,8 @@
     if (!compareBar || !compareCount) return;
     compareCount.textContent = state.selected.size;
     compareBar.classList.toggle('open',state.selected.size > 0);
+    renderLinkedPanels();
+    renderChart();
   };
 
   const metric = (label,value) => '<div class="wb-metric"><span>' + escapeHtml(label) + '</span><strong>' + (value || '<span class="wb-null">—</span>') + '</strong></div>';
@@ -607,12 +609,80 @@
       ['Financials',linked.financials],
       ['Facilities',linked.facilities],
       ['Evidence',linked.evidence],
+      ['Activity',linked.activity],
       ['Commitments',linked.commitments],
     ];
     linkedStrip.innerHTML =
       '<strong>' + escapeHtml(row.company || row.name || row.entity_id) + '</strong>' +
       specs.map(([label,items])=>'<span><b>' + (Array.isArray(items)?items.length:0) + '</b> ' + label + '</span>').join('');
     linkedStrip.hidden = false;
+  };
+
+  const lifecycleStages = row => {
+    const linked=row?.entity_id ? (linkedByEntity[row.entity_id] || {}) : {};
+    const stages=['Demand','Customer','Constraint','CapEx','Build','Prod','Revenue','ROIC'];
+    const active=new Set();
+    if(row?.demand_evidence || row?.evidence || (linked.evidence?.length || 0) || (linked.activity?.length || 0)) active.add('Demand');
+    if(row?.customer_commitment || row?.customer || (linked.commitments?.length || 0)) active.add('Customer');
+    if(row?.capacity_before != null || row?.capacity_after != null) active.add('Constraint');
+    if(row?.capex && (row.capex.low != null || row.capex.high != null)) active.add('CapEx');
+    const text=[row?.status,row?.project_name,...(linked.projects||[]).map(item=>item.status)].filter(Boolean).join(' ');
+    if(/build|construction|facility|plant/i.test(text)) active.add('Build');
+    if(row?.production_start || /operational|production|realized|ramping/i.test(text)) active.add('Prod');
+    if((linked.financials||[]).some(item=>/revenue|sales/i.test(item.concept_id || ''))) active.add('Revenue');
+    if((linked.financials||[]).some(item=>/roic|return_on|return.*capital/i.test(item.concept_id || ''))) active.add('ROIC');
+    return stages.map(stage=>({stage,on:active.has(stage)}));
+  };
+
+  const linkedListHtml = (items,{name='record',meta='target_date',limit=4,source=false}={}) => {
+    const list=(Array.isArray(items)?items:[]).slice(0,limit);
+    if(!list.length) return '<p class="wb-linked-empty">No canonical records</p>';
+    return '<ul class="wb-linked-panel-list">' + list.map(item=>{
+      const label=item[name] || item.project_name || item.concept_id || item.facility_name || item.customer_name || item.change_type || item.event_type || item.id || 'record';
+      const detail=item[meta] || item.status || item.period_end || item.event_type || '';
+      const body='<span><strong>'+escapeHtml(label)+'</strong>'+(detail?'<small>'+escapeHtml(detail)+'</small>':'')+'</span>';
+      return '<li>'+(source && item.source_url ? '<a href="'+escapeHtml(item.source_url)+'" target="_blank" rel="noreferrer">'+body+'<b>↗</b></a>' : body)+'</li>';
+    }).join('') + '</ul>';
+  };
+
+  const renderLinkedPanels = () => {
+    if(!linkedPanels) return;
+    if(!state.widgets.visible.has('linked')){
+      linkedPanels.hidden=true;linkedPanels.innerHTML='';return;
+    }
+    const activeRow=rows.find(row=>row.id===state.active.rowId) || null;
+    const selectedRows=rows.filter(row=>state.selected.has(row.id));
+    if(!activeRow && !selectedRows.length){
+      linkedPanels.hidden=true;linkedPanels.innerHTML='';return;
+    }
+
+    const compareHtml=selectedRows.length ? '<section class="wb-linked-panel wb-compare-summary"><header><strong>Compare</strong><span>'+selectedRows.length+' selected</span></header><div class="wb-compare-chips">' +
+      selectedRows.slice(0,6).map(row=>'<span><b>'+escapeHtml(row.company || row.name || row.entity_id || row.id)+'</b><small>'+escapeHtml(row.project_name || row.concept_id || row.status || '')+'</small></span>').join('') +
+      '</div></section>' : '';
+
+    if(!activeRow?.entity_id){
+      linkedPanels.innerHTML=compareHtml;
+      linkedPanels.hidden=false;
+      return;
+    }
+
+    const linked=linkedByEntity[activeRow.entity_id] || {};
+    const lifecycle=lifecycleStages(activeRow);
+    const timeline=[...(linked.activity||[]),...(linked.evidence||[])]
+      .filter(item=>item.source_url)
+      .sort((a,b)=>String(b.target_date||'').localeCompare(String(a.target_date||'')));
+    linkedPanels.innerHTML=compareHtml +
+      '<section class="wb-linked-panel"><header><strong>Financial</strong><span>'+(linked.financials?.length||0)+'</span></header>' +
+        linkedListHtml(linked.financials,{name:'concept_id',meta:'target_date',source:true}) + '</section>' +
+      '<section class="wb-linked-panel"><header><strong>Lifecycle</strong><span>'+escapeHtml(activeRow.company || activeRow.entity_id)+'</span></header><div class="wb-lifecycle-mini">' +
+        lifecycle.map(item=>'<span class="'+(item.on?'on':'')+'"><i></i>'+escapeHtml(item.stage)+'</span>').join('') + '</div></section>' +
+      '<section class="wb-linked-panel"><header><strong>Evidence</strong><span>'+(linked.evidence?.length||0)+'</span></header>' +
+        linkedListHtml(linked.evidence,{name:'project_name',meta:'event_type',source:true}) + '</section>' +
+      '<section class="wb-linked-panel"><header><strong>Activity</strong><span>'+(linked.activity?.length||0)+'</span></header>' +
+        linkedListHtml(linked.activity,{name:'change_type',meta:'target_date',source:true}) + '</section>' +
+      '<section class="wb-linked-panel"><header><strong>Source Timeline</strong><span>'+timeline.length+'</span></header>' +
+        linkedListHtml(timeline,{name:'project_name',meta:'target_date',source:true,limit:5}) + '</section>';
+    linkedPanels.hidden=false;
   };
 
   const applyInspectorTab = tab => {
@@ -680,6 +750,7 @@
     }));
     applyInspectorTab(state.inspector.tab || 'overview');
     renderLinkedStrip();
+    renderLinkedPanels();
     renderTable();
     writeUrl();
   };
@@ -690,6 +761,7 @@
     workspace?.classList.remove('has-inspector');
     if (inspector) inspector.innerHTML = '';
     renderLinkedStrip();
+    renderLinkedPanels();
     renderTable();
     writeUrl();
   };
@@ -821,9 +893,11 @@
     chartPanel.style.height=Number(state.widgets.sizes.chartHeight || 170)+'px';
     root.style.setProperty('--wb-inspector',Number(state.widgets.sizes.inspectorWidth || 390)+'px');
     const activeRow=rows.find(r=>r.id===state.active.rowId) || null;
-    const model=chartEngine.build({view:payload.view,rows:filteredRows(),activeRow,requestedType:state.analysis.chartType});
+    const selectedRows=rows.filter(r=>state.selected.has(r.id));
+    const chartRows=selectedRows.length ? selectedRows : filteredRows();
+    const model=chartEngine.build({view:payload.view,rows:chartRows,activeRow,requestedType:state.analysis.chartType});
     const supported=['auto','bar','pie','line'];
-    chartPanel.innerHTML='<div class="wb-chart-head"><div><strong>'+escapeHtml(model.title)+'</strong><small>'+escapeHtml(model.valueLabel || '')+'</small></div><div class="wb-chart-types">' +
+    chartPanel.innerHTML='<div class="wb-chart-head"><div><strong>'+escapeHtml(model.title)+'</strong><small>'+(selectedRows.length?escapeHtml(selectedRows.length+' selected · '):'')+escapeHtml(model.valueLabel || '')+'</small></div><div class="wb-chart-types">' +
       supported.map(type=>'<button type="button" data-chart-type="'+type+'" class="'+(state.analysis.chartType===type?'active':'')+'">'+type+'</button>').join('') +
       '</div></div><div class="wb-chart-body">' +
       (model.type==='bar'?barChartHtml(model):model.type==='line'?lineChartHtml(model):model.type==='pie'?pieChartHtml(model):'<div class="wb-empty">No chartable data for this screen.</div>') +
@@ -879,6 +953,7 @@
   const applyWidgetState = () => {
     root.dataset.workspaceLayout=state.widgets.layout || 'default';
     renderLinkedStrip();
+    renderLinkedPanels();
     renderChart();
     root.style.setProperty('--wb-inspector',Number(state.widgets.sizes.inspectorWidth || 390)+'px');
   };
@@ -1117,7 +1192,7 @@
       return {active_id:first.id,elapsed_ms:performance.now()-start};
     },
   };
-  state.subscribe((_,type)=>{ if(type==='active'){renderLinkedStrip();renderChart()} });
-  renderColumnDialog(); renderSavedViews(); renderSavedWorkspaces(); renderSortState(); renderWatchlistState(); renderTable(); renderCompare(); renderLinkedStrip(); applyWidgetState();
+  state.subscribe((_,type)=>{ if(type==='active'||type==='selected'){renderLinkedStrip();renderLinkedPanels();renderChart()} });
+  renderColumnDialog(); renderSavedViews(); renderSavedWorkspaces(); renderSortState(); renderWatchlistState(); renderTable(); renderCompare(); renderLinkedStrip(); renderLinkedPanels(); applyWidgetState();
   if(state.activeId) openInspector(state.activeId);
 })();
