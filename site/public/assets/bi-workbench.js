@@ -43,6 +43,7 @@
   const workspaceList = q('[data-workspace-list]');
   const mobileNavDialog = q('[data-mobile-nav-dialog]');
   const linkedStrip = q('[data-linked-strip]');
+  const linkedPanels = q('[data-linked-panels]');
   const chartPanel = q('[data-chart-panel]');
   const watchlistCount = q('[data-watchlist-count]');
   const watchlistFilterButton = q('[data-watchlist-filter]');
@@ -158,6 +159,10 @@
     state.watchlistOnly = params.get('watchlist') === '1';
     state.sortKey = params.get('sort') || state.sortKey;
     state.sortDir = params.has('dir') ? (params.get('dir') === 'desc' ? 'desc' : 'asc') : (payload.defaultDir === 'desc' ? 'desc' : 'asc');
+    const sortsParam=(params.get('sorts') || '').split(',').filter(Boolean).map(item=>{
+      const [key,dir]=item.split(':'); return columns.some(col=>col.key===key) ? {key,dir:dir==='desc'?'desc':'asc'} : null;
+    }).filter(Boolean);
+    state.table.sorts=sortsParam.length ? sortsParam : (state.sortKey ? [{key:state.sortKey,dir:state.sortDir}] : []);
     state.activeId = params.get('row') || null;
     const selected = (params.get('compare') || '').split(',').filter(Boolean);
     state.selected = new Set(selected);
@@ -169,11 +174,13 @@
     };
     state.includeFilters = params.getAll('f').map(parsePair).filter(Boolean);
     state.excludeFilters = params.getAll('x').map(parsePair).filter(Boolean);
+    state.table.columnFilters=Object.fromEntries(params.getAll('cf').map(parsePair).filter(Boolean).map(item=>[item.key,item.value]));
     if (searchInput) searchInput.value = state.query;
     for (const key of ['country','role','quality','status']) {
       const el = q('[data-filter="' + key + '"]');
       if (el) el.value = state[key];
     }
+    qa('[data-column-filter]').forEach(input=>{input.value=state.table.columnFilters[input.getAttribute('data-column-filter')] || ''});
   };
 
   const writeUrl = () => {
@@ -186,6 +193,7 @@
     if (state.watchlistOnly) params.set('watchlist','1');
     if (state.sortKey) params.set('sort', state.sortKey);
     if (state.sortDir === 'desc') params.set('dir','desc');
+    if (state.table.sorts.length > 1) params.set('sorts',state.table.sorts.map(item=>item.key+':'+item.dir).join(','));
     if (state.activeId) params.set('row', state.activeId);
     if (state.selected.size) params.set('compare',[...state.selected].join(','));
     const defaultCols = columns.map(c => c.key);
@@ -193,6 +201,7 @@
     if (visible.length !== defaultCols.length || visible.some((key,idx)=>key !== defaultCols[idx])) params.set('cols',visible.join(','));
     for (const item of state.includeFilters) params.append('f',item.key + '=' + item.value);
     for (const item of state.excludeFilters) params.append('x',item.key + '=' + item.value);
+    for (const [key,value] of Object.entries(state.table.columnFilters)) if(value) params.append('cf',key+'='+value);
     const qs = params.toString();
     history.replaceState(null,'',location.pathname + (qs ? '?' + qs : ''));
   };
@@ -200,46 +209,55 @@
   const filteredRows = () => dataEngine.filterSortRows(rows,{
     query:state.query,country:state.country,role:state.role,quality:state.quality,status:state.status,
     watchlistOnly:state.watchlistOnly,watchlist:state.watchlist,
-    includeFilters:state.includeFilters,excludeFilters:state.excludeFilters,
-    sortKey:state.sortKey,sortDir:state.sortDir,
+    includeFilters:state.includeFilters,excludeFilters:state.excludeFilters,columnFilters:state.table.columnFilters,
+    sortKey:state.sortKey,sortDir:state.sortDir,sorts:state.table.sorts,
   });
 
   const renderSortState = () => {
     qa('[data-sort]').forEach(th => {
-      const key = th.getAttribute('data-sort');
-      const active = key && key === state.sortKey;
-      th.setAttribute('aria-sort', active ? (state.sortDir === 'desc' ? 'descending' : 'ascending') : 'none');
-      if (active) th.setAttribute('data-sort-dir',state.sortDir);
-      else th.removeAttribute('data-sort-dir');
+      const key=th.getAttribute('data-sort');
+      const index=state.table.sorts.findIndex(item=>item.key===key);
+      const sort=index>=0 ? state.table.sorts[index] : null;
+      th.setAttribute('aria-sort', index===0 ? (sort.dir==='desc'?'descending':'ascending') : 'none');
+      if(sort){th.setAttribute('data-sort-dir',sort.dir);th.setAttribute('data-sort-order',String(index+1))}
+      else{th.removeAttribute('data-sort-dir');th.removeAttribute('data-sort-order')}
     });
   };
 
   const applyColumnLayout = () => {
     const headRow=q('.wb-table thead tr');
+    const filterRow=q('[data-column-filter-row]');
     if(!headRow) return;
     for(const col of orderedColumns()){
       const th=q('[data-col="' + col.key + '"]');
+      const filterTh=q('[data-filter-col="' + col.key + '"]');
       if(th) headRow.appendChild(th);
+      if(filterTh && filterRow) filterRow.appendChild(filterTh);
     }
     let left=0;
     for(const col of orderedColumns()){
       const key=col.key;
       const th=q('[data-col="' + key + '"]');
+      const filterTh=q('[data-filter-col="' + key + '"]');
       if(!th) continue;
       const width=Number(state.table.widths[key] || col.width || th.getBoundingClientRect().width || 120);
       if(state.table.widths[key]){
         th.style.width=width+'px';th.style.minWidth=width+'px';th.style.maxWidth=width+'px';
+        if(filterTh){filterTh.style.width=width+'px';filterTh.style.minWidth=width+'px';filterTh.style.maxWidth=width+'px'}
         qa('td[data-cell-key="' + key + '"]').forEach(td=>{td.style.width=width+'px';td.style.minWidth=width+'px';td.style.maxWidth=width+'px'});
       }
       const pinned=state.table.pinned.has(key);
       th.classList.toggle('wb-pinned',pinned);
+      filterTh?.classList.toggle('wb-pinned',pinned);
       qa('td[data-cell-key="' + key + '"]').forEach(td=>td.classList.toggle('wb-pinned',pinned));
       if(pinned){
         th.style.left=left+'px';
+        if(filterTh) filterTh.style.left=left+'px';
         qa('td[data-cell-key="' + key + '"]').forEach(td=>td.style.left=left+'px');
         left+=width;
       } else {
         th.style.left='';
+        if(filterTh) filterTh.style.left='';
         qa('td[data-cell-key="' + key + '"]').forEach(td=>td.style.left='');
       }
     }
@@ -300,6 +318,7 @@
   const renderTable = () => {
     renderSortState();
     qa('[data-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-col'))));
+    qa('[data-filter-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-filter-col'))));
     const visible = filteredRows();
     if (resultCount) resultCount.textContent = visible.length.toLocaleString();
     if (!tableBody) return;
@@ -870,6 +889,7 @@
       if(el) el.value=state[key] || '';
     }
     renderWatchlistState();
+    qa('[data-column-filter]').forEach(input=>{input.value=state.table.columnFilters[input.getAttribute('data-column-filter')] || ''});
     renderColumnDialog();
     renderSortState();
     renderTable();
@@ -994,14 +1014,30 @@
   hydrateSelect('status',[...new Set(rows.map(r=>r.status))]);
 
   searchInput?.addEventListener('input',()=>{ state.query=searchInput.value; renderTable(); writeUrl(); });
-  qa('[data-sort]').forEach(th=>th.addEventListener('click',()=>{
+  qa('[data-sort]').forEach(th=>th.addEventListener('click',ev=>{
+    if(ev.target.closest('[data-resize-col]')) return;
     const key=th.getAttribute('data-sort');
-    if(state.sortKey===key) state.sortDir=state.sortDir==='asc'?'desc':'asc'; else {state.sortKey=key;state.sortDir='asc'}
+    const index=state.table.sorts.findIndex(item=>item.key===key);
+    if(ev.shiftKey){
+      if(index>=0) state.table.sorts[index].dir=state.table.sorts[index].dir==='asc'?'desc':'asc';
+      else state.table.sorts.push({key,dir:'asc'});
+    }else{
+      const dir=index===0 && state.table.sorts[0]?.dir==='asc' ? 'desc' : 'asc';
+      state.table.sorts=[{key,dir}];
+    }
+    state.sortKey=state.table.sorts[0]?.key || '';
+    state.sortDir=state.table.sorts[0]?.dir || 'asc';
     renderTable(); writeUrl();
   }));
+  qa('[data-column-filter]').forEach(input=>input.addEventListener('input',()=>{
+    const key=input.getAttribute('data-column-filter');
+    if(input.value) state.table.columnFilters[key]=input.value; else delete state.table.columnFilters[key];
+    renderTable();writeUrl();
+  }));
   q('[data-clear-filters]')?.addEventListener('click',()=>{
-    state.query='';state.country='';state.role='';state.quality='';state.status='';
+    state.query='';state.country='';state.role='';state.quality='';state.status='';state.table.columnFilters={};
     if(searchInput)searchInput.value='';
+    qa('[data-column-filter]').forEach(input=>{input.value=''});
     for(const key of ['country','role','quality','status']){const el=q('[data-filter="'+key+'"]');if(el)el.value=''}
     renderTable();writeUrl();
   });
