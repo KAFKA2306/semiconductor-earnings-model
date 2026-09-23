@@ -4,186 +4,116 @@
 [![Audit live semiconductor earnings Pages](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/live-pages-audit.yml/badge.svg)](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/live-pages-audit.yml)
 [![Data Platform Standard v1](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/data-platform-standard.yml/badge.svg)](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/data-platform-standard.yml)
 
-**半導体企業の「利益」を追いかけると、決算書だけでは終わらない。NANDのASP、ビット出荷、設備投資、データセンター電力、信用需給までつながってくる。**
+半導体企業の決算、需要、ASP、bit shipment、設備投資、生産能力、財務、会社予想を、一次情報まで追跡できる形でつなぐ研究基盤です。
 
-このプロジェクトは、そのつながりを推測で埋めず、企業の決算資料、規制開示、業界KPIを、期間・単位・情報種別・出典を保ったまま収集して検証する研究基盤です。
+推測で欠損を埋めず、実績、会社予想、コンセンサス、独自推計、シナリオ、市場観測を分離し、期間、単位、会計basis、出典、計算系譜を保持します。
 
 **公開サイト:** https://kafka2306.github.io/semiconductor-earnings-model/
 
-実績、会社予想、アナリスト予想、独自推計、シナリオ、株価観測を混ぜず、すべての計算を元データまで追跡できる形で公開します。
+## まず見る場所
 
-## Vision
+- [ドキュメント索引](docs/README.md)
+- [全体アーキテクチャと正本境界](docs/architecture.md)
+- [決算開示の正準フロー](docs/canonical-earnings-flow.md)
+- [半導体インフラ・CapEx台帳](docs/semiconductor-infrastructure-ledger.md)
+- [Financial Database v3](docs/financial-database.md)
+- [開発・検証手順](docs/development.md)
 
-半導体企業の決算を単発の売上・利益数字として読むのではなく、**需要、ASP、bit shipment、設備投資、生産能力、財務、会社予想までを同じ証拠線上でたどり、「なぜ利益が動くのか」を検証できる分析体験**を作ります。
-
-対象は、決算数字そのものよりも、その数字がどの期間・定義・一次資料に基づき、どの需要・価格・数量・設備投資要因とつながっているかを確認したい投資家・研究者・事業分析者です。
-
-## Design philosophy
-
-- **実績と予想を混ぜない。** Actual / Guidance / Consensus / Market observation / Estimate / Scenario を別の value type として保持します。
-- **数字より証拠線を優先する。** 派生値から source URL、period、unit、basis、計算式へ戻れる状態を正準とします。
-- **比較不能を推測で埋めない。** 未取得、非開示、定義差、期間差は欠損理由として残します。
-- **企業ごとの表記差を利用者へ押し付けない。** 年次・四半期、期間値・時点値、連結・セグメント、通貨・scaleを明示して正規化します。
-- **API / DB / UIで別々の真実を作らない。** 同じ正準データとevidence lineageを異なる入口から利用します。
-
-## Why / 差別化
-
-一般的な決算まとめやscreeningでは、同じ表の中に実績・会社予想・市場予想・独自推計が並び、比較条件や計算根拠が見えにくくなることがあります。本リポジトリは、DBやAPIの機能数ではなく、**「この数字は実績か予想か」「どの期間か」「何から計算したか」「本当に比較可能か」を利用者自身が一次情報まで逆引きできること**を差別化の中心に置きます。
-
-そのため、値を増やすことよりも、source URL / period / unit / basis / value type / evidence edge を失わないことを優先します。比較できない値は、見栄えのために補完しません。
-
-## 最初に見るページ
+公開面では次を入口にします。
 
 - [統合リサーチ画面・財務耐久力比較](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
 - [決算の一次事実台帳](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
 - [需要から利益までの計算モデル](https://kafka2306.github.io/semiconductor-earnings-model/model/)
-- [信用需給・デレバレッジAPI](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/market-positioning/index.json)
 - [Financial Database v3 JSON](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/index.json)
 - [Financial Database v3 SQLite](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/financial.db)
 - [Research API v2](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
 - [API v1 index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
 
-## 利用者ができる主要な分析
-
-- 売上高、営業利益、営業CF、設備投資、FCF、現金、負債、利益剰余金
-- 四半期成長率、利益率、年次推移、CAGR、変動性
-- 流動性、負債負担、下振れ時の資金耐久力
-- データセンター設備投資、減価償却、電力容量、受注残
-- NANDのASP、ビット出荷量、在庫日数、稼働率、製造能力
-- HBM、先端パッケージ、ウェハ能力などの業界KPI
-- 日本の個別信用倍率、韓国の信用融資・反対売買、世界半導体月次売上
-- 市場価格、時価総額、企業価値、予想PER、コンセンサス
-- 会社予想と実績、予想と独自シナリオの差分
-
-## 主要な分析経路
-
-### `/earnings/`
-
-開示された売上高、営業利益、営業CF、設備投資、期間、XBRLタグ、提出書類URLを保存する一次事実台帳です。
-
-### `/resilience/`
-
-四半期の成長性と収益性、年次のFCF・流動性・負債、同業中央値、下振れシナリオ、データ品質フラグを統合した比較画面です。
-
-### `/model/`
-
-既知の入力、計算式、中間値、未知の変数、最終判断を分離し、需要から利益までの計算境界を示します。
-
-### `/api/v1/market-positioning/`
-
-J-Quants、韓国の公共データポータル、SIA公式リリースから、信用需給、強制デレバレッジ、世界半導体売上を定期取得します。J-Quantsの生データは公開せず、信用倍率などの派生分析値だけを保存します。
-
-### `/api/v3/financial-database/`
-
-実績、ガイダンス、コンセンサス、市場観測、推計、シナリオ、NAND KPIを別の値種別として保持する再利用可能な分析DBです。
-
-## データモデル
-
-1. **Entity** — 企業、証券、ティッカー、CIK、同業グループ
-2. **Concept** — 財務項目、業界KPI、会社予想、市場観測、計算指標
-3. **Observation** — 値、単位、対象期間、観測日、改訂、出典
-4. **Source** — 規制開示、会社IR、許諾された予想、市場データ、モデル
-5. **Derived metric** — 計算式と入力証拠を持つ派生値
-6. **Evaluation** — 判定ルール、閾値、結果、根拠指標
-7. **Evidence edge** — 計算・判定から元データへの系譜
-8. **Audit issue** — 欠損、古さ、競合、形式不良、根拠不足
-
-年次と四半期、期間値と時点値、連結とセグメントを暗黙に混ぜません。
-
-## 金額単位の契約
-
-`/earnings/` が読む金額factと派生四半期値は、すべて明示的な `unit` を持ちます。HTML生成へ渡す正準単位は **base USD (`unit: "USD"`)** です。`USD_million`、`USD_billion`、`JPY`、`JPY_million`、`JPY_billion` は入力・fixtureで識別可能ですが、そのままHTMLへ流しません。
-
-- `USD_million` は `value × 1,000,000`、`USD_billion` は `value × 1,000,000,000` でbase USDへ正規化します。
-- JPYをUSDへ換算する場合は、観測日・出典を持つ明示的な `JPY_per_USD` を入力し、`JPY / JPY_per_USD` で換算します。暗黙の為替レートや固定レートは使いません。
-- SEC Companyfacts由来の金額はAPIのunit配列から `USD` のfactだけを採用し、表示時に `$...B` へ縮尺する処理とデータ単位を分離します。
-- `site/scripts/audit-units.mjs` はAstro buildの前に一次API、半導体利益API、需要APIの比較対象を監査し、欠損unit、未対応unit、million/billionの未正規化、JPYの未換算を検出したら非0終了します。
-- 単位換算の純関数とfail-closed動作は `npm --prefix site run test:unit-audit` で検証します。
-
-SECのEDGAR XBRL GuideはUSD金額のunitを `iso4217:USD` とし、「thousands/millions of USD」のようなunit自体を定義しないよう要求しています。そのため本リポジトリでも、SEC由来データはbase USDを正準形とし、million/billionは表示・外部入力側のscaleとしてのみ扱います。
-
-## NAND KPIの扱い
-
-NAND ASPとビット出荷量は、次を明示して保存します。
-
-- 前四半期比の実績
-- 4四半期を複利計算した前年同期比
-- 比較可能な会社想定との差
-- 会社が使用した原文表現
-- 数値非開示または比較不能の状態
-
-比較可能な開示がない場合は、差分を推測せず`not_disclosed_or_not_comparable`として残します。
-
-関連資料:
-
-- [信用需給・強制デレバレッジ取得パイプライン](docs/market-positioning-pipeline.md)
-- [NAND KPI recurring pipeline](docs/nand-kpi-pipeline.md)
-- [Kioxia / NAND sector CapEx audit](docs/reports/semiconductor/2026-07-30-kioxia-nand-sector-capex.md)
-- [Financial database operating contract](docs/financial-database.md)
-- [Metric catalog](data/financial_db/metric_catalog.json)
-
-## 更新と公開の流れ
+## 設計の中心
 
 ```text
-一次資料を取得
-  → 期間・タグ・単位を正規化
-  → 派生指標を計算
-  → 同業比較・シナリオ評価
-  → 出典・計算系譜を監査
-  → JSON / SQLite / Web画面を生成
-  → GitHub Pages公開後に実URLを再検証
+Primary sources
+  -> raw / rejected evidence
+  -> canonical ledgers
+  -> deterministic derived data
+  -> audited publication artifacts
+  -> API / Pages / Google Sheets / MCP
 ```
 
-取得失敗、期間の古さ、根拠のない値、壊れた証拠リンク、DB監査エラー、SQLite不整合、テスト失敗、公開後検証失敗がある場合はデプロイを停止します。
+正本は用途ごとに明示します。
 
-機械可読な定義:
+- `data/earnings_ledger/`: 新規決算・業績開示の正準 evidence boundary
+- `data/canonical/`: CapEx projects、facilities、customer commitments、orders/backlog など半導体インフラ事実の正準データ
+- `data/derived/`: 正本から再生成できる派生値。正本を上書きしない
+- `site/public/api/**`: 公開projection。手編集で正本化しない
+- Google Sheets: import/export と分析ビュー。移行後の正本ではない
 
-- [Financial research ontology](data/ontology/financial_research_ontology.json)
-- [Cross-project ontology](ontology/project.yaml)
+詳しい所有関係は [docs/architecture.md](docs/architecture.md) を参照してください。
 
-## Data Platform Standard v1
+## データ契約
 
-`data/earnings_ledger/` を一次事実の正本とし、同じread-only `DataPlatformService` をREST Data API・CLI・MCPから利用します。adapter側で財務値、freshness、quality statusを再計算しません。
+このリポジトリでは次を不変条件として扱います。
 
-- [Data sources / data layers](docs/data-sources.md)
-- [Methodology / deterministic replay](docs/methodology.md)
-- [Data quality / correction policy](docs/data-quality.md)
-- [MCP 2026-07-28 / tool catalog](docs/mcp.md)
-- [Machine-readable standard contract](config/data_platform_standard.json)
+- Actual / Guidance / Consensus / Estimate / Scenario / Market observation を混ぜない
+- NULL と 0 を混同しない
+- 年次と四半期、期間値と時点値、連結とセグメントを暗黙に混ぜない
+- source URL、publication/observation time、period、unit/currency、basis、value type、evidence ID、hash を必要なschemaで保持する
+- 派生値は入力証拠と式へ戻れるようにする
+- source不明、basis不明、期間不明、単位不明、矛盾は fail closed にする
+- API、DB、UIで別々の真実を作らない
 
-主要recordは `canonical_id`、source URL/hash、freshness、null reason、derivation、basis、provenanceを保持します。欠損を0/falseへ補完せず、source不明・basis不明・矛盾はfail-closeします。
+エージェントと自動化向けのリポジトリ契約は [AGENTS.md](AGENTS.md) が正本です。
 
-MCPは公式Python SDK v2の `MCPServer` を使うstateless Streamable HTTP `/mcp` で、`server/discover` と `tools/list` をCI検証します。
+## 主なデータ経路
 
-## ローカル検証
+### 決算開示
+
+```text
+first-party disclosure
+  -> data/earnings_ledger/events.ndjson
+  -> deterministic audit / lineage / publication
+  -> DataPlatformService
+  -> REST / CLI / MCP / Pages
+```
+
+詳細: [docs/canonical-earnings-flow.md](docs/canonical-earnings-flow.md)
+
+### 半導体インフラ・CapEx
+
+```text
+SEC / EDINET / company IR / reviewed imports
+  -> data/canonical/
+  -> semicon.build_derived
+  -> API v2 / Google Sheets projection / earnings inputs
+```
+
+詳細: [docs/semiconductor-infrastructure-ledger.md](docs/semiconductor-infrastructure-ledger.md)
+
+### 分析DB
+
+Financial Database v3 は、実績、ガイダンス、コンセンサス、市場観測、推計、シナリオ、NAND KPIを意味クラスを保ったまま統合し、JSONとSQLiteへ公開します。
+
+詳細: [docs/financial-database.md](docs/financial-database.md)
+
+## ローカル開始
 
 ```bash
 uv sync
-: "${SEC_USER_AGENT:?set SEC_USER_AGENT to identify the real operator/contact}"
-uv run python scripts/build_primary_api.py
-uv run python scripts/build_semiconductor_profit_api.py
-uv run python scripts/build_semiconductor_resilience_api_v2.py
-uv run python scripts/build_semiconductor_research_api.py
-uv run python scripts/finalize_semiconductor_research_api.py
-uv run python scripts/build_demand_api.py
-uv run python scripts/update_nand_kpis.py --offline
-uv run python scripts/update_market_positioning.py
-uv run python scripts/build_financial_database_with_nand.py
-uv run python scripts/check_readme_pages_link.py
-uv run python scripts/build_model_snapshot.py
-uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
-uv run python scripts/check_data_platform_standard.py
-uv run --with "mcp>=2,<3" python scripts/check_mcp_contract.py
 uv run python -m pytest -q
 npm --prefix site ci
-npm --prefix site run test:unit-audit
-GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local npm --prefix site run build
+GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model \
+PUBLIC_BUILD_SHA=local \
+npm --prefix site run build
 ```
 
-`SEC_USER_AGENT`には実際の運用者を識別できる連絡情報を設定してください。信用需給の認証済み取得には、`JQUANTS_API_KEY`と`DATA_GO_KR_SERVICE_KEY`も設定します。
+データ更新や特定サブシステムの検証は変更範囲ごとに異なります。コマンド一覧は [docs/development.md](docs/development.md) に集約しています。
+
+## ドキュメント方針
+
+ルートREADMEは入口と不変条件だけを持ちます。詳細な設計、運用、取得パイプライン、外部サービス固有の制約、日付付きの調査結果は `docs/` 側で所有します。
+
+新しい説明を追加する前に [docs/README.md](docs/README.md) の「どこに書くか」を確認し、同じ契約を複数ファイルへコピーしないでください。
 
 ## 注意
 
 このプロジェクトは財務・業界研究用です。投資助言、売買推奨、将来利益の保証ではありません。
-
-**README最終監査:** 2026-08-14
