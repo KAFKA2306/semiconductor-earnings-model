@@ -62,6 +62,7 @@ def _financial() -> dict:
         "entities": [
             {"id": "US:MU", "ticker": "MU"},
             {"id": "JP:3436", "ticker": "3436"},
+            {"id": "kioxia-holdings", "ticker": "285A", "exchange": "TSE Prime"},
             {"id": "KR:000660", "ticker": "000660"},
             {"id": "sk-hynix", "ticker": "000660", "exchange": "Korea Exchange"},
             {"id": "samsung-electronics", "ticker": "005930", "exchange": "Korea Exchange"},
@@ -199,6 +200,7 @@ def test_yahoo_symbol_mapping_is_explicit_by_market() -> None:
     assert entity_yahoo_symbols(_financial()) == {
         "US:MU": "MU",
         "JP:3436": "3436.T",
+        "kioxia-holdings": "285A.T",
         "KR:000660": "000660.KS",
         "sk-hynix": "000660.KS",
         "samsung-electronics": "005930.KS",
