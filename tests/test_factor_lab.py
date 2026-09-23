@@ -63,6 +63,8 @@ def _financial() -> dict:
             {"id": "US:MU", "ticker": "MU"},
             {"id": "JP:3436", "ticker": "3436"},
             {"id": "KR:000660", "ticker": "000660"},
+            {"id": "sk-hynix", "ticker": "000660", "exchange": "Korea Exchange"},
+            {"id": "samsung-electronics", "ticker": "005930", "exchange": "Korea Exchange"},
         ],
         "observations": [
             {
@@ -198,4 +200,6 @@ def test_yahoo_symbol_mapping_is_explicit_by_market() -> None:
         "US:MU": "MU",
         "JP:3436": "3436.T",
         "KR:000660": "000660.KS",
+        "sk-hynix": "000660.KS",
+        "samsung-electronics": "005930.KS",
     }
