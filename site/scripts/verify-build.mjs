@@ -145,6 +145,8 @@ for (const marker of [
   'ensureColumnResizers',
   'workspaceApi.setActive',
   "ev.key==='ArrowDown'",
+  'ev.shiftKey',
+  'ev.metaKey||ev.ctrlKey',
   'toggleKeyboardSelection',
   'selectRange',
   'SemiconWorkbenchDebug',
