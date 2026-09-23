@@ -23,6 +23,8 @@
       table: {
         sortKey:defaultSort,
         sortDir:defaultDir === 'desc' ? 'desc' : 'asc',
+        sorts:defaultSort ? [{key:defaultSort,dir:defaultDir === 'desc' ? 'desc' : 'asc'}] : [],
+        columnFilters:{},
         visibleColumns:new Set(columns),
         columnOrder:[...columns],
         widths:{},
@@ -95,6 +97,8 @@
     table:{
       sortKey:state.table.sortKey,
       sortDir:state.table.sortDir,
+      sorts:state.table.sorts.map(item=>({...item})),
+      columnFilters:{...state.table.columnFilters},
       visibleColumns:[...state.table.visibleColumns],
       columnOrder:[...state.table.columnOrder],
       widths:{...state.table.widths},
@@ -133,6 +137,8 @@
     state.table={
       sortKey:String(table.sortKey || ''),
       sortDir:table.sortDir==='desc'?'desc':'asc',
+      sorts:Array.isArray(table.sorts) ? table.sorts.filter(item=>available.has(item.key)).map(item=>({key:item.key,dir:item.dir==='desc'?'desc':'asc'})) : (table.sortKey ? [{key:String(table.sortKey),dir:table.sortDir==='desc'?'desc':'asc'}] : []),
+      columnFilters:table.columnFilters && typeof table.columnFilters==='object' ? Object.fromEntries(Object.entries(table.columnFilters).filter(([key])=>available.has(key))) : {},
       visibleColumns:new Set(Array.isArray(table.visibleColumns)?table.visibleColumns.filter(key=>available.has(key)):columns),
       columnOrder:order,
       widths:table.widths && typeof table.widths==='object' ? {...table.widths} : {},
