@@ -1,0 +1,104 @@
+name: Refresh Factor Lab
+
+on:
+  pull_request:
+    paths:
+      - "scripts/factor_lab.py"
+      - "scripts/factor_inputs.py"
+      - "scripts/build_factor_lab_live.py"
+      - "tests/test_factor_lab.py"
+      - "docs/factor-lab.md"
+      - ".github/workflows/factor-lab-update.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/factor_lab.py"
+      - "scripts/factor_inputs.py"
+      - "scripts/build_factor_lab_live.py"
+      - "tests/test_factor_lab.py"
+      - "docs/factor-lab.md"
+      - ".github/workflows/factor-lab-update.yml"
+  schedule:
+    - cron: "45 2 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: factor-lab-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic Python environment
+        run: uv sync --frozen
+      - name: Test Factor Lab math, point-in-time panel, and anti-leakage rules
+        run: uv run python -m pytest tests/test_factor_lab.py -q
+
+  refresh:
+    if: github.event_name != 'pull_request'
+    needs: contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic Python environment
+        run: uv sync --frozen
+      - name: Rebuild canonical Financial Database v3
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: |
+          set -euo pipefail
+          test -n "${SEC_USER_AGENT:-}"
+          uv run python scripts/build_primary_api.py
+          uv run python scripts/build_semiconductor_profit_api.py
+          uv run python scripts/build_semiconductor_resilience_api_v2.py
+          uv run python scripts/build_semiconductor_research_api.py
+          uv run python scripts/finalize_semiconductor_research_api.py
+          uv run python scripts/build_demand_api.py
+          uv run python scripts/build_financial_database_with_nand.py
+      - name: Build live Factor Lab
+        run: |
+          uv run --with pandas --with "yfinance[repair]" python scripts/build_factor_lab_live.py \
+            --financial-db site/public/api/v3/financial-database/index.json \
+            --output site/public/api/v3/factor-lab/index.json
+      - name: Verify Factor Lab publication contract
+        run: |
+          set -euo pipefail
+          path=site/public/api/v3/factor-lab/index.json
+          test -s "$path"
+          jq -e '.schema_version == "factor-lab.v1"' "$path" >/dev/null
+          jq -e '.audit.factor_count > 0' "$path" >/dev/null
+          jq -e '.audit.rows_with_any_forward_return > 0' "$path" >/dev/null
+          jq -e '.market_data.raw_persisted == false' "$path" >/dev/null
+          jq -e '.input_contract.raw_market_prices_persisted == false' "$path" >/dev/null
+          jq -e 'all(.factor_tests[]; (.horizon | IN("1m","3m","6m","12m")))' "$path" >/dev/null
+          jq -e 'any(.factor_tests[]; .cross_section_count > 0)' "$path" >/dev/null
+      - name: Commit refreshed Factor Lab
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/public/api/v3/factor-lab/index.json
+          if git diff --cached --quiet; then
+            echo "No Factor Lab changes"
+            exit 0
+          fi
+          git commit -m "data: refresh factor lab"
+          git pull --rebase origin main
+          git push origin HEAD:main
