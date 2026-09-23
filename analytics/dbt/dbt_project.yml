@@ -1,0 +1,25 @@
+name: semiconductor_medallion
+version: "1.0.0"
+config-version: 2
+
+profile: semiconductor_medallion
+
+model-paths: ["models"]
+test-paths: ["tests"]
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+vars:
+  repo_root: "../.."
+
+models:
+  semiconductor_medallion:
+    silver:
+      +materialized: view
+      +schema: silver
+      +tags: ["silver"]
+    gold:
+      +materialized: table
+      +schema: gold
+      +tags: ["gold"]
