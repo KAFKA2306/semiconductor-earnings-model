@@ -345,7 +345,11 @@
     qa('[data-row]').forEach(tr => {
       tr.addEventListener('click', ev => {
         if (ev.target.closest('input,button,a')) return;
-        openInspector(tr.getAttribute('data-row'));
+        const id=tr.getAttribute('data-row');
+        if(ev.shiftKey){ev.preventDefault();toggleKeyboardSelection(id,true);return}
+        if(ev.metaKey||ev.ctrlKey){ev.preventDefault();toggleKeyboardSelection(id,false);return}
+        keyboardAnchorId=id;
+        openInspector(id);
       });
       tr.addEventListener('keydown', ev => {
         const id=tr.getAttribute('data-row');
