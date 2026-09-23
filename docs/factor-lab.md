@@ -69,6 +69,7 @@ Factor Lab は決算期末日を「市場がその値を知っていた日」と
 
 - `US:*` -> entity ticker
 - `JP:3436` -> `3436.T`
+- entity id が国コード形式でなくても `exchange: TSE ...` なら `ticker.T`
 - `KR:000660` -> `000660.KS`
 - entity id が国コード形式でなくても `exchange: Korea Exchange` なら `ticker.KS`
 - `exchange` が Kosdaq なら `ticker.KQ`
