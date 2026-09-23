@@ -100,5 +100,10 @@ jobs:
             exit 0
           fi
           git commit -m "data: refresh factor lab"
+          # Canonical rebuilders intentionally update other tracked/generated files.
+          # Keep the committed Factor Lab artifact, then discard unrelated runtime output
+          # before rebasing the one-file publication commit.
+          git reset --hard HEAD
+          git clean -fd
           git pull --rebase origin main
           git push origin HEAD:main

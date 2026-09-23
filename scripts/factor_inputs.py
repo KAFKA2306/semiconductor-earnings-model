@@ -132,8 +132,13 @@ def entity_yahoo_symbols(financial: dict[str, Any]) -> dict[str, str]:
         if not entity_id:
             continue
         prefix, _, code = entity_id.partition(":")
+        exchange = str(entity.get("exchange") or "").strip().lower()
         symbol = ""
-        if prefix == "JP" and code:
+        if "kosdaq" in exchange:
+            symbol = f"{ticker.zfill(6)}.KQ" if ticker else ""
+        elif "korea" in exchange or exchange in {"krx", "kospi"}:
+            symbol = f"{ticker.zfill(6)}.KS" if ticker else ""
+        elif prefix == "JP" and code:
             symbol = f"{code}.T"
         elif prefix == "KR" and code:
             symbol = f"{code.zfill(6)}.KS"

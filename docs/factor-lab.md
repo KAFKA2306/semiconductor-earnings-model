@@ -70,9 +70,11 @@ Factor Lab は決算期末日を「市場がその値を知っていた日」と
 - `US:*` -> entity ticker
 - `JP:3436` -> `3436.T`
 - `KR:000660` -> `000660.KS`
+- entity id が国コード形式でなくても `exchange: Korea Exchange` なら `ticker.KS`
+- `exchange` が Kosdaq なら `ticker.KQ`
 - `TW:2330` -> `2330.TW`
 
-市場固有の例外が必要になった場合は、推測ではなく明示 mapping を追加します。
+市場 suffix は entity id だけで推測せず、利用できる場合は exchange metadata を優先します。未知の市場は裸の数字 ticker に変換せず、明示 mapping / exchange rule を追加します。
 
 ## OSS review
 
