@@ -5,6 +5,8 @@ on:
     paths:
       - "config/data_platform_standard.json"
       - "data/earnings_ledger/**"
+      - "data/canonical/**"
+      - "analytics/dbt/**"
       - "docs/data-sources.md"
       - "docs/methodology.md"
       - "docs/data-quality.md"
@@ -45,6 +47,10 @@ jobs:
 
       - name: Run deterministic service tests
         run: uv run python -m pytest tests/test_data_platform_standard.py -q
+
+      - name: Verify dbt Medallion contracts
+        working-directory: analytics/dbt
+        run: uv run --with "dbt-duckdb==1.11.0" dbt build --profiles-dir .
 
       - name: Verify MCP 2026-07-28 discovery, tools and parity
         run: uv run --with "mcp>=2,<3" python scripts/check_mcp_contract.py

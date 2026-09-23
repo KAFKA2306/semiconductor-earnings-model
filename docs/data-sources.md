@@ -16,6 +16,23 @@ Data Platform Standard v1 の正本は `data/earnings_ledger/` です。MCP・Da
 
 物理directory名をlayer名へ強制的に合わせるのではなく、Data Platform serviceが返す各recordの `data_layer` で機械判定可能にします。
 
+## dbt execution boundary
+
+`analytics/dbt/` は Medallion の変換契約を実行可能にする分析層です。source acquisition や canonical identity の所有権は移しません。
+
+- Bronze は既存の Python ingestion が所有し、raw snapshot・棄却・source state を保存します。
+- Silver は `data/canonical/*.jsonl` を正規化済み境界として dbt から read-only で参照します。
+- Gold は Silver からのみ生成し、verification と provenance を満たさないrecordを fail-close で除外します。
+- UI・API・Google Sheets は独自に事実を再計算せず、canonical service または Gold projection を利用します。
+
+dbt のローカル検証は `analytics/dbt/` から次を実行します。
+
+```bash
+uv run --with "dbt-duckdb==1.11.0" dbt build --profiles-dir .
+```
+
+生成される `target/medallion.duckdb` は再生成可能な分析artifactであり、正本ではありません。
+
 ## Provenance contract
 
 主要recordは以下を欠落させません。
