@@ -161,3 +161,9 @@ a{color:var(--wb-accent)}button:focus-visible,a:focus-visible,input:focus-visibl
 .wb-shell[data-workspace-layout="chart-focus"] .wb-chart-panel{min-height:260px!important}
 .wb-shell[data-workspace-layout="chart-focus"] .wb-chart-body{min-height:220px}
 @media(max-width:760px){.wb-workspace-controls{grid-template-columns:1fr}}
+
+.wb-table tr[data-row]:focus-visible{outline:2px solid var(--wb-accent);outline-offset:-2px}
+.wb-table tr[data-row]:focus-visible td{background:#f5f8ff}
+.wb-top-action:focus-visible,.wb-control-btn:focus-visible,.wb-nav a:focus-visible,.wb-tabs button:focus-visible{outline:2px solid var(--wb-accent);outline-offset:1px}
+@media(max-width:1366px){.wb-chart-panel{min-height:150px}.wb-chart-body{min-height:110px}.wb-table-wrap{height:calc(100dvh - 315px)}}
+@media(max-width:760px){.wb-table-wrap{height:calc(100dvh - 300px)}.wb-inspector{height:calc(100dvh - 100px)}}
