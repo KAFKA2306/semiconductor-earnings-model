@@ -47,3 +47,15 @@ CI must provide:
 - no global pastel-watercolor stylesheet injection into Workbench or auxiliary research pages
 
 The screenshot artifact is produced by the `Validate semiconductor BI workbench` workflow as `workbench-visual-evidence-<sha>`.
+
+
+## JavaScript artifact size record
+
+Measured from repository UTF-8 asset bytes before and after this workline:
+
+| State | Assets | Bytes |
+| --- | --- | ---: |
+| Baseline `main` | `bi-workbench.js` | 39,895 |
+| Hardened stacked branch | `bi-workbench.js` + `workspace-state.js` + `chart-engine.js` + `workbench-data-engine.js` | 76,532 |
+
+The increase is explicit rather than hidden: state authority, deterministic chart/data engines, saved workspace/watchlist, keyboard handling, and runtime performance diagnostics were split into reusable assets. The performance gate is therefore based on measured interaction latency, not bundle size alone.
