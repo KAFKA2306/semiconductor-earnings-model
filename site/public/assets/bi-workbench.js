@@ -645,20 +645,38 @@
     }).join('') + '</ul>';
   };
 
+  const linkedStageFor = item => {
+    const text=[item?.change_type,item?.event_type,item?.status,item?.project_name,item?.concept_id].filter(Boolean).join(' ').toLowerCase();
+    if(/customer|commitment|agreement|lta/.test(text)) return 'Customer';
+    if(/capacity|constraint|wafer/.test(text)) return 'Constraint';
+    if(/capex|invest/.test(text)) return 'CapEx';
+    if(/build|construction|facility|fab|plant/.test(text)) return 'Build';
+    if(/production|operational|ramp/.test(text)) return 'Prod';
+    if(/revenue|sales/.test(text)) return 'Revenue';
+    if(/roic|return.*capital/.test(text)) return 'ROIC';
+    return 'Demand';
+  };
+
   const renderLinkedPanels = () => {
     if(!linkedPanels) return;
     if(!state.widgets.visible.has('linked')){
       linkedPanels.hidden=true;linkedPanels.innerHTML='';return;
     }
     const activeRow=rows.find(row=>row.id===state.active.rowId) || null;
-    const selectedRows=rows.filter(row=>state.selected.has(row.id));
+    const selectedRows=rows.filter(row=>state.selected.has(row.id)).slice(0,6);
     if(!activeRow && !selectedRows.length){
       linkedPanels.hidden=true;linkedPanels.innerHTML='';return;
     }
 
-    const compareHtml=selectedRows.length ? '<section class="wb-linked-panel wb-compare-summary"><header><strong>Compare</strong><span>'+selectedRows.length+' selected</span></header><div class="wb-compare-chips">' +
-      selectedRows.slice(0,6).map(row=>'<span><b>'+escapeHtml(row.company || row.name || row.entity_id || row.id)+'</b><small>'+escapeHtml(row.project_name || row.concept_id || row.status || '')+'</small></span>').join('') +
-      '</div></section>' : '';
+    const compareHtml=selectedRows.length ? '<section class="wb-linked-panel wb-compare-summary"><header><strong>Linked Compare</strong><span>'+selectedRows.length+' selected</span></header><div class="wb-compare-linked">' +
+      selectedRows.map(row=>{
+        const linked=row.entity_id ? (linkedByEntity[row.entity_id] || {}) : {};
+        const financial=(linked.financials||[])[0];
+        const stages=lifecycleStages(row).filter(item=>item.on).map(item=>item.stage);
+        return '<div><strong>'+escapeHtml(row.company || row.name || row.entity_id || row.id)+'</strong>' +
+          '<small>'+escapeHtml(financial ? ((financial.concept_id||'financial')+': '+chartValueText(financial.value)+(financial.unit?' '+financial.unit:'')) : 'No linked financial')+'</small>' +
+          '<span>'+escapeHtml(stages.length?stages.join(' → '):'No lifecycle signal')+'</span></div>';
+      }).join('') + '</div></section>' : '';
 
     if(!activeRow?.entity_id){
       linkedPanels.innerHTML=compareHtml;
@@ -668,21 +686,34 @@
 
     const linked=linkedByEntity[activeRow.entity_id] || {};
     const lifecycle=lifecycleStages(activeRow);
-    const timeline=[...(linked.activity||[]),...(linked.evidence||[])]
+    const stageFilter=state.analysis.lifecycleStage;
+    const evidenceItems=(linked.evidence||[]).filter(item=>!stageFilter || linkedStageFor(item)===stageFilter);
+    const activityItems=(linked.activity||[]).filter(item=>!stageFilter || linkedStageFor(item)===stageFilter);
+    const timeline=[...activityItems,...evidenceItems]
       .filter(item=>item.source_url)
       .sort((a,b)=>String(b.target_date||'').localeCompare(String(a.target_date||'')));
+
     linkedPanels.innerHTML=compareHtml +
       '<section class="wb-linked-panel"><header><strong>Financial</strong><span>'+(linked.financials?.length||0)+'</span></header>' +
         linkedListHtml(linked.financials,{name:'concept_id',meta:'target_date',source:true}) + '</section>' +
-      '<section class="wb-linked-panel"><header><strong>Lifecycle</strong><span>'+escapeHtml(activeRow.company || activeRow.entity_id)+'</span></header><div class="wb-lifecycle-mini">' +
-        lifecycle.map(item=>'<span class="'+(item.on?'on':'')+'"><i></i>'+escapeHtml(item.stage)+'</span>').join('') + '</div></section>' +
-      '<section class="wb-linked-panel"><header><strong>Evidence</strong><span>'+(linked.evidence?.length||0)+'</span></header>' +
-        linkedListHtml(linked.evidence,{name:'project_name',meta:'event_type',source:true}) + '</section>' +
-      '<section class="wb-linked-panel"><header><strong>Activity</strong><span>'+(linked.activity?.length||0)+'</span></header>' +
-        linkedListHtml(linked.activity,{name:'change_type',meta:'target_date',source:true}) + '</section>' +
+      '<section class="wb-linked-panel wb-lifecycle-panel"><header><strong>Lifecycle</strong><button type="button" data-clear-lifecycle'+(stageFilter?'':' disabled')+'>'+(stageFilter?escapeHtml(stageFilter)+' ×':'All evidence')+'</button></header><div class="wb-lifecycle-mini">' +
+        lifecycle.map(item=>'<button type="button" data-lifecycle-stage="'+escapeHtml(item.stage)+'" class="'+(item.on?'on ':'')+(stageFilter===item.stage?'active':'')+'" '+(item.on?'':'disabled')+'><i></i>'+escapeHtml(item.stage)+'</button>').join('') + '</div></section>' +
+      '<section class="wb-linked-panel"><header><strong>Evidence</strong><span>'+evidenceItems.length+(stageFilter?' · '+escapeHtml(stageFilter):'')+'</span></header>' +
+        linkedListHtml(evidenceItems,{name:'project_name',meta:'event_type',source:true}) + '</section>' +
+      '<section class="wb-linked-panel"><header><strong>Activity</strong><span>'+activityItems.length+(stageFilter?' · '+escapeHtml(stageFilter):'')+'</span></header>' +
+        linkedListHtml(activityItems,{name:'change_type',meta:'target_date',source:true}) + '</section>' +
       '<section class="wb-linked-panel"><header><strong>Source Timeline</strong><span>'+timeline.length+'</span></header>' +
         linkedListHtml(timeline,{name:'project_name',meta:'target_date',source:true,limit:5}) + '</section>';
     linkedPanels.hidden=false;
+
+    qa('[data-lifecycle-stage]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.analysis.lifecycleStage=btn.getAttribute('data-lifecycle-stage') || null;
+      renderLinkedPanels();
+    }));
+    q('[data-clear-lifecycle]')?.addEventListener('click',()=>{
+      state.analysis.lifecycleStage=null;
+      renderLinkedPanels();
+    });
   };
 
   const applyInspectorTab = tab => {
