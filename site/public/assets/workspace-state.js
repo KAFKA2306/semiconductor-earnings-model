@@ -30,7 +30,7 @@
         widths:{},
         pinned:new Set(['select','company'].filter(key=>columns.includes(key))),
       },
-      analysis: {chartType:'auto', metric:null},
+      analysis: {chartType:'auto', metric:null, lifecycleStage:null},
       watchlist:new Set(),
       widgets:{
         visible:new Set(['grid','chart','linked']),
@@ -144,7 +144,7 @@
       widths:table.widths && typeof table.widths==='object' ? {...table.widths} : {},
       pinned:new Set(Array.isArray(table.pinned)?table.pinned.filter(key=>available.has(key)):['select','company'].filter(key=>available.has(key))),
     };
-    state.analysis={chartType:'auto',metric:null,...(saved.analysis||{})};
+    state.analysis={chartType:'auto',metric:null,lifecycleStage:null,...(saved.analysis||{})};
     state.watchlist=new Set(Array.isArray(saved.watchlist)?saved.watchlist:[]);
     const widgets=saved.widgets || {};
     state.widgets={
