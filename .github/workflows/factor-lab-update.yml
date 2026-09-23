@@ -24,6 +24,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: factor-lab-${{ github.ref }}
@@ -107,3 +108,7 @@ jobs:
           git clean -fd
           git pull --rebase origin main
           git push origin HEAD:main
+      - name: Trigger Pages publication from updated main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
