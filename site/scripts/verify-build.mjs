@@ -9,10 +9,12 @@ const cssPath = path.join(dist, 'assets/bi-workbench.css');
 const jsPath = path.join(dist, 'assets/bi-workbench.js');
 const statePath = path.join(dist, 'assets/workspace-state.js');
 const chartEnginePath = path.join(dist, 'assets/chart-engine.js');
+const dataEnginePath = path.join(dist, 'assets/workbench-data-engine.js');
+const auxCssPath = path.join(dist, 'assets/aux-workbench.css');
 const financialPath = path.join(dist, 'api/v3/financial-database/index.json');
 const infrastructurePath = path.join(dist, 'api/v1/ai-infrastructure/index.json');
 
-for (const file of [indexPath, componentPath, cssPath, jsPath, statePath, chartEnginePath, financialPath, infrastructurePath]) {
+for (const file of [indexPath, componentPath, cssPath, jsPath, statePath, chartEnginePath, dataEnginePath, auxCssPath, financialPath, infrastructurePath]) {
   if (!fs.existsSync(file)) throw new Error('Required Pages artifact is missing: ' + path.relative(root, file));
 }
 
@@ -22,6 +24,8 @@ const css = fs.readFileSync(cssPath, 'utf8');
 const js = fs.readFileSync(jsPath, 'utf8');
 const workspaceState = fs.readFileSync(statePath, 'utf8');
 const chartEngine = fs.readFileSync(chartEnginePath, 'utf8');
+const dataEngine = fs.readFileSync(dataEnginePath, 'utf8');
+const auxCss = fs.readFileSync(auxCssPath, 'utf8');
 const financial = JSON.parse(fs.readFileSync(financialPath, 'utf8'));
 const infrastructure = JSON.parse(fs.readFileSync(infrastructurePath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
@@ -90,6 +94,8 @@ for (const marker of [
   '.wb-pie',
   '.wb-col-resizer',
   '.wb-pinned',
+  'tr[data-row]:focus-visible',
+  '@media(max-width:1366px)',
 ]) {
   if (!css.includes(marker)) throw new Error('BI CSS is missing contract marker: ' + marker);
 }
@@ -138,11 +144,42 @@ for (const marker of [
   'moveColumn',
   'ensureColumnResizers',
   'workspaceApi.setActive',
+  "ev.key==='ArrowDown'",
+  'ev.shiftKey',
+  'ev.metaKey||ev.ctrlKey',
+  'toggleKeyboardSelection',
+  'selectRange',
+  'SemiconWorkbenchDebug',
+  'run500RowPerformance',
   'openInspector',
 ]) {
   if (!js.includes(marker)) throw new Error('BI interaction contract is missing: ' + marker);
 }
 
+for (const marker of [
+  'SemiconDataEngine',
+  'filterSortRows',
+  'performanceFixture',
+  'count=500',
+]) {
+  if (!dataEngine.includes(marker)) throw new Error('Workbench data-engine contract is missing: ' + marker);
+}
+for (const marker of [
+  '--aux-bg:',
+  '.table-wrap',
+  '.metric-grid',
+  '@media(max-width:760px)',
+]) {
+  if (!auxCss.includes(marker)) throw new Error('Auxiliary workbench CSS is missing: ' + marker);
+}
+for (const route of ['china-ai','investment-policy','ledger']) {
+  const file=path.join(dist,route,'index.html');
+  if(!fs.existsSync(file)) throw new Error('Auxiliary research route missing: '+route);
+  const page=fs.readFileSync(file,'utf8');
+  if(!page.includes('data-aux-workbench')) throw new Error(route+' is not using auxiliary research surface');
+  if(page.includes('pastel-watercolor.css')) throw new Error(route+' still receives global pastel-watercolor CSS');
+  if(!page.includes('assets/aux-workbench.css')) throw new Error(route+' is missing neutral auxiliary CSS');
+}
 for (const marker of [
   'SemiconChartEngine',
   'pieAllowed',
