@@ -7,8 +7,8 @@
   "provider_terms": "https://edinetdb.jp/legal/terms",
   "source_endpoint": "/v1/companies/E35948/financials",
   "request_fingerprint": "0f4eefa448c82d686bb15db909760186483e13f9d52afd62570a29a1fcd528ad",
-  "fetched_at": "2026-09-23T01:32:14Z",
-  "response_sha256": "45ccc47b367c8b698a21ca52bac0d558e88317e5a0f0c857ec4bf5189a54113a",
+  "fetched_at": "2026-09-24T01:28:41Z",
+  "response_sha256": "274c820f4d8a083fbc80cf4674e7917109e39f36b8d62ee49e551148180b368a",
   "record_count": 6,
   "records": [
     {
