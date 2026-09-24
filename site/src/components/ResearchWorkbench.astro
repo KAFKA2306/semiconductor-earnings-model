@@ -1,6 +1,7 @@
 ---
 import fs from 'node:fs';
 import path from 'node:path';
+import { classifyCanonicalChange } from '../lib/activity-change.mjs';
 
 const { view = 'projects' } = Astro.props;
 const cwd = process.cwd();
@@ -141,7 +142,8 @@ const financialRows = (financialDoc.views?.latest_actuals || []).map((o) => {
     raw: o,
   };
 });
-const activityRows = [...evidenceRows].sort((a,b) => String(b.target_date || '').localeCompare(String(a.target_date || '')) || String(b.imported_at || '').localeCompare(String(a.imported_at || '')));
+const activityRows = evidenceRows.map(row => ({...row,change_type:classifyCanonicalChange(row)}))
+  .sort((a,b) => String(b.target_date || '').localeCompare(String(a.target_date || '')) || String(b.imported_at || '').localeCompare(String(a.imported_at || '')));
 const qualityRows = [...projectRows, ...evidenceRows, ...facilityRows].sort((a,b) => String(a.quality || '').localeCompare(String(b.quality || '')));
 const columns = {
   projects: [
@@ -165,7 +167,7 @@ const columns = {
     {key:'source_system',label:'Source'},{key:'quality',label:'Quality'},
   ],
   activity: [
-    {key:'select',label:'',width:34},{key:'target_date',label:'Date'},{key:'company',label:'Company'},
+    {key:'select',label:'',width:34},{key:'target_date',label:'Date'},{key:'change_type',label:'Canonical Change'},{key:'company',label:'Company'},
     {key:'project_name',label:'Event / Project'},{key:'event_type',label:'Type'},{key:'status',label:'Status'},
     {key:'source_system',label:'Source'},{key:'quality',label:'Quality'},
   ],
@@ -194,7 +196,7 @@ const titles = {
   projects:['Projects','CapEx / capacity projects with source-level evidence'],
   companies:['Companies','Canonical entity universe and evidence coverage'],
   capacity:['Capacity','Physical capacity claims only. Allocation and utilization are not treated as expansion.'],
-  activity:['Activity','Canonical disclosure and project events, newest first.'],
+  activity:['Activity','Canonical change semantics over source-traceable disclosures, newest first.'],
   evidence:['Evidence','Events and disclosures, with provenance one click away'],
   quality:['Data Quality','Primary, imported, missing and conflicting records'],
   facilities:['Facilities','Canonical production / R&D / expansion locations'],
@@ -262,7 +264,17 @@ const payload = {
     semantics:['NULL != 0','Actual != Guidance','Derived != Observed'],
   },
 };
-const nav = [['projects','▦','Projects'],['companies','◫','Companies'],['financials','≡','Financials'],['capacity','↗','Capacity'],['facilities','⌖','Facilities'],['activity','↻','Activity'],['evidence','◎','Evidence'],['quality','!','Quality']];
+const icons = {
+  projects:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3.5h6v5H3zM11 3.5h6v5h-6zM3 11.5h6v5H3zM11 11.5h6v5h-6z"/></svg>',
+  companies:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V6h6v11M9 17V3h8v14M6 9h.01M6 12h.01M12 6h2M12 9h2M12 12h2M2 17h16"/></svg>',
+  financials:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 16h14M5 14V9M10 14V5M15 14V2"/></svg>',
+  capacity:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15l4-4 3 2 6-8M12 5h4v4"/></svg>',
+  facilities:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V8l5 3V7l5 3V4h4v13M2 17h16M6 14h1M10 14h1M14 14h1"/></svg>',
+  activity:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 7a7 7 0 1 0 1 5M16 3v4h-4M10 6v4l3 2"/></svg>',
+  evidence:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h7l3 3V17H5zM12 2.5v4h3M7.5 10h5M7.5 13h5"/></svg>',
+  quality:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6 2v5c0 4-2.5 6.5-6 8-3.5-1.5-6-4-6-8v-5zM10 6v5M10 14h.01"/></svg>',
+};
+const nav = [['projects',icons.projects,'Projects'],['companies',icons.companies,'Companies'],['financials',icons.financials,'Financials'],['capacity',icons.capacity,'Capacity'],['facilities',icons.facilities,'Facilities'],['activity',icons.activity,'Activity'],['evidence',icons.evidence,'Evidence'],['quality',icons.quality,'Quality']];
 const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 ---
 
@@ -272,8 +284,8 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
     <a class="wb-brand" href={base}><span>SEMICON LEDGER<small>RESEARCH WORKBENCH</small></span></a>
     <nav class="wb-nav">
       {nav.map(([key,icon,label]) => (
-        <a href={hrefFor(key)} aria-current={normalizedView === key ? 'page' : undefined}>
-          <span class="ico">{icon}</span><span class="label">{label}</span>
+        <a href={hrefFor(key)} aria-label={label} title={label} aria-current={normalizedView === key ? 'page' : undefined}>
+          <span class="ico" set:html={icon}></span><span class="label">{label}</span>
         </a>
       ))}
     </nav>
@@ -282,6 +294,7 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 
   <main class="wb-main">
     <header class="wb-topbar">
+      <button class="wb-top-action wb-mobile-menu" type="button" data-open-mobile-nav aria-label="Open navigation">Menu</button>
       <div class="wb-search">
         <span aria-hidden="true">⌕</span>
         <input data-search type="search" placeholder="Search company, ticker, project, technology…" aria-label="Search workbench" />
@@ -289,10 +302,11 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       </div>
       <button class="wb-top-action desktop-only" type="button" data-open-command>Command <span class="wb-kbd">⌘K</span></button>
       <button class="wb-top-action desktop-only" type="button" data-open-views>Views</button>
-      <button class="wb-top-action desktop-only" type="button" data-save-view>Save view</button>
-      <button class="wb-top-action" type="button" data-copy-view>Share</button>
-      <a class="wb-top-action" href={base + apiPaths[normalizedView]} target="_blank" rel="noreferrer">API</a>
-      <button class="wb-top-action" type="button" data-open-export>Export</button>
+      <button class="wb-top-action desktop-only" type="button" data-open-workspaces>Workspaces</button>
+      <button class="wb-top-action primary desktop-only" type="button" data-save-workspace>Save workspace</button>
+      <button class="wb-top-action utility" type="button" data-copy-view>Share</button>
+      <a class="wb-top-action utility" href={base + apiPaths[normalizedView]} target="_blank" rel="noreferrer">API</a>
+      <button class="wb-top-action utility" type="button" data-open-export>Export</button>
     </header>
 
     <section class="wb-context" aria-labelledby="wb-title">
@@ -311,16 +325,20 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
       <select class="wb-filter" data-filter="quality" aria-label="Filter by evidence quality"><option value="">All evidence</option></select>
       <button class="wb-control-btn" type="button" data-clear-filters>Clear</button>
       <button class="wb-control-btn" type="button" data-open-columns>Columns</button>
+      <button class="wb-control-btn" type="button" data-watchlist-filter>Watchlist <span data-watchlist-count>0</span></button>
       <div class="wb-filter-chips" data-cross-filter-chips aria-label="Active cross filters"></div>
       <span class="wb-spacer"></span><span class="wb-view-label"><strong data-result-count>{rows.length}</strong> rows</span>
     </section>
+
+    <section class="wb-linked-strip" data-linked-strip aria-label="Linked active context" hidden></section>
+    <section class="wb-chart-panel" data-chart-panel aria-label="Interactive chart"></section>
 
     <div class="wb-workspace" data-workspace>
       <section class="wb-grid-panel" aria-label={title + ' data grid'}>
         <div class="wb-table-wrap">
           <table class="wb-table">
             <thead><tr>{activeColumns.map((col) => (
-              <th class={col.numeric ? 'num' : ''} data-col={col.key} data-sort={col.key === 'select' ? undefined : col.key} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
+              <th class={col.numeric ? 'num' : ''} data-col={col.key} data-sort={col.key === 'select' ? undefined : col.key} aria-sort={col.key === 'select' ? undefined : 'none'} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
             ))}</tr></thead>
             <tbody data-table-body></tbody>
           </table>
@@ -332,10 +350,18 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 
   <div class="wb-bottom" data-compare-bar aria-live="polite">
     <div class="wb-bottom-inner"><strong><span data-compare-count>0</span> selected</strong>
-      <button type="button" data-open-compare>Compare</button><button type="button" data-export-selected>Export selected</button><button type="button" data-copy-view>Copy view URL</button><button type="button" data-clear-selection>Clear selection</button>
+      <button type="button" data-open-compare>Compare</button><button type="button" data-add-watchlist>Add to watchlist</button><button type="button" data-export-selected>Export selected</button><button type="button" data-copy-view>Copy view URL</button><button type="button" data-clear-selection>Clear selection</button>
     </div>
   </div>
 
+  <dialog class="wb-mobile-nav" data-mobile-nav-dialog>
+    <div class="wb-mobile-nav-head"><strong>Research Workbench</strong><button class="wb-close" type="button" data-close-mobile-nav aria-label="Close navigation">×</button></div>
+    <nav aria-label="Mobile workbench navigation">
+      {nav.map(([key,icon,label]) => (
+        <a href={hrefFor(key)} aria-current={normalizedView === key ? 'page' : undefined}><span class="ico" set:html={icon}></span><span>{label}</span></a>
+      ))}
+    </nav>
+  </dialog>
   <dialog class="wb-command" data-command>
     <input data-command-input type="search" placeholder="Search entity / project / ticker…" aria-label="Command palette search" />
     <div class="wb-command-results" data-command-results></div>
@@ -352,6 +378,19 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
     <div class="wb-modal-head"><h2>Saved views</h2><button class="wb-close" type="button" data-close-views aria-label="Close saved views">×</button></div>
     <div class="wb-modal-body" data-views-body></div>
   </dialog>
+  <dialog class="wb-modal" data-workspace-dialog>
+    <div class="wb-modal-head"><h2>Saved workspaces</h2><button class="wb-close" type="button" data-close-workspaces aria-label="Close workspaces">×</button></div>
+    <div class="wb-modal-body">
+      <div class="wb-workspace-controls">
+        <label><input type="checkbox" data-widget-visible="chart" checked /> Chart</label>
+        <label><input type="checkbox" data-widget-visible="linked" checked /> Linked context</label>
+        <label>Layout <select data-widget-layout><option value="default">Default</option><option value="grid-focus">Grid focus</option><option value="chart-focus">Chart focus</option></select></label>
+        <label>Chart height <select data-widget-size="chartHeight"><option value="150">150</option><option value="170">170</option><option value="220">220</option><option value="300">300</option></select></label>
+        <label>Inspector width <select data-widget-size="inspectorWidth"><option value="320">320</option><option value="340">340</option><option value="360">360</option><option value="390">390</option><option value="440">440</option></select></label>
+      </div>
+      <div data-workspace-list></div>
+    </div>
+  </dialog>
   <dialog class="wb-modal" data-export-dialog>
     <div class="wb-modal-head"><h2>Export reproducible slice</h2><button class="wb-close" type="button" data-close-export aria-label="Close export">×</button></div>
     <div class="wb-modal-body">
@@ -359,11 +398,15 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
         <button type="button" data-export-visible><strong>Displayed CSV</strong><small>Current filters, sort and visible columns</small></button>
         <button type="button" data-export-selected><strong>Selected CSV</strong><small>Only selected rows and visible columns</small></button>
         <button type="button" data-export-json><strong>Displayed JSON</strong><small>Current filtered records with canonical fields</small></button>
+        <button type="button" data-export-full><strong>Full canonical JSON</strong><small>All records in the canonical slice behind this view</small></button>
         <button type="button" data-export-meta><strong>Metadata JSON</strong><small>View schema, source API and semantic contract</small></button>
         <button type="button" data-copy-api><strong>Copy API URL</strong><small>Canonical source endpoint for this view</small></button>
       </div>
     </div>
   </dialog>
   <script type="application/json" id="workbench-data" set:html={safeJson(payload)}></script>
+  <script src={base + 'assets/workspace-state.js'} defer></script>
+  <script src={base + 'assets/chart-engine.js'} defer></script>
+  <script src={base + 'assets/workbench-data-engine.js'} defer></script>
   <script src={base + 'assets/bi-workbench.js'} defer></script>
 </div>
