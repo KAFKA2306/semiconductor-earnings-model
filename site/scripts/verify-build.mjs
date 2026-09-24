@@ -7,10 +7,14 @@ const indexPath = path.join(dist, 'index.html');
 const componentPath = path.join(root, 'src/components/ResearchWorkbench.astro');
 const cssPath = path.join(dist, 'assets/bi-workbench.css');
 const jsPath = path.join(dist, 'assets/bi-workbench.js');
+const statePath = path.join(dist, 'assets/workspace-state.js');
+const chartEnginePath = path.join(dist, 'assets/chart-engine.js');
+const dataEnginePath = path.join(dist, 'assets/workbench-data-engine.js');
+const auxCssPath = path.join(dist, 'assets/aux-workbench.css');
 const financialPath = path.join(dist, 'api/v3/financial-database/index.json');
 const infrastructurePath = path.join(dist, 'api/v1/ai-infrastructure/index.json');
 
-for (const file of [indexPath, componentPath, cssPath, jsPath, financialPath, infrastructurePath]) {
+for (const file of [indexPath, componentPath, cssPath, jsPath, statePath, chartEnginePath, dataEnginePath, auxCssPath, financialPath, infrastructurePath]) {
   if (!fs.existsSync(file)) throw new Error('Required Pages artifact is missing: ' + path.relative(root, file));
 }
 
@@ -18,6 +22,10 @@ const html = fs.readFileSync(indexPath, 'utf8');
 const component = fs.readFileSync(componentPath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
 const js = fs.readFileSync(jsPath, 'utf8');
+const workspaceState = fs.readFileSync(statePath, 'utf8');
+const chartEngine = fs.readFileSync(chartEnginePath, 'utf8');
+const dataEngine = fs.readFileSync(dataEnginePath, 'utf8');
+const auxCss = fs.readFileSync(auxCssPath, 'utf8');
 const financial = JSON.parse(fs.readFileSync(financialPath, 'utf8'));
 const infrastructure = JSON.parse(fs.readFileSync(infrastructurePath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
@@ -37,12 +45,24 @@ for (const marker of [
   'data-open-compare',
   'data-open-views',
   'data-open-export',
+  'data-open-mobile-nav',
+  'data-mobile-nav-dialog',
+  'data-open-workspaces',
+  'data-save-workspace',
+  'data-workspace-dialog',
+  'data-watchlist-filter',
+  'data-add-watchlist',
+  'data-linked-strip',
+  'data-chart-panel',
+  'assets/chart-engine.js',
   'data-export-json',
+  'data-export-full',
+  'Full canonical JSON',
   'data-export-meta',
   'data-copy-api',
   'Displayed JSON',
   'Metadata JSON',
-  'Save view',
+  'Save workspace',
   'Export',
 ]) {
   if (!html.includes(marker)) throw new Error('Workbench root is missing marker: ' + marker);
@@ -57,13 +77,29 @@ for (const forbidden of ['AIインフラで、最後に何が変わったか。'
   if (html.includes(forbidden)) throw new Error('Legacy marketing UI leaked into root: ' + forbidden);
 }
 for (const marker of [
-  '--wb-rail:',
+  '--wb-rail:64px',
+  '--wb-inspector:340px',
+  'min-width:960px',
+  '.wb-nav .ico svg',
   '.wb-table',
   '.wb-inspector',
   '.wb-command',
   '.wb-bottom',
   'font-variant-numeric:tabular-nums',
   '@media(max-width:760px)',
+  '.wb-mobile-nav',
+  '.wb-linked-strip',
+  '[data-sort-dir=asc]',
+  '[data-sort-dir=desc]',
+  'attr(data-sort-rank)',
+  '.wb-chart-panel',
+  '.wb-bar-chart',
+  '.wb-pastel-line',
+  '.wb-pie',
+  '.wb-col-resizer',
+  '.wb-pinned',
+  'tr[data-row]:focus-visible',
+  '@media(max-width:1366px)',
 ]) {
   if (!css.includes(marker)) throw new Error('BI CSS is missing contract marker: ' + marker);
 }
@@ -71,6 +107,7 @@ for (const marker of [
   "new URLSearchParams(location.search)",
   "params.set('compare'",
   "params.set('cols'",
+  "params.set('sorts'",
   "localStorage.getItem('semicon:saved-views')",
   "navigator.clipboard.writeText",
   "exportRows('visible')",
@@ -92,9 +129,90 @@ for (const marker of [
   'openCellMenu',
   'addCrossFilter',
   "ev.key.toLowerCase()==='k'",
+  "ev.key==='/'",
+  'data-inspector-tab',
+  'applyInspectorTab',
+  'renderSortState',
+  'aria-sort',
+  'data-sort-rank',
+  'state.table.sorts',
+  'renderLinkedStrip',
+  'renderChart',
+  'openChartMenu',
+  'TABLE_LAYOUT_KEY',
+  'WORKSPACE_KEY',
+  'WATCHLIST_KEY',
+  'saveWorkspace',
+  'renderSavedWorkspaces',
+  'workspaceApi.restore',
+  'exportFullCanonical',
+  'addSelectedToWatchlist',
+  'watchlistOnly',
+  'moveColumn',
+  'ensureColumnResizers',
+  'workspaceApi.setActive',
+  "ev.key==='ArrowDown'",
+  'ev.shiftKey',
+  'ev.metaKey||ev.ctrlKey',
+  'toggleKeyboardSelection',
+  'selectRange',
+  'SemiconWorkbenchDebug',
+  'run500RowPerformance',
   'openInspector',
 ]) {
   if (!js.includes(marker)) throw new Error('BI interaction contract is missing: ' + marker);
+}
+
+for (const marker of [
+  'SemiconDataEngine',
+  'filterSortRows',
+  'performanceFixture',
+  'count=500',
+  'state.sorts',
+]) {
+  if (!dataEngine.includes(marker)) throw new Error('Workbench data-engine contract is missing: ' + marker);
+}
+for (const marker of [
+  '--aux-bg:',
+  '.table-wrap',
+  '.metric-grid',
+  '@media(max-width:760px)',
+]) {
+  if (!auxCss.includes(marker)) throw new Error('Auxiliary workbench CSS is missing: ' + marker);
+}
+for (const route of ['china-ai','investment-policy','ledger']) {
+  const file=path.join(dist,route,'index.html');
+  if(!fs.existsSync(file)) throw new Error('Auxiliary research route missing: '+route);
+  const page=fs.readFileSync(file,'utf8');
+  if(!page.includes('data-aux-workbench')) throw new Error(route+' is not using auxiliary research surface');
+  if(page.includes('pastel-watercolor.css')) throw new Error(route+' still receives global pastel-watercolor CSS');
+  if(!page.includes('assets/aux-workbench.css')) throw new Error(route+' is missing neutral auxiliary CSS');
+}
+for (const marker of [
+  'SemiconChartEngine',
+  'pieAllowed',
+  "view==='projects'",
+  "view==='financials'",
+  "type:'line'",
+  "type:'bar'",
+  "model.type='pie'",
+]) {
+  if (!chartEngine.includes(marker)) throw new Error('Chart engine contract is missing: ' + marker);
+}
+for (const marker of [
+  'workspace-state.v1',
+  'active: {rowId:null, entityId:null, projectId:null, recordId:null}',
+  'selected: new Set()',
+  'filter:',
+  'toggleSelected',
+  'setInspectorTab',
+  'snapshot',
+  'restore',
+  'watchlist:new Set()',
+  'widgets:',
+  'sorts:',
+]) {
+  if (!workspaceState.includes(marker)) throw new Error('WorkspaceState contract is missing: ' + marker);
 }
 for (const marker of [
   "NULL ≠ 0",
@@ -104,7 +222,11 @@ for (const marker of [
   "site/public/api/v2/events/index.json",
   "site/public/api/v3/financial-database/index.json",
   "linkedByEntity",
+  "change_type",
+  "classifyCanonicalChange",
   "semiconductor-workbench-export.v1",
+  "icons = {",
+  "set:html={icon}",
 ]) {
   if (!component.includes(marker)) throw new Error('Canonical workbench contract is missing: ' + marker);
 }
