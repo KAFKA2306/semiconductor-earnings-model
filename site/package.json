@@ -5,10 +5,14 @@
   "scripts": {
     "prebuild": "node scripts/audit-units.mjs",
     "build": "astro build",
-    "postbuild": "node scripts/verify-build.mjs",
+    "postbuild": "node scripts/test-workspace-state.mjs && node scripts/test-chart-engine.mjs && node scripts/test-activity-change.mjs && node scripts/test-workbench-performance.mjs && node scripts/verify-build.mjs",
     "test:unit-audit": "node scripts/test-unit-audit.mjs",
     "dev": "astro dev",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test:workspace-state": "node scripts/test-workspace-state.mjs",
+    "test:chart-engine": "node scripts/test-chart-engine.mjs",
+    "test:activity-change": "node scripts/test-activity-change.mjs",
+    "test:workbench-performance": "node scripts/test-workbench-performance.mjs"
   },
   "dependencies": {
     "astro": "5.18.2"
