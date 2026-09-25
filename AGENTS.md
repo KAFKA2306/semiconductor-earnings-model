@@ -14,6 +14,18 @@ This repository is a reproducible primary-financial-facts system.
 - Prefer SEC/EDGAR, TDnet/JPX, issuer IR, official APIs, or the repository's authorized provider for current primary facts.
 - Fail closed on missing sources, schema errors, hash/provenance failures, ambiguous periods/units, or failed audits. Do not weaken data-integrity gates to make CI pass.
 
+## dbt responsibility
+
+dbt is a first-class repository responsibility for reproducible analytical transformation, not a second source of truth.
+
+- Source acquisition, source verification, raw snapshots, and canonical identity remain upstream responsibilities.
+- dbt owns reproducible Silver-to-Gold transformation where analytical normalization or joining is required.
+- dbt owns model-level data-quality tests, lineage metadata, generated docs/catalog artifacts, and CI checks for those transformations.
+- New analytical marts must preserve evidence lineage and must not overwrite or silently reinterpret observed facts.
+- UI, API, Google Sheets, and BI consumers must not independently reimplement business transformations already owned by a tested Gold model.
+- A dbt failure must fail the affected analytical/publication path closed. Do not weaken provenance, period, unit, or verification requirements to obtain a green build.
+- Prefer additive models and explicit context joins over causal labels unless causality is separately evidenced.
+
 ## Evidence boundary
 
 A successful command is not the business postcondition. Verify the ledger row, manifest/hash, audit result, generated artifact, API, or deployed surface that owns the claim.
