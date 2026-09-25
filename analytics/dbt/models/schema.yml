@@ -37,6 +37,30 @@ models:
       - name: entity_id
         data_tests: [not_null]
 
+  - name: silver_verified_revenue_actuals
+    description: Verified SEC revenue actuals exposed from the canonical earnings evidence ledger.
+    columns:
+      - name: accession_number
+        data_tests: [not_null]
+      - name: company_id
+        data_tests: [not_null]
+      - name: entity_id
+        data_tests: [not_null]
+      - name: metric
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["revenue"]
+      - name: period_start
+        data_tests: [not_null]
+      - name: period_end
+        data_tests: [not_null]
+      - name: value
+        data_tests: [not_null]
+      - name: source_url
+        data_tests: [not_null]
+
   - name: gold_capex_projects
     description: Publication-safe CapEx projects. Only primary-source-extracted rows with source identity are promoted.
     columns:
@@ -64,3 +88,51 @@ models:
         data_tests: [not_null]
       - name: source_document_count
         data_tests: [not_null]
+
+  - name: gold_verified_revenue_actuals
+    description: Publication-safe SEC revenue actuals with explicit filing lineage.
+    columns:
+      - name: accession_number
+        data_tests: [not_null]
+      - name: entity_id
+        data_tests: [not_null]
+      - name: source_url
+        data_tests: [not_null]
+      - name: value
+        data_tests: [not_null]
+      - name: publication_tier
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["gold"]
+
+  - name: gold_company_revenue_latest
+    description: Latest discrete annual and quarterly verified revenue observations per US-listed entity without mixing durations.
+    columns:
+      - name: entity_id
+        data_tests: [not_null, unique]
+      - name: publication_tier
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["gold"]
+
+  - name: gold_capex_revenue_context
+    description: Publication-safe CapEx projects joined to the latest verified annual and discrete-quarter revenue context by entity_id. This is context, not a causal estimate.
+    columns:
+      - name: project_id
+        data_tests: [not_null, unique]
+      - name: entity_id
+        data_tests: [not_null]
+      - name: capex_source_doc_id
+        data_tests: [not_null]
+      - name: capex_source_url
+        data_tests: [not_null]
+      - name: publication_tier
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["gold"]

@@ -52,5 +52,18 @@ jobs:
         working-directory: analytics/dbt
         run: uv run --with "dbt-duckdb==1.11.0" dbt build --profiles-dir .
 
+      - name: Generate dbt docs and lineage metadata
+        working-directory: analytics/dbt
+        run: uv run --with "dbt-duckdb==1.11.0" dbt docs generate --profiles-dir .
+
+      - name: Upload dbt lineage evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-medallion-lineage
+          path: |
+            analytics/dbt/target/manifest.json
+            analytics/dbt/target/catalog.json
+            analytics/dbt/target/run_results.json
+
       - name: Verify MCP 2026-07-28 discovery, tools and parity
         run: uv run --with "mcp>=2,<3" python scripts/check_mcp_contract.py
