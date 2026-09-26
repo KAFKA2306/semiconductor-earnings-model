@@ -12,9 +12,11 @@ Data Platform Standard v1 の正本は `data/earnings_ledger/` です。MCP・Da
 | --- | --- | --- |
 | `raw/bronze` | 取得候補、棄却、source state | `rejected.ndjson`, `source_registry.json`, `source_state.json` |
 | `normalized/silver` | 正規化済み事実、監査、lineage | `events.ndjson`, `*audit_latest.json`, `lineage_latest.json` |
-| `public/gold` | fail-close監査を通った公開snapshot/API | `publication_latest.json`, `site/public/api/**` |
+| `public/gold` | fail-close監査を通った公開snapshot/API | `publication_latest.json`, `site/public/api/v2/gold/**` |
 
 物理directory名をlayer名へ強制的に合わせるのではなく、Data Platform serviceが返す各recordの `data_layer` で機械判定可能にします。
+
+`site/public/api/v2/**` の既存endpointは research/Silver projection として、監査中の `imported_unverified` を含む場合があります。payload の `publication_tier` は `research` です。検証済みrecordだけを必要とするconsumerは `site/public/api/v2/gold/**` を使用します。Goldは `publication_tier: gold` を持ち、`quality_flag == primary_source_extracted` のrecordだけを fail-closed で含めます。quality flag が欠落・未知のrecordも Gold へ昇格しません。
 
 ## dbt execution boundary
 
