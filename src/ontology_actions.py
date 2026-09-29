@@ -310,6 +310,8 @@ class OntologyActionExecutor:
         actor, role = self._authorize(authorization_token)
         if not idempotency_key.strip():
             raise ActionValidationError("idempotency_key is required")
+        if expected_version is None:
+            raise ActionValidationError("expected_version is required")
         contract = self._action_contract(action_type)
         required_role = str(contract.get("required_role") or "")
         if required_role and role != required_role:
@@ -464,6 +466,8 @@ class OntologyActionExecutor:
         actor, role = self._authorize(authorization_token)
         if not idempotency_key.strip():
             raise ActionValidationError("idempotency_key is required")
+        if expected_version is None:
+            raise ActionValidationError("expected_version is required")
 
         with self._lock():
             rows = self._read_log()
