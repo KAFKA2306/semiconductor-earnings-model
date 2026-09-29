@@ -32,6 +32,7 @@ EXPECTED_DOCS = {
     "docs/methodology.md",
     "docs/data-quality.md",
     "docs/mcp.md",
+    "docs/ontology-runtime.md",
 }
 ALLOWED_LAYERS = {"raw/bronze", "normalized/silver", "public/gold"}
 
