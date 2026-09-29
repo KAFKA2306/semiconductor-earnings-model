@@ -15,7 +15,7 @@ _service = DataPlatformService()
 mcp = MCPServer(
     "semiconductor-earnings-data-platform",
     version="1.0.0",
-    description="Read-only deterministic projections of the canonical earnings ledger.",
+    description="Deterministic ontology data platform with controlled overlay-only actions.",
 )
 
 
@@ -106,6 +106,54 @@ def get_ontology_neighbors(
 ) -> dict[str, Any]:
     """Traverse incoming and outgoing ontology links for one object."""
     return _service.get_ontology_neighbors(object_type, primary_key, link_type)
+
+
+@mcp.tool()
+def get_ontology_action_status() -> dict[str, Any]:
+    """Return controlled ontology action execution status."""
+    return _service.get_ontology_action_status()
+
+
+@mcp.tool()
+def get_ontology_action_log(limit: int = 100) -> dict[str, Any]:
+    """Return the hash-chained ontology action log."""
+    return _service.get_ontology_action_log(limit)
+
+
+@mcp.tool()
+def execute_ontology_action(
+    action_type: str,
+    object_type: str,
+    primary_key: str,
+    parameters: dict[str, Any],
+    idempotency_key: str,
+    expected_version: int | None = None,
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Execute an authorized overlay-only ontology action."""
+    return _service.execute_ontology_action(
+        action_type=action_type,
+        object_type=object_type,
+        primary_key=primary_key,
+        parameters=parameters,
+        idempotency_key=idempotency_key,
+        expected_version=expected_version,
+        dry_run=dry_run,
+    )
+
+
+@mcp.tool()
+def rollback_ontology_action(
+    action_id: str,
+    idempotency_key: str,
+    expected_version: int | None = None,
+) -> dict[str, Any]:
+    """Rollback one ontology action when optimistic concurrency permits."""
+    return _service.rollback_ontology_action(
+        action_id=action_id,
+        idempotency_key=idempotency_key,
+        expected_version=expected_version,
+    )
 
 
 def _csv_env(name: str, default: tuple[str, ...]) -> list[str]:
