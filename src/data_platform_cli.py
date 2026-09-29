@@ -9,6 +9,15 @@ from src.data_platform import DataPlatformService
 _service = DataPlatformService()
 
 
+def _json_argument(argument: str) -> dict[str, Any]:
+    if not argument:
+        return {}
+    payload = json.loads(argument)
+    if not isinstance(payload, dict):
+        raise ValueError("argument must be a JSON object")
+    return payload
+
+
 def execute(operation: str, argument: str = "") -> dict[str, Any]:
     if operation == "search_companies":
         return _service.search_companies(argument)
@@ -30,6 +39,26 @@ def execute(operation: str, argument: str = "") -> dict[str, Any]:
         return _service.get_ontology_definition()
     if operation == "get_ontology_snapshot":
         return _service.get_ontology_snapshot()
+    if operation == "search_ontology_objects":
+        payload = _json_argument(argument)
+        return _service.search_ontology_objects(
+            str(payload.get("object_type") or ""),
+            str(payload.get("query") or ""),
+            int(payload.get("limit") or 50),
+        )
+    if operation == "get_ontology_object":
+        payload = _json_argument(argument)
+        return _service.get_ontology_object(
+            str(payload.get("object_type") or ""),
+            str(payload.get("primary_key") or ""),
+        )
+    if operation == "get_ontology_neighbors":
+        payload = _json_argument(argument)
+        return _service.get_ontology_neighbors(
+            str(payload.get("object_type") or ""),
+            str(payload.get("primary_key") or ""),
+            str(payload.get("link_type") or ""),
+        )
     raise ValueError(f"unknown operation: {operation}")
 
 
@@ -48,6 +77,9 @@ def main() -> None:
             "get_data_quality",
             "get_ontology_definition",
             "get_ontology_snapshot",
+            "search_ontology_objects",
+            "get_ontology_object",
+            "get_ontology_neighbors",
         ],
     )
     parser.add_argument("argument", nargs="?", default="")
