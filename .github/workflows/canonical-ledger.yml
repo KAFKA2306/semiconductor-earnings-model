@@ -1,6 +1,8 @@
 name: Canonical infrastructure ledger
 
 on:
+  schedule:
+    - cron: "15 21 * * *"
   pull_request:
     paths:
       - "semicon/**"
@@ -28,6 +30,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: canonical-ledger-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   validate:
@@ -58,3 +64,14 @@ jobs:
         run: uv run python -m semicon.source_round_trip
       - name: Build API v2 projection
         run: uv run python -m semicon.build_api_v2
+      - name: Preserve scheduled-run audit outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-ledger-audit-${{ github.run_id }}
+          path: |
+            data/canonical/
+            data/derived/
+            data/conflicts/
+          if-no-files-found: error
+          retention-days: 30
