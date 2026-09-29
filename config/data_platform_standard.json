@@ -48,7 +48,10 @@
     "get_publication_snapshot",
     "get_data_quality",
     "get_ontology_definition",
-    "get_ontology_snapshot"
+    "get_ontology_snapshot",
+    "search_ontology_objects",
+    "get_ontology_object",
+    "get_ontology_neighbors"
   ],
   "determinism": {
     "llm_overwrites_primary_facts": false,
@@ -78,7 +81,10 @@
       "get_publication_snapshot": "GET /api/data-platform/v1/publication",
       "get_data_quality": "GET /api/data-platform/v1/quality",
       "get_ontology_definition": "GET /api/data-platform/v1/ontology",
-      "get_ontology_snapshot": "GET /api/data-platform/v1/ontology/snapshot"
+      "get_ontology_snapshot": "GET /api/data-platform/v1/ontology/snapshot",
+      "search_ontology_objects": "GET /api/data-platform/v1/ontology/objects?type={object_type}&q={query}&limit={limit}",
+      "get_ontology_object": "GET /api/data-platform/v1/ontology/objects/{object_type}/{primary_key}",
+      "get_ontology_neighbors": "GET /api/data-platform/v1/ontology/objects/{object_type}/{primary_key}/neighbors?link_type={link_type}"
     }
   }
 }
