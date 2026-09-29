@@ -27,6 +27,8 @@ EXPECTED_TOOLS = {
     "get_audit_status",
     "get_publication_snapshot",
     "get_data_quality",
+    "get_ontology_definition",
+    "get_ontology_snapshot",
 }
 
 
@@ -52,6 +54,14 @@ async def check() -> None:
         assert quality.structured_content == canonical
         assert cli_execute("get_data_quality") == canonical
         assert dispatch_rest("/api/data-platform/v1/quality") == canonical
+
+        ontology = await client.call_tool("get_ontology_snapshot", {})
+        assert ontology.is_error is False
+        assert ontology.structured_content is not None
+        ontology_canonical = _service.get_ontology_snapshot()
+        assert ontology.structured_content == ontology_canonical
+        assert cli_execute("get_ontology_snapshot") == ontology_canonical
+        assert dispatch_rest("/api/data-platform/v1/ontology/snapshot") == ontology_canonical
 
         print(
             json.dumps(
