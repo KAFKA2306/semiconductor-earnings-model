@@ -12,7 +12,9 @@
     "normalized/silver": [
       "data/earnings_ledger/events.ndjson",
       "data/earnings_ledger/*audit_latest.json",
-      "data/earnings_ledger/lineage_latest.json"
+      "data/earnings_ledger/lineage_latest.json",
+      "data/ontology_runtime/action_state.json",
+      "data/ontology_runtime/action_log.jsonl"
     ],
     "public/gold": [
       "data/earnings_ledger/publication_latest.json",
