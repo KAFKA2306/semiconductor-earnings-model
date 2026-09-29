@@ -12,6 +12,7 @@ on:
       - "data/raw/google_sheets_import/**"
       - "data/raw/company_ir/**"
       - "data/conflicts/**"
+      - "analytics/dbt/**"
       - "tests/test_semicon_canonical_ledger.py"
       - "docs/semiconductor-infrastructure-ledger.md"
       - ".github/workflows/canonical-ledger.yml"
@@ -24,6 +25,7 @@ on:
       - "data/derived/**"
       - "data/raw/google_sheets_import/**"
       - "data/conflicts/**"
+      - "analytics/dbt/**"
       - "tests/test_semicon_canonical_ledger.py"
       - ".github/workflows/canonical-ledger.yml"
   workflow_dispatch:
@@ -68,6 +70,12 @@ jobs:
         run: uv run python -m semicon.audit_snapshot
       - name: Build canonical semantic diff
         run: uv run python -m semicon.semantic_diff
+      - name: Gate Canonical to Derived/Mart with dbt
+        working-directory: analytics/dbt
+        run: uv run --with "dbt-duckdb==1.11.0" dbt build --profiles-dir .
+      - name: Generate dbt lineage metadata
+        working-directory: analytics/dbt
+        run: uv run --with "dbt-duckdb==1.11.0" dbt docs generate --profiles-dir .
       - name: Preserve scheduled-run audit outputs
         if: always()
         uses: actions/upload-artifact@v4
@@ -79,5 +87,8 @@ jobs:
             data/conflicts/
             data/audit/canonical-ledger-status.json
             data/audit/canonical-semantic-diff.json
+            analytics/dbt/target/manifest.json
+            analytics/dbt/target/catalog.json
+            analytics/dbt/target/run_results.json
           if-no-files-found: error
           retention-days: 30
