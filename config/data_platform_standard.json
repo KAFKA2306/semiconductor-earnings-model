@@ -46,7 +46,9 @@
     "get_lineage",
     "get_audit_status",
     "get_publication_snapshot",
-    "get_data_quality"
+    "get_data_quality",
+    "get_ontology_definition",
+    "get_ontology_snapshot"
   ],
   "determinism": {
     "llm_overwrites_primary_facts": false,
@@ -74,7 +76,9 @@
       "get_lineage": "GET /api/data-platform/v1/lineage",
       "get_audit_status": "GET /api/data-platform/v1/audit",
       "get_publication_snapshot": "GET /api/data-platform/v1/publication",
-      "get_data_quality": "GET /api/data-platform/v1/quality"
+      "get_data_quality": "GET /api/data-platform/v1/quality",
+      "get_ontology_definition": "GET /api/data-platform/v1/ontology",
+      "get_ontology_snapshot": "GET /api/data-platform/v1/ontology/snapshot"
     }
   }
 }

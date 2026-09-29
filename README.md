@@ -77,6 +77,20 @@ J-Quants、韓国の公共データポータル、SIA公式リリースから、
 
 実績、ガイダンス、コンセンサス、市場観測、推計、シナリオ、NAND KPIを別の値種別として保持する再利用可能な分析DBです。
 
+## Ontology runtime
+
+Palantir Foundry型の `Object Type / Property / Link Type / Action Type / Interface` を
+repository横断で再利用できる上位契約として実装しています。
+
+- 定義: [`ontology/semiconductor.ontology.json`](ontology/semiconductor.ontology.json)
+- 運用: [`docs/ontology-runtime.md`](docs/ontology-runtime.md)
+- CLI: `get_ontology_definition` / `get_ontology_snapshot`
+- REST: `/api/data-platform/v1/ontology` / `/api/data-platform/v1/ontology/snapshot`
+- MCP: `get_ontology_definition` / `get_ontology_snapshot`
+
+現時点のAction Typeは宣言のみで、既存のread-only境界を維持するため実行不可です。
+Authorization、Action Log、write auditを実装するまで書き込みへ昇格させません。
+
 ## データモデル
 
 1. **Entity** — 企業、証券、ティッカー、CIK、同業グループ

@@ -26,6 +26,10 @@ def execute(operation: str, argument: str = "") -> dict[str, Any]:
         return _service.get_publication_snapshot()
     if operation == "get_data_quality":
         return _service.get_data_quality()
+    if operation == "get_ontology_definition":
+        return _service.get_ontology_definition()
+    if operation == "get_ontology_snapshot":
+        return _service.get_ontology_snapshot()
     raise ValueError(f"unknown operation: {operation}")
 
 
@@ -42,6 +46,8 @@ def main() -> None:
             "get_audit_status",
             "get_publication_snapshot",
             "get_data_quality",
+            "get_ontology_definition",
+            "get_ontology_snapshot",
         ],
     )
     parser.add_argument("argument", nargs="?", default="")

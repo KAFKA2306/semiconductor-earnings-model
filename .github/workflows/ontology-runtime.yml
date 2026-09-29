@@ -1,0 +1,41 @@
+name: Ontology Runtime v0.1
+
+on:
+  pull_request:
+    paths:
+      - "ontology/**"
+      - "src/ontology_runtime.py"
+      - "scripts/check_ontology_runtime.py"
+      - "tests/test_ontology_runtime.py"
+      - "docs/ontology-runtime.md"
+      - ".github/workflows/ontology-runtime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ontology-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install locked environment
+        run: uv sync --frozen
+
+      - name: Validate ontology definition schema
+        run: uv run --with "jsonschema>=4,<5" python -m jsonschema -i ontology/semiconductor.ontology.json ontology/ontology-definition.schema.json
+
+      - name: Compile ontology against real repository data
+        run: uv run python scripts/check_ontology_runtime.py
+
+      - name: Run ontology contract tests
+        run: uv run python -m pytest tests/test_ontology_runtime.py -q
