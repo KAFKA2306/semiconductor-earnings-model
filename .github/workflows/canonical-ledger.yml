@@ -66,6 +66,8 @@ jobs:
         run: uv run python -m semicon.build_api_v2
       - name: Build machine-readable hash and freshness status
         run: uv run python -m semicon.audit_snapshot
+      - name: Build canonical semantic diff
+        run: uv run python -m semicon.semantic_diff
       - name: Preserve scheduled-run audit outputs
         if: always()
         uses: actions/upload-artifact@v4
@@ -76,5 +78,6 @@ jobs:
             data/derived/
             data/conflicts/
             data/audit/canonical-ledger-status.json
+            data/audit/canonical-semantic-diff.json
           if-no-files-found: error
           retention-days: 30
