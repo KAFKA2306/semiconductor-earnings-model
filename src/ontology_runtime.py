@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from src.ontology_projection import project_repository
+
 ONTOLOGY_SCHEMA_VERSION = "kafka-ontology.v0.1"
 ALLOWED_PROPERTY_TYPES = {
     "boolean",
@@ -216,81 +218,7 @@ class OntologyRuntime:
 
     def build_snapshot(self) -> dict[str, Any]:
         definition = self.definition()
-        entities_path = self.root / "data" / "primary" / "entities.json"
-        concepts_path = (
-            self.root / "data" / "financial_db" / "metric_catalog.json"
-        )
-        entities = self._read_json(entities_path)
-        concepts = self._read_json(concepts_path)
-
-        objects: list[dict[str, Any]] = []
-        links: list[dict[str, Any]] = []
-
-        for row in entities.get("entities", []):
-            issuer_id = str(row.get("id") or "").strip()
-            if not issuer_id:
-                raise OntologyContractError("primary entity missing id")
-
-            objects.append(
-                {
-                    "object_type": "Issuer",
-                    "primary_key": issuer_id,
-                    "properties": {
-                        "id": issuer_id,
-                        "name": row.get("name"),
-                        "cik": row.get("cik"),
-                        "issuer_class": row.get("class"),
-                        "role": row.get("role"),
-                        "source_label": row.get("source"),
-                    },
-                }
-            )
-
-            ticker = row.get("ticker")
-            if ticker:
-                security_id = f"{issuer_id}:{ticker}"
-                objects.append(
-                    {
-                        "object_type": "Security",
-                        "primary_key": security_id,
-                        "properties": {
-                            "id": security_id,
-                            "ticker": ticker,
-                        },
-                    }
-                )
-                links.append(
-                    {
-                        "link_type": "issuedBy",
-                        "source": {
-                            "object_type": "Security",
-                            "primary_key": security_id,
-                        },
-                        "target": {
-                            "object_type": "Issuer",
-                            "primary_key": issuer_id,
-                        },
-                    }
-                )
-
-        for row in concepts.get("concepts", []):
-            concept_id = str(row.get("id") or "").strip()
-            if not concept_id:
-                raise OntologyContractError("metric catalog concept missing id")
-            objects.append(
-                {
-                    "object_type": "NormalizedConcept",
-                    "primary_key": concept_id,
-                    "properties": {
-                        "id": concept_id,
-                        "statement": row.get("statement"),
-                        "default_unit": row.get("default_unit"),
-                        "aggregation": row.get("aggregation"),
-                        "status": row.get("status"),
-                        "formula": row.get("formula"),
-                    },
-                }
-            )
+        objects, links, input_paths = project_repository(self.root)
 
         self._validate_instances(definition, objects, links)
         objects.sort(
@@ -317,20 +245,136 @@ class OntologyRuntime:
                 link_type_counts.get(row["link_type"], 0) + 1
             )
 
+        input_hashes = {
+            relative_path: self._sha256(self.root / relative_path)
+            for relative_path in input_paths
+        }
+
         return {
-            "schema_version": "kafka-ontology-snapshot.v0.1",
+            "schema_version": "kafka-ontology-snapshot.v0.2",
             "ontology_id": definition["ontology_id"],
             "definition_hash": self._sha256(self.definition_path),
-            "input_hashes": {
-                "data/primary/entities.json": self._sha256(entities_path),
-                "data/financial_db/metric_catalog.json": self._sha256(
-                    concepts_path
-                ),
-            },
+            "input_hashes": input_hashes,
             "object_type_counts": object_type_counts,
             "link_type_counts": link_type_counts,
             "objects": objects,
             "links": links,
+        }
+
+    def search_objects(
+        self,
+        *,
+        object_type: str = "",
+        query: str = "",
+        limit: int = 50,
+    ) -> dict[str, Any]:
+        if limit < 1 or limit > 200:
+            raise ValueError("limit must be between 1 and 200")
+        needle = query.strip().casefold()
+        snapshot = self.build_snapshot()
+        rows: list[dict[str, Any]] = []
+        for row in snapshot["objects"]:
+            if object_type and row["object_type"] != object_type:
+                continue
+            haystack = json.dumps(
+                row,
+                ensure_ascii=False,
+                sort_keys=True,
+            ).casefold()
+            if needle and needle not in haystack:
+                continue
+            rows.append(row)
+            if len(rows) >= limit:
+                break
+        return {
+            "schema_version": snapshot["schema_version"],
+            "ontology_id": snapshot["ontology_id"],
+            "object_type": object_type or None,
+            "query": query,
+            "count": len(rows),
+            "records": rows,
+        }
+
+    def get_object(
+        self,
+        *,
+        object_type: str,
+        primary_key: str,
+    ) -> dict[str, Any]:
+        snapshot = self.build_snapshot()
+        for row in snapshot["objects"]:
+            if (
+                row["object_type"] == object_type
+                and row["primary_key"] == primary_key
+            ):
+                return {
+                    "schema_version": snapshot["schema_version"],
+                    "ontology_id": snapshot["ontology_id"],
+                    "record": row,
+                    "null_reason": None,
+                }
+        return {
+            "schema_version": snapshot["schema_version"],
+            "ontology_id": snapshot["ontology_id"],
+            "record": None,
+            "null_reason": "NOT_FOUND",
+        }
+
+    def get_neighbors(
+        self,
+        *,
+        object_type: str,
+        primary_key: str,
+        link_type: str = "",
+    ) -> dict[str, Any]:
+        snapshot = self.build_snapshot()
+        object_index = {
+            (row["object_type"], row["primary_key"]): row
+            for row in snapshot["objects"]
+        }
+        identity = (object_type, primary_key)
+        if identity not in object_index:
+            return {
+                "schema_version": snapshot["schema_version"],
+                "ontology_id": snapshot["ontology_id"],
+                "object": None,
+                "links": [],
+                "neighbors": [],
+                "null_reason": "NOT_FOUND",
+            }
+
+        matched_links: list[dict[str, Any]] = []
+        neighbor_ids: set[tuple[str, str]] = set()
+        for row in snapshot["links"]:
+            if link_type and row["link_type"] != link_type:
+                continue
+            source = (
+                row["source"]["object_type"],
+                row["source"]["primary_key"],
+            )
+            target = (
+                row["target"]["object_type"],
+                row["target"]["primary_key"],
+            )
+            if source == identity:
+                matched_links.append(row)
+                neighbor_ids.add(target)
+            elif target == identity:
+                matched_links.append(row)
+                neighbor_ids.add(source)
+
+        neighbors = [
+            object_index[item]
+            for item in sorted(neighbor_ids)
+            if item in object_index
+        ]
+        return {
+            "schema_version": snapshot["schema_version"],
+            "ontology_id": snapshot["ontology_id"],
+            "object": object_index[identity],
+            "links": matched_links,
+            "neighbors": neighbors,
+            "null_reason": None,
         }
 
     def _validate_instances(
