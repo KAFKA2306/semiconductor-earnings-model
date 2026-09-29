@@ -4,7 +4,18 @@ on:
   pull_request:
     paths:
       - "ontology/**"
+      - "data/financial_db/micron_business_unit_operating_margin_fy2026.json"
+      - "data/financial_db/micron_business_unit_revenue_fy2026.json"
+      - "data/financial_db/ai_infrastructure_observations.json"
+      - "data/financial_db/nand_kpi_observations.json"
+      - "data/financial_db/manual_observations.json"
+      - "data/financial_db/metric_catalog.json"
+      - "data/earnings_ledger/source_registry.json"
+      - "data/financial_db/industry_entities.json"
+      - "data/primary/semiconductor_entities.json"
+      - "data/primary/entities.json"
       - "src/ontology_runtime.py"
+      - "src/ontology_projection.py"
       - "scripts/check_ontology_runtime.py"
       - "tests/test_ontology_runtime.py"
       - "docs/ontology-runtime.md"
