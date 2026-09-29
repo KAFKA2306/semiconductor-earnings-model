@@ -32,6 +32,10 @@ EXPECTED_TOOLS = {
     "search_ontology_objects",
     "get_ontology_object",
     "get_ontology_neighbors",
+    "get_ontology_action_status",
+    "get_ontology_action_log",
+    "execute_ontology_action",
+    "rollback_ontology_action",
 }
 
 
@@ -92,6 +96,17 @@ async def check() -> None:
         assert {"Issuer", "NormalizedConcept", "Source", "Document"} <= {
             row["object_type"] for row in neighbors_canonical["neighbors"]
         }
+
+        action_status = await client.call_tool("get_ontology_action_status", {})
+        assert action_status.is_error is False
+        assert action_status.structured_content is not None
+        assert action_status.structured_content["write_mode"] == "overlay_only"
+        assert action_status.structured_content["enabled"] is False
+
+        action_log = await client.call_tool("get_ontology_action_log", {"limit": 10})
+        assert action_log.is_error is False
+        assert action_log.structured_content is not None
+        assert action_log.structured_content["records"] == []
 
         print(
             json.dumps(
