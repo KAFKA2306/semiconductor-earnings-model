@@ -26,6 +26,9 @@ EXPECTED_TOOLS = {
     "get_data_quality",
     "get_ontology_definition",
     "get_ontology_snapshot",
+    "search_ontology_objects",
+    "get_ontology_object",
+    "get_ontology_neighbors",
 }
 EXPECTED_DOCS = {
     "docs/data-sources.md",
@@ -117,6 +120,25 @@ def main() -> None:
     assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology")) == canonical_json(ontology_definition)
     assert canonical_json(cli_execute("get_ontology_snapshot")) == canonical_json(ontology_snapshot)
     assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology/snapshot")) == canonical_json(ontology_snapshot)
+    ontology_search = service.search_ontology_objects("Issuer", "Micron", 10)
+    assert any(row["primary_key"] == "micron" for row in ontology_search["records"])
+    search_argument = canonical_json({"object_type": "Issuer", "query": "Micron", "limit": 10})
+    assert canonical_json(cli_execute("search_ontology_objects", search_argument)) == canonical_json(ontology_search)
+    assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology/objects", "type=Issuer&q=Micron&limit=10")) == canonical_json(ontology_search)
+
+    observation_id = "micron:2026-05-28:revenue:consolidated:actual"
+    ontology_object = service.get_ontology_object("Observation", observation_id)
+    object_argument = canonical_json({"object_type": "Observation", "primary_key": observation_id})
+    assert canonical_json(cli_execute("get_ontology_object", object_argument)) == canonical_json(ontology_object)
+    assert canonical_json(dispatch_rest(f"/api/data-platform/v1/ontology/objects/Observation/{observation_id}")) == canonical_json(ontology_object)
+
+    ontology_neighbors = service.get_ontology_neighbors("Observation", observation_id)
+    neighbors_argument = canonical_json({"object_type": "Observation", "primary_key": observation_id})
+    assert canonical_json(cli_execute("get_ontology_neighbors", neighbors_argument)) == canonical_json(ontology_neighbors)
+    assert canonical_json(dispatch_rest(f"/api/data-platform/v1/ontology/objects/Observation/{observation_id}/neighbors")) == canonical_json(ontology_neighbors)
+    assert {"Issuer", "NormalizedConcept", "Source", "Document"} <= {
+        row["object_type"] for row in ontology_neighbors["neighbors"]
+    }
     assert canonical_json(cli_execute("search_companies", "")) == canonical_json(companies_a)
     assert canonical_json(dispatch_rest("/api/data-platform/v1/companies", "q=")) == canonical_json(companies_a)
 
