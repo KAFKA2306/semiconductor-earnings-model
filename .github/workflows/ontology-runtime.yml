@@ -1,4 +1,4 @@
-name: Ontology Runtime v0.1
+name: Ontology Runtime v0.2
 
 on:
   pull_request:
