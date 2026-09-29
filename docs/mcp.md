@@ -2,7 +2,7 @@
 
 ## Contract
 
-このrepositoryはModel Context Protocol **2026-07-28** と公式Python SDK v2を基準に、read-only MCP serverを提供します。
+このrepositoryはModel Context Protocol **2026-07-28** と公式Python SDK v2を基準に、read APIと明示的に有効化するcontrolled ontology actionsを提供します。
 
 - Streamable HTTP endpoint: `POST /mcp`
 - stateless HTTP: enabled
@@ -25,8 +25,17 @@
 | `get_audit_status` | canonical audit群 |
 | `get_publication_snapshot` | freshness gate後の公開snapshot |
 | `get_data_quality` | audit/publication/lineage quality |
+| `get_ontology_definition` | Ontology contract |
+| `get_ontology_snapshot` | Object/Link snapshot |
+| `search_ontology_objects` | Object検索 |
+| `get_ontology_object` | Object 1件取得 |
+| `get_ontology_neighbors` | Link traversal |
+| `get_ontology_action_status` | Action実行可否・version |
+| `get_ontology_action_log` | hash-chained Action Log |
+| `execute_ontology_action` | overlay-only Action実行 |
+| `rollback_ontology_action` | optimistic-concurrency rollback |
 
-いずれも `DataPlatformService` のread-only projectionを呼び、MCP側で値を再計算しません。
+read系は `DataPlatformService` のdeterministic projectionを呼び、MCP側で値を再計算しません。Action系はcanonical sourceを変更せず、監査済みoverlayだけを書き換えます。
 
 ## Local run
 
@@ -46,7 +55,11 @@ uv run --with "mcp>=2,<3" python -m src.mcp_server
 - production Host allowlist: `MCP_ALLOWED_HOSTS`
 - production Origin allowlist: `MCP_ALLOWED_ORIGINS`
 - secrets: environment only
-- tools: read-only
+- canonical source: read-only
+- controlled actions: default disabled
+- action enable gate: `ONTOLOGY_ACTIONS_ENABLED=1`
+- actor/role: `ONTOLOGY_ACTION_ACTOR` / `ONTOLOGY_ACTION_ROLE=operator`
+- REST action token: `ONTOLOGY_ACTION_TOKEN`
 - server: stateless
 - rate limit: deployment ingressでclient identityまたはsource IPごとに **60 requests/minute** を既定policyとして強制する
 
