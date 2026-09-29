@@ -15,6 +15,11 @@ def main() -> None:
     runtime = OntologyRuntime(ROOT)
     definition = runtime.describe()
     snapshot = runtime.build_snapshot()
+    assert snapshot["schema_version"] == "kafka-ontology-snapshot.v0.2"
+    assert snapshot["object_type_counts"].get("Observation", 0) > 0
+    assert snapshot["object_type_counts"].get("Source", 0) > 0
+    assert snapshot["object_type_counts"].get("Document", 0) > 0
+    assert snapshot["link_type_counts"].get("observationSource", 0) == snapshot["object_type_counts"]["Observation"]
 
     print(
         json.dumps(
