@@ -501,6 +501,45 @@ class DataPlatformService:
             "records": [record],
         }
 
+    def search_ontology_objects(
+        self,
+        object_type: str = "",
+        query: str = "",
+        limit: int = 50,
+    ) -> dict[str, Any]:
+        self._validate_query(query)
+        return self.ontology.search_objects(
+            object_type=object_type,
+            query=query,
+            limit=limit,
+        )
+
+    def get_ontology_object(
+        self,
+        object_type: str,
+        primary_key: str,
+    ) -> dict[str, Any]:
+        if not object_type.strip() or not primary_key.strip():
+            raise ValueError("object_type and primary_key are required")
+        return self.ontology.get_object(
+            object_type=object_type.strip(),
+            primary_key=primary_key.strip(),
+        )
+
+    def get_ontology_neighbors(
+        self,
+        object_type: str,
+        primary_key: str,
+        link_type: str = "",
+    ) -> dict[str, Any]:
+        if not object_type.strip() or not primary_key.strip():
+            raise ValueError("object_type and primary_key are required")
+        return self.ontology.get_neighbors(
+            object_type=object_type.strip(),
+            primary_key=primary_key.strip(),
+            link_type=link_type.strip(),
+        )
+
 
 _SERVICE: DataPlatformService | None = None
 

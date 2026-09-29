@@ -79,6 +79,35 @@ def get_ontology_snapshot() -> dict[str, Any]:
     return _service.get_ontology_snapshot()
 
 
+@mcp.tool()
+def search_ontology_objects(
+    object_type: str = "",
+    query: str = "",
+    limit: int = 50,
+) -> dict[str, Any]:
+    """Search ontology objects by type and text across object properties."""
+    return _service.search_ontology_objects(object_type, query, limit)
+
+
+@mcp.tool()
+def get_ontology_object(
+    object_type: str,
+    primary_key: str,
+) -> dict[str, Any]:
+    """Get one ontology object by type and primary key."""
+    return _service.get_ontology_object(object_type, primary_key)
+
+
+@mcp.tool()
+def get_ontology_neighbors(
+    object_type: str,
+    primary_key: str,
+    link_type: str = "",
+) -> dict[str, Any]:
+    """Traverse incoming and outgoing ontology links for one object."""
+    return _service.get_ontology_neighbors(object_type, primary_key, link_type)
+
+
 def _csv_env(name: str, default: tuple[str, ...]) -> list[str]:
     raw = os.getenv(name)
     if raw is None:

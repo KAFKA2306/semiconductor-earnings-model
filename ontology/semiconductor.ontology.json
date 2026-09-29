@@ -431,15 +431,65 @@
       "collection": "entities"
     },
     {
+      "object_type": "Issuer",
+      "source": "data/primary/semiconductor_entities.json",
+      "collection": "entities"
+    },
+    {
+      "object_type": "Issuer",
+      "source": "data/financial_db/industry_entities.json",
+      "collection": "entities"
+    },
+    {
+      "object_type": "Issuer",
+      "source": "data/earnings_ledger/source_registry.json",
+      "collection": "sources"
+    },
+    {
       "object_type": "Security",
-      "source": "data/primary/entities.json",
-      "collection": "entities",
+      "source": "merged issuer registries",
+      "collection": "issuers",
       "condition": "ticker != null"
     },
     {
       "object_type": "NormalizedConcept",
       "source": "data/financial_db/metric_catalog.json",
       "collection": "concepts"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/manual_observations.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/nand_kpi_observations.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/ai_infrastructure_observations.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/micron_business_unit_revenue_fy2026.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/micron_business_unit_operating_margin_fy2026.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Source",
+      "source": "observation source_url projection",
+      "collection": "unique source URLs"
+    },
+    {
+      "object_type": "Document",
+      "source": "observation source_url projection",
+      "collection": "unique source URLs"
     }
   ]
 }
