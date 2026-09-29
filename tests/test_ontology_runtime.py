@@ -21,6 +21,7 @@ def test_definition_exposes_palantir_style_core_primitives() -> None:
     assert definition["schema_version"] == ONTOLOGY_SCHEMA_VERSION
     assert definition["ontology_id"] == "semiconductor-financial-research"
     assert definition["read_only"] is True
+    assert definition["action_execution"]["mode"] == "overlay_only"
     assert definition["counts"]["object_types"] >= 8
     assert definition["counts"]["link_types"] >= 6
     assert definition["counts"]["action_types"] >= 2
@@ -33,14 +34,20 @@ def test_definition_exposes_palantir_style_core_primitives() -> None:
     assert {"Issuer", "Security", "Observation", "Document"} <= object_types
     assert {"issuedBy", "observationSubject", "observationSource"} <= link_types
     assert {"supersedeObservation", "setEvaluationStatus"} <= action_types
-    assert all(row["executable"] is False for row in definition["action_types"])
+    executable = {
+        row["api_name"]: row["executable"]
+        for row in definition["action_types"]
+    }
+    assert executable["supersedeObservation"] is True
+    assert executable["setEvaluationStatus"] is False
 
 
 def test_snapshot_projects_real_repository_data_into_objects_and_links() -> None:
     runtime = OntologyRuntime(ROOT)
     snapshot = runtime.build_snapshot()
 
-    assert snapshot["schema_version"] == "kafka-ontology-snapshot.v0.2"
+    assert snapshot["schema_version"] == "kafka-ontology-snapshot.v0.3"
+    assert snapshot["action_state_version"] == 0
     assert snapshot["definition_hash"]
     assert snapshot["input_hashes"]["data/primary/entities.json"]
     assert snapshot["input_hashes"]["data/financial_db/metric_catalog.json"]
@@ -73,13 +80,18 @@ def test_snapshot_projects_real_repository_data_into_objects_and_links() -> None
         ) in identities
 
 
-def test_read_only_contract_rejects_executable_actions() -> None:
+def test_executable_actions_require_overlay_only_no_canonical_writes() -> None:
     runtime = OntologyRuntime(ROOT)
-    definition = copy.deepcopy(runtime.definition())
-    definition["action_types"][0]["executable"] = True
 
-    with pytest.raises(OntologyContractError, match="read-only ontology"):
-        runtime.validate_definition(definition)
+    bad_mode = copy.deepcopy(runtime.definition())
+    bad_mode["action_execution"]["mode"] = "direct"
+    with pytest.raises(OntologyContractError, match="overlay_only"):
+        runtime.validate_definition(bad_mode)
+
+    canonical_write = copy.deepcopy(runtime.definition())
+    canonical_write["action_execution"]["direct_canonical_writes"] = True
+    with pytest.raises(OntologyContractError, match="cannot write canonical"):
+        runtime.validate_definition(canonical_write)
 
 
 def test_snapshot_is_deterministic() -> None:

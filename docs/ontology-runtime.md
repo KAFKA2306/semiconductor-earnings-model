@@ -1,4 +1,4 @@
-# Ontology Runtime v0.2
+# Ontology Runtime v0.3
 
 このrepositoryのOntologyは、特定の会社・指標を固定テーブルとして扱うだけでなく、
 Object Type / Property / Link Type / Action Type / Interfaceを定義できる上位契約として運用する。
@@ -19,15 +19,15 @@ Object Type / Property / Link Type / Action Type / Interfaceを定義できる�
 - Interfaces: Identified, Sourced, Temporal
 - Action Types: supersedeObservation, setEvaluationStatus
 
-Action TypeはOntology契約として定義するが、現在のData Platformはread-onlyのため
-`executable: false` を必須とする。Authorization、Action Log、write auditが実装されるまで
-runtimeから書き込みは行わない。
+canonical sourceはread-onlyのまま維持し、Actionは`data/ontology_runtime/action_state.json`
+へのoverlay-only mutationとして実行する。`action_log.jsonl` はhash chainを持ち、
+idempotency key、expected_version、actor、before/afterを記録する。
 
 ## Compile and validate
 
 ```bash
 uv run python scripts/check_ontology_runtime.py
-uv run python -m pytest tests/test_ontology_runtime.py -q
+uv run python -m pytest tests/test_ontology_runtime.py tests/test_ontology_actions.py -q
 uv run --with "jsonschema>=4,<5" python -m jsonschema \
   -i ontology/semiconductor.ontology.json \
   ontology/ontology-definition.schema.json
@@ -69,13 +69,41 @@ definition hashと全入力hashを返すため、どのOntologyと入力から�
 3. NULLを既定値へ変換しない。
 4. ObservationやDocumentを追加する場合、Source / provenanceを失わない。
 5. 生成Viewをcanonical sourceへ昇格させない。
-6. Actionを実行可能にする前にAuthorization、Action Log、idempotency、rollbackを実装する。
+6. Actionはcanonical sourceへ直接書かず、overlay-onlyで実行する。
+7. 全writeはidempotency keyとexpected_versionを必須にする。
+8. rollbackも新しいAction Log recordとして残し、履歴を消さない。
 
-## Next runtime slice
+## Controlled actions
 
-次の実装対象はObservation / Source / Documentを既存financial-database v3からprojectし、
-Observation -> Issuer / NormalizedConcept / Source / DocumentのLinkを実データ化すること。
+有効化は明示的に行う。
 
+```bash
+export ONTOLOGY_ACTIONS_ENABLED=1
+export ONTOLOGY_ACTION_ACTOR=kafka-local
+export ONTOLOGY_ACTION_ROLE=operator
+export ONTOLOGY_ACTION_TOKEN='replace-with-secret'
+```
+
+状態確認:
+
+```bash
+uv run python -m src.data_platform_cli get_ontology_action_status
+```
+
+dry-run:
+
+```bash
+uv run python -m src.data_platform_cli execute_ontology_action '{"action_type":"supersedeObservation","object_type":"Observation","primary_key":"micron:2026-05-28:eps_diluted:consolidated:actual:gaap","parameters":{"replacement_observation_id":"micron:2026-05-28:eps_diluted:consolidated:actual:non_gaap"},"idempotency_key":"example-001","expected_version":0,"dry_run":true}'
+```
+
+本実行では`dry_run:false`にする。戻す場合は実行結果の`action_id`と現在のversionを使う。
+
+```bash
+uv run python -m src.data_platform_cli rollback_ontology_action '{"action_id":"action:...","idempotency_key":"rollback-example-001","expected_version":1}'
+```
+
+REST POSTは`Authorization: Bearer $ONTOLOGY_ACTION_TOKEN`を必須とする。
+MCP/CLI actionは既定でlocalhost/process-local運用とし、上記environment gateが未設定ならfail-closeする。
 
 ## Practical graph queries
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://kafka2306.github.io/semiconductor-earnings-model/ontology/ontology-definition.schema.json",
-  "title": "KAFKA Ontology Definition v0.1",
+  "title": "KAFKA Ontology Definition v0.2",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -9,6 +9,7 @@
     "ontology_id",
     "display_name",
     "read_only",
+    "action_execution",
     "interfaces",
     "object_types",
     "link_types",
@@ -17,7 +18,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "kafka-ontology.v0.1"
+      "const": "kafka-ontology.v0.2"
     },
     "ontology_id": {
       "type": "string",
@@ -59,6 +60,44 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/projection"
+      }
+    },
+    "action_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "state_path",
+        "log_path",
+        "authorization",
+        "require_idempotency_key",
+        "require_optimistic_concurrency",
+        "direct_canonical_writes"
+      ],
+      "properties": {
+        "mode": {
+          "const": "overlay_only"
+        },
+        "state_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "log_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorization": {
+          "const": "environment_gate"
+        },
+        "require_idempotency_key": {
+          "const": true
+        },
+        "require_optimistic_concurrency": {
+          "const": true
+        },
+        "direct_canonical_writes": {
+          "const": false
+        }
       }
     }
   },
@@ -244,7 +283,8 @@
         "executable",
         "parameters",
         "mutations",
-        "reason_disabled"
+        "reason_disabled",
+        "required_role"
       ],
       "properties": {
         "api_name": {
@@ -272,6 +312,10 @@
         },
         "reason_disabled": {
           "type": "string"
+        },
+        "required_role": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

@@ -29,6 +29,10 @@ EXPECTED_TOOLS = {
     "search_ontology_objects",
     "get_ontology_object",
     "get_ontology_neighbors",
+    "get_ontology_action_status",
+    "get_ontology_action_log",
+    "execute_ontology_action",
+    "rollback_ontology_action",
 }
 EXPECTED_DOCS = {
     "docs/data-sources.md",
@@ -65,8 +69,10 @@ def main() -> None:
     assert set(config["mcp_tools"]) == EXPECTED_TOOLS
     assert config["security"]["stateless_http"] is True
     assert config["security"]["request_body_limit_bytes"] == 65536
-    assert config["security"]["read_only"] is True
-    assert config["rest_api"]["read_only"] is True
+    assert config["security"]["read_only"] is False
+    assert config["security"]["canonical_sources_read_only"] is True
+    assert config["security"]["write_mode"] == "ontology_overlay_only"
+    assert config["rest_api"]["read_only"] is False
     assert set(config["rest_api"]["routes"]) == EXPECTED_TOOLS
     assert config["determinism"]["llm_overwrites_primary_facts"] is False
     assert config["determinism"]["null_is_not_defaulted"] is True
@@ -131,6 +137,11 @@ def main() -> None:
     object_argument = canonical_json({"object_type": "Observation", "primary_key": observation_id})
     assert canonical_json(cli_execute("get_ontology_object", object_argument)) == canonical_json(ontology_object)
     assert canonical_json(dispatch_rest(f"/api/data-platform/v1/ontology/objects/Observation/{observation_id}")) == canonical_json(ontology_object)
+
+    action_status = service.get_ontology_action_status()
+    assert action_status["write_mode"] == "overlay_only"
+    assert action_status["enabled"] is False
+    assert service.get_ontology_action_log()["records"] == []
 
     ontology_neighbors = service.get_ontology_neighbors("Observation", observation_id)
     neighbors_argument = canonical_json({"object_type": "Observation", "primary_key": observation_id})

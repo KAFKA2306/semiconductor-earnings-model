@@ -1,5 +1,5 @@
 {
-  "schema_version": "kafka-ontology.v0.1",
+  "schema_version": "kafka-ontology.v0.2",
   "ontology_id": "semiconductor-financial-research",
   "display_name": "Semiconductor Financial Research Ontology",
   "read_only": true,
@@ -386,7 +386,7 @@
     {
       "api_name": "supersedeObservation",
       "target_object_type": "Observation",
-      "executable": false,
+      "executable": true,
       "parameters": [
         {
           "api_name": "replacement_observation_id",
@@ -401,7 +401,8 @@
           "value": "superseded"
         }
       ],
-      "reason_disabled": "Repository data platform is read-only until authorization, action log, and write-audit controls are implemented."
+      "reason_disabled": "",
+      "required_role": "operator"
     },
     {
       "api_name": "setEvaluationStatus",
@@ -421,7 +422,8 @@
           "parameter": "status"
         }
       ],
-      "reason_disabled": "Repository data platform is read-only until authorization, action log, and write-audit controls are implemented."
+      "reason_disabled": "Repository data platform is read-only until authorization, action log, and write-audit controls are implemented.",
+      "required_role": "operator"
     }
   ],
   "projections": [
@@ -491,5 +493,14 @@
       "source": "observation source_url projection",
       "collection": "unique source URLs"
     }
-  ]
+  ],
+  "action_execution": {
+    "mode": "overlay_only",
+    "state_path": "data/ontology_runtime/action_state.json",
+    "log_path": "data/ontology_runtime/action_log.jsonl",
+    "authorization": "environment_gate",
+    "require_idempotency_key": true,
+    "require_optimistic_concurrency": true,
+    "direct_canonical_writes": false
+  }
 }
