@@ -31,6 +31,10 @@ def dispatch_rest(path: str, query_string: str = "") -> dict:
         return _service.get_publication_snapshot()
     if path == "/api/data-platform/v1/quality":
         return _service.get_data_quality()
+    if path == "/api/data-platform/v1/ontology":
+        return _service.get_ontology_definition()
+    if path == "/api/data-platform/v1/ontology/snapshot":
+        return _service.get_ontology_snapshot()
     raise KeyError(path)
 
 
