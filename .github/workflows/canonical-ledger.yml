@@ -64,6 +64,8 @@ jobs:
         run: uv run python -m semicon.source_round_trip
       - name: Build API v2 projection
         run: uv run python -m semicon.build_api_v2
+      - name: Build machine-readable hash and freshness status
+        run: uv run python -m semicon.audit_snapshot
       - name: Preserve scheduled-run audit outputs
         if: always()
         uses: actions/upload-artifact@v4
@@ -73,5 +75,6 @@ jobs:
             data/canonical/
             data/derived/
             data/conflicts/
+            data/audit/canonical-ledger-status.json
           if-no-files-found: error
           retention-days: 30
