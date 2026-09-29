@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from src.ontology_actions import OntologyActionExecutor
 from src.ontology_runtime import OntologyRuntime
 
 STANDARD_SCHEMA_VERSION = "data-platform-standard.v1"
@@ -24,6 +25,7 @@ class DataPlatformService:
         self.root = self.root.resolve()
         self.ledger = self.root / "data" / "earnings_ledger"
         self.ontology = OntologyRuntime(self.root)
+        self.ontology_actions = OntologyActionExecutor(self.root, self.ontology)
 
     def _safe_path(self, relative_path: str) -> Path:
         path = (self.root / relative_path).resolve()
@@ -538,6 +540,51 @@ class DataPlatformService:
             object_type=object_type.strip(),
             primary_key=primary_key.strip(),
             link_type=link_type.strip(),
+        )
+
+
+    def get_ontology_action_status(self) -> dict[str, Any]:
+        return self.ontology_actions.status()
+
+    def get_ontology_action_log(self, limit: int = 100) -> dict[str, Any]:
+        return self.ontology_actions.log(limit=limit)
+
+    def execute_ontology_action(
+        self,
+        *,
+        action_type: str,
+        object_type: str,
+        primary_key: str,
+        parameters: dict[str, Any],
+        idempotency_key: str,
+        expected_version: int | None = None,
+        dry_run: bool = False,
+        authorization_token: str | None = None,
+    ) -> dict[str, Any]:
+        return self.ontology_actions.execute(
+            action_type=action_type,
+            object_type=object_type,
+            primary_key=primary_key,
+            parameters=parameters,
+            idempotency_key=idempotency_key,
+            expected_version=expected_version,
+            dry_run=dry_run,
+            authorization_token=authorization_token,
+        )
+
+    def rollback_ontology_action(
+        self,
+        *,
+        action_id: str,
+        idempotency_key: str,
+        expected_version: int | None = None,
+        authorization_token: str | None = None,
+    ) -> dict[str, Any]:
+        return self.ontology_actions.rollback(
+            action_id=action_id,
+            idempotency_key=idempotency_key,
+            expected_version=expected_version,
+            authorization_token=authorization_token,
         )
 
 
