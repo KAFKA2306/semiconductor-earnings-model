@@ -15,6 +15,8 @@ from src.ontology_projection import (
     OBSERVATION_PATHS,
     REGISTRY_PATHS,
 )
+from src.data_platform import DataPlatformService
+import src.data_platform_rest as rest_api
 from src.ontology_runtime import OntologyRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -166,3 +168,48 @@ def test_rest_style_token_is_verified(
             idempotency_key="wrong-token",
             authorization_token="wrong-secret",
         )
+
+
+def test_rest_action_endpoint_requires_bearer_token(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = action_root(tmp_path)
+    enable_actions(monkeypatch)
+    monkeypatch.setattr(rest_api, "_service", DataPlatformService(root))
+
+    payload = {
+        "action_type": "supersedeObservation",
+        "object_type": "Observation",
+        "primary_key":
+            "micron:2026-05-28:eps_diluted:consolidated:actual:gaap",
+        "parameters": {
+            "replacement_observation_id":
+                "micron:2026-05-28:eps_diluted:consolidated:actual:non_gaap"
+        },
+        "idempotency_key": "rest-action-001",
+        "expected_version": 0,
+        "dry_run": False,
+    }
+
+    with pytest.raises(ActionAuthorizationError, match="invalid action token"):
+        rest_api.dispatch_rest(
+            "/api/data-platform/v1/ontology/actions/execute",
+            method="POST",
+            body=payload,
+            authorization_token="wrong-secret",
+        )
+
+    result = rest_api.dispatch_rest(
+        "/api/data-platform/v1/ontology/actions/execute",
+        method="POST",
+        body=payload,
+        authorization_token="test-secret",
+    )
+    assert result["status"] == "EXECUTED"
+
+    status = rest_api.dispatch_rest(
+        "/api/data-platform/v1/ontology/actions/status",
+    )
+    assert status["global_version"] == 1
+    assert status["action_count"] == 1
