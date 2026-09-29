@@ -67,6 +67,18 @@ def get_data_quality() -> dict[str, Any]:
     return _service.get_data_quality()
 
 
+@mcp.tool()
+def get_ontology_definition() -> dict[str, Any]:
+    """Return the versioned ontology type, link, action, and interface contract."""
+    return _service.get_ontology_definition()
+
+
+@mcp.tool()
+def get_ontology_snapshot() -> dict[str, Any]:
+    """Return deterministic ontology objects and links projected from canonical data."""
+    return _service.get_ontology_snapshot()
+
+
 def _csv_env(name: str, default: tuple[str, ...]) -> list[str]:
     raw = os.getenv(name)
     if raw is None:
