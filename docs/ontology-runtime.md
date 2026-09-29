@@ -1,4 +1,4 @@
-# Ontology Runtime v0.1
+# Ontology Runtime v0.2
 
 このrepositoryのOntologyは、特定の会社・指標を固定テーブルとして扱うだけでなく、
 Object Type / Property / Link Type / Action Type / Interfaceを定義できる上位契約として運用する。
@@ -75,3 +75,32 @@ definition hashと全入力hashを返すため、どのOntologyと入力から�
 
 次の実装対象はObservation / Source / Documentを既存financial-database v3からprojectし、
 Observation -> Issuer / NormalizedConcept / Source / DocumentのLinkを実データ化すること。
+
+
+## Practical graph queries
+
+MCP:
+
+```text
+search_ontology_objects(object_type="Issuer", query="Micron", limit=10)
+get_ontology_object(object_type="Observation", primary_key="micron:2026-05-28:revenue:consolidated:actual")
+get_ontology_neighbors(object_type="Observation", primary_key="micron:2026-05-28:revenue:consolidated:actual")
+```
+
+REST:
+
+```text
+GET /api/data-platform/v1/ontology/objects?type=Issuer&q=Micron&limit=10
+GET /api/data-platform/v1/ontology/objects/Observation/micron:2026-05-28:revenue:consolidated:actual
+GET /api/data-platform/v1/ontology/objects/Observation/micron:2026-05-28:revenue:consolidated:actual/neighbors
+```
+
+CLI:
+
+```bash
+uv run python -m src.data_platform_cli search_ontology_objects '{"object_type":"Issuer","query":"Micron","limit":10}'
+uv run python -m src.data_platform_cli get_ontology_neighbors '{"object_type":"Observation","primary_key":"micron:2026-05-28:revenue:consolidated:actual"}'
+```
+
+Observationから `observationSubject` / `observationConcept` / `observationSource` / `disclosedIn`
+を辿ることで、企業、意味、出典、文書へ戻れます。
