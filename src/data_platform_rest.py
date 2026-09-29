@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from http import HTTPStatus
 from typing import Callable
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, unquote
 
 from src.data_platform import DataPlatformService
 
@@ -35,6 +35,24 @@ def dispatch_rest(path: str, query_string: str = "") -> dict:
         return _service.get_ontology_definition()
     if path == "/api/data-platform/v1/ontology/snapshot":
         return _service.get_ontology_snapshot()
+    if path == "/api/data-platform/v1/ontology/objects":
+        return _service.search_ontology_objects(
+            params.get("type", [""])[0],
+            params.get("q", [""])[0],
+            int(params.get("limit", ["50"])[0]),
+        )
+    prefix = "/api/data-platform/v1/ontology/objects/"
+    if path.startswith(prefix):
+        remainder = path[len(prefix):].strip("/")
+        parts = [unquote(part) for part in remainder.split("/") if part]
+        if len(parts) == 3 and parts[2] == "neighbors":
+            return _service.get_ontology_neighbors(
+                parts[0],
+                parts[1],
+                params.get("link_type", [""])[0],
+            )
+        if len(parts) == 2:
+            return _service.get_ontology_object(parts[0], parts[1])
     raise KeyError(path)
 
 
