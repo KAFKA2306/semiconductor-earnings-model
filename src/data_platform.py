@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from src.ontology_runtime import OntologyRuntime
+
 STANDARD_SCHEMA_VERSION = "data-platform-standard.v1"
 REPOSITORY = "KAFKA2306/semiconductor-earnings-model"
 MAX_QUERY_LENGTH = 128
@@ -21,6 +23,7 @@ class DataPlatformService:
         self.root = Path(root) if root is not None else Path(__file__).resolve().parents[1]
         self.root = self.root.resolve()
         self.ledger = self.root / "data" / "earnings_ledger"
+        self.ontology = OntologyRuntime(self.root)
 
     def _safe_path(self, relative_path: str) -> Path:
         path = (self.root / relative_path).resolve()
@@ -448,6 +451,55 @@ class DataPlatformService:
             },
         )
         return {"schema_version": STANDARD_SCHEMA_VERSION, "status": status, "records": [record]}
+
+
+    def get_ontology_definition(self) -> dict[str, Any]:
+        definition = self.ontology.describe()
+        record = self._envelope(
+            canonical_id="ontology:semiconductor-financial-research",
+            data_layer="normalized/silver",
+            source_path="ontology/semiconductor.ontology.json",
+            record=definition,
+            source_type="ontology_definition",
+            source_id=definition["ontology_id"],
+            data_as_of=None,
+            generated_at=None,
+            freshness="PASS",
+            stale=False,
+            null_reason=None,
+            derivation_method="ontology_contract_projection",
+            basis="versioned_ontology_definition",
+        )
+        return {
+            "schema_version": STANDARD_SCHEMA_VERSION,
+            "records": [record],
+        }
+
+    def get_ontology_snapshot(self) -> dict[str, Any]:
+        snapshot = self.ontology.build_snapshot()
+        record = self._envelope(
+            canonical_id="ontology-snapshot:semiconductor-financial-research",
+            data_layer="normalized/silver",
+            source_path="ontology/semiconductor.ontology.json",
+            record=snapshot,
+            source_type="ontology_projection",
+            source_id=snapshot["ontology_id"],
+            data_as_of=None,
+            generated_at=None,
+            freshness="PASS",
+            stale=False,
+            null_reason=None,
+            derivation_method="deterministic_ontology_projection",
+            basis="ontology_definition_plus_canonical_repository_data",
+            provenance_extra={
+                "definition_hash": snapshot["definition_hash"],
+                "input_hashes": snapshot["input_hashes"],
+            },
+        )
+        return {
+            "schema_version": STANDARD_SCHEMA_VERSION,
+            "records": [record],
+        }
 
 
 _SERVICE: DataPlatformService | None = None
