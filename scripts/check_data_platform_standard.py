@@ -24,6 +24,8 @@ EXPECTED_TOOLS = {
     "get_audit_status",
     "get_publication_snapshot",
     "get_data_quality",
+    "get_ontology_definition",
+    "get_ontology_snapshot",
 }
 EXPECTED_DOCS = {
     "docs/data-sources.md",
@@ -92,8 +94,10 @@ def main() -> None:
     audits = service.get_audit_status()
     publication = service.get_publication_snapshot()
     quality = service.get_data_quality()
+    ontology_definition = service.get_ontology_definition()
+    ontology_snapshot = service.get_ontology_snapshot()
 
-    for payload in (latest, history, evidence, lineage, audits, publication, quality):
+    for payload in (latest, history, evidence, lineage, audits, publication, quality, ontology_definition, ontology_snapshot):
         for record in payload.get("records", []):
             assert_envelope(record, required_fields, ROOT)
 
@@ -108,6 +112,10 @@ def main() -> None:
 
     assert canonical_json(cli_execute("get_data_quality")) == canonical_json(quality)
     assert canonical_json(dispatch_rest("/api/data-platform/v1/quality")) == canonical_json(quality)
+    assert canonical_json(cli_execute("get_ontology_definition")) == canonical_json(ontology_definition)
+    assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology")) == canonical_json(ontology_definition)
+    assert canonical_json(cli_execute("get_ontology_snapshot")) == canonical_json(ontology_snapshot)
+    assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology/snapshot")) == canonical_json(ontology_snapshot)
     assert canonical_json(cli_execute("search_companies", "")) == canonical_json(companies_a)
     assert canonical_json(dispatch_rest("/api/data-platform/v1/companies", "q=")) == canonical_json(companies_a)
 
