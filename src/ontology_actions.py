@@ -311,6 +311,11 @@ class OntologyActionExecutor:
         if not idempotency_key.strip():
             raise ActionValidationError("idempotency_key is required")
         contract = self._action_contract(action_type)
+        required_role = str(contract.get("required_role") or "")
+        if required_role and role != required_role:
+            raise ActionAuthorizationError(
+                f"action {action_type} requires role {required_role}"
+            )
         if contract["target_object_type"] != object_type:
             raise ActionValidationError(
                 f"action {action_type} targets "
