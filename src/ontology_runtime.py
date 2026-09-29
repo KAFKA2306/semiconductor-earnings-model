@@ -213,6 +213,7 @@ class OntologyRuntime:
             "ontology_id": payload["ontology_id"],
             "display_name": payload["display_name"],
             "read_only": payload["read_only"],
+            "action_execution": payload.get("action_execution"),
             "counts": {
                 "object_types": len(payload["object_types"]),
                 "link_types": len(payload["link_types"]),
