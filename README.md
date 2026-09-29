@@ -84,12 +84,12 @@ repository横断で再利用できる上位契約として実装しています�
 
 - 定義: [`ontology/semiconductor.ontology.json`](ontology/semiconductor.ontology.json)
 - 運用: [`docs/ontology-runtime.md`](docs/ontology-runtime.md)
-- CLI: `get_ontology_definition` / `get_ontology_snapshot`
-- REST: `/api/data-platform/v1/ontology` / `/api/data-platform/v1/ontology/snapshot`
-- MCP: `get_ontology_definition` / `get_ontology_snapshot`
+- CLI / REST / MCP: Ontology定義、Snapshot、Object検索、Link traversal
+- Controlled Action: `supersedeObservation`
+- Action state: `data/ontology_runtime/action_state.json`
+- Action log: `data/ontology_runtime/action_log.jsonl`
 
-現時点のAction Typeは宣言のみで、既存のread-only境界を維持するため実行不可です。
-Authorization、Action Log、write auditを実装するまで書き込みへ昇格させません。
+canonical sourceはread-onlyのまま維持し、Actionはoverlay-onlyです。実行には明示的なenvironment gate、actor/role、idempotency key、expected_versionを要求し、rollbackもAction Logへ残します。
 
 ## データモデル
 
@@ -157,7 +157,7 @@ NAND ASPとビット出荷量は、次を明示して保存します。
 
 ## Data Platform Standard v1
 
-`data/earnings_ledger/` を一次事実の正本とし、同じread-only `DataPlatformService` をREST Data API・CLI・MCPから利用します。adapter側で財務値、freshness、quality statusを再計算しません。
+`data/earnings_ledger/` を一次事実の正本とし、同じ `DataPlatformService` をREST Data API・CLI・MCPから利用します。一次事実はread-onlyで、書き込みはOntology overlayだけに限定します。adapter側で財務値、freshness、quality statusを再計算しません。
 
 - [Data sources / data layers](docs/data-sources.md)
 - [Methodology / deterministic replay](docs/methodology.md)
