@@ -29,6 +29,9 @@ EXPECTED_TOOLS = {
     "get_data_quality",
     "get_ontology_definition",
     "get_ontology_snapshot",
+    "search_ontology_objects",
+    "get_ontology_object",
+    "get_ontology_neighbors",
 }
 
 
@@ -62,6 +65,33 @@ async def check() -> None:
         assert ontology.structured_content == ontology_canonical
         assert cli_execute("get_ontology_snapshot") == ontology_canonical
         assert dispatch_rest("/api/data-platform/v1/ontology/snapshot") == ontology_canonical
+
+        search_args = {"object_type": "Issuer", "query": "Micron", "limit": 10}
+        ontology_search = await client.call_tool("search_ontology_objects", search_args)
+        assert ontology_search.is_error is False
+        search_canonical = _service.search_ontology_objects(**search_args)
+        assert ontology_search.structured_content == search_canonical
+        assert dispatch_rest(
+            "/api/data-platform/v1/ontology/objects",
+            "type=Issuer&q=Micron&limit=10",
+        ) == search_canonical
+
+        observation_id = "micron:2026-05-28:revenue:consolidated:actual"
+        neighbors_args = {
+            "object_type": "Observation",
+            "primary_key": observation_id,
+            "link_type": "",
+        }
+        ontology_neighbors = await client.call_tool(
+            "get_ontology_neighbors",
+            neighbors_args,
+        )
+        assert ontology_neighbors.is_error is False
+        neighbors_canonical = _service.get_ontology_neighbors(**neighbors_args)
+        assert ontology_neighbors.structured_content == neighbors_canonical
+        assert {"Issuer", "NormalizedConcept", "Source", "Document"} <= {
+            row["object_type"] for row in neighbors_canonical["neighbors"]
+        }
 
         print(
             json.dumps(
