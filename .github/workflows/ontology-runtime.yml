@@ -1,4 +1,4 @@
-name: Ontology Runtime v0.2
+name: Ontology Runtime v0.3
 
 on:
   pull_request:
@@ -49,4 +49,4 @@ jobs:
         run: uv run python scripts/check_ontology_runtime.py
 
       - name: Run ontology contract tests
-        run: uv run python -m pytest tests/test_ontology_runtime.py -q
+        run: uv run python -m pytest tests/test_ontology_runtime.py tests/test_ontology_actions.py -q
