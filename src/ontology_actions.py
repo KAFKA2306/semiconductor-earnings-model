@@ -529,15 +529,12 @@ class OntologyActionExecutor:
             new_version = current_version + 1
             timestamp = self._now()
 
-            if restored:
-                state["overrides"][key] = {
-                    "version": new_version,
-                    "properties": restored,
-                    "updated_at": timestamp,
-                    "last_action_id": rollback_id,
-                }
-            else:
-                state["overrides"].pop(key, None)
+            state["overrides"][key] = {
+                "version": new_version,
+                "properties": restored,
+                "updated_at": timestamp,
+                "last_action_id": rollback_id,
+            }
             state["global_version"] = int(state["global_version"]) + 1
             self._write_state(state)
 
