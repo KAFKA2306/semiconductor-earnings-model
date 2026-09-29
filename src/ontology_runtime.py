@@ -7,7 +7,7 @@ from typing import Any
 
 from src.ontology_projection import project_repository
 
-ONTOLOGY_SCHEMA_VERSION = "kafka-ontology.v0.1"
+ONTOLOGY_SCHEMA_VERSION = "kafka-ontology.v0.2"
 ALLOWED_PROPERTY_TYPES = {
     "boolean",
     "date",
@@ -191,11 +191,20 @@ class OntologyRuntime:
                         f"action {api_name} references unknown parameter "
                         f"{parameter}"
                     )
-            if payload.get("read_only") and action.get("executable"):
-                raise OntologyContractError(
-                    f"read-only ontology cannot expose executable action "
-                    f"{api_name}"
-                )
+            if action.get("executable"):
+                execution = payload.get("action_execution") or {}
+                if execution.get("mode") != "overlay_only":
+                    raise OntologyContractError(
+                        f"executable action {api_name} requires overlay_only mode"
+                    )
+                if execution.get("direct_canonical_writes") is not False:
+                    raise OntologyContractError(
+                        f"executable action {api_name} cannot write canonical data"
+                    )
+                if not action.get("required_role"):
+                    raise OntologyContractError(
+                        f"executable action {api_name} must declare required_role"
+                    )
 
     def describe(self) -> dict[str, Any]:
         payload = self.definition()
@@ -216,9 +225,70 @@ class OntologyRuntime:
             "interfaces": payload["interfaces"],
         }
 
+    def _apply_action_overlays(
+        self,
+        definition: dict[str, Any],
+        objects: list[dict[str, Any]],
+    ) -> int:
+        execution = definition.get("action_execution") or {}
+        state_relative = execution.get("state_path")
+        if not state_relative:
+            return 0
+        state_path = self.root / str(state_relative)
+        if not state_path.is_file():
+            return 0
+        state = self._read_json(state_path)
+        if state.get("schema_version") != "ontology-action-state.v1":
+            raise OntologyContractError("unsupported ontology action state schema")
+        overrides = state.get("overrides")
+        if not isinstance(overrides, dict):
+            raise OntologyContractError("ontology action overrides must be an object")
+
+        object_index = {
+            (row["object_type"], row["primary_key"]): row
+            for row in objects
+        }
+        object_contracts = {
+            row["api_name"]: {
+                prop["api_name"]
+                for prop in row["properties"]
+            }
+            for row in definition["object_types"]
+        }
+        for key, override in overrides.items():
+            if "|" not in key:
+                raise OntologyContractError(
+                    f"invalid ontology action target key: {key}"
+                )
+            object_type, primary_key = key.split("|", 1)
+            identity = (object_type, primary_key)
+            row = object_index.get(identity)
+            if row is None:
+                raise OntologyContractError(
+                    f"ontology action override target missing: {identity}"
+                )
+            properties = override.get("properties")
+            if not isinstance(properties, dict):
+                raise OntologyContractError(
+                    f"ontology action override properties invalid: {identity}"
+                )
+            allowed = object_contracts[object_type]
+            unknown = set(properties) - allowed
+            if unknown:
+                raise OntologyContractError(
+                    f"ontology action override has unknown properties "
+                    f"{identity}: {sorted(unknown)}"
+                )
+            row["properties"].update(properties)
+        return int(state.get("global_version") or 0)
+
     def build_snapshot(self) -> dict[str, Any]:
         definition = self.definition()
         objects, links, input_paths = project_repository(self.root)
+        action_state_version = self._apply_action_overlays(
+            definition,
+            objects,
+        )
 
         self._validate_instances(definition, objects, links)
         objects.sort(
@@ -249,12 +319,20 @@ class OntologyRuntime:
             relative_path: self._sha256(self.root / relative_path)
             for relative_path in input_paths
         }
+        state_relative = (
+            definition.get("action_execution") or {}
+        ).get("state_path")
+        if state_relative:
+            state_path = self.root / str(state_relative)
+            if state_path.is_file():
+                input_hashes[str(state_relative)] = self._sha256(state_path)
 
         return {
-            "schema_version": "kafka-ontology-snapshot.v0.2",
+            "schema_version": "kafka-ontology-snapshot.v0.3",
             "ontology_id": definition["ontology_id"],
             "definition_hash": self._sha256(self.definition_path),
             "input_hashes": input_hashes,
+            "action_state_version": action_state_version,
             "object_type_counts": object_type_counts,
             "link_type_counts": link_type_counts,
             "objects": objects,
