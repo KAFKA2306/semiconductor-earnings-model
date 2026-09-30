@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30T01:24:40+00:00",
+  "generated_at": "2026-09-30T16:02:25+00:00",
   "new_observations": 11,
   "schema_version": "1.0.0",
   "sources": [
@@ -14,7 +14,9 @@
       "status": "disabled_missing_secret"
     },
     {
-      "archive_errors": [],
+      "archive_errors": [
+        "https://www.semiconductors.org/policies/market-data/: Remote end closed connection without response"
+      ],
       "observations": 11,
       "release_errors": [],
       "release_links": 11,
