@@ -142,7 +142,7 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_BUILD_SHA: ${{ github.sha }}
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/")" = "200"
