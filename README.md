@@ -39,6 +39,7 @@
 - [需要から利益までの計算モデル](https://kafka2306.github.io/semiconductor-earnings-model/model/)
 - [信用需給・デレバレッジAPI](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/market-positioning/index.json)
 - [Financial Database v3 JSON](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/index.json)
+- [Analytical Star Schema](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/star-schema.json)
 - [Financial Database v3 SQLite](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/financial.db)
 - [Research API v2](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
 - [API v1 index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
@@ -76,6 +77,14 @@ J-Quants、韓国の公共データポータル、SIA公式リリースから、
 ### `/api/v3/financial-database/`
 
 実績、ガイダンス、コンセンサス、市場観測、推計、シナリオ、NAND KPIを別の値種別として保持する再利用可能な分析DBです。
+
+## Star Schema + Ontology
+
+分析系は `fact_observation` を中心に `dim_company / dim_metric / dim_period / dim_source / dim_value_type / dim_scope` を接続するStar Schemaへ投影します。集計・比較・BIはStar Schema、意味・関係・操作はOntologyに分離し、どちらもcanonical evidenceから決定論的に再生成します。
+
+- [Star Schema contract](docs/star-schema.md)
+- 公開JSON: `/api/v3/financial-database/star-schema.json`
+- SQLite: 同じ `financial.db` 内に `dim_*` / `fact_*` テーブルを併設
 
 ## Ontology runtime
 
@@ -144,6 +153,8 @@ NAND ASPとビット出荷量は、次を明示して保存します。
   → 派生指標を計算
   → 同業比較・シナリオ評価
   → 出典・計算系譜を監査
+  → Financial Databaseを生成
+  → Star Schema / Ontologyへ決定論的に投影
   → JSON / SQLite / Web画面を生成
   → GitHub Pages公開後に実URLを再検証
 ```
@@ -183,6 +194,7 @@ uv run python scripts/build_demand_api.py
 uv run python scripts/update_nand_kpis.py --offline
 uv run python scripts/update_market_positioning.py
 uv run python scripts/build_financial_database_with_nand.py
+uv run python scripts/build_star_schema.py
 uv run python scripts/check_readme_pages_link.py
 uv run python scripts/build_model_snapshot.py
 uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json

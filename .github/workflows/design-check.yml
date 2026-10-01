@@ -57,6 +57,8 @@ jobs:
         run: uv run python scripts/finalize_semiconductor_research_api.py
       - name: Build Financial Database v3 with NAND operating KPIs
         run: uv run python scripts/build_financial_database_with_nand.py
+      - name: Build analytical Star Schema projection
+        run: uv run python scripts/build_star_schema.py
       - name: Build canonical AI infrastructure projection
         env:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -87,6 +89,8 @@ jobs:
         run: uv run python -m pytest tests/test_nand_kpi_pipeline.py -q
       - name: Test financial database JSON and SQLite contracts
         run: uv run python -m pytest tests/test_financial_database.py -q
+      - name: Test analytical Star Schema contract
+        run: uv run python -m pytest tests/test_star_schema.py -q
       - name: Run legacy data contract tests
         run: uv run python -m pytest -q --ignore=tests/test_semiconductor_research_api.py --ignore=tests/test_financial_database.py --ignore=tests/test_nand_kpi_pipeline.py --ignore=tests/test_audit_investor2_yahoo_market_cache.py
       - name: Verify research, NAND, and financial database counts
@@ -104,6 +108,10 @@ jobs:
           assert research['summary']['evaluation_count'] >= 72
           assert research['summary']['evidence_edge_count'] >= 100
           assert financial['schema_version'] == 'financial-database.v3'
+          star = json.loads(Path('site/public/api/v3/financial-database/star-schema.json').read_text(encoding='utf-8'))
+          assert star['schema_version'] == 'financial-star-schema.v1'
+          assert star['source_content_hash'] == financial['content_hash']
+          assert star['audit']['counts']['fact_observations'] == len(financial['observations'])
           assert 'nand-operating-kpis.v1' in financial['extensions']
           assert financial['audit']['status'] == 'PASS'
           assert financial['audit']['counts']['entities'] == len(financial['entities'])
@@ -114,6 +122,7 @@ jobs:
           db = sqlite3.connect('site/public/api/v3/financial-database/financial.db')
           assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
           assert db.execute('SELECT COUNT(*) FROM observations').fetchone()[0] == len(financial['observations'])
+          assert db.execute('SELECT COUNT(*) FROM fact_observation').fetchone()[0] == len(financial['observations'])
           assert db.execute("SELECT COUNT(*) FROM observations WHERE concept_id LIKE 'nand_%'").fetchone()[0] >= 10
           db.close()
           PY
@@ -139,6 +148,7 @@ jobs:
           test -s site/dist/assets/bi-workbench.js
           test -s site/dist/api/v1/ai-infrastructure/index.json
           test -s site/dist/api/v3/financial-database/index.json
+          test -s site/dist/api/v3/financial-database/star-schema.json
           test -s site/dist/api/v3/financial-database/financial.db
           for page in \
             site/dist/index.html \

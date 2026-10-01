@@ -48,7 +48,9 @@ jobs:
           uv run python scripts/build_semiconductor_research_api.py
           uv run python scripts/finalize_semiconductor_research_api.py
       - name: Build Financial Database v3 with NAND KPIs
-        run: uv run python scripts/build_financial_database_with_nand.py
+        run: |
+          uv run python scripts/build_financial_database_with_nand.py
+          uv run python scripts/build_star_schema.py
       - name: Validate NAND collection priority, data contract, and source registry
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -58,6 +60,7 @@ jobs:
             tests/test_nand_kpi_pipeline.py \
             tests/test_nand_source_registry.py \
             tests/test_financial_database.py \
+            tests/test_star_schema.py \
             -q
           uv run python scripts/check_readme_pages_link.py
       - name: Commit reviewed ledger changes
