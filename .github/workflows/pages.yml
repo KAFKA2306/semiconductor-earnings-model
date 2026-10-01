@@ -142,7 +142,7 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_BUILD_SHA: ${{ github.sha }}
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/")" = "200"
@@ -197,9 +197,9 @@ jobs:
           grep -Fq "Financials | Semiconductor Research Workbench" <<< "$earnings_html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$earnings_html"
           grep -Fq "data-workbench" <<< "$model_html"
-          grep -Fq "Projects &amp; Model Inputs | Semiconductor Research Workbench" <<< "$model_html"
+          grep -Fq "Projects & Model Inputs | Semiconductor Research Workbench" <<< "$model_html"
           grep -Fq "data-workbench" <<< "$resilience_html"
-          grep -Fq "Data Quality &amp; Resilience | Semiconductor Research Workbench" <<< "$resilience_html"
+          grep -Fq "Data Quality & Resilience | Semiconductor Research Workbench" <<< "$resilience_html"
           ! grep -Fq "pastel-watercolor.css" <<< "$earnings_html"
           ! grep -Fq "pastel-watercolor.css" <<< "$model_html"
           ! grep -Fq "pastel-watercolor.css" <<< "$resilience_html"
