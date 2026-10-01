@@ -176,6 +176,7 @@ jobs:
           research_json="$(curl -fsSL "$base/api/v2/semiconductor-research/index.json")"
           financial_json="$(curl -fsSL "$base/api/v3/financial-database/index.json")"
           star_json="$(curl -fsSL "$base/api/v3/financial-database/star-schema.json")"
+          financial_hash="$(jq -er '.content_hash' <<< "$financial_json")"
           resilience_hash="$(jq -er '.content_hash' <<< "$resilience_json")"
           research_hash="$(jq -er '.content_hash' <<< "$research_json")"
 
@@ -221,7 +222,7 @@ jobs:
 
           jq -e '.schema_version == "financial-database.v3"' <<< "$financial_json" >/dev/null
           jq -e '.schema_version == "financial-star-schema.v1"' <<< "$star_json" >/dev/null
-          jq -e '.source_content_hash == ($source | .content_hash)' --argjson source "$financial_json" <<< "$star_json" >/dev/null
+          jq -e --arg source_hash "$financial_hash" '.source_content_hash == $source_hash' <<< "$star_json" >/dev/null
           jq -e '.audit.status == "PASS"' <<< "$star_json" >/dev/null
           jq -e '.audit.counts.fact_observations == .audit.counts.source_observations' <<< "$star_json" >/dev/null
           jq -e '.extensions | index("nand-operating-kpis.v1")' <<< "$financial_json" >/dev/null
