@@ -1,6 +1,6 @@
 {
   "schema_version": "verified-sec-inventory.v1",
-  "run_at": "2026-10-02T06:11:31.192954Z",
+  "run_at": "2026-10-02T13:09:42.654605Z",
   "eligible_events_total": 6,
   "verified_metrics_total": 6,
   "metrics": [
