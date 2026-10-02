@@ -2,7 +2,7 @@ name: Canonical infrastructure ledger
 
 on:
   schedule:
-    - cron: "15 21 * * *"
+    - cron: "37 21 * * *"
   pull_request:
     paths:
       - "semicon/**"
