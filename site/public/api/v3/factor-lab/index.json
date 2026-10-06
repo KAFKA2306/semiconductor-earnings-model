@@ -5003,7 +5003,7 @@
   },
   "market_data": {
     "raw_persisted": false,
-    "raw_sha256": "9c44379739b97d59df70b92bc17c45bc0290577a33f1a4c5c3981847a60d51b9",
+    "raw_sha256": "654d6250562256dfecaf253db80bf3e87f76f31e0919c3d3a958d065d45c2df0",
     "source": "Yahoo Finance via yfinance",
     "symbols": {
       "alphabet": "GOOGL",
