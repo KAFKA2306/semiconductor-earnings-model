@@ -15,6 +15,6 @@
     "test:workbench-performance": "node scripts/test-workbench-performance.mjs"
   },
   "dependencies": {
-    "astro": "5.18.2"
+    "astro": "7.3.5"
   }
 }
