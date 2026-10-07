@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Reproducible primary financial facts ledger."
 requires-python = ">=3.12"
 dependencies = [
-    "langgraph==0.4.7",
+    "langgraph==1.2.12",
 ]
 
 [dependency-groups]
