@@ -15,12 +15,15 @@ The database is not a single spreadsheet and does not treat every number as equi
 
 ## Public outputs
 
-- JSON: `/api/v3/financial-database/index.json`
+- Canonical analytical JSON: `/api/v3/financial-database/index.json`
+- Star Schema JSON: `/api/v3/financial-database/star-schema.json`
 - SQLite: `/api/v3/financial-database/financial.db`
 
-JSON is optimized for inspection, citations, and static clients. SQLite is optimized for repeated analytical queries.
+JSON is optimized for inspection, citations, and static clients. SQLite contains both the normalized compatibility tables and the first-class `dim_*` / `fact_*` Star Schema used for repeated analytical queries.
 
-## Canonical tables
+The architecture is intentionally split: canonical evidence is the truth layer, Star Schema is the analytical layer, and the Foundry-style Ontology is the semantic relationship/action layer. See [star-schema.md](star-schema.md).
+
+## Compatibility tables
 
 | Table | Role |
 |---|---|

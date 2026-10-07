@@ -1,0 +1,5052 @@
+{
+  "audit": {
+    "attached_row_count": 192,
+    "factor_count": 15,
+    "factor_row_count": 192,
+    "rows_with_any_forward_return": 164,
+    "rows_without_start_price": 0,
+    "test_count": 60
+  },
+  "content_hash": "5a459f61accda2af41f6bab974d86cc3496bc4cdda07230743b01fd0b9186aff",
+  "factor_observations": [
+    {
+      "age_days": 0,
+      "as_of": "2026-04-30",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:7ed9dbf6aa9cc5f411404da1"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.021907466068623593,
+        "3m": -0.13290017087623673,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 35674000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.0527239563389366
+    },
+    {
+      "age_days": 1,
+      "as_of": "2026-04-30",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:8fda2906845f4e31bfe01559"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.029607544881976255,
+        "3m": -0.0325996954188712,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 1256000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.5402771800662318
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-04-30",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f1c47b9d75ab41f7385d005d"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.018695564614868876,
+        "3m": -0.11910239585266935,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 18997000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.20369651991851573
+    },
+    {
+      "age_days": 1,
+      "as_of": "2026-04-30",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:7eefbdfe913e20fbad4cd67b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.1293344214827945,
+        "3m": 0.10623377177374715,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 30876000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.691249743645811
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-05-31",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:7ed9dbf6aa9cc5f411404da1"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.050482238877953334,
+        "3m": -0.09836062782354693,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 35674000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.2778005414609075
+    },
+    {
+      "age_days": 23,
+      "as_of": "2026-05-31",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:70e5f3bef8234157b6f3e9a8"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.20253163628508752,
+        "3m": -0.31990066017306296,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 7695000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.8535174996931566
+    },
+    {
+      "age_days": 32,
+      "as_of": "2026-05-31",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:8fda2906845f4e31bfe01559"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.007975108470025472,
+        "3m": -0.0038543627557358073,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 1256000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.344012401833727
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-05-31",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f1c47b9d75ab41f7385d005d"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.061918154928289004,
+        "3m": -0.04684654557282397,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 18997000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.007419506673162223
+    },
+    {
+      "age_days": 32,
+      "as_of": "2026-05-31",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:7eefbdfe913e20fbad4cd67b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.1900026102827912,
+        "3m": 0.10155915193045284,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 30876000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.9123098533928137
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-06-30",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:7ed9dbf6aa9cc5f411404da1"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.06634578106453293,
+        "3m": -0.046030673851224946,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 35674000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.2778005414609075
+    },
+    {
+      "age_days": 53,
+      "as_of": "2026-06-30",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:70e5f3bef8234157b6f3e9a8"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.2575848819954032,
+        "3m": -0.13672895805879504,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 7695000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.8535174996931566
+    },
+    {
+      "age_days": 62,
+      "as_of": "2026-06-30",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:8fda2906845f4e31bfe01559"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.00493098991376173,
+        "3m": -0.026017128652497834,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 1256000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.344012401833727
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-06-30",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f1c47b9d75ab41f7385d005d"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.04306831237336717,
+        "3m": 0.31156244003240685,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 18997000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.007419506673162223
+    },
+    {
+      "age_days": 62,
+      "as_of": "2026-06-30",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:7eefbdfe913e20fbad4cd67b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.20931858717893537,
+        "3m": 0.36443087889433134,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 30876000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.9123098533928137
+    },
+    {
+      "age_days": 92,
+      "as_of": "2026-07-31",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:7ed9dbf6aa9cc5f411404da1"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.047117621512454355,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 35674000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.6118552435861901
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-07-31",
+      "entity_id": "amazon",
+      "evidence_ids": [
+        "observation:c997aaf0e69172df11b1dd8b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.04348625871756273,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-07-31",
+      "raw_value": 54208000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.653220919115877
+    },
+    {
+      "age_days": 84,
+      "as_of": "2026-07-31",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:70e5f3bef8234157b6f3e9a8"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.1828062332485776,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 7695000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.9601945155400163
+    },
+    {
+      "age_days": 93,
+      "as_of": "2026-07-31",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:8fda2906845f4e31bfe01559"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.026920905558385888,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 1256000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.3219811554847478
+    },
+    {
+      "age_days": 92,
+      "as_of": "2026-07-31",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f1c47b9d75ab41f7385d005d"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.02807566644377779,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 18997000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.3251715920029211
+    },
+    {
+      "age_days": 93,
+      "as_of": "2026-07-31",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:7eefbdfe913e20fbad4cd67b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.09160356174125917,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 30876000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.34227110032561836
+    },
+    {
+      "age_days": 123,
+      "as_of": "2026-08-31",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:7ed9dbf6aa9cc5f411404da1"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.01393835386378961,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 35674000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.6118552435861901
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-08-31",
+      "entity_id": "amazon",
+      "evidence_ids": [
+        "observation:c997aaf0e69172df11b1dd8b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.040882301906817076,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-07-31",
+      "raw_value": 54208000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.653220919115877
+    },
+    {
+      "age_days": 115,
+      "as_of": "2026-08-31",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:70e5f3bef8234157b6f3e9a8"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.026269329402369257,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 7695000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.9601945155400163
+    },
+    {
+      "age_days": 124,
+      "as_of": "2026-08-31",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:8fda2906845f4e31bfe01559"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.03357149437941487,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 1256000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.3219811554847478
+    },
+    {
+      "age_days": 123,
+      "as_of": "2026-08-31",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f1c47b9d75ab41f7385d005d"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2670439924672763,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 18997000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.3251715920029211
+    },
+    {
+      "age_days": 124,
+      "as_of": "2026-08-31",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:7eefbdfe913e20fbad4cd67b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.011058794327986066,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 30876000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.34227110032561836
+    },
+    {
+      "age_days": 153,
+      "as_of": "2026-09-30",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:7ed9dbf6aa9cc5f411404da1"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 35674000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.6267266708507098
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-09-30",
+      "entity_id": "amazon",
+      "evidence_ids": [
+        "observation:c997aaf0e69172df11b1dd8b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-07-31",
+      "raw_value": 54208000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.7480465007133466
+    },
+    {
+      "age_days": 145,
+      "as_of": "2026-09-30",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:70e5f3bef8234157b6f3e9a8"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 7695000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.0660221971608752
+    },
+    {
+      "age_days": 154,
+      "as_of": "2026-09-30",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:8fda2906845f4e31bfe01559"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 1256000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.4555861544547954
+    },
+    {
+      "age_days": 153,
+      "as_of": "2026-09-30",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f1c47b9d75ab41f7385d005d"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 18997000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.3822433735336214
+    },
+    {
+      "age_days": 154,
+      "as_of": "2026-09-30",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:7eefbdfe913e20fbad4cd67b"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 30876000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.3364443495125781
+    },
+    {
+      "age_days": 19,
+      "as_of": "2026-09-30",
+      "entity_id": "oracle",
+      "evidence_ids": [
+        "observation:977bd4a889498a040999bc98"
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-09-11",
+      "raw_value": 28499000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.19263420407265758
+    },
+    {
+      "age_days": 6,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:eps_diluted:consolidated:actual:gaap"
+      ],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 24.67,
+      "source_type": "actual",
+      "unit": "USD_per_share",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 37,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:eps_diluted:consolidated:actual:gaap"
+      ],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 24.67,
+      "source_type": "actual",
+      "unit": "USD_per_share",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 68,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:eps_diluted:consolidated:actual:gaap"
+      ],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 24.67,
+      "source_type": "actual",
+      "unit": "USD_per_share",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 98,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:eps_diluted:consolidated:actual:gaap"
+      ],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 24.67,
+      "source_type": "actual",
+      "unit": "USD_per_share",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-04-30",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:87da93ea05ea0ac3218fa4b1"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.021907466068623593,
+        "3m": -0.13290017087623673,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 45790000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.77651958556982
+    },
+    {
+      "age_days": 1,
+      "as_of": "2026-04-30",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:b6a66a443b837772140034c6"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.029607544881976255,
+        "3m": -0.0325996954188712,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 717000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.6478114583027643
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-04-30",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f526d315a5dbcf3d6e58f938"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.018695564614868876,
+        "3m": -0.11910239585266935,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 32226000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.046955849428721545
+    },
+    {
+      "age_days": 1,
+      "as_of": "2026-04-30",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:b7971ef9f2c10379be5ef93e"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.1293344214827945,
+        "3m": 0.10623377177374715,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 46679000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.8243360233042226
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-05-31",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:87da93ea05ea0ac3218fa4b1"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.050482238877953334,
+        "3m": -0.09836062782354693,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 45790000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.1780207959452063
+    },
+    {
+      "age_days": 23,
+      "as_of": "2026-05-31",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:bdcb44a9b2dc6d5421d33e45"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.20253163628508752,
+        "3m": -0.31990066017306296,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 2984000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.8969731875393495
+    },
+    {
+      "age_days": 30,
+      "as_of": "2026-05-31",
+      "entity_id": "digital-realty",
+      "evidence_ids": [
+        "observation:b5e3c63e22364e41132e756f"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.029297287399704386,
+        "3m": 0.003189169394003377,
+        "6m": null
+      },
+      "known_at": "2026-05-01",
+      "raw_value": 532421000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.0158119408691884
+    },
+    {
+      "age_days": 32,
+      "as_of": "2026-05-31",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:b6a66a443b837772140034c6"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.007975108470025472,
+        "3m": -0.0038543627557358073,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 717000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.0068645896923067
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-05-31",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f526d315a5dbcf3d6e58f938"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.061918154928289004,
+        "3m": -0.04684654557282397,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 32226000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.5205144091773579
+    },
+    {
+      "age_days": 32,
+      "as_of": "2026-05-31",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:b7971ef9f2c10379be5ef93e"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.1900026102827912,
+        "3m": 0.10155915193045284,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 46679000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.2211145129782803
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-06-30",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:87da93ea05ea0ac3218fa4b1"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.06634578106453293,
+        "3m": -0.046030673851224946,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 45790000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.1780207959452063
+    },
+    {
+      "age_days": 53,
+      "as_of": "2026-06-30",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:bdcb44a9b2dc6d5421d33e45"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.2575848819954032,
+        "3m": -0.13672895805879504,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 2984000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.8969731875393495
+    },
+    {
+      "age_days": 60,
+      "as_of": "2026-06-30",
+      "entity_id": "digital-realty",
+      "evidence_ids": [
+        "observation:b5e3c63e22364e41132e756f"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.07578795228633295,
+        "3m": -0.016817041105178787,
+        "6m": null
+      },
+      "known_at": "2026-05-01",
+      "raw_value": 532421000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.0158119408691884
+    },
+    {
+      "age_days": 62,
+      "as_of": "2026-06-30",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:b6a66a443b837772140034c6"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.00493098991376173,
+        "3m": -0.026017128652497834,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 717000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.0068645896923067
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-06-30",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f526d315a5dbcf3d6e58f938"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.04306831237336717,
+        "3m": 0.31156244003240685,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 32226000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.5205144091773579
+    },
+    {
+      "age_days": 62,
+      "as_of": "2026-06-30",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:b7971ef9f2c10379be5ef93e"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.20931858717893537,
+        "3m": 0.36443087889433134,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 46679000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.2211145129782803
+    },
+    {
+      "age_days": 92,
+      "as_of": "2026-07-31",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:87da93ea05ea0ac3218fa4b1"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.047117621512454355,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 45790000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.0018203277962991
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-07-31",
+      "entity_id": "amazon",
+      "evidence_ids": [
+        "observation:12624989df37edc7dea34994"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.04348625871756273,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-07-31",
+      "raw_value": 45387000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.9824916454990752
+    },
+    {
+      "age_days": 84,
+      "as_of": "2026-07-31",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:bdcb44a9b2dc6d5421d33e45"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.1828062332485776,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 2984000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.0512406509008982
+    },
+    {
+      "age_days": 91,
+      "as_of": "2026-07-31",
+      "entity_id": "digital-realty",
+      "evidence_ids": [
+        "observation:b5e3c63e22364e41132e756f"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.015542159283720824,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-01",
+      "raw_value": 532421000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.1688232603737174
+    },
+    {
+      "age_days": 93,
+      "as_of": "2026-07-31",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:b6a66a443b837772140034c6"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.026920905558385888,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 717000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.1599704840716347
+    },
+    {
+      "age_days": 92,
+      "as_of": "2026-07-31",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f526d315a5dbcf3d6e58f938"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.02807566644377779,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 32226000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.3512638844227351
+    },
+    {
+      "age_days": 93,
+      "as_of": "2026-07-31",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:b7971ef9f2c10379be5ef93e"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.09160356174125917,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 46679000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.0444585376281408
+    },
+    {
+      "age_days": 123,
+      "as_of": "2026-08-31",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:87da93ea05ea0ac3218fa4b1"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.01393835386378961,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 45790000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.0018203277962991
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-08-31",
+      "entity_id": "amazon",
+      "evidence_ids": [
+        "observation:12624989df37edc7dea34994"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.040882301906817076,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-07-31",
+      "raw_value": 45387000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.9824916454990752
+    },
+    {
+      "age_days": 115,
+      "as_of": "2026-08-31",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:bdcb44a9b2dc6d5421d33e45"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.026269329402369257,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 2984000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.0512406509008982
+    },
+    {
+      "age_days": 122,
+      "as_of": "2026-08-31",
+      "entity_id": "digital-realty",
+      "evidence_ids": [
+        "observation:b5e3c63e22364e41132e756f"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05420549467697722,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-01",
+      "raw_value": 532421000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.1688232603737174
+    },
+    {
+      "age_days": 124,
+      "as_of": "2026-08-31",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:b6a66a443b837772140034c6"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.03357149437941487,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 717000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.1599704840716347
+    },
+    {
+      "age_days": 123,
+      "as_of": "2026-08-31",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f526d315a5dbcf3d6e58f938"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2670439924672763,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 32226000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.3512638844227351
+    },
+    {
+      "age_days": 124,
+      "as_of": "2026-08-31",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:b7971ef9f2c10379be5ef93e"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.011058794327986066,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 46679000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.0444585376281408
+    },
+    {
+      "age_days": 153,
+      "as_of": "2026-09-30",
+      "entity_id": "alphabet",
+      "evidence_ids": [
+        "observation:87da93ea05ea0ac3218fa4b1"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 45790000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.0820189507018345
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-09-30",
+      "entity_id": "amazon",
+      "evidence_ids": [
+        "observation:12624989df37edc7dea34994"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-07-31",
+      "raw_value": 45387000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.061365330305173
+    },
+    {
+      "age_days": 145,
+      "as_of": "2026-09-30",
+      "entity_id": "coreweave",
+      "evidence_ids": [
+        "observation:bdcb44a9b2dc6d5421d33e45"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-08",
+      "raw_value": 2984000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.1117747830437914
+    },
+    {
+      "age_days": 152,
+      "as_of": "2026-09-30",
+      "entity_id": "digital-realty",
+      "evidence_ids": [
+        "observation:b5e3c63e22364e41132e756f"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-05-01",
+      "raw_value": 532421000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.2374174183748752
+    },
+    {
+      "age_days": 154,
+      "as_of": "2026-09-30",
+      "entity_id": "equinix",
+      "evidence_ids": [
+        "observation:b6a66a443b837772140034c6"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 717000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -1.2279578039848122
+    },
+    {
+      "age_days": 153,
+      "as_of": "2026-09-30",
+      "entity_id": "meta",
+      "evidence_ids": [
+        "observation:f526d315a5dbcf3d6e58f938"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 32226000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.3868683128350478
+    },
+    {
+      "age_days": 154,
+      "as_of": "2026-09-30",
+      "entity_id": "microsoft",
+      "evidence_ids": [
+        "observation:b7971ef9f2c10379be5ef93e"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-29",
+      "raw_value": 46679000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 1.1275799148026582
+    },
+    {
+      "age_days": 19,
+      "as_of": "2026-09-30",
+      "entity_id": "oracle",
+      "evidence_ids": [
+        "observation:761831b5a3b33dfb1ce276c8"
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-09-11",
+      "raw_value": 23103000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": -0.08068250324123465
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.36,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.36,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.36,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.62,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.62,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.62,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 6,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.75,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 37,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.75,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 68,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.75,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 98,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:aebu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.75,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.55,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.55,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.55,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.66,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.66,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.66,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 6,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.78,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 37,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.78,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 68,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.78,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 98,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cmbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.78,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.37,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.37,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.37,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.67,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.67,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.67,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 6,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.83,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 37,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.83,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 68,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.83,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 98,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:cdbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.83,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.47,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.47,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 0.47,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.76,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.76,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 0.76,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 6,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.86,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 37,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.86,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 68,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.86,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 98,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:operating_margin:mcbu:actual"
+      ],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 0.86,
+      "source_type": "actual",
+      "unit": "ratio",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 6,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:revenue:consolidated:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 41460000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 37,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:revenue:consolidated:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 41460000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 68,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:revenue:consolidated:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 41460000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 98,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-05-28:revenue:consolidated:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-06-24",
+      "raw_value": 41460000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 1720000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 1720000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 1720000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 2708000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 2708000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 2708000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 104,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 2708000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 135,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 2708000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 166,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 2708000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 196,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:aebu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 2708000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 5284000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 5284000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 5284000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7749000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7749000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7749000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 104,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7749000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 135,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7749000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 166,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7749000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 196,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cmbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7749000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 24,
+      "as_of": "2025-11-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2025-10-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.14297950855764907,
+        "3m": 1.9456155611334962,
+        "6m": 7.380977632663871
+      },
+      "known_at": "2025-11-06",
+      "raw_value": 652000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 55,
+      "as_of": "2025-12-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2025-10-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.427542287247309,
+        "3m": 1.9182322277343045,
+        "6m": 7.561041068755442
+      },
+      "known_at": "2025-11-06",
+      "raw_value": 652000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 2,
+      "as_of": "2026-01-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.06938845202055322,
+        "3m": 0.8878299617993535,
+        "6m": 0.9361885157311136
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 907000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 30,
+      "as_of": "2026-02-28",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.07524070524648163,
+        "3m": 1.8452381034539362,
+        "6m": 1.5306905536001305
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 907000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-03-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.7258632596983634,
+        "3m": 2.57876079636014,
+        "6m": 1.7225736403337328
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 907000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-04-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.6063966931660174,
+        "3m": 0.16730348974295883,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 820000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-05-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2908431848761248,
+        "3m": -0.11055227661683753,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 820000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-06-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.4370659788399216,
+        "3m": -0.23924123593206115,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 820000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 92,
+      "as_of": "2026-07-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2896454712558534,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 820000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 123,
+      "as_of": "2026-08-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11054450046227315,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 820000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 153,
+      "as_of": "2026-09-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:consumer:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 820000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 2379000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 2379000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 2379000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 5687000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 5687000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 5687000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 104,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 5687000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 135,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 5687000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 166,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 5687000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 196,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:cdbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 5687000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 24,
+      "as_of": "2025-11-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2025-10-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.14297950855764907,
+        "3m": 1.9456155611334962,
+        "6m": 7.380977632663871
+      },
+      "known_at": "2025-11-06",
+      "raw_value": 269000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 55,
+      "as_of": "2025-12-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2025-10-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.427542287247309,
+        "3m": 1.9182322277343045,
+        "6m": 7.561041068755442
+      },
+      "known_at": "2025-11-06",
+      "raw_value": 269000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 2,
+      "as_of": "2026-01-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.06938845202055322,
+        "3m": 0.8878299617993535,
+        "6m": 0.9361885157311136
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 440000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 30,
+      "as_of": "2026-02-28",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.07524070524648163,
+        "3m": 1.8452381034539362,
+        "6m": 1.5306905536001305
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 440000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-03-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.7258632596983634,
+        "3m": 2.57876079636014,
+        "6m": 1.7225736403337328
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 440000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-04-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.6063966931660174,
+        "3m": 0.16730348974295883,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 1467000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-05-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2908431848761248,
+        "3m": -0.11055227661683753,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 1467000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-06-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.4370659788399216,
+        "3m": -0.23924123593206115,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 1467000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 92,
+      "as_of": "2026-07-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2896454712558534,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 1467000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 123,
+      "as_of": "2026-08-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11054450046227315,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 1467000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 153,
+      "as_of": "2026-09-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:datacenter:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 1467000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 24,
+      "as_of": "2025-11-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2025-10-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.14297950855764907,
+        "3m": 1.9456155611334962,
+        "6m": 7.380977632663871
+      },
+      "known_at": "2025-11-06",
+      "raw_value": 1387000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 55,
+      "as_of": "2025-12-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2025-10-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.427542287247309,
+        "3m": 1.9182322277343045,
+        "6m": 7.561041068755442
+      },
+      "known_at": "2025-11-06",
+      "raw_value": 1387000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 2,
+      "as_of": "2026-01-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.06938845202055322,
+        "3m": 0.8878299617993535,
+        "6m": 0.9361885157311136
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 1678000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 30,
+      "as_of": "2026-02-28",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.07524070524648163,
+        "3m": 1.8452381034539362,
+        "6m": 1.5306905536001305
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 1678000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-03-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-01-02:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.7258632596983634,
+        "3m": 2.57876079636014,
+        "6m": 1.7225736403337328
+      },
+      "known_at": "2026-01-29",
+      "raw_value": 1678000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 0,
+      "as_of": "2026-04-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.6063966931660174,
+        "3m": 0.16730348974295883,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 3663000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 31,
+      "as_of": "2026-05-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2908431848761248,
+        "3m": -0.11055227661683753,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 3663000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 61,
+      "as_of": "2026-06-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.4370659788399216,
+        "3m": -0.23924123593206115,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 3663000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 92,
+      "as_of": "2026-07-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.2896454712558534,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 3663000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 123,
+      "as_of": "2026-08-31",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11054450046227315,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 3663000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 153,
+      "as_of": "2026-09-30",
+      "entity_id": "sandisk",
+      "evidence_ids": [
+        "sandisk:2026-04-03:revenue:edge:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-04-30",
+      "raw_value": 3663000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 14,
+      "as_of": "2025-12-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.4536281123978394,
+        "3m": 0.288847627566009,
+        "6m": 2.61683198224183
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 4255000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 45,
+      "as_of": "2026-01-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.05740058260832592,
+        "3m": 0.3166971865691981,
+        "6m": 0.894700829439635
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 4255000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 73,
+      "as_of": "2026-02-28",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2025-11-27:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.22020021488835062,
+        "3m": 1.5092688257111124,
+        "6m": 1.3232363614339526
+      },
+      "known_at": "2025-12-17",
+      "raw_value": 4255000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 13,
+      "as_of": "2026-03-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.5307837400853326,
+        "3m": 2.4166766859304514,
+        "6m": 2.1526165273499704
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7711000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 43,
+      "as_of": "2026-04-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 1.0022817962955686,
+        "3m": 0.6912754632309663,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7711000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 74,
+      "as_of": "2026-05-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11471756548768708,
+        "3m": -0.07413811639908252,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7711000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 104,
+      "as_of": "2026-06-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": -0.24225286232659582,
+        "3m": -0.07728567343461423,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7711000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 135,
+      "as_of": "2026-07-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.16487849330091287,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7711000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 166,
+      "as_of": "2026-08-31",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": 0.11095929724738585,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7711000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    },
+    {
+      "age_days": 196,
+      "as_of": "2026-09-30",
+      "entity_id": "micron",
+      "evidence_ids": [
+        "micron:2026-02-26:revenue:mcbu:actual"
+      ],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
+      "known_at": "2026-03-18",
+      "raw_value": 7711000000.0,
+      "source_type": "actual",
+      "unit": "USD",
+      "zscore": 0.0
+    }
+  ],
+  "factor_tests": [
+    {
+      "cross_section_count": 5,
+      "cross_sections": [
+        {
+          "as_of": "2026-04-30",
+          "ic": 0.4367586064037656,
+          "rank_ic": 0.4,
+          "sample_size": 4
+        },
+        {
+          "as_of": "2026-05-31",
+          "ic": -0.13910964587794428,
+          "rank_ic": -0.1,
+          "sample_size": 5
+        },
+        {
+          "as_of": "2026-06-30",
+          "ic": 0.42682791348600224,
+          "rank_ic": 0.0,
+          "sample_size": 5
+        },
+        {
+          "as_of": "2026-07-31",
+          "ic": -0.6071018101104413,
+          "rank_ic": -0.5428571428571428,
+          "sample_size": 6
+        },
+        {
+          "as_of": "2026-08-31",
+          "ic": -0.19656874226209925,
+          "rank_ic": -0.3142857142857143,
+          "sample_size": 6
+        }
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "horizon": "1m",
+      "pooled_ic": 0.02267521805924138,
+      "pooled_rank_ic": -0.15733862258964315,
+      "quantile_mean_returns": {
+        "1": 0.02425333005595398,
+        "2": -0.03673848479686111,
+        "3": 0.025402062050076713,
+        "4": -0.007154151364228834,
+        "5": -0.05029914514171652
+      },
+      "quantile_monotonicity": -0.5,
+      "rank_ic_ir": -0.3147311268181339,
+      "rank_ic_mean": -0.11142857142857142,
+      "rank_ic_positive_ratio": 0.2,
+      "rank_ic_std": 0.3540436961386408,
+      "rank_ic_tstat": -0.7037601942004544,
+      "sample_size": 26,
+      "top_minus_bottom": -0.0745524751976705
+    },
+    {
+      "cross_section_count": 3,
+      "cross_sections": [
+        {
+          "as_of": "2026-04-30",
+          "ic": 0.021011727305964165,
+          "rank_ic": -0.4,
+          "sample_size": 4
+        },
+        {
+          "as_of": "2026-05-31",
+          "ic": 0.35060131290736163,
+          "rank_ic": 0.0,
+          "sample_size": 5
+        },
+        {
+          "as_of": "2026-06-30",
+          "ic": 0.41962032878163447,
+          "rank_ic": 0.2,
+          "sample_size": 5
+        }
+      ],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "horizon": "3m",
+      "pooled_ic": 0.2649786223523045,
+      "pooled_rank_ic": 0.026880571164444218,
+      "quantile_mean_returns": {
+        "1": -0.02082372894236828,
+        "2": -0.1919106713615091,
+        "3": 0.12364988874444334,
+        "4": 0.11102995331618248,
+        "5": -0.07219565083738594
+      },
+      "quantile_monotonicity": 0.1,
+      "rank_ic_ir": -0.2182178902359924,
+      "rank_ic_mean": -0.06666666666666667,
+      "rank_ic_positive_ratio": 0.3333333333333333,
+      "rank_ic_std": 0.30550504633038933,
+      "rank_ic_tstat": -0.3779644730092272,
+      "sample_size": 14,
+      "top_minus_bottom": -0.05137192189501766
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 5,
+      "cross_sections": [
+        {
+          "as_of": "2026-04-30",
+          "ic": 0.5188690455036646,
+          "rank_ic": 0.8,
+          "sample_size": 4
+        },
+        {
+          "as_of": "2026-05-31",
+          "ic": -0.22613581959422416,
+          "rank_ic": -0.5428571428571428,
+          "sample_size": 6
+        },
+        {
+          "as_of": "2026-06-30",
+          "ic": 0.35663115221704395,
+          "rank_ic": 0.02857142857142857,
+          "sample_size": 6
+        },
+        {
+          "as_of": "2026-07-31",
+          "ic": -0.35590021324540777,
+          "rank_ic": -0.07142857142857142,
+          "sample_size": 7
+        },
+        {
+          "as_of": "2026-08-31",
+          "ic": 0.21532109268847271,
+          "rank_ic": 0.32142857142857145,
+          "sample_size": 7
+        }
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "horizon": "1m",
+      "pooled_ic": 0.12444826543148713,
+      "pooled_rank_ic": 0.048152506553681376,
+      "quantile_mean_returns": {
+        "1": -0.006951026814815384,
+        "2": -0.05394730404888255,
+        "3": 0.011979594988056357,
+        "4": -0.0041345732216713,
+        "5": 0.03049458324134735
+      },
+      "quantile_monotonicity": 0.8,
+      "rank_ic_ir": 0.2157436073119822,
+      "rank_ic_mean": 0.10714285714285716,
+      "rank_ic_positive_ratio": 0.6,
+      "rank_ic_std": 0.49662123702196276,
+      "rank_ic_tstat": 0.4824173716606129,
+      "sample_size": 30,
+      "top_minus_bottom": 0.03744561005616273
+    },
+    {
+      "cross_section_count": 3,
+      "cross_sections": [
+        {
+          "as_of": "2026-04-30",
+          "ic": 0.08535380757528215,
+          "rank_ic": 0.2,
+          "sample_size": 4
+        },
+        {
+          "as_of": "2026-05-31",
+          "ic": 0.34611209657475417,
+          "rank_ic": 0.02857142857142857,
+          "sample_size": 6
+        },
+        {
+          "as_of": "2026-06-30",
+          "ic": 0.6287931459693488,
+          "rank_ic": 0.3142857142857143,
+          "sample_size": 6
+        }
+      ],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "horizon": "3m",
+      "pooled_ic": 0.36543649367223785,
+      "pooled_rank_ic": 0.1743823037017289,
+      "quantile_mean_returns": {
+        "1": -0.01521981170765605,
+        "2": -0.1919106713615091,
+        "3": 0.04393857452778205,
+        "4": -0.012719176633674908,
+        "5": 0.2329950154123921
+      },
+      "quantile_monotonicity": 0.8,
+      "rank_ic_ir": 1.2583057392117916,
+      "rank_ic_mean": 0.18095238095238095,
+      "rank_ic_positive_ratio": 1.0,
+      "rank_ic_std": 0.14380637019563333,
+      "rank_ic_tstat": 2.1794494717703365,
+      "sample_size": 16,
+      "top_minus_bottom": 0.24821482712004814
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Edge",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "1m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "3m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "6m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    },
+    {
+      "cross_section_count": 0,
+      "cross_sections": [],
+      "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
+      "horizon": "12m",
+      "pooled_ic": null,
+      "pooled_rank_ic": null,
+      "quantile_mean_returns": {},
+      "quantile_monotonicity": null,
+      "rank_ic_ir": null,
+      "rank_ic_mean": null,
+      "rank_ic_positive_ratio": null,
+      "rank_ic_std": null,
+      "rank_ic_tstat": null,
+      "sample_size": 0,
+      "top_minus_bottom": null
+    }
+  ],
+  "input_contract": {
+    "factor_panel_rows": 192,
+    "financial_schema_version": "financial-database.v3",
+    "raw_market_prices_persisted": false
+  },
+  "market_data": {
+    "raw_persisted": false,
+    "raw_sha256": "dce225c1d6303a39519d2e58e0a4cf6213f7ff59c37e7e840d450269b2903b7b",
+    "source": "Yahoo Finance via yfinance",
+    "symbols": {
+      "alphabet": "GOOGL",
+      "amazon": "AMZN",
+      "amd": "AMD",
+      "analog-devices": "ADI",
+      "applied-materials": "AMAT",
+      "broadcom": "AVGO",
+      "coreweave": "CRWV",
+      "digital-realty": "DLR",
+      "equinix": "EQIX",
+      "intel": "INTC",
+      "kioxia-holdings": "285A.T",
+      "kla": "KLAC",
+      "lam-research": "LRCX",
+      "marvell": "MRVL",
+      "meta": "META",
+      "micron": "MU",
+      "microsoft": "MSFT",
+      "nvidia": "NVDA",
+      "oracle": "ORCL",
+      "qualcomm": "QCOM",
+      "samsung-electronics": "005930.KS",
+      "sandisk": "SNDK",
+      "sk-hynix": "000660.KS",
+      "spacex": "SPCX",
+      "texas-instruments": "TXN"
+    }
+  },
+  "methodology": {
+    "anti_leakage": "factor value must be observable on or before as_of; future returns start no earlier than as_of",
+    "horizons_calendar_days": {
+      "12m": 365,
+      "1m": 30,
+      "3m": 91,
+      "6m": 182
+    },
+    "ic": "Pearson cross-sectional correlation",
+    "min_cross_section": 3,
+    "quantiles": 5,
+    "rank_ic": "Spearman cross-sectional correlation with average ranks for ties",
+    "return_formula": "end_close / start_close - 1",
+    "start_price_rule": "first close on or after factor as_of, bounded by max price lag"
+  },
+  "schema_version": "factor-lab.v1"
+}

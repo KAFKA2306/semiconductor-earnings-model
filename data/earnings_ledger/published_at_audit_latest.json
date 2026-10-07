@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-08-24T16:56:04.903038Z",
-  "events_total": 4,
-  "sec_events_total": 4,
+  "run_at": "2026-09-11T00:11:43.897215Z",
+  "events_total": 11,
+  "sec_events_total": 11,
   "non_sec_events_not_independently_reverified": 0,
   "items": [
     {
@@ -50,6 +50,90 @@
       "primary_acceptance_at": "2026-08-20T20:01:46.000Z",
       "ledger_published_at_utc": "2026-08-20T20:01:46Z",
       "primary_acceptance_at_utc": "2026-08-20T20:01:46Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "423c7d5ee9fb43d3653fbcef",
+      "company_id": "nvidia",
+      "accession_number": "0001045810-26-000073",
+      "ledger_published_at": "2026-08-26T20:21:19Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T20:21:19.000Z",
+      "ledger_published_at_utc": "2026-08-26T20:21:19Z",
+      "primary_acceptance_at_utc": "2026-08-26T20:21:19Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "a9a06d96aa77b2985b3a39ff",
+      "company_id": "synopsys",
+      "accession_number": "0001193125-26-368620",
+      "ledger_published_at": "2026-08-26T20:21:49Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T20:21:49.000Z",
+      "ledger_published_at_utc": "2026-08-26T20:21:49Z",
+      "primary_acceptance_at_utc": "2026-08-26T20:21:49Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "368c9e131b767f63eb496bfd",
+      "company_id": "nvidia",
+      "accession_number": "0001045810-26-000075",
+      "ledger_published_at": "2026-08-26T20:36:00Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T20:36:00.000Z",
+      "ledger_published_at_utc": "2026-08-26T20:36:00Z",
+      "primary_acceptance_at_utc": "2026-08-26T20:36:00Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "30f27afcf8a3ddabb7925cf8",
+      "company_id": "synopsys",
+      "accession_number": "0000883241-26-000025",
+      "ledger_published_at": "2026-08-26T21:02:25Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-08-26T21:02:25.000Z",
+      "ledger_published_at_utc": "2026-08-26T21:02:25Z",
+      "primary_acceptance_at_utc": "2026-08-26T21:02:25Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "bc2e9128520915644c571364",
+      "company_id": "broadcom",
+      "accession_number": "0001730168-26-000076",
+      "ledger_published_at": "2026-09-02T20:26:04Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-09-02T20:26:04.000Z",
+      "ledger_published_at_utc": "2026-09-02T20:26:04Z",
+      "primary_acceptance_at_utc": "2026-09-02T20:26:04Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "837e53975925d9b420b0dc5e",
+      "company_id": "broadcom",
+      "accession_number": "0001730168-26-000080",
+      "ledger_published_at": "2026-09-09T17:56:42Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-09-09T17:56:42.000Z",
+      "ledger_published_at_utc": "2026-09-09T17:56:42Z",
+      "primary_acceptance_at_utc": "2026-09-09T17:56:42Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "d47fba975be6eebf5d64d944",
+      "company_id": "oracle",
+      "accession_number": "0001193125-26-387905",
+      "ledger_published_at": "2026-09-10T16:16:50Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-09-10T16:16:50.000Z",
+      "ledger_published_at_utc": "2026-09-10T16:16:50Z",
+      "primary_acceptance_at_utc": "2026-09-10T16:16:50Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

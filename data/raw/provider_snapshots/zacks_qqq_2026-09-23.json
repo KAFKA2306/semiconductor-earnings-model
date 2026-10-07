@@ -1,0 +1,820 @@
+{
+  "schema_version": "zacks-qqq-provider-snapshot.v1",
+  "retrieved_at": "2026-09-23",
+  "as_of_date": "2026-09-22",
+  "provider": "Zacks Investment Research via ChatGPT MCP",
+  "purpose": "NASDAQ-100 working-universe reconciliation against QQQ tracking holdings.",
+  "caveats": [
+    "Provider endpoint returns the top 100 holdings, while the Nasdaq-100 can contain more than 100 securities because multiple share classes may be present.",
+    "Existing bottom-weight constituents not returned by the top-100 cap are preserved unless contradicted by corporate-action evidence.",
+    "SPCX is added using Nasdaq's official June 26, 2026 announcement effective July 7, 2026.",
+    "KHC is removed from the working universe after its Nasdaq listing exit and absence from the 2026-09-22 QQQ holdings."
+  ],
+  "source_urls": {
+    "qqq": "https://www.zacks.com/stock/quote/QQQ",
+    "ndx": "https://indexes.nasdaq.com/Index/Weighting/NDX",
+    "spcx_addition": "https://ir.nasdaq.com/news-releases/news-release-details/space-exploration-technologies-corporation-join-nasdaq-100"
+  },
+  "records": [
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA Corp",
+      "weight_pct": 8.85,
+      "shares": 186789290,
+      "pct_chg_52w": 23.84,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AAPL",
+      "name": "Apple Inc",
+      "weight_pct": 7.46,
+      "shares": 113365762,
+      "pct_chg_52w": 32.37,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft Corp",
+      "weight_pct": 5.91,
+      "shares": 57335117,
+      "pct_chg_52w": -2.5,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MU",
+      "name": "Micron Technology Inc",
+      "weight_pct": 5.03,
+      "shares": 24030062,
+      "pct_chg_52w": 534.16,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AMZN",
+      "name": "Amazon.com Inc",
+      "weight_pct": 4.42,
+      "shares": 83029451,
+      "pct_chg_52w": 13.54,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AMD",
+      "name": "Advanced Micro Devices Inc",
+      "weight_pct": 3.41,
+      "shares": 34745689,
+      "pct_chg_52w": 285.21,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "GOOGL",
+      "name": "Alphabet Inc",
+      "weight_pct": 3.13,
+      "shares": 44952807,
+      "pct_chg_52w": 40.56,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "GOOG",
+      "name": "Alphabet Inc",
+      "weight_pct": 2.91,
+      "shares": 42112432,
+      "pct_chg_52w": 38.75,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "META",
+      "name": "Meta Platforms Inc",
+      "weight_pct": 2.9,
+      "shares": 22856906,
+      "pct_chg_52w": -3.13,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "TSLA",
+      "name": "Tesla Inc",
+      "weight_pct": 2.81,
+      "shares": 38557917,
+      "pct_chg_52w": -13.57,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AVGO",
+      "name": "Broadcom Inc",
+      "weight_pct": 2.69,
+      "shares": 36595602,
+      "pct_chg_52w": 7.05,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "WMT",
+      "name": "Walmart Inc",
+      "weight_pct": 2.3,
+      "shares": 103945882,
+      "pct_chg_52w": 4.49,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "INTC",
+      "name": "Intel Corp",
+      "weight_pct": 2.11,
+      "shares": 107095884,
+      "pct_chg_52w": 323.43,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CSCO",
+      "name": "Cisco Systems Inc",
+      "weight_pct": 1.89,
+      "shares": 83986606,
+      "pct_chg_52w": 64.52,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "COST",
+      "name": "Costco Wholesale Corp",
+      "weight_pct": 1.78,
+      "shares": 9453605,
+      "pct_chg_52w": -4.75,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "PLTR",
+      "name": "Palantir Technologies Inc",
+      "weight_pct": 1.75,
+      "shares": 48925829,
+      "pct_chg_52w": 2.1,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "LRCX",
+      "name": "Lam Research Corp",
+      "weight_pct": 1.69,
+      "shares": 26647763,
+      "pct_chg_52w": 128.65,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AMAT",
+      "name": "Applied Materials Inc",
+      "weight_pct": 1.58,
+      "shares": 16917999,
+      "pct_chg_52w": 131.52,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "NFLX",
+      "name": "Netflix Inc",
+      "weight_pct": 1.44,
+      "shares": 89727130,
+      "pct_chg_52w": -40.23,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "SPCX",
+      "name": "Space Exploration Technologies Corp",
+      "weight_pct": 1.24,
+      "shares": 40842524,
+      "pct_chg_52w": null,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "PANW",
+      "name": "Palo Alto Networks Inc",
+      "weight_pct": 1.19,
+      "shares": 17387546,
+      "pct_chg_52w": 78.58,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "SNDK",
+      "name": "Sandisk Corp",
+      "weight_pct": 1.13,
+      "shares": 3156421,
+      "pct_chg_52w": 1616.52,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "KLAC",
+      "name": "KLA Corp",
+      "weight_pct": 1.06,
+      "shares": 27835802,
+      "pct_chg_52w": 71.73,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AMGN",
+      "name": "Amgen Inc",
+      "weight_pct": 1.04,
+      "shares": 11500571,
+      "pct_chg_52w": 37.47,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "TXN",
+      "name": "Texas Instruments Inc",
+      "weight_pct": 1.03,
+      "shares": 19392898,
+      "pct_chg_52w": 50.8,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "LIN",
+      "name": "Linde PLC",
+      "weight_pct": 0.97,
+      "shares": 9852283,
+      "pct_chg_52w": -4.24,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CRWD",
+      "name": "Crowdstrike Holdings Inc",
+      "weight_pct": 0.95,
+      "shares": 21698292,
+      "pct_chg_52w": 102.25,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "TMUS",
+      "name": "T-Mobile US Inc",
+      "weight_pct": 0.87,
+      "shares": 23059572,
+      "pct_chg_52w": -30.4,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MRVL",
+      "name": "Marvell Technology Inc",
+      "weight_pct": 0.86,
+      "shares": 18641157,
+      "pct_chg_52w": 240.76,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "STX",
+      "name": "Seagate Technology Holdings PLC",
+      "weight_pct": 0.83,
+      "shares": 4778160,
+      "pct_chg_52w": 282.56,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "PEP",
+      "name": "PepsiCo Inc",
+      "weight_pct": 0.83,
+      "shares": 29123000,
+      "pct_chg_52w": -8.11,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "GILD",
+      "name": "Gilead Sciences Inc",
+      "weight_pct": 0.82,
+      "shares": 26456278,
+      "pct_chg_52w": 33.84,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "QCOM",
+      "name": "QUALCOMM Inc",
+      "weight_pct": 0.78,
+      "shares": 22459934,
+      "pct_chg_52w": 14.44,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "SHOP",
+      "name": "Shopify Inc",
+      "weight_pct": 0.78,
+      "shares": 25987894,
+      "pct_chg_52w": -12.22,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ADI",
+      "name": "Analog Devices Inc",
+      "weight_pct": 0.78,
+      "shares": 10379266,
+      "pct_chg_52w": 54.85,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "WDC",
+      "name": "Western Digital Corp",
+      "weight_pct": 0.71,
+      "shares": 7344792,
+      "pct_chg_52w": 298.69,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ASML",
+      "name": "ASML Holding NV",
+      "weight_pct": 0.69,
+      "shares": 1952837,
+      "pct_chg_52w": 78.67,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "BKNG",
+      "name": "Booking Holdings Inc",
+      "weight_pct": 0.66,
+      "shares": 16512270,
+      "pct_chg_52w": -22.8,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "VRTX",
+      "name": "Vertex Pharmaceuticals Inc",
+      "weight_pct": 0.61,
+      "shares": 5408445,
+      "pct_chg_52w": 33.3,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ISRG",
+      "name": "Intuitive Surgical Inc",
+      "weight_pct": 0.57,
+      "shares": 7547013,
+      "pct_chg_52w": -9.65,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "SBUX",
+      "name": "Starbucks Corp",
+      "weight_pct": 0.52,
+      "shares": 24286095,
+      "pct_chg_52w": 11.27,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "FTNT",
+      "name": "Fortinet Inc",
+      "weight_pct": 0.5,
+      "shares": 15611236,
+      "pct_chg_52w": 106.13,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ADP",
+      "name": "Automatic Data Processing Inc",
+      "weight_pct": 0.49,
+      "shares": 8518108,
+      "pct_chg_52w": -8.08,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ARM",
+      "name": "ARM Holdings PLC",
+      "weight_pct": 0.47,
+      "shares": 9034681,
+      "pct_chg_52w": 123.49,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CEG",
+      "name": "Constellation Energy Corp",
+      "weight_pct": 0.47,
+      "shares": 7696159,
+      "pct_chg_52w": -24.49,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ADBE",
+      "name": "Adobe Inc",
+      "weight_pct": 0.47,
+      "shares": 8613295,
+      "pct_chg_52w": -31.47,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MELI",
+      "name": "MercadoLibre Inc",
+      "weight_pct": 0.44,
+      "shares": 1080370,
+      "pct_chg_52w": -26.02,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "APP",
+      "name": "AppLovin Corp",
+      "weight_pct": 0.43,
+      "shares": 6514520,
+      "pct_chg_52w": -48.69,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CMCSA",
+      "name": "Comcast Corp",
+      "weight_pct": 0.41,
+      "shares": 75915494,
+      "pct_chg_52w": -27.18,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "INTU",
+      "name": "Intuit Inc",
+      "weight_pct": 0.4,
+      "shares": 5828535,
+      "pct_chg_52w": -56.68,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CSX",
+      "name": "CSX Corp",
+      "weight_pct": 0.4,
+      "shares": 39593061,
+      "pct_chg_52w": 38.52,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MAR",
+      "name": "Marriott International Inc/MD",
+      "weight_pct": 0.39,
+      "shares": 5618635,
+      "pct_chg_52w": 29.75,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "DASH",
+      "name": "DoorDash Inc",
+      "weight_pct": 0.38,
+      "shares": 8764685,
+      "pct_chg_52w": -26.23,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MNST",
+      "name": "Monster Beverage Corp",
+      "weight_pct": 0.38,
+      "shares": 41678659,
+      "pct_chg_52w": 37.54,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "REGN",
+      "name": "Regeneron Pharmaceuticals Inc",
+      "weight_pct": 0.37,
+      "shares": 2195226,
+      "pct_chg_52w": 33.99,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CTAS",
+      "name": "Cintas Corp",
+      "weight_pct": 0.35,
+      "shares": 8525691,
+      "pct_chg_52w": -2.82,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CDNS",
+      "name": "Cadence Design Systems Inc",
+      "weight_pct": 0.35,
+      "shares": 5877056,
+      "pct_chg_52w": -21.02,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MDLZ",
+      "name": "Mondelez International Inc",
+      "weight_pct": 0.34,
+      "shares": 27353759,
+      "pct_chg_52w": -5.24,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "SNPS",
+      "name": "Synopsys Inc",
+      "weight_pct": 0.33,
+      "shares": 4080404,
+      "pct_chg_52w": -21.94,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ABNB",
+      "name": "Airbnb Inc",
+      "weight_pct": 0.33,
+      "shares": 8906017,
+      "pct_chg_52w": 33,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ROST",
+      "name": "Ross Stores Inc",
+      "weight_pct": 0.33,
+      "shares": 6864303,
+      "pct_chg_52w": 59.85,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ORLY",
+      "name": "O'Reilly Automotive Inc",
+      "weight_pct": 0.32,
+      "shares": 17659167,
+      "pct_chg_52w": -19.88,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "WBD",
+      "name": "Warner Bros Discovery Inc",
+      "weight_pct": 0.31,
+      "shares": 53421890,
+      "pct_chg_52w": 57.06,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "DDOG",
+      "name": "Datadog Inc",
+      "weight_pct": 0.31,
+      "shares": 7049175,
+      "pct_chg_52w": 77.12,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "LITE",
+      "name": "Lumentum Holdings Inc",
+      "weight_pct": 0.3,
+      "shares": 1657817,
+      "pct_chg_52w": 479.5,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AEP",
+      "name": "American Electric Power Co Inc",
+      "weight_pct": 0.3,
+      "shares": 11593739,
+      "pct_chg_52w": 12.13,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "HON",
+      "name": "Honeywell International Inc",
+      "weight_pct": 0.29,
+      "shares": 6751403,
+      "pct_chg_52w": -50.6,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "PCAR",
+      "name": "PACCAR Inc",
+      "weight_pct": 0.29,
+      "shares": 11214049,
+      "pct_chg_52w": 18.19,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "BKR",
+      "name": "Baker Hughes Co",
+      "weight_pct": 0.28,
+      "shares": 21138948,
+      "pct_chg_52w": 21.31,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MPWR",
+      "name": "Monolithic Power Systems Inc",
+      "weight_pct": 0.26,
+      "shares": 1047053,
+      "pct_chg_52w": 38.46,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "FAST",
+      "name": "Fastenal Co",
+      "weight_pct": 0.25,
+      "shares": 24462813,
+      "pct_chg_52w": 5.37,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "NXPI",
+      "name": "NXP Semiconductors NV",
+      "weight_pct": 0.25,
+      "shares": 5379819,
+      "pct_chg_52w": 2.96,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "TER",
+      "name": "Teradyne Inc",
+      "weight_pct": 0.25,
+      "shares": 3335679,
+      "pct_chg_52w": 182.25,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "FANG",
+      "name": "Diamondback Energy Inc",
+      "weight_pct": 0.25,
+      "shares": 5994156,
+      "pct_chg_52w": 36.33,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "PDD",
+      "name": "PDD Holdings Inc",
+      "weight_pct": 0.24,
+      "shares": 14232162,
+      "pct_chg_52w": -38.33,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ALAB",
+      "name": "Astera Labs Inc",
+      "weight_pct": 0.23,
+      "shares": 3652553,
+      "pct_chg_52w": 43.59,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "NBIS",
+      "name": "Nebius Group NV",
+      "weight_pct": 0.22,
+      "shares": 4696537,
+      "pct_chg_52w": 118.39,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "HONA",
+      "name": "Honeywell Aerospace Inc",
+      "weight_pct": 0.22,
+      "shares": 6751034,
+      "pct_chg_52w": null,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "PYPL",
+      "name": "PayPal Holdings Inc",
+      "weight_pct": 0.21,
+      "shares": 18796634,
+      "pct_chg_52w": -22.25,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CCEP",
+      "name": "Coca-Cola Europacific Partners PLC",
+      "weight_pct": 0.21,
+      "shares": 9501249,
+      "pct_chg_52w": 13.53,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "XEL",
+      "name": "Xcel Energy Inc",
+      "weight_pct": 0.21,
+      "shares": 13302725,
+      "pct_chg_52w": -0.69,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MSTR",
+      "name": "Strategy Inc",
+      "weight_pct": 0.21,
+      "shares": 7049593,
+      "pct_chg_52w": -49.84,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ADSK",
+      "name": "Autodesk Inc",
+      "weight_pct": 0.2,
+      "shares": 4496253,
+      "pct_chg_52w": -32.54,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "EXC",
+      "name": "Exelon Corp",
+      "weight_pct": 0.2,
+      "shares": 21803178,
+      "pct_chg_52w": -3.27,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "PAYX",
+      "name": "Paychex Inc",
+      "weight_pct": 0.19,
+      "shares": 7634848,
+      "pct_chg_52w": -11.8,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "IDXX",
+      "name": "IDEXX Laboratories Inc",
+      "weight_pct": 0.19,
+      "shares": 1680962,
+      "pct_chg_52w": -20,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "KDP",
+      "name": "Keurig Dr Pepper Inc",
+      "weight_pct": 0.19,
+      "shares": 28992163,
+      "pct_chg_52w": 18,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CRWV",
+      "name": "CoreWeave Inc",
+      "weight_pct": 0.18,
+      "shares": 9537673,
+      "pct_chg_52w": -35.88,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "TRI",
+      "name": "Thomson Reuters Corp",
+      "weight_pct": 0.18,
+      "shares": 8120374.85,
+      "pct_chg_52w": -42.39,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "FER",
+      "name": "Ferrovial NV",
+      "weight_pct": 0.18,
+      "shares": 15330613,
+      "pct_chg_52w": -4.46,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "MCHP",
+      "name": "Microchip Technology Inc",
+      "weight_pct": 0.18,
+      "shares": 11551451,
+      "pct_chg_52w": 14.34,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "AXON",
+      "name": "Axon Enterprise Inc",
+      "weight_pct": 0.18,
+      "shares": 1718255,
+      "pct_chg_52w": -41.74,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ROP",
+      "name": "Roper Technologies Inc",
+      "weight_pct": 0.18,
+      "shares": 2150441,
+      "pct_chg_52w": -28.3,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ODFL",
+      "name": "Old Dominion Freight Line Inc",
+      "weight_pct": 0.17,
+      "shares": 4431637,
+      "pct_chg_52w": 26.22,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "TTWO",
+      "name": "Take-Two Interactive Software Inc",
+      "weight_pct": 0.17,
+      "shares": 3956403,
+      "pct_chg_52w": -16.58,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "WDAY",
+      "name": "Workday Inc",
+      "weight_pct": 0.17,
+      "shares": 4283232,
+      "pct_chg_52w": -20.91,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "ALNY",
+      "name": "Alnylam Pharmaceuticals Inc",
+      "weight_pct": 0.16,
+      "shares": 2845151,
+      "pct_chg_52w": -46.76,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "RKLB",
+      "name": "Rocket Lab Corp",
+      "weight_pct": 0.16,
+      "shares": 12332538,
+      "pct_chg_52w": 40.31,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "DXCM",
+      "name": "Dexcom Inc",
+      "weight_pct": 0.15,
+      "shares": 8222942,
+      "pct_chg_52w": 28.28,
+      "zacks_covered": "Y"
+    },
+    {
+      "ticker": "CPRT",
+      "name": "Copart Inc",
+      "weight_pct": 0.14,
+      "shares": 19730149,
+      "pct_chg_52w": -36.29,
+      "zacks_covered": "Y"
+    }
+  ]
+}

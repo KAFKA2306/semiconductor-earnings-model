@@ -5,13 +5,21 @@ on:
     paths:
       - "config/data_platform_standard.json"
       - "data/earnings_ledger/**"
+      - "data/canonical/**"
+      - "data/financial_db/**"
+      - "data/primary/**"
+      - "ontology/**"
+      - "analytics/dbt/**"
       - "docs/data-sources.md"
       - "docs/methodology.md"
       - "docs/data-quality.md"
       - "docs/mcp.md"
+      - "docs/ontology-runtime.md"
       - "scripts/check_data_platform_standard.py"
       - "scripts/check_mcp_contract.py"
       - "src/data_platform.py"
+      - "src/ontology_runtime.py"
+      - "src/ontology_projection.py"
       - "src/data_platform_cli.py"
       - "src/data_platform_rest.py"
       - "src/mcp_server.py"
@@ -45,6 +53,23 @@ jobs:
 
       - name: Run deterministic service tests
         run: uv run python -m pytest tests/test_data_platform_standard.py -q
+
+      - name: Verify dbt Medallion contracts
+        working-directory: analytics/dbt
+        run: uv run --with "dbt-duckdb==1.11.0" dbt build --profiles-dir .
+
+      - name: Generate dbt docs and lineage metadata
+        working-directory: analytics/dbt
+        run: uv run --with "dbt-duckdb==1.11.0" dbt docs generate --profiles-dir .
+
+      - name: Upload dbt lineage evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-medallion-lineage
+          path: |
+            analytics/dbt/target/manifest.json
+            analytics/dbt/target/catalog.json
+            analytics/dbt/target/run_results.json
 
       - name: Verify MCP 2026-07-28 discovery, tools and parity
         run: uv run --with "mcp>=2,<3" python scripts/check_mcp_contract.py

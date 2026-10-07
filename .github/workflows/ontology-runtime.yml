@@ -1,0 +1,52 @@
+name: Ontology Runtime v0.3
+
+on:
+  pull_request:
+    paths:
+      - "ontology/**"
+      - "data/financial_db/micron_business_unit_operating_margin_fy2026.json"
+      - "data/financial_db/micron_business_unit_revenue_fy2026.json"
+      - "data/financial_db/ai_infrastructure_observations.json"
+      - "data/financial_db/nand_kpi_observations.json"
+      - "data/financial_db/manual_observations.json"
+      - "data/financial_db/metric_catalog.json"
+      - "data/earnings_ledger/source_registry.json"
+      - "data/financial_db/industry_entities.json"
+      - "data/primary/semiconductor_entities.json"
+      - "data/primary/entities.json"
+      - "src/ontology_runtime.py"
+      - "src/ontology_projection.py"
+      - "scripts/check_ontology_runtime.py"
+      - "tests/test_ontology_runtime.py"
+      - "docs/ontology-runtime.md"
+      - ".github/workflows/ontology-runtime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ontology-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install locked environment
+        run: uv sync --frozen
+
+      - name: Validate ontology definition schema
+        run: uv run --with "jsonschema>=4,<5" python -m jsonschema -i ontology/semiconductor.ontology.json ontology/ontology-definition.schema.json
+
+      - name: Compile ontology against real repository data
+        run: uv run python scripts/check_ontology_runtime.py
+
+      - name: Run ontology contract tests
+        run: uv run python -m pytest tests/test_ontology_runtime.py tests/test_ontology_actions.py -q

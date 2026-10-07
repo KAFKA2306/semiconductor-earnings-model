@@ -1,0 +1,506 @@
+{
+  "schema_version": "kafka-ontology.v0.2",
+  "ontology_id": "semiconductor-financial-research",
+  "display_name": "Semiconductor Financial Research Ontology",
+  "read_only": true,
+  "interfaces": [
+    {
+      "api_name": "Identified",
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "api_name": "Sourced",
+      "properties": [
+        {
+          "api_name": "source_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "source_url",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "api_name": "Temporal",
+      "properties": [
+        {
+          "api_name": "as_of",
+          "type": "datetime",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "object_types": [
+    {
+      "api_name": "Issuer",
+      "primary_key": "id",
+      "implements": [
+        "Identified"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "name",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "cik",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "api_name": "issuer_class",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "role",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "source_label",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "api_name": "Security",
+      "primary_key": "id",
+      "implements": [
+        "Identified"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "ticker",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "api_name": "NormalizedConcept",
+      "primary_key": "id",
+      "implements": [
+        "Identified"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "statement",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "default_unit",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "aggregation",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "status",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "formula",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "api_name": "Observation",
+      "primary_key": "id",
+      "implements": [
+        "Identified",
+        "Sourced",
+        "Temporal"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "entity_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "concept_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "value",
+          "type": "number",
+          "nullable": true
+        },
+        {
+          "api_name": "value_low",
+          "type": "number",
+          "nullable": true
+        },
+        {
+          "api_name": "value_high",
+          "type": "number",
+          "nullable": true
+        },
+        {
+          "api_name": "unit",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "value_type",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "period_start",
+          "type": "date",
+          "nullable": true
+        },
+        {
+          "api_name": "period_end",
+          "type": "date",
+          "nullable": true
+        },
+        {
+          "api_name": "as_of",
+          "type": "datetime",
+          "nullable": true
+        },
+        {
+          "api_name": "source_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "source_url",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "status",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "api_name": "Source",
+      "primary_key": "id",
+      "implements": [
+        "Identified"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "name",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "source_tier",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "url",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "api_name": "Document",
+      "primary_key": "id",
+      "implements": [
+        "Identified",
+        "Sourced",
+        "Temporal"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "document_type",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "source_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "source_url",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "as_of",
+          "type": "datetime",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "api_name": "Evaluation",
+      "primary_key": "id",
+      "implements": [
+        "Identified"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "rule_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "result",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "status",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "api_name": "Claim",
+      "primary_key": "id",
+      "implements": [
+        "Identified"
+      ],
+      "properties": [
+        {
+          "api_name": "id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "text",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "api_name": "status",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "link_types": [
+    {
+      "api_name": "issuedBy",
+      "source_object_type": "Security",
+      "target_object_type": "Issuer",
+      "source_cardinality": "many",
+      "target_cardinality": "one"
+    },
+    {
+      "api_name": "observationSubject",
+      "source_object_type": "Observation",
+      "target_object_type": "Issuer",
+      "source_cardinality": "many",
+      "target_cardinality": "one"
+    },
+    {
+      "api_name": "observationConcept",
+      "source_object_type": "Observation",
+      "target_object_type": "NormalizedConcept",
+      "source_cardinality": "many",
+      "target_cardinality": "one"
+    },
+    {
+      "api_name": "observationSource",
+      "source_object_type": "Observation",
+      "target_object_type": "Source",
+      "source_cardinality": "many",
+      "target_cardinality": "one"
+    },
+    {
+      "api_name": "disclosedIn",
+      "source_object_type": "Observation",
+      "target_object_type": "Document",
+      "source_cardinality": "many",
+      "target_cardinality": "one"
+    },
+    {
+      "api_name": "supportedBy",
+      "source_object_type": "Claim",
+      "target_object_type": "Document",
+      "source_cardinality": "many",
+      "target_cardinality": "many"
+    }
+  ],
+  "action_types": [
+    {
+      "api_name": "supersedeObservation",
+      "target_object_type": "Observation",
+      "executable": true,
+      "parameters": [
+        {
+          "api_name": "replacement_observation_id",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "mutations": [
+        {
+          "property": "status",
+          "operation": "set",
+          "value": "superseded"
+        }
+      ],
+      "reason_disabled": "",
+      "required_role": "operator"
+    },
+    {
+      "api_name": "setEvaluationStatus",
+      "target_object_type": "Evaluation",
+      "executable": false,
+      "parameters": [
+        {
+          "api_name": "status",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "mutations": [
+        {
+          "property": "status",
+          "operation": "set_from_parameter",
+          "parameter": "status"
+        }
+      ],
+      "reason_disabled": "Repository data platform is read-only until authorization, action log, and write-audit controls are implemented.",
+      "required_role": "operator"
+    }
+  ],
+  "projections": [
+    {
+      "object_type": "Issuer",
+      "source": "data/primary/entities.json",
+      "collection": "entities"
+    },
+    {
+      "object_type": "Issuer",
+      "source": "data/primary/semiconductor_entities.json",
+      "collection": "entities"
+    },
+    {
+      "object_type": "Issuer",
+      "source": "data/financial_db/industry_entities.json",
+      "collection": "entities"
+    },
+    {
+      "object_type": "Issuer",
+      "source": "data/earnings_ledger/source_registry.json",
+      "collection": "sources"
+    },
+    {
+      "object_type": "Security",
+      "source": "merged issuer registries",
+      "collection": "issuers",
+      "condition": "ticker != null"
+    },
+    {
+      "object_type": "NormalizedConcept",
+      "source": "data/financial_db/metric_catalog.json",
+      "collection": "concepts"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/manual_observations.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/nand_kpi_observations.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/ai_infrastructure_observations.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/micron_business_unit_revenue_fy2026.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Observation",
+      "source": "data/financial_db/micron_business_unit_operating_margin_fy2026.json",
+      "collection": "observations"
+    },
+    {
+      "object_type": "Source",
+      "source": "observation source_url projection",
+      "collection": "unique source URLs"
+    },
+    {
+      "object_type": "Document",
+      "source": "observation source_url projection",
+      "collection": "unique source URLs"
+    }
+  ],
+  "action_execution": {
+    "mode": "overlay_only",
+    "state_path": "data/ontology_runtime/action_state.json",
+    "log_path": "data/ontology_runtime/action_log.jsonl",
+    "authorization": "environment_gate",
+    "require_idempotency_key": true,
+    "require_optimistic_concurrency": true,
+    "direct_canonical_writes": false
+  }
+}

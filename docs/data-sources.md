@@ -11,10 +11,29 @@ Data Platform Standard v1 の正本は `data/earnings_ledger/` です。MCP・Da
 | Layer | 責務 | 主なartifact |
 | --- | --- | --- |
 | `raw/bronze` | 取得候補、棄却、source state | `rejected.ndjson`, `source_registry.json`, `source_state.json` |
-| `normalized/silver` | 正規化済み事実、監査、lineage | `events.ndjson`, `*audit_latest.json`, `lineage_latest.json` |
-| `public/gold` | fail-close監査を通った公開snapshot/API | `publication_latest.json`, `site/public/api/**` |
+| `normalized/silver` | 正規化済み事実、監査、lineage | `events.ndjson`, `*audit_latest.json`, `lineage_latest.json`, `site/public/api/v2/{events,capex,projects}/**` |
+| `public/gold` | fail-close監査を通った公開snapshot/API | `publication_latest.json`, `site/public/api/v2/gold/**` |
+
+`site/public/api/v2/events`, `capex`, `projects` は Research Workbench 用 Silver API で、`imported_unverified` を含めて調査可能です。公開判断に使う Gold API は `site/public/api/v2/gold/{events,capex,projects}` のみです。Gold は `quality_flag == primary_source_extracted` を満たすrecordだけを生成時に採用し、qualityが欠落・未知・`imported_unverified` のrecordは fail-close で除外します。したがって `site/public/api/**` 全体を Gold とみなしません。
 
 物理directory名をlayer名へ強制的に合わせるのではなく、Data Platform serviceが返す各recordの `data_layer` で機械判定可能にします。
+
+## dbt execution boundary
+
+`analytics/dbt/` は Medallion の変換契約を実行可能にする分析層です。source acquisition や canonical identity の所有権は移しません。
+
+- Bronze は既存の Python ingestion が所有し、raw snapshot・棄却・source state を保存します。
+- Silver は `data/canonical/*.jsonl` を正規化済み境界として dbt から read-only で参照します。
+- Gold は Silver からのみ生成し、verification と provenance を満たさないrecordを fail-close で除外します。
+- UI・API・Google Sheets は独自に事実を再計算せず、canonical service または Gold projection を利用します。
+
+dbt のローカル検証は `analytics/dbt/` から次を実行します。
+
+```bash
+uv run --with "dbt-duckdb==1.11.0" dbt build --profiles-dir .
+```
+
+生成される `target/medallion.duckdb` は再生成可能な分析artifactであり、正本ではありません。
 
 ## Provenance contract
 

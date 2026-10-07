@@ -12,7 +12,9 @@
     "normalized/silver": [
       "data/earnings_ledger/events.ndjson",
       "data/earnings_ledger/*audit_latest.json",
-      "data/earnings_ledger/lineage_latest.json"
+      "data/earnings_ledger/lineage_latest.json",
+      "data/ontology_runtime/action_state.json",
+      "data/ontology_runtime/action_log.jsonl"
     ],
     "public/gold": [
       "data/earnings_ledger/publication_latest.json",
@@ -46,7 +48,16 @@
     "get_lineage",
     "get_audit_status",
     "get_publication_snapshot",
-    "get_data_quality"
+    "get_data_quality",
+    "get_ontology_definition",
+    "get_ontology_snapshot",
+    "search_ontology_objects",
+    "get_ontology_object",
+    "get_ontology_neighbors",
+    "get_ontology_action_status",
+    "get_ontology_action_log",
+    "execute_ontology_action",
+    "rollback_ontology_action"
   ],
   "determinism": {
     "llm_overwrites_primary_facts": false,
@@ -55,17 +66,23 @@
     "fail_closed": true
   },
   "security": {
-    "read_only": true,
+    "read_only": false,
     "secrets": "environment-only",
     "request_body_limit_bytes": 65536,
     "host_allowlist_env": "MCP_ALLOWED_HOSTS",
     "origin_allowlist_env": "MCP_ALLOWED_ORIGINS",
     "rate_limit_policy": "Enforce at the deployment ingress; default production policy is 60 requests per minute per client identity or source IP.",
-    "stateless_http": true
+    "stateless_http": true,
+    "canonical_sources_read_only": true,
+    "write_mode": "ontology_overlay_only",
+    "action_enable_env": "ONTOLOGY_ACTIONS_ENABLED",
+    "action_actor_env": "ONTOLOGY_ACTION_ACTOR",
+    "action_role_env": "ONTOLOGY_ACTION_ROLE",
+    "action_token_env": "ONTOLOGY_ACTION_TOKEN"
   },
   "rest_api": {
     "base_path": "/api/data-platform/v1",
-    "read_only": true,
+    "read_only": false,
     "routes": {
       "search_companies": "GET /api/data-platform/v1/companies?q={query}",
       "get_company_earnings": "GET /api/data-platform/v1/companies/{company_id}/earnings",
@@ -74,7 +91,16 @@
       "get_lineage": "GET /api/data-platform/v1/lineage",
       "get_audit_status": "GET /api/data-platform/v1/audit",
       "get_publication_snapshot": "GET /api/data-platform/v1/publication",
-      "get_data_quality": "GET /api/data-platform/v1/quality"
+      "get_data_quality": "GET /api/data-platform/v1/quality",
+      "get_ontology_definition": "GET /api/data-platform/v1/ontology",
+      "get_ontology_snapshot": "GET /api/data-platform/v1/ontology/snapshot",
+      "search_ontology_objects": "GET /api/data-platform/v1/ontology/objects?type={object_type}&q={query}&limit={limit}",
+      "get_ontology_object": "GET /api/data-platform/v1/ontology/objects/{object_type}/{primary_key}",
+      "get_ontology_neighbors": "GET /api/data-platform/v1/ontology/objects/{object_type}/{primary_key}/neighbors?link_type={link_type}",
+      "get_ontology_action_status": "GET /api/data-platform/v1/ontology/actions/status",
+      "get_ontology_action_log": "GET /api/data-platform/v1/ontology/actions/log?limit={limit}",
+      "execute_ontology_action": "POST /api/data-platform/v1/ontology/actions/execute",
+      "rollback_ontology_action": "POST /api/data-platform/v1/ontology/actions/rollback"
     }
   }
 }

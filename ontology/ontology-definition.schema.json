@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kafka2306.github.io/semiconductor-earnings-model/ontology/ontology-definition.schema.json",
+  "title": "KAFKA Ontology Definition v0.2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "ontology_id",
+    "display_name",
+    "read_only",
+    "action_execution",
+    "interfaces",
+    "object_types",
+    "link_types",
+    "action_types",
+    "projections"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "kafka-ontology.v0.2"
+    },
+    "ontology_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "read_only": {
+      "type": "boolean"
+    },
+    "interfaces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/interface"
+      }
+    },
+    "object_types": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/object_type"
+      }
+    },
+    "link_types": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/link_type"
+      }
+    },
+    "action_types": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action_type"
+      }
+    },
+    "projections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/projection"
+      }
+    },
+    "action_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "state_path",
+        "log_path",
+        "authorization",
+        "require_idempotency_key",
+        "require_optimistic_concurrency",
+        "direct_canonical_writes"
+      ],
+      "properties": {
+        "mode": {
+          "const": "overlay_only"
+        },
+        "state_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "log_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorization": {
+          "const": "environment_gate"
+        },
+        "require_idempotency_key": {
+          "const": true
+        },
+        "require_optimistic_concurrency": {
+          "const": true
+        },
+        "direct_canonical_writes": {
+          "const": false
+        }
+      }
+    }
+  },
+  "$defs": {
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api_name",
+        "type",
+        "nullable"
+      ],
+      "properties": {
+        "api_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "boolean",
+            "date",
+            "datetime",
+            "integer",
+            "number",
+            "string",
+            "vector"
+          ]
+        },
+        "nullable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api_name",
+        "properties"
+      ],
+      "properties": {
+        "api_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/property"
+          }
+        }
+      }
+    },
+    "object_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api_name",
+        "primary_key",
+        "implements",
+        "properties"
+      ],
+      "properties": {
+        "api_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "primary_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/property"
+          }
+        }
+      }
+    },
+    "link_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api_name",
+        "source_object_type",
+        "target_object_type",
+        "source_cardinality",
+        "target_cardinality"
+      ],
+      "properties": {
+        "api_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_object_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_object_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_cardinality": {
+          "enum": [
+            "one",
+            "many"
+          ]
+        },
+        "target_cardinality": {
+          "enum": [
+            "one",
+            "many"
+          ]
+        }
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api_name",
+        "type",
+        "required"
+      ],
+      "properties": {
+        "api_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "boolean",
+            "date",
+            "datetime",
+            "integer",
+            "number",
+            "string",
+            "vector"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "mutation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "property",
+        "operation"
+      ],
+      "properties": {
+        "property": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "enum": [
+            "set",
+            "set_from_parameter"
+          ]
+        },
+        "value": {},
+        "parameter": {
+          "type": "string"
+        }
+      }
+    },
+    "action_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api_name",
+        "target_object_type",
+        "executable",
+        "parameters",
+        "mutations",
+        "reason_disabled",
+        "required_role"
+      ],
+      "properties": {
+        "api_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_object_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "executable": {
+          "type": "boolean"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parameter"
+          }
+        },
+        "mutations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/mutation"
+          }
+        },
+        "reason_disabled": {
+          "type": "string"
+        },
+        "required_role": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_type",
+        "source",
+        "collection"
+      ],
+      "properties": {
+        "object_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "collection": {
+          "type": "string",
+          "minLength": 1
+        },
+        "condition": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

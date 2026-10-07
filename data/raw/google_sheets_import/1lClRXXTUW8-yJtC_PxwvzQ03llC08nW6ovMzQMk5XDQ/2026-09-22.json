@@ -1,0 +1,3257 @@
+{
+  "schema_version": "google-sheets-raw.v1",
+  "spreadsheet_id": "1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ",
+  "spreadsheet_title": "Semiconductor CapEx Decision DB",
+  "captured_at": "2026-09-22T00:16:00Z",
+  "sheets": [
+    {
+      "name": "README",
+      "sheet_id": 993235932,
+      "rows": [
+        [
+          "Semiconductor CapEx Decision Database"
+        ],
+        [
+          "Purpose",
+          "NAS100 / SOX / 日経半導体の設備投資判断を、CapEx額だけでなく需要根拠・能力増加・顧客コミット・資金調達・実績で追う。"
+        ],
+        [
+          "Canonical grain",
+          "CapExは issuer_id 単位。GOOG/GOOGLのような複数証券を二重計上しない。"
+        ],
+        [
+          "Actual vs Plan",
+          "実績CapExと計画CapExは分離。PP&E CapExとM&A/R&Dも分離する。"
+        ],
+        [
+          "Source priority",
+          "会社IR/SEC/EDINET > 決算資料 > 公式指数 > 会社PR > 報道。掲示板は根拠データにしない。"
+        ],
+        [
+          "Update cadence",
+          "Index: 月次/リバランス時。Financials: 決算ごと。CapEx Events: 発表時。Capacity: 四半期。"
+        ],
+        [
+          "Decision question",
+          "顧客コミット / 能力逼迫 / 投資後の利益変換を確認する。"
+        ],
+        [
+          "NAS100 freshness",
+          "2026-06-30 QQQ N-PORT由来 working universe。公式現行構成は要更新。"
+        ],
+        [
+          "SOX freshness",
+          "2026-09-04 pre-reconstitution。2026-09-21発効の新構成へ要更新。"
+        ],
+        [
+          "Nikkei freshness",
+          "2026-09-18 日経公式構成。"
+        ],
+        [
+          "Missing data",
+          "空欄は0ではない。未開示・未取得は空欄で保持する。"
+        ]
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "sheet_id": 101,
+      "rows": [
+        [
+          "Metric",
+          "Value",
+          "Operational check",
+          "Status"
+        ],
+        [
+          "Unique issuers",
+          142,
+          "NASDAQ-100 membership",
+          "Needs current official refresh"
+        ],
+        [
+          "Index membership rows",
+          162,
+          "SOX membership",
+          "Refresh today: 2026-09-21 reconstitution"
+        ],
+        [
+          "NASDAQ-100 securities",
+          102,
+          "Nikkei membership",
+          "Verified official 2026-09-18"
+        ],
+        [
+          "SOX companies",
+          30,
+          "CapEx source completeness",
+          "Seeded; expand issuer-by-issuer"
+        ],
+        [
+          "Nikkei semiconductor companies",
+          30
+        ],
+        [
+          "Seed CapEx events",
+          5
+        ]
+      ]
+    },
+    {
+      "name": "Issuer_Master",
+      "sheet_id": 102,
+      "rows": [
+        [
+          "issuer_id",
+          "company_name",
+          "country",
+          "reporting_currency",
+          "primary_role",
+          "NASDAQ100",
+          "SOX",
+          "NikkeiSemi"
+        ],
+        [
+          "JP:285A",
+          "Kioxia Holdings Corp",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:3132",
+          "Macnica Holdings Inc",
+          "Japan",
+          "JPY",
+          "Trading Companies",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:3436",
+          "SUMCO Corp",
+          "Japan",
+          "JPY",
+          "Nonferrous Metals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4021",
+          "Nissan Chemical Corp",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4043",
+          "Tokuyama Corp",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4063",
+          "Shin-Etsu Chemical Co Ltd",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4186",
+          "Tokyo Ohka Kogyo Co Ltd",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4203",
+          "Sumitomo Bakelite Co Ltd",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4272",
+          "Nippon Kayaku Co Ltd",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4401",
+          "ADEKA Corp",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4626",
+          "Taiyo Holdings Co Ltd",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:4980",
+          "Dexerials Corp",
+          "Japan",
+          "JPY",
+          "Chemicals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:5016",
+          "JX Advanced Metals Corp",
+          "Japan",
+          "JPY",
+          "Nonferrous Metals",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6146",
+          "DISCO Corp",
+          "Japan",
+          "JPY",
+          "Precision Instruments",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6315",
+          "TOWA Corp",
+          "Japan",
+          "JPY",
+          "Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6323",
+          "RORZE Corp",
+          "Japan",
+          "JPY",
+          "Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6525",
+          "Kokusai Electric Corp",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6526",
+          "Socionext Inc",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6723",
+          "Renesas Electronics Corp",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6728",
+          "ULVAC Inc",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6758",
+          "Sony Group Corp",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6857",
+          "Advantest Corp",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6890",
+          "Ferrotec Corp",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6920",
+          "Lasertec Corp",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:6963",
+          "ROHM Co Ltd",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:7729",
+          "Tokyo Seimitsu Co Ltd",
+          "Japan",
+          "JPY",
+          "Precision Instruments",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:7735",
+          "SCREEN Holdings Co Ltd",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:7741",
+          "HOYA Corp",
+          "Japan",
+          "JPY",
+          "Precision Instruments",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:8035",
+          "Tokyo Electron Ltd",
+          "Japan",
+          "JPY",
+          "Electric Machinery",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "JP:8154",
+          "Kaga Electronics Co Ltd",
+          "Japan",
+          "JPY",
+          "Trading Companies",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:AAPL",
+          "Apple Inc.",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ABNB",
+          "Airbnb Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ADBE",
+          "Adobe Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ADI",
+          "Analog Devices Inc",
+          "",
+          "",
+          "Analog / Power / Embedded",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:ADP",
+          "Automatic Data Processing Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ADSK",
+          "Autodesk Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:AEP",
+          "American Electric Power Co Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ALAB",
+          "Astera Labs Inc",
+          "",
+          "",
+          "Connectivity / Optical",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:ALNY",
+          "Alnylam Pharmaceuticals Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ALPHABET",
+          "Alphabet Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:AMAT",
+          "Applied Materials Inc",
+          "",
+          "",
+          "Manufacturing Equipment",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:AMD",
+          "Advanced Micro Devices Inc",
+          "",
+          "",
+          "Compute / AI Accelerators",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:AMGN",
+          "Amgen Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:AMZN",
+          "Amazon.com Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:APP",
+          "AppLovin Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ARM",
+          "Arm Holdings plc",
+          "",
+          "",
+          "Semiconductor IP",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:ASML",
+          "ASML Holding NV",
+          "",
+          "",
+          "Manufacturing Equipment / Lithography",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:AVGO",
+          "Broadcom Inc",
+          "",
+          "",
+          "Custom Silicon / Networking",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:AXON",
+          "Axon Enterprise Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:BKNG",
+          "Booking Holdings Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:BKR",
+          "Baker Hughes Co",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CCEP",
+          "Coca-Cola Europacific Partners plc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CDNS",
+          "Cadence Design Systems Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CEG",
+          "Constellation Energy Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CMCSA",
+          "Comcast Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:COHR",
+          "Coherent Corp",
+          "",
+          "",
+          "Connectivity / Optical",
+          "",
+          "Y"
+        ],
+        [
+          "US:COST",
+          "Costco Wholesale Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CPRT",
+          "Copart Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CRDO",
+          "Credo Technology Group Holding Ltd",
+          "",
+          "",
+          "Connectivity / Optical",
+          "",
+          "Y"
+        ],
+        [
+          "US:CRWD",
+          "CrowdStrike Holdings Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CRWV",
+          "CoreWeave Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CSCO",
+          "Cisco Systems Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CSX",
+          "CSX Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:CTAS",
+          "Cintas Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:DASH",
+          "DoorDash Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:DDOG",
+          "Datadog Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:DXCM",
+          "Dexcom Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:EA",
+          "Electronic Arts Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ENTG",
+          "Entegris Inc",
+          "",
+          "",
+          "Materials / Specialty Chemicals",
+          "",
+          "Y"
+        ],
+        [
+          "US:EXC",
+          "Exelon Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:FANG",
+          "Diamondback Energy Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:FAST",
+          "Fastenal Co",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:FER",
+          "Ferrovial NV",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:FTNT",
+          "Fortinet Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:GEHC",
+          "GE HealthCare Technologies Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:GFS",
+          "GlobalFoundries Inc",
+          "",
+          "",
+          "Foundry",
+          "",
+          "Y"
+        ],
+        [
+          "US:GILD",
+          "Gilead Sciences Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:HON",
+          "Honeywell International Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:HONA",
+          "Honeywell Aerospace Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:IDXX",
+          "IDEXX Laboratories Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:INTC",
+          "Intel Corp",
+          "",
+          "",
+          "Compute / Legacy IDM",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:INTU",
+          "Intuit Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ISRG",
+          "Intuitive Surgical Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:KDP",
+          "Keurig Dr Pepper Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:KHC",
+          "Kraft Heinz Co",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:KLAC",
+          "KLA Corp",
+          "",
+          "",
+          "Process Control / Metrology",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:LIN",
+          "Linde plc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:LITE",
+          "Lumentum Holdings Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:LRCX",
+          "Lam Research Corp",
+          "",
+          "",
+          "Manufacturing Equipment",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:MAR",
+          "Marriott International Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:MCHP",
+          "Microchip Technology Inc",
+          "",
+          "",
+          "Analog / Power / Embedded",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:MDLZ",
+          "Mondelez International Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:MELI",
+          "MercadoLibre Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:META",
+          "Meta Platforms Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:MNST",
+          "Monster Beverage Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:MPWR",
+          "Monolithic Power Systems Inc",
+          "",
+          "",
+          "Analog / Power / Embedded",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:MRVL",
+          "Marvell Technology Inc",
+          "",
+          "",
+          "Custom Silicon / Networking",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:MSFT",
+          "Microsoft Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:MSTR",
+          "Strategy Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:MTSI",
+          "MACOM Technology Solutions Holdings Inc",
+          "",
+          "",
+          "Connectivity / RF / Optical",
+          "",
+          "Y"
+        ],
+        [
+          "US:MU",
+          "Micron Technology Inc",
+          "",
+          "",
+          "Memory",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:NBIS",
+          "Nebius Group NV",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:NFLX",
+          "Netflix Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:NVDA",
+          "Nvidia Corp",
+          "",
+          "",
+          "Compute / AI Accelerators",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:NVMI",
+          "Nova Ltd",
+          "",
+          "",
+          "Process Control / Metrology",
+          "",
+          "Y"
+        ],
+        [
+          "US:NXPI",
+          "NXP Semiconductors NV",
+          "",
+          "",
+          "Analog / Power / Embedded",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:ODFL",
+          "Old Dominion Freight Line Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ON",
+          "onsemi",
+          "",
+          "",
+          "Analog / Power / Embedded",
+          "",
+          "Y"
+        ],
+        [
+          "US:ORLY",
+          "O'Reilly Automotive Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:PANW",
+          "Palo Alto Networks Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:PAYX",
+          "Paychex Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:PCAR",
+          "Paccar Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:PDD",
+          "PDD Holdings Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:PEP",
+          "PepsiCo Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:PLTR",
+          "Palantir Technologies Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:PYPL",
+          "PayPal Holdings Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:QCOM",
+          "Qualcomm Inc",
+          "",
+          "",
+          "Connectivity / RF",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:QRVO",
+          "Qorvo Inc",
+          "",
+          "",
+          "Connectivity / RF",
+          "",
+          "Y"
+        ],
+        [
+          "US:REGN",
+          "Regeneron Pharmaceuticals Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:RKLB",
+          "Rocket Lab Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:RMBS",
+          "Rambus Inc",
+          "",
+          "",
+          "Semiconductor IP",
+          "",
+          "Y"
+        ],
+        [
+          "US:ROP",
+          "Roper Technologies Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:ROST",
+          "Ross Stores Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:SBUX",
+          "Starbucks Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:SHOP",
+          "Shopify Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:SNDK",
+          "Sandisk Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:SNPS",
+          "Synopsys Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:STX",
+          "Seagate Technology Holdings plc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:SWKS",
+          "Skyworks Solutions Inc",
+          "",
+          "",
+          "Connectivity / RF",
+          "",
+          "Y"
+        ],
+        [
+          "US:TER",
+          "Teradyne Inc",
+          "",
+          "",
+          "Test",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:TMUS",
+          "T-Mobile US Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:TRI",
+          "Thomson Reuters Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:TSLA",
+          "Tesla Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:TSM",
+          "Taiwan Semiconductor Manufacturing Co",
+          "",
+          "",
+          "Foundry",
+          "",
+          "Y"
+        ],
+        [
+          "US:TTWO",
+          "Take-Two Interactive Software Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:TXN",
+          "Texas Instruments Inc",
+          "",
+          "",
+          "Analog / Power / Embedded",
+          "Y",
+          "Y"
+        ],
+        [
+          "US:VRTX",
+          "Vertex Pharmaceuticals Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:WBD",
+          "Warner Bros Discovery Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:WDAY",
+          "Workday Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:WDC",
+          "Western Digital Corp",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:WMT",
+          "Walmart Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ],
+        [
+          "US:XEL",
+          "Xcel Energy Inc",
+          "",
+          "",
+          "",
+          "Y"
+        ]
+      ]
+    },
+    {
+      "name": "Index_Membership",
+      "sheet_id": 103,
+      "rows": [
+        [
+          "issuer_id",
+          "security_ticker_or_code",
+          "security_name",
+          "index_name",
+          "as_of_date",
+          "source_type",
+          "verification_status",
+          "source_url"
+        ],
+        [
+          "US:NVDA",
+          "NVDA",
+          "Nvidia Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AAPL",
+          "AAPL",
+          "Apple Inc.",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MU",
+          "MU",
+          "Micron Technology Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MSFT",
+          "MSFT",
+          "Microsoft Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AMD",
+          "AMD",
+          "Advanced Micro Devices Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AMZN",
+          "AMZN",
+          "Amazon.com Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:TSLA",
+          "TSLA",
+          "Tesla Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ALPHABET",
+          "GOOGL",
+          "Alphabet Inc Class A",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:INTC",
+          "INTC",
+          "Intel Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ALPHABET",
+          "GOOG",
+          "Alphabet Inc Class C",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AVGO",
+          "AVGO",
+          "Broadcom Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:META",
+          "META",
+          "Meta Platforms Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AMAT",
+          "AMAT",
+          "Applied Materials Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:WMT",
+          "WMT",
+          "Walmart Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:LRCX",
+          "LRCX",
+          "Lam Research Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CSCO",
+          "CSCO",
+          "Cisco Systems Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:COST",
+          "COST",
+          "Costco Wholesale Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:KLAC",
+          "KLAC",
+          "KLA Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:SNDK",
+          "SNDK",
+          "Sandisk Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:NFLX",
+          "NFLX",
+          "Netflix Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:PANW",
+          "PANW",
+          "Palo Alto Networks Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:TXN",
+          "TXN",
+          "Texas Instruments Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:PLTR",
+          "PLTR",
+          "Palantir Technologies Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MRVL",
+          "MRVL",
+          "Marvell Technology Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:LIN",
+          "LIN",
+          "Linde plc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:WDC",
+          "WDC",
+          "Western Digital Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:STX",
+          "STX",
+          "Seagate Technology Holdings plc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AMGN",
+          "AMGN",
+          "Amgen Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:QCOM",
+          "QCOM",
+          "Qualcomm Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CRWD",
+          "CRWD",
+          "CrowdStrike Holdings Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ADI",
+          "ADI",
+          "Analog Devices Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:PEP",
+          "PEP",
+          "PepsiCo Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ASML",
+          "ASML",
+          "ASML Holding NV",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:TMUS",
+          "TMUS",
+          "T-Mobile US Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:APP",
+          "APP",
+          "AppLovin Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:GILD",
+          "GILD",
+          "Gilead Sciences Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ARM",
+          "ARM",
+          "Arm Holdings plc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ISRG",
+          "ISRG",
+          "Intuitive Surgical Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:SHOP",
+          "SHOP",
+          "Shopify Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:BKNG",
+          "BKNG",
+          "Booking Holdings Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:VRTX",
+          "VRTX",
+          "Vertex Pharmaceuticals Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:SBUX",
+          "SBUX",
+          "Starbucks Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:FTNT",
+          "FTNT",
+          "Fortinet Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CDNS",
+          "CDNS",
+          "Cadence Design Systems Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MAR",
+          "MAR",
+          "Marriott International Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MNST",
+          "MNST",
+          "Monster Beverage Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CEG",
+          "CEG",
+          "Constellation Energy Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ADP",
+          "ADP",
+          "Automatic Data Processing Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CSX",
+          "CSX",
+          "CSX Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CMCSA",
+          "CMCSA",
+          "Comcast Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:DDOG",
+          "DDOG",
+          "Datadog Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MELI",
+          "MELI",
+          "MercadoLibre Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:SNPS",
+          "SNPS",
+          "Synopsys Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ADBE",
+          "ADBE",
+          "Adobe Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ALAB",
+          "ALAB",
+          "Astera Labs Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ORLY",
+          "ORLY",
+          "O'Reilly Automotive Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:DASH",
+          "DASH",
+          "DoorDash Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:TER",
+          "TER",
+          "Teradyne Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AEP",
+          "AEP",
+          "American Electric Power Co Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MDLZ",
+          "MDLZ",
+          "Mondelez International Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:INTU",
+          "INTU",
+          "Intuit Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:NXPI",
+          "NXPI",
+          "NXP Semiconductors NV",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:HON",
+          "HON",
+          "Honeywell International Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:HONA",
+          "HONA",
+          "Honeywell Aerospace Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ROST",
+          "ROST",
+          "Ross Stores Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CTAS",
+          "CTAS",
+          "Cintas Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MPWR",
+          "MPWR",
+          "Monolithic Power Systems Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:WBD",
+          "WBD",
+          "Warner Bros Discovery Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:LITE",
+          "LITE",
+          "Lumentum Holdings Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:REGN",
+          "REGN",
+          "Regeneron Pharmaceuticals Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:PCAR",
+          "PCAR",
+          "Paccar Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:NBIS",
+          "NBIS",
+          "Nebius Group NV",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ABNB",
+          "ABNB",
+          "Airbnb Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:RKLB",
+          "RKLB",
+          "Rocket Lab Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:FAST",
+          "FAST",
+          "Fastenal Co",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:BKR",
+          "BKR",
+          "Baker Hughes Co",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:EA",
+          "EA",
+          "Electronic Arts Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:PDD",
+          "PDD",
+          "PDD Holdings Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:XEL",
+          "XEL",
+          "Xcel Energy Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:FANG",
+          "FANG",
+          "Diamondback Energy Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MCHP",
+          "MCHP",
+          "Microchip Technology Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:FER",
+          "FER",
+          "Ferrovial NV",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:EXC",
+          "EXC",
+          "Exelon Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:TTWO",
+          "TTWO",
+          "Take-Two Interactive Software Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:AXON",
+          "AXON",
+          "Axon Enterprise Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ODFL",
+          "ODFL",
+          "Old Dominion Freight Line Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CCEP",
+          "CCEP",
+          "Coca-Cola Europacific Partners plc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CRWV",
+          "CRWV",
+          "CoreWeave Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:KDP",
+          "KDP",
+          "Keurig Dr Pepper Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:IDXX",
+          "IDXX",
+          "IDEXX Laboratories Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ADSK",
+          "ADSK",
+          "Autodesk Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ALNY",
+          "ALNY",
+          "Alnylam Pharmaceuticals Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:PYPL",
+          "PYPL",
+          "PayPal Holdings Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:PAYX",
+          "PAYX",
+          "Paychex Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:ROP",
+          "ROP",
+          "Roper Technologies Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:TRI",
+          "TRI",
+          "Thomson Reuters Corp",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:GEHC",
+          "GEHC",
+          "GE HealthCare Technologies Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:MSTR",
+          "MSTR",
+          "Strategy Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:KHC",
+          "KHC",
+          "Kraft Heinz Co",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:CPRT",
+          "CPRT",
+          "Copart Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:DXCM",
+          "DXCM",
+          "Dexcom Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:WDAY",
+          "WDAY",
+          "Workday Inc",
+          "NASDAQ-100",
+          46203,
+          "Fund report / tracking fund",
+          "Needs current official check",
+          "https://equibles.com/indexes/nasdaq-100"
+        ],
+        [
+          "US:NVDA",
+          "NVDA",
+          "NVIDIA Corporation",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:AMD",
+          "AMD",
+          "Advanced Micro Devices Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:INTC",
+          "INTC",
+          "Intel Corporation",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:AVGO",
+          "AVGO",
+          "Broadcom Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:MRVL",
+          "MRVL",
+          "Marvell Technology Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:MU",
+          "MU",
+          "Micron Technology Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:TSM",
+          "TSM",
+          "Taiwan Semiconductor Manufacturing Co",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:GFS",
+          "GFS",
+          "GlobalFoundries Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:AMAT",
+          "AMAT",
+          "Applied Materials Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:LRCX",
+          "LRCX",
+          "Lam Research Corp",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:ASML",
+          "ASML",
+          "ASML Holding NV",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:KLAC",
+          "KLAC",
+          "KLA Corp",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:NVMI",
+          "NVMI",
+          "Nova Ltd",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:TXN",
+          "TXN",
+          "Texas Instruments Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:ADI",
+          "ADI",
+          "Analog Devices Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:MPWR",
+          "MPWR",
+          "Monolithic Power Systems Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:ON",
+          "ON",
+          "onsemi",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:NXPI",
+          "NXPI",
+          "NXP Semiconductors NV",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:MCHP",
+          "MCHP",
+          "Microchip Technology Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:QCOM",
+          "QCOM",
+          "Qualcomm Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:SWKS",
+          "SWKS",
+          "Skyworks Solutions Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:QRVO",
+          "QRVO",
+          "Qorvo Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:CRDO",
+          "CRDO",
+          "Credo Technology Group Holding Ltd",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:ALAB",
+          "ALAB",
+          "Astera Labs Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:MTSI",
+          "MTSI",
+          "MACOM Technology Solutions Holdings Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:COHR",
+          "COHR",
+          "Coherent Corp",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:ARM",
+          "ARM",
+          "Arm Holdings plc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:RMBS",
+          "RMBS",
+          "Rambus Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:TER",
+          "TER",
+          "Teradyne Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "US:ENTG",
+          "ENTG",
+          "Entegris Inc",
+          "SOX",
+          46269,
+          "Pre-reconstitution working set",
+          "Refresh required: 2026-09-21 effective reconstitution",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/"
+        ],
+        [
+          "JP:4021",
+          4021,
+          "Nissan Chemical Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4043",
+          4043,
+          "Tokuyama Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4063",
+          4063,
+          "Shin-Etsu Chemical Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4186",
+          4186,
+          "Tokyo Ohka Kogyo Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4203",
+          4203,
+          "Sumitomo Bakelite Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4272",
+          4272,
+          "Nippon Kayaku Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4401",
+          4401,
+          "ADEKA Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4626",
+          4626,
+          "Taiyo Holdings Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:4980",
+          4980,
+          "Dexerials Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:3436",
+          3436,
+          "SUMCO Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:5016",
+          5016,
+          "JX Advanced Metals Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6315",
+          6315,
+          "TOWA Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6323",
+          6323,
+          "RORZE Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:285A",
+          "285A",
+          "Kioxia Holdings Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6525",
+          6525,
+          "Kokusai Electric Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6526",
+          6526,
+          "Socionext Inc",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6723",
+          6723,
+          "Renesas Electronics Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6728",
+          6728,
+          "ULVAC Inc",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6758",
+          6758,
+          "Sony Group Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6857",
+          6857,
+          "Advantest Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6890",
+          6890,
+          "Ferrotec Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6920",
+          6920,
+          "Lasertec Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6963",
+          6963,
+          "ROHM Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:7735",
+          7735,
+          "SCREEN Holdings Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:8035",
+          8035,
+          "Tokyo Electron Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:6146",
+          6146,
+          "DISCO Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:7729",
+          7729,
+          "Tokyo Seimitsu Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:7741",
+          7741,
+          "HOYA Corp",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:3132",
+          3132,
+          "Macnica Holdings Inc",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ],
+        [
+          "JP:8154",
+          8154,
+          "Kaga Electronics Co Ltd",
+          "Nikkei Semiconductor Stock Index",
+          46283,
+          "Official Nikkei components",
+          "Verified official",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd"
+        ]
+      ]
+    },
+    {
+      "name": "CapEx_Events",
+      "sheet_id": 104,
+      "rows": [
+        [
+          "event_id",
+          "issuer_id",
+          "announced_date",
+          "fiscal_period",
+          "event_type",
+          "project_name",
+          "region",
+          "amount_low_local_mm",
+          "amount_high_local_mm",
+          "currency",
+          "amount_low_usd_mm",
+          "amount_high_usd_mm",
+          "capacity_metric",
+          "capacity_current",
+          "capacity_target",
+          "capacity_unit",
+          "target_date",
+          "management_rationale",
+          "status",
+          "source_url",
+          "source_note"
+        ],
+        [
+          "CAPEX-JP5016-20260616",
+          "JP:5016",
+          46189,
+          "2026-2029",
+          "Expansion",
+          "InP substrate capacity expansion",
+          "Japan",
+          "",
+          120000,
+          "JPY",
+          "",
+          "",
+          "InP substrate capacity multiple",
+          1,
+          7,
+          "x lower end; target 7-10x vs FY2025",
+          47299,
+          "Customer requests materially above prior assumptions",
+          "Announced",
+          "https://www.jx-nmm.com/newsrelease/2026/20260616_01.html",
+          "Up to JPY120bn over four years."
+        ],
+        [
+          "CAPEX-TSM-2026",
+          "US:TSM",
+          46037,
+          "FY2026",
+          "Annual CapEx Guidance",
+          "Advanced process / specialty / advanced packaging",
+          "Global",
+          52000,
+          56000,
+          "USD",
+          52000,
+          56000,
+          "CapEx allocation",
+          70,
+          80,
+          "% to advanced process",
+          46387,
+          "Support multi-year structural AI/HPC/5G customer growth",
+          "Guidance",
+          "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+          "2026 capital budget USD52-56bn."
+        ],
+        [
+          "CAPEX-MU-2026",
+          "US:MU",
+          46197,
+          "FY2026",
+          "Annual CapEx Guidance",
+          "Memory capacity / cleanroom / U.S. fabs",
+          "Global",
+          27000,
+          27000,
+          "USD",
+          27000,
+          27000,
+          "Construction CapEx trend",
+          "",
+          "",
+          "",
+          46265,
+          "Long-term HBM and DRAM demand",
+          "Guidance",
+          "https://investors.micron.com/static-files/2354ecda-77a0-4ddd-8462-a631eb491356",
+          "FY2026 capex approx USD27bn; FY2027 steps up."
+        ],
+        [
+          "CAPEX-COHR-INP-2026",
+          "US:COHR",
+          46098,
+          "CY2026-2027",
+          "Capacity Expansion",
+          "6-inch InP wafer fab capacity",
+          "US / Sweden / Switzerland",
+          "",
+          "",
+          "USD",
+          "",
+          "",
+          "InP output capacity",
+          1,
+          2,
+          "x per year / >2x by Q4CY27 vs Q4CY25",
+          46752,
+          "Unprecedented demand for EMLs, CW lasers, PDs and PICs",
+          "Ramping",
+          "https://www.coherent.com/content/dam/coherent/site/en/documents/investors/investor-presentations/2026/march-17/OFC-2026-Investor%20event-deck-vf.pdf",
+          "6-inch yields reported higher than 3-inch."
+        ],
+        [
+          "CAPEX-INTC-COMMIT-2026",
+          "US:INTC",
+          46018,
+          "FY2026",
+          "Committed CapEx",
+          "Capital expenditure commitments",
+          "Global",
+          9100,
+          9100,
+          "USD",
+          9100,
+          9100,
+          "Committed CapEx",
+          "",
+          "",
+          "USD mm",
+          46387,
+          "Roadmap execution and changing business conditions determine cadence",
+          "Committed",
+          "https://www.intc.com/filings-reports/all-sec-filings/content/0000050863-26-000011/intc-20251227.htm",
+          "USD9.1bn of 2026 capital expenditure commitments."
+        ]
+      ]
+    },
+    {
+      "name": "Financials",
+      "sheet_id": 105,
+      "rows": [
+        [
+          "issuer_id",
+          "period_end",
+          "period_type",
+          "currency",
+          "revenue_mm",
+          "gross_profit_mm",
+          "operating_income_mm",
+          "operating_cf_mm",
+          "capex_mm",
+          "free_cash_flow_mm",
+          "gross_margin",
+          "operating_margin",
+          "capex_to_revenue",
+          "capex_to_operating_cf",
+          "cash_mm",
+          "debt_mm",
+          "source_url",
+          "status"
+        ]
+      ]
+    },
+    {
+      "name": "Demand_Commitments",
+      "sheet_id": 106,
+      "rows": [
+        [
+          "commitment_id",
+          "issuer_id",
+          "announced_date",
+          "customer",
+          "commitment_type",
+          "amount_local_mm",
+          "currency",
+          "term_start",
+          "term_end",
+          "minimum_volume",
+          "volume_unit",
+          "prepayment",
+          "take_or_pay",
+          "capacity_reservation",
+          "source_url",
+          "source_note",
+          "status"
+        ]
+      ]
+    },
+    {
+      "name": "Capacity_Metrics",
+      "sheet_id": 107,
+      "rows": [
+        [
+          "capacity_id",
+          "issuer_id",
+          "as_of_date",
+          "business_or_process",
+          "site",
+          "metric",
+          "current_value",
+          "target_value",
+          "unit",
+          "target_date",
+          "utilization_pct",
+          "yield_pct",
+          "bottleneck",
+          "source_url",
+          "source_note"
+        ]
+      ]
+    },
+    {
+      "name": "Decision_View",
+      "sheet_id": 108,
+      "rows": [
+        [
+          "issuer_id",
+          "company_name",
+          "project_or_business",
+          "demand_visibility_0_5",
+          "capacity_tightness_0_5",
+          "customer_commitment_0_5",
+          "economics_margin_0_5",
+          "funding_quality_0_5",
+          "execution_proof_0_5",
+          "capex_evidence_score_0_100",
+          "risk_flags",
+          "next_check_date",
+          "owner",
+          "status"
+        ]
+      ]
+    },
+    {
+      "name": "Sources",
+      "sheet_id": 109,
+      "rows": [
+        [
+          "source_id",
+          "scope",
+          "as_of_date",
+          "source_name",
+          "source_url",
+          "refresh_note"
+        ],
+        [
+          "SRC-NDX",
+          "NASDAQ-100",
+          46203,
+          "Equibles / QQQ N-PORT working constituent set",
+          "https://equibles.com/indexes/nasdaq-100",
+          "Replace with official current Nasdaq component set when accessible."
+        ],
+        [
+          "SRC-SOX",
+          "SOX",
+          46269,
+          "SOX pre-reconstitution working set",
+          "https://www.getswoopr.com/stocks/indexes/us/phlx-semiconductor-sector-index/constituents/",
+          "2026-09-21 effective reconstitution: refresh immediately."
+        ],
+        [
+          "SRC-NIKKEI",
+          "Nikkei Semiconductor",
+          46283,
+          "Nikkei official components",
+          "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nkscd",
+          "Official; next regular review at end-November."
+        ]
+      ]
+    }
+  ]
+}

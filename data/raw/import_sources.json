@@ -1,0 +1,41 @@
+{
+  "schema_version": "infrastructure-import-sources.v1",
+  "sources": [
+    {
+      "source_id": "google-sheet-live",
+      "type": "google_sheets",
+      "spreadsheet_id": "1lClRXXTUW8-yJtC_PxwvzQ03llC08nW6ovMzQMk5XDQ",
+      "status": "imported",
+      "semantic_sha256": "a5ab21206c397dcf7d7603bb32c0a8e7cd6636d2b4efedbe3d88ff5c8a79a8dd",
+      "binary_sha256": "101e506d876da0b8794722dd4d99116c2ab91def1c6ed1d44bf6b8a24f631d90",
+      "note": "Google XLSX exports may differ byte-for-byte across identical exports; semantic_sha256 is the deterministic import identity."
+    },
+    {
+      "source_id": "semiconductor-capex-database-v0.4",
+      "type": "xlsx",
+      "expected_path": "/mnt/data/semiconductor_capex_database_v0_4.xlsx",
+      "status": "source_artifact_missing",
+      "policy": "Do not reconstruct or infer rows. Import only after the exact workbook is available and archived."
+    },
+    {
+      "source_id": "zacks-sox-provider-2026-09-23",
+      "type": "provider_snapshot",
+      "path": "data/raw/provider_snapshots/zacks_sox_2026-09-23.json",
+      "provider": "Zacks Investment Research via ChatGPT MCP",
+      "retrieved_at": "2026-09-23",
+      "status": "archived",
+      "scope": "SOX30 latest actuals, annual cash flow, F1/F2 consensus, market snapshot, SOXQ/DRAM holdings",
+      "policy": "Secondary provider. Preserve separately from primary-source actuals; do not silently overwrite issuer/SEC/EDINET facts."
+    },
+    {
+      "source_id": "zacks-qqq-provider-2026-09-23",
+      "type": "provider_snapshot",
+      "path": "data/raw/provider_snapshots/zacks_qqq_2026-09-23.json",
+      "provider": "Zacks Investment Research via ChatGPT MCP",
+      "retrieved_at": "2026-09-23",
+      "status": "archived",
+      "scope": "QQQ top-100 holdings for NASDAQ-100 working-universe reconciliation",
+      "policy": "Secondary tracking-fund evidence. Preserve the top-100 cap caveat and use Nasdaq corporate-action evidence for additions/removals."
+    }
+  ]
+}

@@ -20,7 +20,7 @@
       "as_of": "2012-05-23",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
-      "source_sha256": "93edcffe24f55d08284ff1736e41aa1a8e743ab6e4a6eea52cb8e9392b0ae6be",
+      "source_sha256": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -53,7 +53,7 @@
       "as_of": "2012-08-22",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
-      "source_sha256": "93edcffe24f55d08284ff1736e41aa1a8e743ab6e4a6eea52cb8e9392b0ae6be",
+      "source_sha256": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -96,7 +96,7 @@
       "as_of": "2012-11-19",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
-      "source_sha256": "93edcffe24f55d08284ff1736e41aa1a8e743ab6e4a6eea52cb8e9392b0ae6be",
+      "source_sha256": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -139,7 +139,7 @@
       "as_of": "2012-11-19",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
-      "source_sha256": "93edcffe24f55d08284ff1736e41aa1a8e743ab6e4a6eea52cb8e9392b0ae6be",
+      "source_sha256": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -182,7 +182,7 @@
       "as_of": "2015-04-24",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -215,7 +215,7 @@
       "as_of": "2015-07-24",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -258,7 +258,7 @@
       "as_of": "2015-10-23",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -301,7 +301,7 @@
       "as_of": "2016-01-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -344,7 +344,7 @@
       "as_of": "2016-04-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -377,7 +377,7 @@
       "as_of": "2016-07-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -420,7 +420,7 @@
       "as_of": "2016-10-28",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -463,7 +463,7 @@
       "as_of": "2017-02-10",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
-      "source_sha256": "e6aadb0da7384597dbd78f74d1379ffb7fd0829a4d2e797b6d7e442b5e1da0d7",
+      "source_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -539,7 +539,7 @@
       "as_of": "2024-03-14",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -747,7 +747,7 @@
       "as_of": "2024-06-13",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -1005,7 +1005,7 @@
       "as_of": "2024-09-11",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -1091,7 +1091,7 @@
       "as_of": "2024-09-10",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -1329,7 +1329,7 @@
       "as_of": "2024-12-20",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -1405,7 +1405,7 @@
       "as_of": "2024-12-10",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -1663,7 +1663,7 @@
       "as_of": "2025-03-12",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -1739,7 +1739,7 @@
       "as_of": "2025-03-11",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -1957,7 +1957,7 @@
       "as_of": "2025-06-11",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -2043,7 +2043,7 @@
       "as_of": "2025-06-18",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -2301,7 +2301,7 @@
       "as_of": "2025-09-10",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -2387,7 +2387,7 @@
       "as_of": "2025-09-10",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -2625,7 +2625,7 @@
       "as_of": "2025-12-18",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
-      "source_sha256": "b6399ff9bc3e4047dfe955ad7866ca51208a9f617457e7b917cbfc2effcbc916",
+      "source_sha256": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -2668,7 +2668,7 @@
       "as_of": "2025-12-11",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -2926,7 +2926,7 @@
       "as_of": "2026-03-11",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -3102,7 +3102,7 @@
       "as_of": "2026-06-22",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
-      "source_sha256": "60e4f8db39c9a84106bd02677f578db14a54c8bccabcdba2b828e595c32edeca",
+      "source_sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -3209,6 +3209,125 @@
       ]
     },
     {
+      "id": "nvidia:2026-07-26:data-center-revenue:actual",
+      "entity": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "concept_id": "data_center_revenue",
+      "value_type": "actual",
+      "value": 89000000000,
+      "unit": "USD",
+      "period_end": "2026-07-26",
+      "period_type": "quarter",
+      "fiscal_year": 2027,
+      "fiscal_period": "Q2",
+      "as_of": "2026-08-26",
+      "source_tier": "primary_company",
+      "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/default.aspx",
+      "reported_text": "Data Center revenue was $89.0 billion, up 18% sequentially and 117% from a year ago."
+    },
+    {
+      "id": "nvidia:2026-07-26:non-gaap-operating-income:actual",
+      "entity": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "concept_id": "non_gaap_operating_income",
+      "value_type": "actual",
+      "value": 63956000000,
+      "unit": "USD",
+      "period_end": "2026-07-26",
+      "period_type": "quarter",
+      "fiscal_year": 2027,
+      "fiscal_period": "Q2",
+      "as_of": "2026-08-26",
+      "source_tier": "primary_company",
+      "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/default.aspx",
+      "reported_text": "Non-GAAP operating income was $63.956 billion."
+    },
+    {
+      "id": "nvidia:2026-07-26:total-revenue:actual",
+      "entity": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "concept_id": "total_revenue",
+      "value_type": "actual",
+      "value": 96221000000,
+      "unit": "USD",
+      "period_end": "2026-07-26",
+      "period_type": "quarter",
+      "fiscal_year": 2027,
+      "fiscal_period": "Q2",
+      "as_of": "2026-08-26",
+      "source_tier": "primary_company",
+      "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/default.aspx",
+      "reported_text": "Revenue was $96.221 billion."
+    },
+    {
+      "id": "broadcom:2026-08-02:ai-semiconductor-revenue:actual",
+      "entity": "Broadcom Inc.",
+      "ticker": "AVGO",
+      "concept_id": "ai_semiconductor_revenue",
+      "value_type": "actual",
+      "value": 16700000000,
+      "unit": "USD",
+      "period_end": "2026-08-02",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-09-02",
+      "source_tier": "primary_company",
+      "source_url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial",
+      "reported_text": "Q3 AI semiconductor revenue was $16.7 billion, up 221% year-over-year and 54% quarter-over-quarter."
+    },
+    {
+      "id": "broadcom:2026-08-02:free-cash-flow:actual",
+      "entity": "Broadcom Inc.",
+      "ticker": "AVGO",
+      "concept_id": "free_cash_flow",
+      "value_type": "actual",
+      "value": 13700000000,
+      "unit": "USD",
+      "period_end": "2026-08-02",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-09-02",
+      "source_tier": "primary_company",
+      "source_url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial",
+      "reported_text": "Cash from operations of $14.2 billion less capital expenditures of $0.5 billion resulted in $13.7 billion of free cash flow."
+    },
+    {
+      "id": "broadcom:2026-08-02:non-gaap-operating-income:actual",
+      "entity": "Broadcom Inc.",
+      "ticker": "AVGO",
+      "concept_id": "non_gaap_operating_income",
+      "value_type": "actual",
+      "value": 20095000000,
+      "unit": "USD",
+      "period_end": "2026-08-02",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-09-02",
+      "source_tier": "primary_company",
+      "source_url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial",
+      "reported_text": "Non-GAAP operating income was $20.095 billion."
+    },
+    {
+      "id": "broadcom:2026-08-02:total-revenue:actual",
+      "entity": "Broadcom Inc.",
+      "ticker": "AVGO",
+      "concept_id": "total_revenue",
+      "value_type": "actual",
+      "value": 29591000000,
+      "unit": "USD",
+      "period_end": "2026-08-02",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-09-02",
+      "source_tier": "primary_company",
+      "source_url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial",
+      "reported_text": "Revenue was $29.591 billion."
+    },
+    {
       "id": "microsoft:2026-09-30:capital-expenditures:guidance",
       "entity": "Microsoft Corporation",
       "ticker": "MSFT",
@@ -3226,6 +3345,23 @@
       "source_tier": "primary_company",
       "source_url": "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q4",
       "reported_text": "We expect CapEx spend will be over $50 billion including the lease reclassification impact from the useful life update."
+    },
+    {
+      "id": "broadcom:2026-11-01:ai-semiconductor-revenue:guidance",
+      "entity": "Broadcom Inc.",
+      "ticker": "AVGO",
+      "concept_id": "ai_semiconductor_revenue",
+      "value_type": "company_guidance",
+      "value": 21700000000,
+      "unit": "USD",
+      "period_end": "2026-11-01",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q4",
+      "as_of": "2026-09-02",
+      "source_tier": "primary_company",
+      "source_url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial",
+      "reported_text": "Broadcom expects Q4 AI semiconductor revenue of $21.7 billion, up 236% year-over-year."
     }
   ]
 }

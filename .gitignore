@@ -6,3 +6,6 @@ site/.astro/
 __pycache__/
 .pytest_cache/
 data/sec_bulk/
+analytics/dbt/target/
+analytics/dbt/logs/
+analytics/dbt/dbt_packages/

@@ -24,12 +24,22 @@ EXPECTED_TOOLS = {
     "get_audit_status",
     "get_publication_snapshot",
     "get_data_quality",
+    "get_ontology_definition",
+    "get_ontology_snapshot",
+    "search_ontology_objects",
+    "get_ontology_object",
+    "get_ontology_neighbors",
+    "get_ontology_action_status",
+    "get_ontology_action_log",
+    "execute_ontology_action",
+    "rollback_ontology_action",
 }
 EXPECTED_DOCS = {
     "docs/data-sources.md",
     "docs/methodology.md",
     "docs/data-quality.md",
     "docs/mcp.md",
+    "docs/ontology-runtime.md",
 }
 ALLOWED_LAYERS = {"raw/bronze", "normalized/silver", "public/gold"}
 
@@ -59,8 +69,10 @@ def main() -> None:
     assert set(config["mcp_tools"]) == EXPECTED_TOOLS
     assert config["security"]["stateless_http"] is True
     assert config["security"]["request_body_limit_bytes"] == 65536
-    assert config["security"]["read_only"] is True
-    assert config["rest_api"]["read_only"] is True
+    assert config["security"]["read_only"] is False
+    assert config["security"]["canonical_sources_read_only"] is True
+    assert config["security"]["write_mode"] == "ontology_overlay_only"
+    assert config["rest_api"]["read_only"] is False
     assert set(config["rest_api"]["routes"]) == EXPECTED_TOOLS
     assert config["determinism"]["llm_overwrites_primary_facts"] is False
     assert config["determinism"]["null_is_not_defaulted"] is True
@@ -92,8 +104,10 @@ def main() -> None:
     audits = service.get_audit_status()
     publication = service.get_publication_snapshot()
     quality = service.get_data_quality()
+    ontology_definition = service.get_ontology_definition()
+    ontology_snapshot = service.get_ontology_snapshot()
 
-    for payload in (latest, history, evidence, lineage, audits, publication, quality):
+    for payload in (latest, history, evidence, lineage, audits, publication, quality, ontology_definition, ontology_snapshot):
         for record in payload.get("records", []):
             assert_envelope(record, required_fields, ROOT)
 
@@ -108,6 +122,34 @@ def main() -> None:
 
     assert canonical_json(cli_execute("get_data_quality")) == canonical_json(quality)
     assert canonical_json(dispatch_rest("/api/data-platform/v1/quality")) == canonical_json(quality)
+    assert canonical_json(cli_execute("get_ontology_definition")) == canonical_json(ontology_definition)
+    assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology")) == canonical_json(ontology_definition)
+    assert canonical_json(cli_execute("get_ontology_snapshot")) == canonical_json(ontology_snapshot)
+    assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology/snapshot")) == canonical_json(ontology_snapshot)
+    ontology_search = service.search_ontology_objects("Issuer", "Micron", 10)
+    assert any(row["primary_key"] == "micron" for row in ontology_search["records"])
+    search_argument = canonical_json({"object_type": "Issuer", "query": "Micron", "limit": 10})
+    assert canonical_json(cli_execute("search_ontology_objects", search_argument)) == canonical_json(ontology_search)
+    assert canonical_json(dispatch_rest("/api/data-platform/v1/ontology/objects", "type=Issuer&q=Micron&limit=10")) == canonical_json(ontology_search)
+
+    observation_id = "micron:2026-05-28:revenue:consolidated:actual"
+    ontology_object = service.get_ontology_object("Observation", observation_id)
+    object_argument = canonical_json({"object_type": "Observation", "primary_key": observation_id})
+    assert canonical_json(cli_execute("get_ontology_object", object_argument)) == canonical_json(ontology_object)
+    assert canonical_json(dispatch_rest(f"/api/data-platform/v1/ontology/objects/Observation/{observation_id}")) == canonical_json(ontology_object)
+
+    action_status = service.get_ontology_action_status()
+    assert action_status["write_mode"] == "overlay_only"
+    assert action_status["enabled"] is False
+    assert service.get_ontology_action_log()["records"] == []
+
+    ontology_neighbors = service.get_ontology_neighbors("Observation", observation_id)
+    neighbors_argument = canonical_json({"object_type": "Observation", "primary_key": observation_id})
+    assert canonical_json(cli_execute("get_ontology_neighbors", neighbors_argument)) == canonical_json(ontology_neighbors)
+    assert canonical_json(dispatch_rest(f"/api/data-platform/v1/ontology/objects/Observation/{observation_id}/neighbors")) == canonical_json(ontology_neighbors)
+    assert {"Issuer", "NormalizedConcept", "Source", "Document"} <= {
+        row["object_type"] for row in ontology_neighbors["neighbors"]
+    }
     assert canonical_json(cli_execute("search_companies", "")) == canonical_json(companies_a)
     assert canonical_json(dispatch_rest("/api/data-platform/v1/companies", "q=")) == canonical_json(companies_a)
 

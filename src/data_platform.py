@@ -5,6 +5,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+from src.ontology_actions import OntologyActionExecutor
+from src.ontology_runtime import OntologyRuntime
+
 STANDARD_SCHEMA_VERSION = "data-platform-standard.v1"
 REPOSITORY = "KAFKA2306/semiconductor-earnings-model"
 MAX_QUERY_LENGTH = 128
@@ -21,6 +24,8 @@ class DataPlatformService:
         self.root = Path(root) if root is not None else Path(__file__).resolve().parents[1]
         self.root = self.root.resolve()
         self.ledger = self.root / "data" / "earnings_ledger"
+        self.ontology = OntologyRuntime(self.root)
+        self.ontology_actions = OntologyActionExecutor(self.root, self.ontology)
 
     def _safe_path(self, relative_path: str) -> Path:
         path = (self.root / relative_path).resolve()
@@ -448,6 +453,139 @@ class DataPlatformService:
             },
         )
         return {"schema_version": STANDARD_SCHEMA_VERSION, "status": status, "records": [record]}
+
+
+    def get_ontology_definition(self) -> dict[str, Any]:
+        definition = self.ontology.describe()
+        record = self._envelope(
+            canonical_id="ontology:semiconductor-financial-research",
+            data_layer="normalized/silver",
+            source_path="ontology/semiconductor.ontology.json",
+            record=definition,
+            source_type="ontology_definition",
+            source_id=definition["ontology_id"],
+            data_as_of=None,
+            generated_at=None,
+            freshness="PASS",
+            stale=False,
+            null_reason=None,
+            derivation_method="ontology_contract_projection",
+            basis="versioned_ontology_definition",
+        )
+        return {
+            "schema_version": STANDARD_SCHEMA_VERSION,
+            "records": [record],
+        }
+
+    def get_ontology_snapshot(self) -> dict[str, Any]:
+        snapshot = self.ontology.build_snapshot()
+        record = self._envelope(
+            canonical_id="ontology-snapshot:semiconductor-financial-research",
+            data_layer="normalized/silver",
+            source_path="ontology/semiconductor.ontology.json",
+            record=snapshot,
+            source_type="ontology_projection",
+            source_id=snapshot["ontology_id"],
+            data_as_of=None,
+            generated_at=None,
+            freshness="PASS",
+            stale=False,
+            null_reason=None,
+            derivation_method="deterministic_ontology_projection",
+            basis="ontology_definition_plus_canonical_repository_data",
+            provenance_extra={
+                "definition_hash": snapshot["definition_hash"],
+                "input_hashes": snapshot["input_hashes"],
+            },
+        )
+        return {
+            "schema_version": STANDARD_SCHEMA_VERSION,
+            "records": [record],
+        }
+
+    def search_ontology_objects(
+        self,
+        object_type: str = "",
+        query: str = "",
+        limit: int = 50,
+    ) -> dict[str, Any]:
+        self._validate_query(query)
+        return self.ontology.search_objects(
+            object_type=object_type,
+            query=query,
+            limit=limit,
+        )
+
+    def get_ontology_object(
+        self,
+        object_type: str,
+        primary_key: str,
+    ) -> dict[str, Any]:
+        if not object_type.strip() or not primary_key.strip():
+            raise ValueError("object_type and primary_key are required")
+        return self.ontology.get_object(
+            object_type=object_type.strip(),
+            primary_key=primary_key.strip(),
+        )
+
+    def get_ontology_neighbors(
+        self,
+        object_type: str,
+        primary_key: str,
+        link_type: str = "",
+    ) -> dict[str, Any]:
+        if not object_type.strip() or not primary_key.strip():
+            raise ValueError("object_type and primary_key are required")
+        return self.ontology.get_neighbors(
+            object_type=object_type.strip(),
+            primary_key=primary_key.strip(),
+            link_type=link_type.strip(),
+        )
+
+
+    def get_ontology_action_status(self) -> dict[str, Any]:
+        return self.ontology_actions.status()
+
+    def get_ontology_action_log(self, limit: int = 100) -> dict[str, Any]:
+        return self.ontology_actions.log(limit=limit)
+
+    def execute_ontology_action(
+        self,
+        *,
+        action_type: str,
+        object_type: str,
+        primary_key: str,
+        parameters: dict[str, Any],
+        idempotency_key: str,
+        expected_version: int | None = None,
+        dry_run: bool = False,
+        authorization_token: str | None = None,
+    ) -> dict[str, Any]:
+        return self.ontology_actions.execute(
+            action_type=action_type,
+            object_type=object_type,
+            primary_key=primary_key,
+            parameters=parameters,
+            idempotency_key=idempotency_key,
+            expected_version=expected_version,
+            dry_run=dry_run,
+            authorization_token=authorization_token,
+        )
+
+    def rollback_ontology_action(
+        self,
+        *,
+        action_id: str,
+        idempotency_key: str,
+        expected_version: int | None = None,
+        authorization_token: str | None = None,
+    ) -> dict[str, Any]:
+        return self.ontology_actions.rollback(
+            action_id=action_id,
+            idempotency_key=idempotency_key,
+            expected_version=expected_version,
+            authorization_token=authorization_token,
+        )
 
 
 _SERVICE: DataPlatformService | None = None

@@ -606,6 +606,10 @@ def main() -> None:
         f"fatal_issues={len(fatal_issues)} offline={args.offline}"
     )
     if fatal_issues:
+        print(
+            "nand_kpi_fatal_issues="
+            + json.dumps(fatal_issues, ensure_ascii=False, sort_keys=True)
+        )
         raise RuntimeError(
             f"NAND collection failed closed with {len(fatal_issues)} fatal issue(s); see {STATE}"
         )

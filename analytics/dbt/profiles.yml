@@ -1,0 +1,7 @@
+semiconductor_medallion:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: target/medallion.duckdb
+      threads: 4

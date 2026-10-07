@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-24T10:11:29+00:00",
+  "generated_at": "2026-10-07T16:48:54+00:00",
   "new_observations": 11,
   "schema_version": "1.0.0",
   "sources": [
@@ -22,5 +22,5 @@
       "status": "ok"
     }
   ],
-  "total_observations": 23
+  "total_observations": 27
 }

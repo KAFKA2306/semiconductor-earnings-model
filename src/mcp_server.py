@@ -15,7 +15,7 @@ _service = DataPlatformService()
 mcp = MCPServer(
     "semiconductor-earnings-data-platform",
     version="1.0.0",
-    description="Read-only deterministic projections of the canonical earnings ledger.",
+    description="Deterministic ontology data platform with controlled overlay-only actions.",
 )
 
 
@@ -65,6 +65,95 @@ def get_publication_snapshot() -> dict[str, Any]:
 def get_data_quality() -> dict[str, Any]:
     """Return deterministic audit, publication, and lineage quality status."""
     return _service.get_data_quality()
+
+
+@mcp.tool()
+def get_ontology_definition() -> dict[str, Any]:
+    """Return the versioned ontology type, link, action, and interface contract."""
+    return _service.get_ontology_definition()
+
+
+@mcp.tool()
+def get_ontology_snapshot() -> dict[str, Any]:
+    """Return deterministic ontology objects and links projected from canonical data."""
+    return _service.get_ontology_snapshot()
+
+
+@mcp.tool()
+def search_ontology_objects(
+    object_type: str = "",
+    query: str = "",
+    limit: int = 50,
+) -> dict[str, Any]:
+    """Search ontology objects by type and text across object properties."""
+    return _service.search_ontology_objects(object_type, query, limit)
+
+
+@mcp.tool()
+def get_ontology_object(
+    object_type: str,
+    primary_key: str,
+) -> dict[str, Any]:
+    """Get one ontology object by type and primary key."""
+    return _service.get_ontology_object(object_type, primary_key)
+
+
+@mcp.tool()
+def get_ontology_neighbors(
+    object_type: str,
+    primary_key: str,
+    link_type: str = "",
+) -> dict[str, Any]:
+    """Traverse incoming and outgoing ontology links for one object."""
+    return _service.get_ontology_neighbors(object_type, primary_key, link_type)
+
+
+@mcp.tool()
+def get_ontology_action_status() -> dict[str, Any]:
+    """Return controlled ontology action execution status."""
+    return _service.get_ontology_action_status()
+
+
+@mcp.tool()
+def get_ontology_action_log(limit: int = 100) -> dict[str, Any]:
+    """Return the hash-chained ontology action log."""
+    return _service.get_ontology_action_log(limit)
+
+
+@mcp.tool()
+def execute_ontology_action(
+    action_type: str,
+    object_type: str,
+    primary_key: str,
+    parameters: dict[str, Any],
+    idempotency_key: str,
+    expected_version: int | None = None,
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Execute an authorized overlay-only ontology action."""
+    return _service.execute_ontology_action(
+        action_type=action_type,
+        object_type=object_type,
+        primary_key=primary_key,
+        parameters=parameters,
+        idempotency_key=idempotency_key,
+        expected_version=expected_version,
+        dry_run=dry_run,
+    )
+
+
+@mcp.tool()
+def rollback_ontology_action(
+    action_id: str,
+    idempotency_key: str,
+    expected_version: int | None = None,
+) -> dict[str, Any]:
+    """Rollback one ontology action when optimistic concurrency permits."""
+    return _service.rollback_ontology_action(
+        action_id=action_id,
+        idempotency_key=idempotency_key,
+        expected_version=expected_version,
+    )
 
 
 def _csv_env(name: str, default: tuple[str, ...]) -> list[str]:

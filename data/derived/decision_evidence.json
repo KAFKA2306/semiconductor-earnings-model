@@ -1,0 +1,165 @@
+{
+  "rows": [
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:3436",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-AVOID-JP3436-DX-2024",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "US:COHR",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-COHR-INP-2026",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "US:INTC",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-INTC-COMMIT-2026",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 1,
+      "demand_evidence_present": true,
+      "entity_id": "JP:285A",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP285A-20260602",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:4021",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP4021-SEMIMAT-PLANT",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:4021",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP4021-SEMIMAT-RD",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:4021",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP4021-VISTA2027-20250515",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:4186",
+      "execution_start_present": true,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP4186-ASO-20260608",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:4186",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP4186-MTP2027",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:4186",
+      "execution_start_present": true,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP4186-PYEONGTAEK-20260915",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:4980",
+      "execution_start_present": false,
+      "funding_source_present": true,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP4980-MTP2028",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:5016",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP5016-20260616",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:6315",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP6315-KOREA-20240510",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "JP:8035",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-JP8035-20250226",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "US:MU",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-MU-2026",
+      "status": "derived_evidence_presence_only"
+    },
+    {
+      "customer_commitment_count": 0,
+      "demand_evidence_present": true,
+      "entity_id": "US:TSM",
+      "execution_start_present": false,
+      "funding_source_present": false,
+      "orders_backlog_rows": 0,
+      "project_id": "CAPEX-TSM-2026",
+      "status": "derived_evidence_presence_only"
+    }
+  ],
+  "schema_version": "decision-evidence.v1"
+}
