@@ -1,0 +1,40 @@
+name: Dependency vulnerability scan
+
+on:
+  pull_request:
+    paths:
+      - '**/package-lock.json'
+      - '**/pnpm-lock.yaml'
+      - '**/yarn.lock'
+      - '**/uv.lock'
+      - '**/poetry.lock'
+      - '**/Pipfile.lock'
+      - '**/requirements.txt'
+      - '**/Cargo.lock'
+      - '**/go.sum'
+      - '**/Gemfile.lock'
+      - '.github/workflows/dependency-vuln.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/package-lock.json'
+      - '**/pnpm-lock.yaml'
+      - '**/yarn.lock'
+      - '**/uv.lock'
+      - '**/poetry.lock'
+      - '**/Pipfile.lock'
+      - '**/requirements.txt'
+      - '**/Cargo.lock'
+      - '**/go.sum'
+      - '**/Gemfile.lock'
+      - '.github/workflows/dependency-vuln.yml'
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-vulnerability:
+    uses: KAFKA2306/agent-resources/.github/workflows/dependency-vuln-reusable.yml@d03f27b59905020a786a21136697b7b63e9f9bfa
