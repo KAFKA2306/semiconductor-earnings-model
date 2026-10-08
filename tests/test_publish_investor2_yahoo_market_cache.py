@@ -553,7 +553,7 @@ def test_post_publishers_execute_only_repo_local_explicit_paths(tmp_path: Path, 
 
     publisher.run_post_publishers(parent)
 
-    assert commands == [([sys.executable, str(child), "--config", str(child_config)], repo)]
+    assert commands == [([sys.executable, "-m", "scripts.child", "--config", str(child_config)], repo)]
 
     outside = tmp_path / "outside.py"
     outside.write_text("# outside\n", encoding="utf-8")
@@ -563,3 +563,34 @@ def test_post_publishers_execute_only_repo_local_explicit_paths(tmp_path: Path, 
     )
     with pytest.raises(ValueError, match="repository Python file"):
         publisher.run_post_publishers(parent)
+
+
+def test_post_publishers_child_imports_repo_modules(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    publisher = importlib.import_module("scripts.publish_investor2_yahoo_market_cache")
+    repo = tmp_path / "repo"
+    scripts = repo / "scripts"
+    configs = repo / "config"
+    scripts.mkdir(parents=True)
+    configs.mkdir(parents=True)
+    driver = scripts / "publish_investor2_yahoo_market_cache.py"
+    driver.write_text("# marker\n", encoding="utf-8")
+    (scripts / "helper.py").write_text("VALUE = 'import-ok'\n", encoding="utf-8")
+    (scripts / "child.py").write_text(
+        "from pathlib import Path\n"
+        "from scripts.helper import VALUE\n"
+        "Path('child-result.txt').write_text(VALUE, encoding='utf-8')\n",
+        encoding="utf-8",
+    )
+    child_config = configs / "child.json"
+    child_config.write_text("{}\n", encoding="utf-8")
+    parent = configs / "parent.json"
+    parent.write_text(
+        json.dumps({"post_publishers": [{"script": "scripts/child.py", "config": "config/child.json"}]}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(publisher, "__file__", str(driver))
+
+    publisher.run_post_publishers(parent)
+
+    assert (repo / "child-result.txt").read_text(encoding="utf-8") == "import-ok"
+
