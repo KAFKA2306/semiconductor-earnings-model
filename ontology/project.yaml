@@ -81,3 +81,19 @@ validation:
   semantic: Period type, value class, unit, concept, scope, revision, and NAND comparability checks.
   evidence: Formula lineage, source wording, filing links, evaluation inputs, and audit-issue generation.
   publication: README Pages URL, Astro build, deployed HTML SHA, and all v1/v2/v3 API outputs are verified.
+
+operational_model:
+  implementation_status: "Ontology typed runtime already implemented via repo CLI/REST/MCP and controlled evidence actions."
+  canonical_sources: ["ontology/semiconductor.ontology.json","docs/ontology-runtime.md","api/v3/financial-database/","docs/star-schema.md"]
+  objects: ["Issuer","Filing","FinancialFact","ReportingPeriod","Metric","Calculation","Scenario","Evaluation","Evidence"]
+  links:
+    - ["Filing","REPORTS","FinancialFact"]
+    - ["FinancialFact","HAS_PERIOD","ReportingPeriod"]
+    - ["Calculation","DERIVES_FROM","FinancialFact"]
+    - ["Evidence","SUPPORTS","Evaluation"]
+  actions:
+    - id: "publish_evidence_validated_financial_research"
+      preconditions: "Each fact contains issuer, filing, reporting period, unit and value type; each derived metric has formula and upstream evidence; scenarios remain separate from observed facts."
+      recorded_effect: "Expose validated financial database and analytics projections with source, calculation and ontology provenance."
+      rollback_or_recovery: "Suppress unsupported figures and mark incomparable periods or missing disclosure UNKNOWN; preserve prior evidence record."
+  outcome_metrics: ["primary_fact_source_coverage","calculation_lineage_coverage","incomparable_fact_count","audit_issue_count"]
