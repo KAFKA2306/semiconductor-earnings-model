@@ -11,6 +11,8 @@
   if (!workspaceApi) throw new Error('WorkspaceState v1 is required');
   const chartEngine = globalThis.SemiconChartEngine;
   if (!chartEngine) throw new Error('Chart engine is required');
+  const dataEngine = globalThis.SemiconDataEngine;
+  if (!dataEngine) throw new Error('Workbench data engine is required');
   const state = workspaceApi.create({
     columns:columns.map(c=>c.key),
     defaultSort:payload.defaultSort || '',
@@ -41,6 +43,7 @@
   const workspaceList = q('[data-workspace-list]');
   const mobileNavDialog = q('[data-mobile-nav-dialog]');
   const linkedStrip = q('[data-linked-strip]');
+  const linkedPanels = q('[data-linked-panels]');
   const chartPanel = q('[data-chart-panel]');
   const watchlistCount = q('[data-watchlist-count]');
   const watchlistFilterButton = q('[data-watchlist-filter]');
@@ -130,17 +133,7 @@
     return escapeHtml(row.capacity_after ?? row.capacity_before);
   };
 
-  const cellValue = (row, key) => {
-    if (key === 'select') return '';
-    if (key === 'company') return row.company || row.name || row.entity_id || '';
-    if (key === 'capex') {
-      const cap = row.capex || {};
-      return cap.high ?? cap.low ?? null;
-    }
-    if (key === 'capacity') return row.capacity_after ?? row.capacity_before ?? null;
-    if (key === 'quality') return row.quality || '';
-    return row[key] ?? '';
-  };
+  const cellValue = dataEngine.cellValue;
 
   const cellHtml = (row, col) => {
     const key = col.key;
@@ -166,6 +159,10 @@
     state.watchlistOnly = params.get('watchlist') === '1';
     state.sortKey = params.get('sort') || state.sortKey;
     state.sortDir = params.has('dir') ? (params.get('dir') === 'desc' ? 'desc' : 'asc') : (payload.defaultDir === 'desc' ? 'desc' : 'asc');
+    const sortsParam=(params.get('sorts') || '').split(',').filter(Boolean).map(item=>{
+      const [key,dir]=item.split(':'); return columns.some(col=>col.key===key) ? {key,dir:dir==='desc'?'desc':'asc'} : null;
+    }).filter(Boolean);
+    state.table.sorts=sortsParam.length ? sortsParam : (state.sortKey ? [{key:state.sortKey,dir:state.sortDir}] : []);
     state.activeId = params.get('row') || null;
     const selected = (params.get('compare') || '').split(',').filter(Boolean);
     state.selected = new Set(selected);
@@ -177,11 +174,13 @@
     };
     state.includeFilters = params.getAll('f').map(parsePair).filter(Boolean);
     state.excludeFilters = params.getAll('x').map(parsePair).filter(Boolean);
+    state.table.columnFilters=Object.fromEntries(params.getAll('cf').map(parsePair).filter(Boolean).map(item=>[item.key,item.value]));
     if (searchInput) searchInput.value = state.query;
     for (const key of ['country','role','quality','status']) {
       const el = q('[data-filter="' + key + '"]');
       if (el) el.value = state[key];
     }
+    qa('[data-column-filter]').forEach(input=>{input.value=state.table.columnFilters[input.getAttribute('data-column-filter')] || ''});
   };
 
   const writeUrl = () => {
@@ -194,6 +193,7 @@
     if (state.watchlistOnly) params.set('watchlist','1');
     if (state.sortKey) params.set('sort', state.sortKey);
     if (state.sortDir === 'desc') params.set('dir','desc');
+    if (state.table.sorts.length > 1) params.set('sorts',state.table.sorts.map(item=>item.key+':'+item.dir).join(','));
     if (state.activeId) params.set('row', state.activeId);
     if (state.selected.size) params.set('compare',[...state.selected].join(','));
     const defaultCols = columns.map(c => c.key);
@@ -201,81 +201,63 @@
     if (visible.length !== defaultCols.length || visible.some((key,idx)=>key !== defaultCols[idx])) params.set('cols',visible.join(','));
     for (const item of state.includeFilters) params.append('f',item.key + '=' + item.value);
     for (const item of state.excludeFilters) params.append('x',item.key + '=' + item.value);
+    for (const [key,value] of Object.entries(state.table.columnFilters)) if(value) params.append('cf',key+'='+value);
     const qs = params.toString();
     history.replaceState(null,'',location.pathname + (qs ? '?' + qs : ''));
   };
 
-  const filteredRows = () => {
-    const needle = state.query.trim().toLowerCase();
-    let out = rows.filter(row => {
-      if (state.country && row.country !== state.country) return false;
-      if (state.role && row.role !== state.role) return false;
-      if (state.quality && row.quality !== state.quality) return false;
-      if (state.status && row.status !== state.status) return false;
-      if (state.watchlistOnly && !state.watchlist.has(row.entity_id)) return false;
-      for (const item of state.includeFilters) {
-        if (String(cellValue(row,item.key) ?? '') !== item.value) return false;
-      }
-      for (const item of state.excludeFilters) {
-        if (String(cellValue(row,item.key) ?? '') === item.value) return false;
-      }
-      if (!needle) return true;
-      const haystack = [
-        row.company,row.name,row.ticker,row.entity_id,row.project_name,row.product,row.technology,
-        row.location,row.status,row.event_type,row.evidence,row.customer,row.metric,row.source_system
-      ].filter(Boolean).join(' ').toLowerCase();
-      return haystack.includes(needle);
-    });
-    if (state.sortKey) {
-      out = [...out].sort((a,b) => {
-        const av = cellValue(a,state.sortKey);
-        const bv = cellValue(b,state.sortKey);
-        if (av == null && bv != null) return 1;
-        if (av != null && bv == null) return -1;
-        if (typeof av === 'number' && typeof bv === 'number') return av - bv;
-        return String(av ?? '').localeCompare(String(bv ?? ''),undefined,{numeric:true,sensitivity:'base'});
-      });
-      if (state.sortDir === 'desc') out.reverse();
-    }
-    return out;
-  };
+  const filteredRows = () => dataEngine.filterSortRows(rows,{
+    query:state.query,country:state.country,role:state.role,quality:state.quality,status:state.status,
+    watchlistOnly:state.watchlistOnly,watchlist:state.watchlist,
+    includeFilters:state.includeFilters,excludeFilters:state.excludeFilters,columnFilters:state.table.columnFilters,
+    sortKey:state.sortKey,sortDir:state.sortDir,sorts:state.table.sorts,
+  });
 
   const renderSortState = () => {
     qa('[data-sort]').forEach(th => {
-      const key = th.getAttribute('data-sort');
-      const active = key && key === state.sortKey;
-      th.setAttribute('aria-sort', active ? (state.sortDir === 'desc' ? 'descending' : 'ascending') : 'none');
-      if (active) th.setAttribute('data-sort-dir',state.sortDir);
-      else th.removeAttribute('data-sort-dir');
+      const key=th.getAttribute('data-sort');
+      const index=state.table.sorts.findIndex(item=>item.key===key);
+      const sort=index>=0 ? state.table.sorts[index] : null;
+      th.setAttribute('aria-sort', index===0 ? (sort.dir==='desc'?'descending':'ascending') : 'none');
+      if(sort){th.setAttribute('data-sort-dir',sort.dir);th.setAttribute('data-sort-order',String(index+1))}
+      else{th.removeAttribute('data-sort-dir');th.removeAttribute('data-sort-order')}
     });
   };
 
   const applyColumnLayout = () => {
     const headRow=q('.wb-table thead tr');
+    const filterRow=q('[data-column-filter-row]');
     if(!headRow) return;
     for(const col of orderedColumns()){
       const th=q('[data-col="' + col.key + '"]');
+      const filterTh=q('[data-filter-col="' + col.key + '"]');
       if(th) headRow.appendChild(th);
+      if(filterTh && filterRow) filterRow.appendChild(filterTh);
     }
     let left=0;
     for(const col of orderedColumns()){
       const key=col.key;
       const th=q('[data-col="' + key + '"]');
+      const filterTh=q('[data-filter-col="' + key + '"]');
       if(!th) continue;
       const width=Number(state.table.widths[key] || col.width || th.getBoundingClientRect().width || 120);
       if(state.table.widths[key]){
         th.style.width=width+'px';th.style.minWidth=width+'px';th.style.maxWidth=width+'px';
+        if(filterTh){filterTh.style.width=width+'px';filterTh.style.minWidth=width+'px';filterTh.style.maxWidth=width+'px'}
         qa('td[data-cell-key="' + key + '"]').forEach(td=>{td.style.width=width+'px';td.style.minWidth=width+'px';td.style.maxWidth=width+'px'});
       }
       const pinned=state.table.pinned.has(key);
       th.classList.toggle('wb-pinned',pinned);
+      filterTh?.classList.toggle('wb-pinned',pinned);
       qa('td[data-cell-key="' + key + '"]').forEach(td=>td.classList.toggle('wb-pinned',pinned));
       if(pinned){
         th.style.left=left+'px';
+        if(filterTh) filterTh.style.left=left+'px';
         qa('td[data-cell-key="' + key + '"]').forEach(td=>td.style.left=left+'px');
         left+=width;
       } else {
         th.style.left='';
+        if(filterTh) filterTh.style.left='';
         qa('td[data-cell-key="' + key + '"]').forEach(td=>td.style.left='');
       }
     }
@@ -308,9 +290,35 @@
     });
   };
 
+  let keyboardAnchorId=null;
+  const focusRowByOffset = (currentId,delta) => {
+    const visible=filteredRows();
+    const index=visible.findIndex(row=>row.id===currentId);
+    if(index<0) return;
+    const target=visible[Math.max(0,Math.min(visible.length-1,index+delta))];
+    if(!target) return;
+    const tr=q('[data-row="' + CSS.escape(target.id) + '"]');
+    if(tr){tr.focus({preventScroll:true});tr.scrollIntoView({block:'nearest'});return}
+    const absoluteIndex=visible.findIndex(row=>row.id===target.id);
+    if(tableWrap){tableWrap.scrollTop=Math.max(0,absoluteIndex*35-35);renderTable();requestAnimationFrame(()=>q('[data-row="' + CSS.escape(target.id) + '"]')?.focus({preventScroll:true}))}
+  };
+  const selectRange = (fromId,toId) => {
+    const visible=filteredRows();
+    const a=visible.findIndex(row=>row.id===fromId),b=visible.findIndex(row=>row.id===toId);
+    if(a<0||b<0) return;
+    const [start,end]=a<b?[a,b]:[b,a];
+    for(const row of visible.slice(start,end+1)) state.selected.add(row.id);
+    renderCompare();renderTable();writeUrl();
+  };
+  const toggleKeyboardSelection = (id,rangeMode) => {
+    if(rangeMode && keyboardAnchorId) selectRange(keyboardAnchorId,id);
+    else {workspaceApi.toggleSelected(state,id);keyboardAnchorId=id;renderCompare();renderTable();writeUrl()}
+  };
+
   const renderTable = () => {
     renderSortState();
     qa('[data-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-col'))));
+    qa('[data-filter-col]').forEach(th => th.classList.toggle('wb-hidden', !state.visibleColumns.has(th.getAttribute('data-filter-col'))));
     const visible = filteredRows();
     if (resultCount) resultCount.textContent = visible.length.toLocaleString();
     if (!tableBody) return;
@@ -356,10 +364,21 @@
     qa('[data-row]').forEach(tr => {
       tr.addEventListener('click', ev => {
         if (ev.target.closest('input,button,a')) return;
-        openInspector(tr.getAttribute('data-row'));
+        const id=tr.getAttribute('data-row');
+        if(ev.shiftKey){ev.preventDefault();toggleKeyboardSelection(id,true);return}
+        if(ev.metaKey||ev.ctrlKey){ev.preventDefault();toggleKeyboardSelection(id,false);return}
+        keyboardAnchorId=id;
+        openInspector(id);
       });
       tr.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openInspector(tr.getAttribute('data-row')); }
+        const id=tr.getAttribute('data-row');
+        if(ev.key==='ArrowDown'||ev.key==='ArrowUp'){ev.preventDefault();focusRowByOffset(id,ev.key==='ArrowDown'?1:-1);return}
+        if(ev.key==='Enter'){ev.preventDefault();openInspector(id);return}
+        if(ev.key===' '){ev.preventDefault();toggleKeyboardSelection(id,ev.shiftKey);return}
+        if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==='c'){
+          const company=rows.find(row=>row.id===id)?.company || '';
+          navigator.clipboard?.writeText(company).then(()=>toast('Row copied')).catch(()=>{});
+        }
       });
     });
     qa('td[data-cell-key]').forEach(td => td.addEventListener('contextmenu', ev => {
@@ -508,6 +527,8 @@
     if (!compareBar || !compareCount) return;
     compareCount.textContent = state.selected.size;
     compareBar.classList.toggle('open',state.selected.size > 0);
+    renderLinkedPanels();
+    renderChart();
   };
 
   const metric = (label,value) => '<div class="wb-metric"><span>' + escapeHtml(label) + '</span><strong>' + (value || '<span class="wb-null">—</span>') + '</strong></div>';
@@ -588,12 +609,111 @@
       ['Financials',linked.financials],
       ['Facilities',linked.facilities],
       ['Evidence',linked.evidence],
+      ['Activity',linked.activity],
       ['Commitments',linked.commitments],
     ];
     linkedStrip.innerHTML =
       '<strong>' + escapeHtml(row.company || row.name || row.entity_id) + '</strong>' +
       specs.map(([label,items])=>'<span><b>' + (Array.isArray(items)?items.length:0) + '</b> ' + label + '</span>').join('');
     linkedStrip.hidden = false;
+  };
+
+  const lifecycleStages = row => {
+    const linked=row?.entity_id ? (linkedByEntity[row.entity_id] || {}) : {};
+    const stages=['Demand','Customer','Constraint','CapEx','Build','Prod','Revenue','ROIC'];
+    const active=new Set();
+    if(row?.demand_evidence || row?.evidence || (linked.evidence?.length || 0) || (linked.activity?.length || 0)) active.add('Demand');
+    if(row?.customer_commitment || row?.customer || (linked.commitments?.length || 0)) active.add('Customer');
+    if(row?.capacity_before != null || row?.capacity_after != null) active.add('Constraint');
+    if(row?.capex && (row.capex.low != null || row.capex.high != null)) active.add('CapEx');
+    const text=[row?.status,row?.project_name,...(linked.projects||[]).map(item=>item.status)].filter(Boolean).join(' ');
+    if(/build|construction|facility|plant/i.test(text)) active.add('Build');
+    if(row?.production_start || /operational|production|realized|ramping/i.test(text)) active.add('Prod');
+    if((linked.financials||[]).some(item=>/revenue|sales/i.test(item.concept_id || ''))) active.add('Revenue');
+    if((linked.financials||[]).some(item=>/roic|return_on|return.*capital/i.test(item.concept_id || ''))) active.add('ROIC');
+    return stages.map(stage=>({stage,on:active.has(stage)}));
+  };
+
+  const linkedListHtml = (items,{name='record',meta='target_date',limit=4,source=false}={}) => {
+    const list=(Array.isArray(items)?items:[]).slice(0,limit);
+    if(!list.length) return '<p class="wb-linked-empty">No canonical records</p>';
+    return '<ul class="wb-linked-panel-list">' + list.map(item=>{
+      const label=item[name] || item.project_name || item.concept_id || item.facility_name || item.customer_name || item.change_type || item.event_type || item.id || 'record';
+      const detail=item[meta] || item.status || item.period_end || item.event_type || '';
+      const body='<span><strong>'+escapeHtml(label)+'</strong>'+(detail?'<small>'+escapeHtml(detail)+'</small>':'')+'</span>';
+      return '<li>'+(source && item.source_url ? '<a href="'+escapeHtml(item.source_url)+'" target="_blank" rel="noreferrer">'+body+'<b>↗</b></a>' : body)+'</li>';
+    }).join('') + '</ul>';
+  };
+
+  const linkedStageFor = item => {
+    const text=[item?.change_type,item?.event_type,item?.status,item?.project_name,item?.concept_id].filter(Boolean).join(' ').toLowerCase();
+    if(/customer|commitment|agreement|lta/.test(text)) return 'Customer';
+    if(/capacity|constraint|wafer/.test(text)) return 'Constraint';
+    if(/capex|invest/.test(text)) return 'CapEx';
+    if(/build|construction|facility|fab|plant/.test(text)) return 'Build';
+    if(/production|operational|ramp/.test(text)) return 'Prod';
+    if(/revenue|sales/.test(text)) return 'Revenue';
+    if(/roic|return.*capital/.test(text)) return 'ROIC';
+    return 'Demand';
+  };
+
+  const renderLinkedPanels = () => {
+    if(!linkedPanels) return;
+    if(!state.widgets.visible.has('linked')){
+      linkedPanels.hidden=true;linkedPanels.innerHTML='';return;
+    }
+    const activeRow=rows.find(row=>row.id===state.active.rowId) || null;
+    const selectedRows=rows.filter(row=>state.selected.has(row.id)).slice(0,6);
+    if(!activeRow && !selectedRows.length){
+      linkedPanels.hidden=true;linkedPanels.innerHTML='';return;
+    }
+
+    const compareHtml=selectedRows.length ? '<section class="wb-linked-panel wb-compare-summary"><header><strong>Linked Compare</strong><span>'+selectedRows.length+' selected</span></header><div class="wb-compare-linked">' +
+      selectedRows.map(row=>{
+        const linked=row.entity_id ? (linkedByEntity[row.entity_id] || {}) : {};
+        const financial=(linked.financials||[])[0];
+        const stages=lifecycleStages(row).filter(item=>item.on).map(item=>item.stage);
+        return '<div><strong>'+escapeHtml(row.company || row.name || row.entity_id || row.id)+'</strong>' +
+          '<small>'+escapeHtml(financial ? ((financial.concept_id||'financial')+': '+chartValueText(financial.value)+(financial.unit?' '+financial.unit:'')) : 'No linked financial')+'</small>' +
+          '<span>'+escapeHtml(stages.length?stages.join(' → '):'No lifecycle signal')+'</span></div>';
+      }).join('') + '</div></section>' : '';
+
+    if(!activeRow?.entity_id){
+      linkedPanels.innerHTML=compareHtml;
+      linkedPanels.hidden=false;
+      return;
+    }
+
+    const linked=linkedByEntity[activeRow.entity_id] || {};
+    const lifecycle=lifecycleStages(activeRow);
+    const stageFilter=state.analysis.lifecycleStage;
+    const evidenceItems=(linked.evidence||[]).filter(item=>!stageFilter || linkedStageFor(item)===stageFilter);
+    const activityItems=(linked.activity||[]).filter(item=>!stageFilter || linkedStageFor(item)===stageFilter);
+    const timeline=[...activityItems,...evidenceItems]
+      .filter(item=>item.source_url)
+      .sort((a,b)=>String(b.target_date||'').localeCompare(String(a.target_date||'')));
+
+    linkedPanels.innerHTML=compareHtml +
+      '<section class="wb-linked-panel"><header><strong>Financial</strong><span>'+(linked.financials?.length||0)+'</span></header>' +
+        linkedListHtml(linked.financials,{name:'concept_id',meta:'target_date',source:true}) + '</section>' +
+      '<section class="wb-linked-panel wb-lifecycle-panel"><header><strong>Lifecycle</strong><button type="button" data-clear-lifecycle'+(stageFilter?'':' disabled')+'>'+(stageFilter?escapeHtml(stageFilter)+' ×':'All evidence')+'</button></header><div class="wb-lifecycle-mini">' +
+        lifecycle.map(item=>'<button type="button" data-lifecycle-stage="'+escapeHtml(item.stage)+'" class="'+(item.on?'on ':'')+(stageFilter===item.stage?'active':'')+'" '+(item.on?'':'disabled')+'><i></i>'+escapeHtml(item.stage)+'</button>').join('') + '</div></section>' +
+      '<section class="wb-linked-panel"><header><strong>Evidence</strong><span>'+evidenceItems.length+(stageFilter?' · '+escapeHtml(stageFilter):'')+'</span></header>' +
+        linkedListHtml(evidenceItems,{name:'project_name',meta:'event_type',source:true}) + '</section>' +
+      '<section class="wb-linked-panel"><header><strong>Activity</strong><span>'+activityItems.length+(stageFilter?' · '+escapeHtml(stageFilter):'')+'</span></header>' +
+        linkedListHtml(activityItems,{name:'change_type',meta:'target_date',source:true}) + '</section>' +
+      '<section class="wb-linked-panel"><header><strong>Source Timeline</strong><span>'+timeline.length+'</span></header>' +
+        linkedListHtml(timeline,{name:'project_name',meta:'target_date',source:true,limit:5}) + '</section>';
+    linkedPanels.hidden=false;
+
+    qa('[data-lifecycle-stage]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.analysis.lifecycleStage=btn.getAttribute('data-lifecycle-stage') || null;
+      renderLinkedPanels();
+    }));
+    q('[data-clear-lifecycle]')?.addEventListener('click',()=>{
+      state.analysis.lifecycleStage=null;
+      renderLinkedPanels();
+    });
   };
 
   const applyInspectorTab = tab => {
@@ -661,6 +781,7 @@
     }));
     applyInspectorTab(state.inspector.tab || 'overview');
     renderLinkedStrip();
+    renderLinkedPanels();
     renderTable();
     writeUrl();
   };
@@ -671,6 +792,7 @@
     workspace?.classList.remove('has-inspector');
     if (inspector) inspector.innerHTML = '';
     renderLinkedStrip();
+    renderLinkedPanels();
     renderTable();
     writeUrl();
   };
@@ -802,9 +924,11 @@
     chartPanel.style.height=Number(state.widgets.sizes.chartHeight || 170)+'px';
     root.style.setProperty('--wb-inspector',Number(state.widgets.sizes.inspectorWidth || 390)+'px');
     const activeRow=rows.find(r=>r.id===state.active.rowId) || null;
-    const model=chartEngine.build({view:payload.view,rows:filteredRows(),activeRow,requestedType:state.analysis.chartType});
+    const selectedRows=rows.filter(r=>state.selected.has(r.id));
+    const chartRows=selectedRows.length ? selectedRows : filteredRows();
+    const model=chartEngine.build({view:payload.view,rows:chartRows,activeRow,requestedType:state.analysis.chartType});
     const supported=['auto','bar','pie','line'];
-    chartPanel.innerHTML='<div class="wb-chart-head"><div><strong>'+escapeHtml(model.title)+'</strong><small>'+escapeHtml(model.valueLabel || '')+'</small></div><div class="wb-chart-types">' +
+    chartPanel.innerHTML='<div class="wb-chart-head"><div><strong>'+escapeHtml(model.title)+'</strong><small>'+(selectedRows.length?escapeHtml(selectedRows.length+' selected · '):'')+escapeHtml(model.valueLabel || '')+'</small></div><div class="wb-chart-types">' +
       supported.map(type=>'<button type="button" data-chart-type="'+type+'" class="'+(state.analysis.chartType===type?'active':'')+'">'+type+'</button>').join('') +
       '</div></div><div class="wb-chart-body">' +
       (model.type==='bar'?barChartHtml(model):model.type==='line'?lineChartHtml(model):model.type==='pie'?pieChartHtml(model):'<div class="wb-empty">No chartable data for this screen.</div>') +
@@ -860,6 +984,7 @@
   const applyWidgetState = () => {
     root.dataset.workspaceLayout=state.widgets.layout || 'default';
     renderLinkedStrip();
+    renderLinkedPanels();
     renderChart();
     root.style.setProperty('--wb-inspector',Number(state.widgets.sizes.inspectorWidth || 390)+'px');
   };
@@ -870,6 +995,7 @@
       if(el) el.value=state[key] || '';
     }
     renderWatchlistState();
+    qa('[data-column-filter]').forEach(input=>{input.value=state.table.columnFilters[input.getAttribute('data-column-filter')] || ''});
     renderColumnDialog();
     renderSortState();
     renderTable();
@@ -994,14 +1120,30 @@
   hydrateSelect('status',[...new Set(rows.map(r=>r.status))]);
 
   searchInput?.addEventListener('input',()=>{ state.query=searchInput.value; renderTable(); writeUrl(); });
-  qa('[data-sort]').forEach(th=>th.addEventListener('click',()=>{
+  qa('[data-sort]').forEach(th=>th.addEventListener('click',ev=>{
+    if(ev.target.closest('[data-resize-col]')) return;
     const key=th.getAttribute('data-sort');
-    if(state.sortKey===key) state.sortDir=state.sortDir==='asc'?'desc':'asc'; else {state.sortKey=key;state.sortDir='asc'}
+    const index=state.table.sorts.findIndex(item=>item.key===key);
+    if(ev.shiftKey){
+      if(index>=0) state.table.sorts[index].dir=state.table.sorts[index].dir==='asc'?'desc':'asc';
+      else state.table.sorts.push({key,dir:'asc'});
+    }else{
+      const dir=index===0 && state.table.sorts[0]?.dir==='asc' ? 'desc' : 'asc';
+      state.table.sorts=[{key,dir}];
+    }
+    state.sortKey=state.table.sorts[0]?.key || '';
+    state.sortDir=state.table.sorts[0]?.dir || 'asc';
     renderTable(); writeUrl();
   }));
+  qa('[data-column-filter]').forEach(input=>input.addEventListener('input',()=>{
+    const key=input.getAttribute('data-column-filter');
+    if(input.value) state.table.columnFilters[key]=input.value; else delete state.table.columnFilters[key];
+    renderTable();writeUrl();
+  }));
   q('[data-clear-filters]')?.addEventListener('click',()=>{
-    state.query='';state.country='';state.role='';state.quality='';state.status='';
+    state.query='';state.country='';state.role='';state.quality='';state.status='';state.table.columnFilters={};
     if(searchInput)searchInput.value='';
+    qa('[data-column-filter]').forEach(input=>{input.value=''});
     for(const key of ['country','role','quality','status']){const el=q('[data-filter="'+key+'"]');if(el)el.value=''}
     renderTable();writeUrl();
   });
@@ -1069,7 +1211,19 @@
     if(ev.key==='Escape'&&state.activeId){closeInspector();return}
   });
 
-  state.subscribe((_,type)=>{ if(type==='active'){renderLinkedStrip();renderChart()} });
-  renderColumnDialog(); renderSavedViews(); renderSavedWorkspaces(); renderSortState(); renderWatchlistState(); renderTable(); renderCompare(); renderLinkedStrip(); applyWidgetState();
+  globalThis.SemiconWorkbenchDebug={
+    state,
+    filteredRows,
+    run500RowPerformance:()=>dataEngine.performanceFixture({count:500,iterations:80}),
+    activateFirst:()=>{
+      const first=filteredRows()[0];
+      if(!first) return null;
+      const start=performance.now();
+      openInspector(first.id);
+      return {active_id:first.id,elapsed_ms:performance.now()-start};
+    },
+  };
+  state.subscribe((_,type)=>{ if(type==='active'||type==='selected'){renderLinkedStrip();renderLinkedPanels();renderChart()} });
+  renderColumnDialog(); renderSavedViews(); renderSavedWorkspaces(); renderSortState(); renderWatchlistState(); renderTable(); renderCompare(); renderLinkedStrip(); renderLinkedPanels(); applyWidgetState();
   if(state.activeId) openInspector(state.activeId);
 })();

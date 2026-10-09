@@ -51,7 +51,19 @@
 
   const build = ({view,rows=[],activeRow=null,requestedType='auto'}={}) => {
     let model=null;
-    if(view==='financials') model=lineFromActive(activeRow || rows[0]);
+    if(view==='financials') {
+      if(rows.length > 1){
+        const data=rows.map(row=>({
+          label:[row.company || row.entity_id,row.concept_id].filter(Boolean).join(' · '),
+          value:finite(row.value),
+          filterKey:'company',
+          filterValue:row.company || row.entity_id || '',
+          recordId:row.id || null,
+          sourceUrl:row.source_url || null,
+        })).filter(point=>point.label && point.value!=null);
+        model=data.length ? {type:'bar',title:'Selected financial observations',data,valueLabel:'Value'} : lineFromActive(activeRow || rows[0]);
+      } else model=lineFromActive(activeRow || rows[0]);
+    }
     else if(view==='projects'){
       const data=grouped(rows,'company',capexValue);
       model={type:'bar',title:'CapEx by company',data:data.length?data:counted(rows,'company'),valueLabel:data.length?'CapEx':'Projects'};

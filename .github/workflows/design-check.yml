@@ -168,3 +168,41 @@ jobs:
           grep -Fq 'data-command' site/dist/index.html
           grep -Fq 'data-inspector' site/dist/index.html
           grep -Fq 'data-compare-bar' site/dist/index.html
+          for page in site/dist/china-ai/index.html site/dist/investment-policy/index.html site/dist/ledger/index.html; do
+            test -s "$page"
+            grep -Fq 'data-aux-workbench' "$page"
+            grep -Fq 'assets/aux-workbench.css' "$page"
+            ! grep -Fq 'pastel-watercolor.css' "$page"
+          done
+
+      - name: Capture responsive visual evidence
+        working-directory: site
+        run: |
+          set -euo pipefail
+          npx --yes playwright@1.55.0 install chromium
+          npm run preview -- --host 127.0.0.1 --port 4321 >/tmp/workbench-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS "http://127.0.0.1:4321/semiconductor-earnings-model/" >/dev/null; then break; fi
+            sleep 1
+          done
+          mkdir -p visual-evidence
+          row_id="$(jq -r '.projects[0].project_id' dist/api/v2/projects/index.json)"
+          encoded_row="$(python -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$row_id")"
+          url="http://127.0.0.1:4321/semiconductor-earnings-model/?row=$encoded_row"
+          npx --yes playwright@1.55.0 screenshot --viewport-size="1440,900" --wait-for-timeout=900 "$url" visual-evidence/workbench-1440x900.png
+          npx --yes playwright@1.55.0 screenshot --viewport-size="1366,768" --wait-for-timeout=900 "$url" visual-evidence/workbench-1366x768.png
+          npx --yes playwright@1.55.0 screenshot --viewport-size="390,844" --wait-for-timeout=900 "http://127.0.0.1:4321/semiconductor-earnings-model/" visual-evidence/workbench-390x844-grid.png
+          npx --yes playwright@1.55.0 screenshot --viewport-size="390,844" --wait-for-timeout=900 "$url" visual-evidence/workbench-390x844-inspector.png
+          test -s visual-evidence/workbench-1440x900.png
+          test -s visual-evidence/workbench-1366x768.png
+          test -s visual-evidence/workbench-390x844-grid.png
+          test -s visual-evidence/workbench-390x844-inspector.png
+
+      - name: Upload visual evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: workbench-visual-evidence-${{ github.sha }}
+          path: site/visual-evidence
+          if-no-files-found: error
