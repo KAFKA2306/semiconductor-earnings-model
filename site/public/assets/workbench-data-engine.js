@@ -19,6 +19,10 @@
       if(state.quality && row.quality!==state.quality) return false;
       if(state.status && row.status!==state.status) return false;
       if(state.watchlistOnly && !state.watchlist?.has(row.entity_id)) return false;
+      for(const [key,value] of Object.entries(state.columnFilters || {})){
+        const needle=String(value || '').trim().toLowerCase();
+        if(needle && !String(cellValue(row,key) ?? '').toLowerCase().includes(needle)) return false;
+      }
       for(const item of state.includeFilters || []){
         if(String(cellValue(row,item.key) ?? '')!==String(item.value)) return false;
       }
@@ -32,15 +36,20 @@
       ].filter(Boolean).join(' ').toLowerCase();
       return haystack.includes(needle);
     });
-    if(state.sortKey){
+    const sorts=Array.isArray(state.sorts) && state.sorts.length ? state.sorts : (state.sortKey ? [{key:state.sortKey,dir:state.sortDir||'asc'}] : []);
+    if(sorts.length){
       out=[...out].sort((a,b)=>{
-        const av=cellValue(a,state.sortKey),bv=cellValue(b,state.sortKey);
-        if(av==null && bv!=null) return 1;
-        if(av!=null && bv==null) return -1;
-        if(typeof av==='number' && typeof bv==='number') return av-bv;
-        return String(av ?? '').localeCompare(String(bv ?? ''),undefined,{numeric:true,sensitivity:'base'});
+        for(const sort of sorts){
+          const av=cellValue(a,sort.key),bv=cellValue(b,sort.key);
+          let cmp=0;
+          if(av==null && bv!=null) cmp=1;
+          else if(av!=null && bv==null) cmp=-1;
+          else if(typeof av==='number' && typeof bv==='number') cmp=av-bv;
+          else cmp=String(av ?? '').localeCompare(String(bv ?? ''),undefined,{numeric:true,sensitivity:'base'});
+          if(cmp) return sort.dir==='desc' ? -cmp : cmp;
+        }
+        return 0;
       });
-      if(state.sortDir==='desc') out.reverse();
     }
     return out;
   };
@@ -63,8 +72,9 @@
     for(let i=0;i<iterations;i++){
       const state={
         query:i%2?'Company':'Fab',country:i%3===0?'Japan':'',role:'',quality:'',status:'',
-        watchlistOnly:false,watchlist:new Set(),includeFilters:[],excludeFilters:[],
+        watchlistOnly:false,watchlist:new Set(),includeFilters:[],excludeFilters:[],columnFilters:i%4===0?{status:'Plan'}:{},
         sortKey:i%2?'company':'capex',sortDir:i%3===0?'desc':'asc',
+        sorts:i%5===0?[{key:'country',dir:'asc'},{key:'capex',dir:'desc'}]:[],
       };
       const start=performance.now();
       filterSortRows(rows,state);

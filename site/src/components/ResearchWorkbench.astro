@@ -222,6 +222,11 @@ for (const row of evidenceRows) {
   if (!evidenceByEntity.has(row.entity_id)) evidenceByEntity.set(row.entity_id, []);
   evidenceByEntity.get(row.entity_id).push(row);
 }
+const activityByEntity = new Map();
+for (const row of activityRows) {
+  if (!activityByEntity.has(row.entity_id)) activityByEntity.set(row.entity_id, []);
+  activityByEntity.get(row.entity_id).push(row);
+}
 const facilityByEntity = new Map();
 for (const row of facilityRows) {
   if (!facilityByEntity.has(row.entity_id)) facilityByEntity.set(row.entity_id, []);
@@ -233,10 +238,11 @@ for (const row of commitments) {
   commitmentsByEntity.get(row.entity_id).push(row);
 }
 const compactLinked = (row, kind) => {
-  if (kind === 'projects') return {id:row.id,project_name:row.project_name,status:row.status,target_date:row.target_date};
-  if (kind === 'evidence') return {id:row.id,project_name:row.project_name,event_type:row.event_type,status:row.status,target_date:row.target_date};
-  if (kind === 'facilities') return {id:row.id,facility_name:row.project_name,location:row.location,target_date:row.target_date};
-  if (kind === 'financials') return {id:row.id,concept_id:row.concept_id,value:row.value,unit:row.unit,target_date:row.target_date};
+  if (kind === 'projects') return {id:row.id,project_name:row.project_name,status:row.status,target_date:row.target_date,source_url:row.source_url};
+  if (kind === 'evidence') return {id:row.id,project_name:row.project_name,event_type:row.event_type,status:row.status,target_date:row.target_date,source_url:row.source_url,source_system:row.source_system};
+  if (kind === 'activity') return {id:row.id,project_name:row.project_name,change_type:row.change_type,event_type:row.event_type,status:row.status,target_date:row.target_date,source_url:row.source_url};
+  if (kind === 'facilities') return {id:row.id,facility_name:row.project_name,location:row.location,target_date:row.target_date,source_url:row.source_url};
+  if (kind === 'financials') return {id:row.id,concept_id:row.concept_id,value:row.value,unit:row.unit,target_date:row.target_date,source_url:row.source_url};
   if (kind === 'commitments') return {id:row.commitment_id,customer_name:row.customer_name,commitment_type:row.commitment_type,status:row.contract_status,period_end:row.period_end};
   return {id:row.id};
 };
@@ -245,6 +251,7 @@ const linkedByEntity = Object.fromEntries(entities.map((e) => {
   return [id, {
     projects:(projectByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'projects')),
     evidence:(evidenceByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'evidence')),
+    activity:(activityByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'activity')),
     facilities:(facilityByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'facilities')),
     financials:(financialByEntity.get(id) || []).slice(0,24).map(row=>compactLinked(row,'financials')),
     commitments:(commitmentsByEntity.get(id) || []).slice(0,12).map(row=>compactLinked(row,'commitments')),
@@ -322,14 +329,20 @@ const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
 
     <section class="wb-linked-strip" data-linked-strip aria-label="Linked active context" hidden></section>
     <section class="wb-chart-panel" data-chart-panel aria-label="Interactive chart"></section>
+    <section class="wb-linked-panels" data-linked-panels aria-label="Linked research panels" hidden></section>
 
     <div class="wb-workspace" data-workspace>
       <section class="wb-grid-panel" aria-label={title + ' data grid'}>
         <div class="wb-table-wrap">
           <table class="wb-table">
-            <thead><tr>{activeColumns.map((col) => (
-              <th class={col.numeric ? 'num' : ''} data-col={col.key} data-sort={col.key === 'select' ? undefined : col.key} aria-sort={col.key === 'select' ? undefined : 'none'} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
-            ))}</tr></thead>
+            <thead>
+              <tr>{activeColumns.map((col) => (
+                <th class={col.numeric ? 'num' : ''} data-col={col.key} data-sort={col.key === 'select' ? undefined : col.key} aria-sort={col.key === 'select' ? undefined : 'none'} style={col.width ? 'width:' + col.width + 'px' : undefined}>{col.label}</th>
+              ))}</tr>
+              <tr class="wb-column-filter-row" data-column-filter-row>{activeColumns.map((col) => (
+                <th data-filter-col={col.key}>{col.key === 'select' ? '' : <input type="search" data-column-filter={col.key} aria-label={'Filter ' + col.label} placeholder="filter…" />}</th>
+              ))}</tr>
+            </thead>
             <tbody data-table-body></tbody>
           </table>
         </div>

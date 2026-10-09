@@ -10,6 +10,18 @@ vm.runInContext(source,context);
 const api=context.globalThis.SemiconDataEngine;
 if(!api) throw new Error('Workbench data engine missing');
 
+const deterministicRows=[
+  {id:'1',company:'B',country:'Japan',status:'Planned',capex:{high:20}},
+  {id:'2',company:'A',country:'Japan',status:'Operational',capex:{high:30}},
+  {id:'3',company:'C',country:'US',status:'Planned',capex:{high:10}},
+];
+const deterministic=api.filterSortRows(deterministicRows,{
+  query:'',country:'',role:'',quality:'',status:'',watchlistOnly:false,watchlist:new Set(),
+  includeFilters:[],excludeFilters:[],columnFilters:{status:'Plan'},
+  sorts:[{key:'country',dir:'asc'},{key:'capex',dir:'desc'}],
+});
+if(deterministic.length!==2 || deterministic[0].id!=='1' || deterministic[1].id!=='3') throw new Error('Multi-sort/column-filter determinism failed');
+
 const result=api.performanceFixture({count:500,iterations:100});
 if(result.p95_ms>150) throw new Error('500-row filter/sort p95 exceeded 150ms: '+result.p95_ms.toFixed(2));
 
