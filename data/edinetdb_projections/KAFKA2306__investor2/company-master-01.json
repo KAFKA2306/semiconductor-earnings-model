@@ -7,8 +7,8 @@
   "provider_terms": "https://edinetdb.jp/legal/terms",
   "source_endpoint": "/v1/companies",
   "request_fingerprint": "2e1e0a9684b3d280cb2ebf6feddd085cdc9153ce0e622c33203f4c2a7c0955e0",
-  "fetched_at": "2026-10-08T02:43:50Z",
-  "response_sha256": "b78c64d65c6f0aad160c0b130108e60f455d8845b12d32859ed8ce18f5295493",
+  "fetched_at": "2026-10-09T02:58:33Z",
+  "response_sha256": "78a0464ca769eaf2b31046a4cce0ce04baab33d361277d37f51e57d6856435ac",
   "record_count": 1,
   "records": [
     {
