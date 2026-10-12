@@ -489,39 +489,6 @@
       ]
     },
     {
-      "id": "mu:2023-11-30:cash-paid-for-property-plant-equipment:actual",
-      "entity": "Micron Technology, Inc.",
-      "ticker": "MU",
-      "cik": "0000723125",
-      "concept_id": "cash_paid_for_property_plant_equipment",
-      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
-      "value_type": "actual",
-      "value": 1796000000,
-      "unit": "USD",
-      "period_end": "2023-11-30",
-      "period_type": "quarter",
-      "fiscal_year": 2024,
-      "fiscal_period": "Q1",
-      "as_of": "2023-12-21",
-      "source_tier": "primary_regulatory",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
-      "formula": "Q1 year-to-date",
-      "source_facts": [
-        {
-          "start": "2023-09-01",
-          "end": "2023-11-30",
-          "val": 1796000000,
-          "accn": "0000723125-23-000077",
-          "filed": "2023-12-21",
-          "form": "10-Q",
-          "fy": 2024,
-          "fp": "Q1"
-        }
-      ]
-    },
-    {
       "id": "avgo:2024-02-04:cash-paid-for-property-plant-equipment:actual",
       "entity": "Broadcom Inc.",
       "ticker": "AVGO",
@@ -548,49 +515,6 @@
           "val": 122000000,
           "accn": "0001730168-24-000023",
           "filed": "2024-03-14",
-          "form": "10-Q",
-          "fy": 2024,
-          "fp": "Q1"
-        }
-      ]
-    },
-    {
-      "id": "mu:2024-02-29:cash-paid-for-property-plant-equipment:actual",
-      "entity": "Micron Technology, Inc.",
-      "ticker": "MU",
-      "cik": "0000723125",
-      "concept_id": "cash_paid_for_property_plant_equipment",
-      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
-      "value_type": "actual",
-      "value": 1384000000,
-      "unit": "USD",
-      "period_end": "2024-02-29",
-      "period_type": "quarter",
-      "fiscal_year": 2024,
-      "fiscal_period": "Q2",
-      "as_of": "2024-03-21",
-      "source_tier": "primary_regulatory",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
-      "formula": "Q2 year-to-date - Q1 year-to-date",
-      "source_facts": [
-        {
-          "start": "2023-09-01",
-          "end": "2024-02-29",
-          "val": 3180000000,
-          "accn": "0000723125-24-000007",
-          "filed": "2024-03-21",
-          "form": "10-Q",
-          "fy": 2024,
-          "fp": "Q2"
-        },
-        {
-          "start": "2023-09-01",
-          "end": "2023-11-30",
-          "val": 1796000000,
-          "accn": "0000723125-23-000077",
-          "filed": "2023-12-21",
           "form": "10-Q",
           "fy": 2024,
           "fp": "Q1"
@@ -769,49 +693,6 @@
           "form": "10-Q",
           "fy": 2024,
           "fp": "Q1"
-        }
-      ]
-    },
-    {
-      "id": "mu:2024-05-30:cash-paid-for-property-plant-equipment:actual",
-      "entity": "Micron Technology, Inc.",
-      "ticker": "MU",
-      "cik": "0000723125",
-      "concept_id": "cash_paid_for_property_plant_equipment",
-      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
-      "value_type": "actual",
-      "value": 2086000000,
-      "unit": "USD",
-      "period_end": "2024-05-30",
-      "period_type": "quarter",
-      "fiscal_year": 2024,
-      "fiscal_period": "Q3",
-      "as_of": "2024-06-27",
-      "source_tier": "primary_regulatory",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
-      "formula": "Q3 year-to-date - Q2 year-to-date",
-      "source_facts": [
-        {
-          "start": "2023-09-01",
-          "end": "2024-05-30",
-          "val": 5266000000,
-          "accn": "0000723125-24-000019",
-          "filed": "2024-06-27",
-          "form": "10-Q",
-          "fy": 2024,
-          "fp": "Q3"
-        },
-        {
-          "start": "2023-09-01",
-          "end": "2024-02-29",
-          "val": 3180000000,
-          "accn": "0000723125-24-000007",
-          "filed": "2024-03-21",
-          "form": "10-Q",
-          "fy": 2024,
-          "fp": "Q2"
         }
       ]
     },
@@ -1027,49 +908,6 @@
           "form": "10-Q",
           "fy": 2024,
           "fp": "Q2"
-        }
-      ]
-    },
-    {
-      "id": "mu:2024-08-29:cash-paid-for-property-plant-equipment:actual",
-      "entity": "Micron Technology, Inc.",
-      "ticker": "MU",
-      "cik": "0000723125",
-      "concept_id": "cash_paid_for_property_plant_equipment",
-      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
-      "value_type": "actual",
-      "value": 3120000000,
-      "unit": "USD",
-      "period_end": "2024-08-29",
-      "period_type": "quarter",
-      "fiscal_year": 2024,
-      "fiscal_period": "Q4",
-      "as_of": "2024-10-04",
-      "source_tier": "primary_regulatory",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
-      "formula": "FY - Q3 year-to-date",
-      "source_facts": [
-        {
-          "start": "2023-09-01",
-          "end": "2024-08-29",
-          "val": 8386000000,
-          "accn": "0000723125-24-000027",
-          "filed": "2024-10-04",
-          "form": "10-K",
-          "fy": 2024,
-          "fp": "FY"
-        },
-        {
-          "start": "2023-09-01",
-          "end": "2024-05-30",
-          "val": 5266000000,
-          "accn": "0000723125-24-000019",
-          "filed": "2024-06-27",
-          "form": "10-Q",
-          "fy": 2024,
-          "fp": "Q3"
         }
       ]
     },
@@ -1372,7 +1210,7 @@
       "as_of": "2024-12-19",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -1696,7 +1534,7 @@
       "as_of": "2025-03-21",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -2000,7 +1838,7 @@
       "as_of": "2025-06-26",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -2344,7 +2182,7 @@
       "as_of": "2025-10-03",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "source_sha256": "a8b088c2111daef36536e53c81fef4c0f01220c64933e126a665b00a9257f882",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -2651,6 +2489,39 @@
       ]
     },
     {
+      "id": "mu:2025-11-27:cash-paid-for-property-plant-equipment:actual",
+      "entity": "Micron Technology, Inc.",
+      "ticker": "MU",
+      "cik": "0000723125",
+      "concept_id": "cash_paid_for_property_plant_equipment",
+      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
+      "value_type": "actual",
+      "value": 5389000000,
+      "unit": "USD",
+      "period_end": "2025-11-27",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q1",
+      "as_of": "2025-12-18",
+      "source_tier": "primary_regulatory",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
+      "formula": "Q1 year-to-date",
+      "source_facts": [
+        {
+          "start": "2025-08-29",
+          "end": "2025-11-27",
+          "val": 5389000000,
+          "accn": "0000723125-25-000046",
+          "filed": "2025-12-18",
+          "form": "10-Q",
+          "fy": 2026,
+          "fp": "Q1"
+        }
+      ]
+    },
+    {
       "id": "orcl:2025-11-30:cash-paid-for-property-plant-equipment:actual",
       "entity": "Oracle Corporation",
       "ticker": "ORCL",
@@ -2909,6 +2780,49 @@
       ]
     },
     {
+      "id": "mu:2026-02-26:cash-paid-for-property-plant-equipment:actual",
+      "entity": "Micron Technology, Inc.",
+      "ticker": "MU",
+      "cik": "0000723125",
+      "concept_id": "cash_paid_for_property_plant_equipment",
+      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
+      "value_type": "actual",
+      "value": 6387000000,
+      "unit": "USD",
+      "period_end": "2026-02-26",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q2",
+      "as_of": "2026-03-19",
+      "source_tier": "primary_regulatory",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
+      "formula": "Q2 year-to-date - Q1 year-to-date",
+      "source_facts": [
+        {
+          "start": "2025-08-29",
+          "end": "2026-02-26",
+          "val": 11776000000,
+          "accn": "0000723125-26-000006",
+          "filed": "2026-03-19",
+          "form": "10-Q",
+          "fy": 2026,
+          "fp": "Q2"
+        },
+        {
+          "start": "2025-08-29",
+          "end": "2025-11-27",
+          "val": 5389000000,
+          "accn": "0000723125-25-000046",
+          "filed": "2025-12-18",
+          "form": "10-Q",
+          "fy": 2026,
+          "fp": "Q1"
+        }
+      ]
+    },
+    {
       "id": "orcl:2026-02-28:cash-paid-for-property-plant-equipment:actual",
       "entity": "Oracle Corporation",
       "ticker": "ORCL",
@@ -3065,6 +2979,49 @@
       "source_tier": "primary_company",
       "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
       "reported_text": "Data Center networking revenue was $14.8 billion."
+    },
+    {
+      "id": "mu:2026-05-28:cash-paid-for-property-plant-equipment:actual",
+      "entity": "Micron Technology, Inc.",
+      "ticker": "MU",
+      "cik": "0000723125",
+      "concept_id": "cash_paid_for_property_plant_equipment",
+      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
+      "value_type": "actual",
+      "value": 7826000000,
+      "unit": "USD",
+      "period_end": "2026-05-28",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "as_of": "2026-06-25",
+      "source_tier": "primary_regulatory",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
+      "formula": "Q3 year-to-date - Q2 year-to-date",
+      "source_facts": [
+        {
+          "start": "2025-08-29",
+          "end": "2026-05-28",
+          "val": 19602000000,
+          "accn": "0000723125-26-000015",
+          "filed": "2026-06-25",
+          "form": "10-Q",
+          "fy": 2026,
+          "fp": "Q3"
+        },
+        {
+          "start": "2025-08-29",
+          "end": "2026-02-26",
+          "val": 11776000000,
+          "accn": "0000723125-26-000006",
+          "filed": "2026-03-19",
+          "form": "10-Q",
+          "fy": 2026,
+          "fp": "Q2"
+        }
+      ]
     },
     {
       "id": "micron:2026-05-28:data-center-ssd-revenue:actual",
@@ -3326,6 +3283,49 @@
       "source_tier": "primary_company",
       "source_url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial",
       "reported_text": "Revenue was $29.591 billion."
+    },
+    {
+      "id": "mu:2026-09-03:cash-paid-for-property-plant-equipment:actual",
+      "entity": "Micron Technology, Inc.",
+      "ticker": "MU",
+      "cik": "0000723125",
+      "concept_id": "cash_paid_for_property_plant_equipment",
+      "sec_concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "definition": "Cash paid to acquire property, plant and equipment as reported under the SEC XBRL cash-flow concept; not total company CapEx when leases or other non-cash additions are included.",
+      "value_type": "actual",
+      "value": 11110000000,
+      "unit": "USD",
+      "period_end": "2026-09-03",
+      "period_type": "quarter",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q4",
+      "as_of": "2026-10-09",
+      "source_tier": "primary_regulatory",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
+      "source_sha256": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
+      "formula": "FY - Q3 year-to-date",
+      "source_facts": [
+        {
+          "start": "2025-08-29",
+          "end": "2026-09-03",
+          "val": 30712000000,
+          "accn": "0000723125-26-000023",
+          "filed": "2026-10-09",
+          "form": "10-K",
+          "fy": 2026,
+          "fp": "FY"
+        },
+        {
+          "start": "2025-08-29",
+          "end": "2026-05-28",
+          "val": 19602000000,
+          "accn": "0000723125-26-000015",
+          "filed": "2026-06-25",
+          "form": "10-Q",
+          "fy": 2026,
+          "fp": "Q3"
+        }
+      ]
     },
     {
       "id": "microsoft:2026-09-30:capital-expenditures:guidance",
