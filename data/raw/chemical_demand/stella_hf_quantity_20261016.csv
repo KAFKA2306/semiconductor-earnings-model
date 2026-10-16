@@ -1,0 +1,11 @@
+observation_id,company_id,product_scope,period_start,period_end,grain,value_t,value_type,derivation,source_url
+STELLA_HF_FY2026_Q1,4109,semiconductor_high_purity_hydrofluoric_acid,2025-04-01,2025-06-30,quarter,18500,issuer_actual,reported_in_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_20250807.pdf
+STELLA_HF_FY2026_Q2,4109,semiconductor_high_purity_hydrofluoric_acid,2025-07-01,2025-09-30,quarter,18400,derived_difference,FY2026_H1_36900_minus_FY2026_Q1_18500,https://www.stella-chemifa.co.jp/ir/material/files/IG_20251113.pdf
+STELLA_HF_FY2026_Q3,4109,semiconductor_high_purity_hydrofluoric_acid,2025-10-01,2025-12-31,quarter,18300,issuer_actual,reported_in_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_2026.02.12.pdf
+STELLA_HF_FY2026_Q4,4109,semiconductor_high_purity_hydrofluoric_acid,2026-01-01,2026-03-31,quarter,18600,derived_difference,FY2026_FULL_73800_minus_FY2026_FIRST3Q_55200,https://www.stella-chemifa.co.jp/files/IG_20260514.pdf
+STELLA_HF_FY2027_Q1,4109,semiconductor_high_purity_hydrofluoric_acid,2026-04-01,2026-06-30,quarter,18700,issuer_actual,reported_in_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_20260806.pdf
+STELLA_HF_FY2022,4109,semiconductor_high_purity_hydrofluoric_acid,2021-04-01,2022-03-31,fiscal_year,75100,issuer_actual,reported_historical_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_2026.02.12.pdf
+STELLA_HF_FY2023,4109,semiconductor_high_purity_hydrofluoric_acid,2022-04-01,2023-03-31,fiscal_year,72400,issuer_actual,reported_historical_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_20260806.pdf
+STELLA_HF_FY2024,4109,semiconductor_high_purity_hydrofluoric_acid,2023-04-01,2024-03-31,fiscal_year,65100,issuer_actual,reported_historical_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_20260806.pdf
+STELLA_HF_FY2025,4109,semiconductor_high_purity_hydrofluoric_acid,2024-04-01,2025-03-31,fiscal_year,72500,issuer_actual,reported_historical_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_20260806.pdf
+STELLA_HF_FY2026,4109,semiconductor_high_purity_hydrofluoric_acid,2025-04-01,2026-03-31,fiscal_year,73800,issuer_actual,reported_in_chart,https://www.stella-chemifa.co.jp/ir/material/files/IG_20260806.pdf
