@@ -16,7 +16,7 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
       - name: Check out pinned GC control implementation
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: KAFKA2306/semiconductor-earnings-model
           ref: 886d945beff9e09cbf9a7fd4ce2e6e83a6e86ac6
