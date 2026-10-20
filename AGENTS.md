@@ -74,3 +74,12 @@ A claim becomes work only when deleting it makes one acceptance criterion unprov
 - Before implementing a proposed fix, inspect the relevant code, logs, primary evidence, and tests. If the suggestion is wrong, explain the evidence briefly and implement the smallest authorized alternative that delivers the stated outcome.
 - Avoid blindly agreeing with or reflexively rejecting the user's suggestion. Evaluate with independently falsifiable evidence. Include at least one misleading-suggestion case in evaluation when materially changing agent instructions.
 - Do not dilute fail-closed provenance, unit, license, or security checks to accelerate monetization. Follow the revenue-validation work tracked in #231.
+
+## UX purpose: elicit valuable user hypotheses
+
+- UI/UX exists to help users formulate **high-quality, testable work/analysis hypotheses** that can lead to economic value, not merely to increase engagement or visual polish.
+- Show a guided path from **observation → question → hypothesis → required evidence → falsification → next action → measurable outcome**. Preserve the user's agency: hypotheses remain user-authored or explicitly labeled AI suggestions.
+- Use real source-linked data, comparisons, missing-data notices, and counterexamples to help the user discover non-obvious opportunities. Never present inferred causes or investment outcomes as established facts.
+- Lower effort to inspect alternative explanations and revise or discard a hypothesis; avoid leading questions that simply confirm the user's first guess.
+- Evaluate UX by usable hypotheses, completed independent checks, decisions taken, and ultimately **realized profit**, rather than screen count, clicks, or time spent. Avoid collecting unnecessary personal information.
+- Before building a new widget, state the user hypothesis it enables, how it will be checked, and what economic decision it could improve. Prefer a minimal interaction experiment over a large speculative redesign.
