@@ -1,6 +1,6 @@
 {
   "schema_version": "verified-sec-inventory.v1",
-  "run_at": "2026-10-22T17:37:36.830868Z",
+  "run_at": "2026-10-22T21:54:48.963436Z",
   "eligible_events_total": 6,
   "verified_metrics_total": 6,
   "metrics": [
@@ -16,7 +16,7 @@
       "unit": "USD",
       "taxonomy": "us-gaap",
       "concept": "InventoryNet",
-      "frame": "CY2026Q2I",
+      "frame": null,
       "fiscal_year": 2026,
       "fiscal_period": "FY",
       "filed": "2026-08-07",
