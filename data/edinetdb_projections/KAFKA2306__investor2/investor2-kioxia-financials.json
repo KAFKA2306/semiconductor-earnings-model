@@ -7,8 +7,8 @@
   "provider_terms": "https://edinetdb.jp/legal/terms",
   "source_endpoint": "/v1/companies/E35948/financials",
   "request_fingerprint": "0f4eefa448c82d686bb15db909760186483e13f9d52afd62570a29a1fcd528ad",
-  "fetched_at": "2026-10-22T01:35:40Z",
-  "response_sha256": "3da2114befc138d3ff6ddb1cf9f06684664592e221b708437024f712d9d6ffc1",
+  "fetched_at": "2026-10-23T01:36:22Z",
+  "response_sha256": "cf79fc287eb6f0b9d962964250c73f44c7226e60afd1a0d4e882acd9a64c6273",
   "record_count": 6,
   "records": [
     {
@@ -52,6 +52,7 @@
         "long_term_loans": "not_applicable_accounting_standard",
         "machinery_and_equipment": "not_applicable_accounting_standard",
         "male_parental_leave_ratio": "not_required_for_fiscal_year",
+        "male_parental_leave_ratio_womens_act": "not_required_for_fiscal_year",
         "non_operating_expenses": "not_applicable_accounting_standard",
         "non_operating_income": "not_applicable_accounting_standard",
         "other_interest_bearing_debt_jp": "not_applicable_accounting_standard",
@@ -102,6 +103,7 @@
         "long_term_loans": "not_applicable_accounting_standard",
         "machinery_and_equipment": "not_applicable_accounting_standard",
         "male_parental_leave_ratio": "not_required_for_fiscal_year",
+        "male_parental_leave_ratio_womens_act": "not_required_for_fiscal_year",
         "non_operating_expenses": "not_applicable_accounting_standard",
         "non_operating_income": "not_applicable_accounting_standard",
         "other_interest_bearing_debt_jp": "not_applicable_accounting_standard",
