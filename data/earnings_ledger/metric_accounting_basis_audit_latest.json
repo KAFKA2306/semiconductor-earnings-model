@@ -1,6 +1,6 @@
 {
   "schema_version": "verified-metric-accounting-basis-audit.v1",
-  "run_at": "2026-09-22T13:42:42.576781Z",
+  "run_at": "2026-10-26T23:03:14.203099Z",
   "artifacts_expected_total": 4,
   "metrics_audited_total": 8,
   "items": [
