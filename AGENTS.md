@@ -65,3 +65,21 @@ A claim becomes work only when deleting it makes one acceptance criterion unprov
 - **Range:** Combine code, data, tests, runtime/UI, and domain expertise when that materially improves the outcome, while respecting canonical owners and avoiding duplicate systems.
 - **Speed:** Complete authorized read-only and reversible work through implementation, focused checks, and read-back without unnecessary approval loops. Bound retries and stop at the proven outcome.
 - These principles never bypass repository-specific security, privacy, permission, publication, spending, destructive-action, or release boundaries. State verified results and any remaining `UNVERIFIED` layers.
+
+## Revenue-first decisions and hypothesis independence
+
+- The ultimate product/business objective is **maximize realized net revenue/profit**, subject to law, security, data licensing, privacy, user constraints, and the repository's evidence and data-integrity contracts. Features, code volume, model novelty, traffic, and visual polish are means, not ends.
+- Prioritize hypotheses that can be tested through payment intent or actual purchases. Record pricing, conversions, refunds, external costs, maintenance effort, and observation windows; never label projected revenue as realized revenue.
+- Keep the user-defined outcome and constraints separate from the user's proposed cause, edit location, technology, or solution. Treat those suggestions as hypotheses, not verified facts or implicit acceptance criteria.
+- Before implementing a proposed fix, inspect the relevant code, logs, primary evidence, and tests. If the suggestion is wrong, explain the evidence briefly and implement the smallest authorized alternative that delivers the stated outcome.
+- Avoid blindly agreeing with or reflexively rejecting the user's suggestion. Evaluate with independently falsifiable evidence. Include at least one misleading-suggestion case in evaluation when materially changing agent instructions.
+- Do not dilute fail-closed provenance, unit, license, or security checks to accelerate monetization. Follow the revenue-validation work tracked in #231.
+
+## UX purpose: elicit valuable user hypotheses
+
+- UI/UX exists to help users formulate **high-quality, testable work/analysis hypotheses** that can lead to economic value, not merely to increase engagement or visual polish.
+- Show a guided path from **observation → question → hypothesis → required evidence → falsification → next action → measurable outcome**. Preserve the user's agency: hypotheses remain user-authored or explicitly labeled AI suggestions.
+- Use real source-linked data, comparisons, missing-data notices, and counterexamples to help the user discover non-obvious opportunities. Never present inferred causes or investment outcomes as established facts.
+- Lower effort to inspect alternative explanations and revise or discard a hypothesis; avoid leading questions that simply confirm the user's first guess.
+- Evaluate UX by usable hypotheses, completed independent checks, decisions taken, and ultimately **realized profit**, rather than screen count, clicks, or time spent. Avoid collecting unnecessary personal information.
+- Before building a new widget, state the user hypothesis it enables, how it will be checked, and what economic decision it could improve. Prefer a minimal interaction experiment over a large speculative redesign.
