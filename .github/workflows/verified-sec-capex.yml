@@ -22,7 +22,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: earnings-ledger-main-writers-${{ github.ref }}
+  group: ${{ github.ref == 'refs/heads/main' && 'earnings-ledger-main-writers' || format('{0}-{1}', github.workflow, github.ref) }}
   cancel-in-progress: false
 
 jobs:
