@@ -54,8 +54,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: earnings-lineage-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.ref == 'refs/heads/main' && 'earnings-ledger-main-writers' || format('{0}-{1}', github.workflow, github.ref) }}
+  cancel-in-progress: false
 
 jobs:
   verify-lineage:
@@ -63,6 +63,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -90,9 +92,20 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Require pull request to carry current lineage manifest
+      - name: Require current lineage manifest when pull request changes lineage inputs
         if: github.event_name == 'pull_request'
-        run: git diff --exit-code -- data/earnings_ledger/lineage_latest.json
+        shell: bash
+        run: |
+          git fetch origin main
+          if git diff --quiet origin/main...HEAD -- \
+            data/earnings_ledger \
+            ':(exclude)data/earnings_ledger/lineage_latest.json' \
+            scripts/build_earnings_lineage_manifest.py \
+            scripts/verify_earnings_lineage_manifest.py; then
+            echo 'No lineage input changes in PR; main push will refresh the manifest.'
+          else
+            git diff --exit-code -- data/earnings_ledger/lineage_latest.json
+          fi
 
       - name: Commit validated lineage manifest
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -106,4 +119,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/earnings_ledger/lineage_latest.json
           git commit -m "data: update earnings ledger lineage"
-          git push
+          PUSH_GUARD_PATHS="data/earnings_ledger scripts/build_earnings_lineage_manifest.py scripts/verify_earnings_lineage_manifest.py" bash scripts/push_earnings_commit_with_retry.sh
