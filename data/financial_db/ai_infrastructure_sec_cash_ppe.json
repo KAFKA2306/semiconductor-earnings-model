@@ -24,7 +24,7 @@
       "as_of": "2024-10-30",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -57,7 +57,7 @@
       "as_of": "2025-01-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -100,7 +100,7 @@
       "as_of": "2025-04-30",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -143,7 +143,7 @@
       "as_of": "2025-07-30",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -186,7 +186,7 @@
       "as_of": "2025-10-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -219,7 +219,7 @@
       "as_of": "2026-01-28",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -262,7 +262,7 @@
       "as_of": "2026-04-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -305,7 +305,7 @@
       "as_of": "2026-07-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-      "source_sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+      "source_sha256": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -996,7 +996,7 @@
       "as_of": "2024-04-25",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -1029,7 +1029,7 @@
       "as_of": "2024-08-01",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -1072,7 +1072,7 @@
       "as_of": "2024-10-31",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -1115,7 +1115,7 @@
       "as_of": "2025-01-30",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -1158,7 +1158,7 @@
       "as_of": "2025-05-01",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "Q1 year-to-date",
       "source_facts": [
         {
@@ -1191,7 +1191,7 @@
       "as_of": "2025-07-31",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "Q2 year-to-date - Q1 year-to-date",
       "source_facts": [
         {
@@ -1234,7 +1234,7 @@
       "as_of": "2025-10-30",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "Q3 year-to-date - Q2 year-to-date",
       "source_facts": [
         {
@@ -1277,7 +1277,7 @@
       "as_of": "2026-01-29",
       "source_tier": "primary_regulatory",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
-      "source_sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+      "source_sha256": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
       "formula": "FY - Q3 year-to-date",
       "source_facts": [
         {
@@ -3086,10 +3086,10 @@
     }
   ],
   "source_hashes": {
-    "MSFT": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f",
+    "MSFT": "dd0308149a8e96497989ed7c690b5a49a00bef9ceafbb24638bda41e8ae938dd",
     "GOOGL": "a017f26ee88cb4a639d1c1ddb06d53b4afe22f0ac89cabec7cd67c88919fe1c5",
     "AMZN": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
-    "META": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e",
+    "META": "52f806ebd7961834d5ac8073e516361e60e800a52ada0ed7f46fb5f615b6050d",
     "NVDA": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
     "AVGO": "3bdb6644c12addf1e63c4dc861008d7804fbf3d3f5aa6eb9b97f72c0e89a7adf",
     "MU": "162439f31208eaf4cd1a33939d80fd40479a559735b9488d32ac43d5516ff7bf",
