@@ -62,8 +62,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: earnings-ledger-update-${{ github.ref }}
-  cancel-in-progress: true
+  group: earnings-ledger-main-writers-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   collect-audit-persist:
