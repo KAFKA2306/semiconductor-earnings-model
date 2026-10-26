@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "push_earnings_commit_with_retry.sh"
 
 
-def run_with_fake_git(tmp_path: Path, behavior: str) -> subprocess.CompletedProcess[str]:
+def run_with_fake_git(tmp_path: Path, behavior: str, guard_paths: str = "") -> subprocess.CompletedProcess[str]:
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     log = tmp_path / "git.log"
@@ -26,8 +26,17 @@ case "${FAKE_GIT_BEHAVIOR}:$1" in
     fi
     exit 0
     ;;
-  retry:fetch|retry:rebase)
+  retry:fetch|retry:rebase|retry:diff)
     exit 0
+    ;;
+  stale:push)
+    exit 1
+    ;;
+  stale:fetch)
+    exit 0
+    ;;
+  stale:diff)
+    exit 1
     ;;
   conflict:push)
     exit 1
@@ -60,6 +69,7 @@ esac
             "FAKE_GIT_BEHAVIOR": behavior,
             "PUSH_MAX_ATTEMPTS": "3",
             "PUSH_RETRY_SLEEP_SECONDS": "0",
+            "PUSH_GUARD_PATHS": guard_paths,
         }
     )
     result = subprocess.run(
@@ -116,3 +126,26 @@ def test_invalid_retry_configuration_fails_before_git(tmp_path: Path):
     )
     assert result.returncode == 2
     assert "positive integer" in result.stderr
+
+
+def test_unchanged_upstream_inputs_allow_bounded_retry(tmp_path: Path):
+    result = run_with_fake_git(tmp_path, "retry", "data/earnings_ledger/events.ndjson")
+    assert result.returncode == 0
+    assert result.git_log == [  # type: ignore[attr-defined]
+        "push origin HEAD:main",
+        "fetch origin main",
+        "diff --quiet HEAD^ origin/main -- data/earnings_ledger/events.ndjson",
+        "rebase origin/main",
+        "push origin HEAD:main",
+    ]
+
+
+def test_changed_upstream_inputs_fail_closed_before_rebase(tmp_path: Path):
+    result = run_with_fake_git(tmp_path, "stale", "data/earnings_ledger/events.ndjson")
+    assert result.returncode != 0
+    assert result.git_log == [  # type: ignore[attr-defined]
+        "push origin HEAD:main",
+        "fetch origin main",
+        "diff --quiet HEAD^ origin/main -- data/earnings_ledger/events.ndjson",
+    ]
+    assert "refusing to rebase stale derived data" in result.stderr
