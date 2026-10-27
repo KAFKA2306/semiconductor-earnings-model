@@ -26,8 +26,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: verified-sec-inventory-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.ref == 'refs/heads/main' && 'earnings-ledger-main-writers' || format('{0}-{1}', github.workflow, github.ref) }}
+  cancel-in-progress: false
 
 jobs:
   extract-verified-inventory:
@@ -86,4 +86,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/earnings_ledger/verified_inventory_latest.json
           git commit -m "data: update verified SEC inventory"
-          bash scripts/push_earnings_commit_with_retry.sh
+          PUSH_GUARD_PATHS="data/earnings_ledger/events.ndjson scripts/extract_verified_sec_inventory.py" bash scripts/push_earnings_commit_with_retry.sh
