@@ -617,7 +617,8 @@ def run_post_publishers(config_path: Path) -> None:
         if repo_root not in child_config.parents or child_config.suffix != ".json" or not child_config.is_file():
             raise ValueError(f"post publisher config must be a repository JSON file: {config_raw}")
         print(f"YAHOO_POST_PUBLISHER_START={script.relative_to(repo_root).as_posix()}")
-        run([sys.executable, str(script), "--config", str(child_config)], cwd=repo_root)
+        module = ".".join(script.relative_to(repo_root).with_suffix("").parts)
+        run([sys.executable, "-m", module, "--config", str(child_config)], cwd=repo_root)
         print(f"YAHOO_POST_PUBLISHER_RESULT=PASS:{script.relative_to(repo_root).as_posix()}")
 
 
