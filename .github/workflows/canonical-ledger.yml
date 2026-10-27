@@ -14,6 +14,7 @@ on:
       - "data/conflicts/**"
       - "analytics/dbt/**"
       - "tests/test_semicon_canonical_ledger.py"
+      - "tests/test_api_v2_publication.py"
       - "docs/semiconductor-infrastructure-ledger.md"
       - ".github/workflows/canonical-ledger.yml"
   push:
@@ -27,6 +28,7 @@ on:
       - "data/conflicts/**"
       - "analytics/dbt/**"
       - "tests/test_semicon_canonical_ledger.py"
+      - "tests/test_api_v2_publication.py"
       - ".github/workflows/canonical-ledger.yml"
   workflow_dispatch:
 
@@ -74,7 +76,7 @@ jobs:
           path: .cache/capex-projection-success
           key: capex-projection-success-${{ env.LIVE_SOURCE_SHA }}
       - name: Test canonical ingest invariants
-        run: uv run python -m pytest -q tests/test_semicon_canonical_ledger.py
+        run: uv run python -m pytest -q tests/test_semicon_canonical_ledger.py tests/test_api_v2_publication.py
       - name: Validate schema, provenance, duplicates and NULL policy
         run: uv run python -m semicon.validate_canonical
       - name: Validate canonical to Sheets to canonical round-trip
