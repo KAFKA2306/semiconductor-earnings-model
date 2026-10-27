@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-10-27T14:32:32.180078Z",
-  "events_total": 12,
-  "classified_events_total": 12,
+  "run_at": "2026-10-27T20:42:29.673788Z",
+  "events_total": 13,
+  "classified_events_total": 13,
   "items": [
     {
       "event_id": "110d99434de9ce74bdd7a88d",
@@ -57,6 +57,16 @@
     {
       "event_id": "4a6873ba8cec88e2e748da7e",
       "company_id": "applied-materials",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
+      "event_id": "64944164b67145dbf2f1a5fe",
+      "company_id": "seagate",
       "document_type": "8-K",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,

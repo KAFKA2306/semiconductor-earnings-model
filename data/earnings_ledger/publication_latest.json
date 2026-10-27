@@ -1,23 +1,23 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-10-27T14:32:32.021778Z",
+  "generated_from_run_at": "2026-10-27T20:42:29.521174Z",
   "audit_status": "PASS",
   "accepted_events_total": 1,
-  "ledger_accepted_events_total": 12,
-  "expired_events_total": 11,
-  "rejected_events_total": 410,
+  "ledger_accepted_events_total": 13,
+  "expired_events_total": 12,
+  "rejected_events_total": 413,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
     {
-      "event_id": "ffaaef75f4f218cf2e970680",
-      "company_id": "cadence",
-      "company_name": "Cadence Design Systems",
+      "event_id": "64944164b67145dbf2f1a5fe",
+      "company_id": "seagate",
+      "company_name": "Seagate Technology Holdings plc",
       "document_type": "8-K",
-      "published_at": "2026-10-26T20:03:09Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000116/0000813672-26-000116-index.html",
+      "published_at": "2026-10-27T20:12:44Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1137789/000113778926000300/0001137789-26-000300-index.html",
       "freshness": "PASS"
     }
   ],

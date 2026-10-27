@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-10-27T14:32:33.279992Z",
-  "events_total": 12,
-  "sec_events_total": 12,
+  "run_at": "2026-10-27T20:42:30.983673Z",
+  "events_total": 13,
+  "sec_events_total": 13,
   "non_sec_events_not_independently_reverified": 0,
   "items": [
     {
@@ -146,6 +146,18 @@
       "primary_acceptance_at": "2026-10-26T20:03:09.000Z",
       "ledger_published_at_utc": "2026-10-26T20:03:09Z",
       "primary_acceptance_at_utc": "2026-10-26T20:03:09Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "64944164b67145dbf2f1a5fe",
+      "company_id": "seagate",
+      "accession_number": "0001137789-26-000300",
+      "ledger_published_at": "2026-10-27T20:12:44Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-10-27T20:12:44.000Z",
+      "ledger_published_at_utc": "2026-10-27T20:12:44Z",
+      "primary_acceptance_at_utc": "2026-10-27T20:12:44Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }
