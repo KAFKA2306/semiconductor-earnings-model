@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-09-11T00:11:42.759995Z",
-  "events_total": 11,
-  "classified_events_total": 11,
+  "run_at": "2026-10-27T01:29:08.077898Z",
+  "events_total": 12,
+  "classified_events_total": 12,
   "items": [
     {
       "event_id": "110d99434de9ce74bdd7a88d",
@@ -113,6 +113,16 @@
       "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
       "automatic_gaap_metric_use": false,
       "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "ffaaef75f4f218cf2e970680",
+      "company_id": "cadence",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
     }
   ],
   "issues": [],

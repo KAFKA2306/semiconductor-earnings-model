@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-09-11T00:11:43.966351Z",
-  "window_start": "2026-09-10T00:11:42.587951Z",
-  "window_end": "2026-09-11T00:11:42.587951Z",
+  "verified_at": "2026-10-27T01:29:08.477781Z",
+  "window_start": "2026-10-26T01:29:07.850869Z",
+  "window_end": "2026-10-27T01:29:07.850869Z",
   "verified_events": 3,
   "required_metric_events": 2,
   "reused_evidence_events": 2,
@@ -36,17 +36,17 @@
       "status": "PASS"
     },
     {
-      "event_id": "d47fba975be6eebf5d64d944",
-      "company_id": "oracle",
+      "event_id": "ffaaef75f4f218cf2e970680",
+      "company_id": "cadence",
       "document_type": "8-K",
-      "published_at": "2026-09-10T16:16:50Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/0001193125-26-387905-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0001341439.json",
+      "published_at": "2026-10-26T20:03:09Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000116/0000813672-26-000116-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000813672.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "746dd24b895e7074c48d244fb23bdf310ebcd30ad517c30f814ba94302b82c2d",
-      "source_content_bytes": 158736,
+      "source_content_sha256": "e9031a0efe0a9ddb2326fc4b99cf8daeb72c1c314b24ee80655615af1f9ddbff",
+      "source_content_bytes": 157610,
       "content_type": "application/json",
-      "verified_at": "2026-09-11T00:11:43.966351Z",
+      "verified_at": "2026-10-27T01:29:08.477781Z",
       "status": "PASS"
     }
   ],

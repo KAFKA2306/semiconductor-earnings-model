@@ -1,23 +1,23 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-09-11T00:11:42.587951Z",
+  "generated_from_run_at": "2026-10-27T01:29:07.850869Z",
   "audit_status": "PASS",
   "accepted_events_total": 1,
-  "ledger_accepted_events_total": 11,
-  "expired_events_total": 10,
-  "rejected_events_total": 389,
+  "ledger_accepted_events_total": 12,
+  "expired_events_total": 11,
+  "rejected_events_total": 409,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
     {
-      "event_id": "d47fba975be6eebf5d64d944",
-      "company_id": "oracle",
-      "company_name": "Oracle",
+      "event_id": "ffaaef75f4f218cf2e970680",
+      "company_id": "cadence",
+      "company_name": "Cadence Design Systems",
       "document_type": "8-K",
-      "published_at": "2026-09-10T16:16:50Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/0001193125-26-387905-index.html",
+      "published_at": "2026-10-26T20:03:09Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000116/0000813672-26-000116-index.html",
       "freshness": "PASS"
     }
   ],
