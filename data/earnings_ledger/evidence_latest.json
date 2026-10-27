@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-27T01:29:08.477781Z",
-  "window_start": "2026-10-26T01:29:07.850869Z",
-  "window_end": "2026-10-27T01:29:07.850869Z",
+  "verified_at": "2026-10-27T07:53:58.769539Z",
+  "window_start": "2026-10-26T07:53:57.137348Z",
+  "window_end": "2026-10-27T07:53:57.137348Z",
   "verified_events": 3,
   "required_metric_events": 2,
   "reused_evidence_events": 2,
@@ -43,10 +43,10 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000116/0000813672-26-000116-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0000813672.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "e9031a0efe0a9ddb2326fc4b99cf8daeb72c1c314b24ee80655615af1f9ddbff",
-      "source_content_bytes": 157610,
+      "source_content_sha256": "cb0400635e3f423a6e209022a997a69a063044b30e0af5258f967586b1a05f82",
+      "source_content_bytes": 157458,
       "content_type": "application/json",
-      "verified_at": "2026-10-27T01:29:08.477781Z",
+      "verified_at": "2026-10-27T07:53:58.769539Z",
       "status": "PASS"
     }
   ],
