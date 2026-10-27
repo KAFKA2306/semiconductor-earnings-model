@@ -476,7 +476,8 @@ def ensure_snapshot(
     run(
         [
             sys.executable,
-            str(investor2 / "scripts/build_explicit_market_snapshot.py"),
+            "-m",
+            "scripts.build_explicit_market_snapshot",
             "--start",
             config.start,
             "--end",
@@ -540,7 +541,8 @@ def run_baseline(
     run(
         [
             sys.executable,
-            str(investor2 / "scripts/session_state_baseline.py"),
+            "-m",
+            "scripts.session_state_baseline",
             "--market-snapshot-dir",
             str(snapshot_root),
             "--market-regions",
@@ -580,7 +582,8 @@ def run_oos(
     run(
         [
             sys.executable,
-            str(investor2 / "scripts/session_state_oos.py"),
+            "-m",
+            "scripts.session_state_oos",
             "--market-snapshot-dir",
             str(snapshot_root),
             "--market-regions",
