@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import importlib
 import json
+import os
+import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -553,7 +555,7 @@ def test_post_publishers_execute_only_repo_local_explicit_paths(tmp_path: Path, 
 
     publisher.run_post_publishers(parent)
 
-    assert commands == [([sys.executable, str(child), "--config", str(child_config)], repo)]
+    assert commands == [([sys.executable, "-m", "scripts.child", "--config", str(child_config)], repo)]
 
     outside = tmp_path / "outside.py"
     outside.write_text("# outside\n", encoding="utf-8")
@@ -563,3 +565,17 @@ def test_post_publishers_execute_only_repo_local_explicit_paths(tmp_path: Path, 
     )
     with pytest.raises(ValueError, match="repository Python file"):
         publisher.run_post_publishers(parent)
+
+
+def test_phase_a_post_publisher_imports_from_repo_root_without_pythonpath() -> None:
+    """The production post-publisher imports scripts.* in a fresh Python process."""
+    repo_root = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, "-m", "scripts.publish_investor2_session_state_research", "--help"],
+        cwd=repo_root,
+        env={**os.environ, "PYTHONPATH": ""},
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    assert "Publish one immutable explicit-universe session-state research package" in result.stdout
