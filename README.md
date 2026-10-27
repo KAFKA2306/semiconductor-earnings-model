@@ -43,6 +43,7 @@
 - [Financial Database v3 SQLite](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/financial.db)
 - [Research API v2](https://kafka2306.github.io/semiconductor-earnings-model/api/v2/semiconductor-research/index.json)
 - [API v1 index](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/index.json)
+- [Anthropic S-1（2026-10-26）財務実績とIPO申請状況](docs/reports/ai/2026-10-26-anthropic-s1.md)
 
 ## 利用者ができる主要な分析
 

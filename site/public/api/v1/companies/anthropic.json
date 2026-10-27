@@ -1,12 +1,21 @@
 {
   "availability": "no_public_sec_10q_10k",
-  "cik": null,
+  "cik": "2130357",
   "class": "private",
   "facts": [],
   "id": "anthropic",
   "name": "Anthropic",
   "quantitative_status": "excluded_without_estimate",
+  "registration_statement": {
+    "accession": "0001628280-26-067168",
+    "filed": "2026-10-26",
+    "form": "S-1",
+    "proposed_exchange": "Nasdaq Global Select Market",
+    "proposed_symbol": "ANT",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm",
+    "status": "filed_not_effective"
+  },
   "role": "model-lab",
-  "source": "No public 10-Q/10-K in this database",
+  "source": "SEC Form S-1 filed 2026-10-26 (CIK 2130357); IPO not effective; no 10-Q/10-K quarterly facts in primary API",
   "ticker": null
 }

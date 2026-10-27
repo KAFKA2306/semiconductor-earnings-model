@@ -1218,14 +1218,23 @@
     },
     {
       "availability": "no_public_sec_10q_10k",
-      "cik": null,
+      "cik": "2130357",
       "class": "private",
       "facts": [],
       "id": "anthropic",
       "name": "Anthropic",
       "quantitative_status": "excluded_without_estimate",
+      "registration_statement": {
+        "accession": "0001628280-26-067168",
+        "filed": "2026-10-26",
+        "form": "S-1",
+        "proposed_exchange": "Nasdaq Global Select Market",
+        "proposed_symbol": "ANT",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm",
+        "status": "filed_not_effective"
+      },
       "role": "model-lab",
-      "source": "No public 10-Q/10-K in this database",
+      "source": "SEC Form S-1 filed 2026-10-26 (CIK 2130357); IPO not effective; no 10-Q/10-K quarterly facts in primary API",
       "ticker": null
     },
     {
@@ -1316,7 +1325,7 @@
       "ticker": "SPCX"
     }
   ],
-  "content_hash": "830550231e10376424c7263440343dea639c6fab80e47358b6f5b9141f6441bb",
+  "content_hash": "3ff891850cb24f8292c1fe5ce2f34e7a2b71b890f149697702f1431c92e3d251",
   "generated_at": "2026-07-18T14:11:58.426176+00:00",
   "schema_version": "primary-finance-api.v1",
   "source_policy": "Only reported primary financial data is quantitative. Missing data stays missing."

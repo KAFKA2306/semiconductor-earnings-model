@@ -12,7 +12,7 @@
     {"id": "digital-realty", "name": "Digital Realty", "ticker": "DLR", "cik": "1297996", "class": "public", "role": "data-center-operator", "source": "SEC EDGAR", "fact_tags": {"operating_cash_flow": "NetCashProvidedByUsedInOperatingActivities"}},
     {"id": "xai", "name": "xAI", "ticker": null, "cik": null, "class": "private", "role": "model-lab", "product_aliases": ["Grok"], "source": "No public 10-Q/10-K in this database"},
     {"id": "openai", "name": "OpenAI", "ticker": null, "cik": null, "class": "private", "role": "model-lab", "source": "No public 10-Q/10-K in this database"},
-    {"id": "anthropic", "name": "Anthropic", "ticker": null, "cik": null, "class": "private", "role": "model-lab", "source": "No public 10-Q/10-K in this database"},
+    {"id": "anthropic", "name": "Anthropic", "ticker": null, "cik": "2130357", "class": "private", "role": "model-lab", "source": "SEC Form S-1 filed 2026-10-26 (CIK 2130357); IPO not effective; no 10-Q/10-K quarterly facts in primary API", "registration_statement": {"form": "S-1", "filed": "2026-10-26", "accession": "0001628280-26-067168", "status": "filed_not_effective", "proposed_exchange": "Nasdaq Global Select Market", "proposed_symbol": "ANT", "source_url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm"}},
     {"id": "spacex", "name": "SpaceX", "ticker": "SPCX", "cik": "1181412", "class": "public", "role": "aerospace-and-infrastructure", "source": "SEC EDGAR", "fact_tags": {}}
   ]
 }

@@ -6384,12 +6384,20 @@
       "ticker": "GOOGL"
     },
     {
+      "cik": "2130357",
       "company_name": "Anthropic",
       "entity_id": "anthropic",
       "id": "anthropic",
       "index_membership": [],
       "name": "Anthropic",
-      "provenance": [],
+      "provenance": [
+        {
+          "document_form": "S-1",
+          "filed_at": "2026-10-26",
+          "original_source_url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm",
+          "verification_status": "SEC primary filing"
+        }
+      ],
       "role": "model-lab"
     },
     {
