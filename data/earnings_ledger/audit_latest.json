@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-10-28T22:36:31.282768Z",
+  "run_at": "2026-10-28T22:59:58.447196Z",
   "accepted_events_total": 22,
   "rejected_events_total": 436,
   "source_status": [
@@ -68,7 +68,7 @@
       "source_id": "seagate",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "arm",
