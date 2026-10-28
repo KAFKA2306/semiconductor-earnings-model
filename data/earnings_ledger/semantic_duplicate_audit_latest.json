@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-semantic-duplicate-audit.v2",
-  "run_at": "2026-10-28T08:35:04.973262Z",
-  "events_total": 17,
-  "sec_events_total": 13,
-  "events_with_primary_period_key": 13,
+  "run_at": "2026-10-28T16:38:26.445808Z",
+  "events_total": 18,
+  "sec_events_total": 14,
+  "events_with_primary_period_key": 14,
   "unkeyable_sec_event_count": 0,
   "unkeyable_sec_events": [],
   "duplicate_count": 0,

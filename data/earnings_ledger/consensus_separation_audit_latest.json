@@ -8,8 +8,8 @@
     "site/public/api/v1/earnings-ledger/index.json"
   ],
   "checked_artifacts_total": 5,
-  "checked_keys_total": 415,
-  "checked_string_values_total": 359,
+  "checked_keys_total": 487,
+  "checked_string_values_total": 430,
   "forbidden_key_tokens": [
     "consensus",
     "estimate",

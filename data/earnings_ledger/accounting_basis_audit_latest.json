@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-10-28T08:35:05.046794Z",
-  "events_total": 17,
-  "classified_events_total": 17,
+  "run_at": "2026-10-28T16:38:26.538096Z",
+  "events_total": 18,
+  "classified_events_total": 18,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -117,6 +117,16 @@
     {
       "event_id": "837e53975925d9b420b0dc5e",
       "company_id": "broadcom",
+      "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "893c606bb5169a68452985f2",
+      "company_id": "cadence",
       "document_type": "10-Q",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,
