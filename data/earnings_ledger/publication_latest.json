@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-10-28T01:23:52.236054Z",
+  "generated_from_run_at": "2026-10-28T08:35:04.889327Z",
   "audit_status": "PASS",
-  "accepted_events_total": 1,
-  "ledger_accepted_events_total": 13,
+  "accepted_events_total": 5,
+  "ledger_accepted_events_total": 17,
   "expired_events_total": 12,
-  "rejected_events_total": 417,
+  "rejected_events_total": 427,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
@@ -18,6 +18,42 @@
       "document_type": "8-K",
       "published_at": "2026-10-27T20:12:44Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1137789/000113778926000300/0001137789-26-000300-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "101314394f03530073e2a1a5",
+      "company_id": "socionext",
+      "company_name": "ソシオネクスト",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-28T06:30:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120261028556613.pdf",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "25200cbf0cab9efd7db59c52",
+      "company_id": "advantest",
+      "company_name": "アドバンテス",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-28T06:30:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120261028557599.pdf",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "40806a3dfefb1d3f31d47410",
+      "company_id": "advantest",
+      "company_name": "アドバンテス",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-28T06:30:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120261028557653.pdf",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "4d56ad56f5cc3e6815eed524",
+      "company_id": "socionext",
+      "company_name": "ソシオネクスト",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-28T06:30:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120261028557383.pdf",
       "freshness": "PASS"
     }
   ],

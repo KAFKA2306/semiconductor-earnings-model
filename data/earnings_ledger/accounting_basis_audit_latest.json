@@ -1,9 +1,19 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-10-28T01:23:52.435234Z",
-  "events_total": 13,
-  "classified_events_total": 13,
+  "run_at": "2026-10-28T08:35:05.046794Z",
+  "events_total": 17,
+  "classified_events_total": 17,
   "items": [
+    {
+      "event_id": "101314394f03530073e2a1a5",
+      "company_id": "socionext",
+      "document_type": "TDNET_DISCLOSURE",
+      "source_adapter": "tdnet_public",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
+      "automatic_gaap_metric_use": false,
+      "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
+    },
     {
       "event_id": "110d99434de9ce74bdd7a88d",
       "company_id": "western-digital",
@@ -23,6 +33,16 @@
       "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
       "automatic_gaap_metric_use": false,
       "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "25200cbf0cab9efd7db59c52",
+      "company_id": "advantest",
+      "document_type": "TDNET_DISCLOSURE",
+      "source_adapter": "tdnet_public",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
+      "automatic_gaap_metric_use": false,
+      "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
     },
     {
       "event_id": "30f27afcf8a3ddabb7925cf8",
@@ -45,6 +65,16 @@
       "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
     },
     {
+      "event_id": "40806a3dfefb1d3f31d47410",
+      "company_id": "advantest",
+      "document_type": "TDNET_DISCLOSURE",
+      "source_adapter": "tdnet_public",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
+      "automatic_gaap_metric_use": false,
+      "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
+    },
+    {
       "event_id": "423c7d5ee9fb43d3653fbcef",
       "company_id": "nvidia",
       "document_type": "8-K",
@@ -63,6 +93,16 @@
       "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
       "automatic_gaap_metric_use": false,
       "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
+      "event_id": "4d56ad56f5cc3e6815eed524",
+      "company_id": "socionext",
+      "document_type": "TDNET_DISCLOSURE",
+      "source_adapter": "tdnet_public",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
+      "automatic_gaap_metric_use": false,
+      "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
     },
     {
       "event_id": "64944164b67145dbf2f1a5fe",
