@@ -1,34 +1,16 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-10-28T16:38:26.344249Z",
+  "generated_from_run_at": "2026-10-28T22:36:31.282768Z",
   "audit_status": "PASS",
-  "accepted_events_total": 6,
-  "ledger_accepted_events_total": 18,
-  "expired_events_total": 12,
-  "rejected_events_total": 429,
+  "accepted_events_total": 8,
+  "ledger_accepted_events_total": 22,
+  "expired_events_total": 14,
+  "rejected_events_total": 436,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
-    {
-      "event_id": "64944164b67145dbf2f1a5fe",
-      "company_id": "seagate",
-      "company_name": "Seagate Technology Holdings plc",
-      "document_type": "8-K",
-      "published_at": "2026-10-27T20:12:44Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1137789/000113778926000300/0001137789-26-000300-index.html",
-      "freshness": "PASS"
-    },
-    {
-      "event_id": "893c606bb5169a68452985f2",
-      "company_id": "cadence",
-      "company_name": "Cadence Design Systems",
-      "document_type": "10-Q",
-      "published_at": "2026-10-27T22:00:12Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000121/0000813672-26-000121-index.html",
-      "freshness": "PASS"
-    },
     {
       "event_id": "101314394f03530073e2a1a5",
       "company_id": "socionext",
@@ -63,6 +45,42 @@
       "document_type": "TDNET_DISCLOSURE",
       "published_at": "2026-10-28T06:30:00Z",
       "source_url": "https://www.release.tdnet.info/inbs/140120261028557383.pdf",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "628e17ebc792004793213c56",
+      "company_id": "alphabet",
+      "company_name": "Alphabet",
+      "document_type": "8-K",
+      "published_at": "2026-10-28T20:01:33Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/0001652044-26-000080-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "1b7aa8f47415017ad82cf209",
+      "company_id": "microsoft",
+      "company_name": "Microsoft",
+      "document_type": "8-K",
+      "published_at": "2026-10-28T20:04:44Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/0001193125-26-436122-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "74aa33e551117b1c7b7651c9",
+      "company_id": "microsoft",
+      "company_name": "Microsoft",
+      "document_type": "10-Q",
+      "published_at": "2026-10-28T20:07:39Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/0001193125-26-436133-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "a5bb46b4ce283174c9f3f03d",
+      "company_id": "kla",
+      "company_name": "KLA",
+      "document_type": "8-K",
+      "published_at": "2026-10-28T20:07:50Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/319201/000031920126000032/0000319201-26-000032-index.html",
       "freshness": "PASS"
     }
   ],

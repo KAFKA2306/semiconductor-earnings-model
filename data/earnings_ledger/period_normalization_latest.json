@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-10-28T16:38:26.494921Z",
-  "events_total": 18,
-  "normalized_events_total": 7,
+  "run_at": "2026-10-28T22:36:31.411646Z",
+  "events_total": 22,
+  "normalized_events_total": 8,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -75,6 +75,19 @@
       "document_type": "10-Q",
       "accession_number": "0001730168-26-000080",
       "period_end": "2026-08-02",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "74aa33e551117b1c7b7651c9",
+      "company_id": "microsoft",
+      "document_type": "10-Q",
+      "accession_number": "0001193125-26-436133",
+      "period_end": "2026-09-30",
       "period_source": "SEC submissions reportDate",
       "period_kind": "INTERIM_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",
