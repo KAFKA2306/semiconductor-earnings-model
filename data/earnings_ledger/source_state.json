@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-10-28T22:36:31.282768Z",
+  "generated_from_run_at": "2026-10-28T22:59:58.447196Z",
   "sources": [
     {
       "source_id": "nvidia",
