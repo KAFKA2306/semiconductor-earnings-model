@@ -1,22 +1,22 @@
 {
   "schema_version": "verified-sec-fcf.v1",
-  "run_at": "2026-10-28T21:27:57.803606Z",
+  "run_at": "2026-10-28T22:59:38.717246Z",
   "freshness_gate_hours": 24,
   "eligible_events_total": 1,
-  "stale_events_skipped_total": 6,
+  "stale_events_skipped_total": 7,
   "verified_metrics_total": 1,
   "metrics": [
     {
-      "event_id": "893c606bb5169a68452985f2",
-      "company_id": "cadence",
-      "ticker": "CDNS",
-      "accession_number": "0000813672-26-000121",
-      "period_start": "2026-01-01",
+      "event_id": "74aa33e551117b1c7b7651c9",
+      "company_id": "microsoft",
+      "ticker": "MSFT",
+      "accession_number": "0001193125-26-436133",
+      "period_start": "2026-07-01",
       "period_end": "2026-09-30",
-      "duration_days": 273,
+      "duration_days": 92,
       "document_type": "10-Q",
       "metric": "free_cash_flow",
-      "value": 1251182000,
+      "value": 18633000000,
       "unit": "USD",
       "accounting_basis": "derived-non-gaap",
       "derivation": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
@@ -24,17 +24,17 @@
         "operating_cash_flow": {
           "taxonomy": "us-gaap",
           "concept": "NetCashProvidedByUsedInOperatingActivities",
-          "value": 1414436000
+          "value": 58000000000
         },
         "capital_expenditures": {
           "taxonomy": "us-gaap",
           "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-          "value": 163254000
+          "value": 39367000000
         }
       },
       "filed": "2026-10-28",
       "source": "SEC Company Facts API",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000813672.json",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
       "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
     }
   ],
