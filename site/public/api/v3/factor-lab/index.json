@@ -1,13 +1,13 @@
 {
   "audit": {
-    "attached_row_count": 232,
+    "attached_row_count": 220,
     "factor_count": 27,
-    "factor_row_count": 232,
-    "rows_with_any_forward_return": 164,
+    "factor_row_count": 220,
+    "rows_with_any_forward_return": 154,
     "rows_without_start_price": 40,
     "test_count": 108
   },
-  "content_hash": "590381873c04053355142d15a99b9c1cd840177912df429768be17268a9a0d12",
+  "content_hash": "3b969e13d674dd0f5e7a18a2d35a17b95da65d59c58f286fe091c873d6a1acbe",
   "factor_observations": [
     {
       "age_days": 0,
@@ -27,7 +27,7 @@
       "raw_value": 35674000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.0527239563389366
+      "zscore": 1.211931239820215
     },
     {
       "age_days": 1,
@@ -47,7 +47,7 @@
       "raw_value": 1256000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.5402771800662318
+      "zscore": -1.2371684418785123
     },
     {
       "age_days": 0,
@@ -67,27 +67,7 @@
       "raw_value": 18997000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.20369651991851573
-    },
-    {
-      "age_days": 1,
-      "as_of": "2026-04-30",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:7eefbdfe913e20fbad4cd67b"
-      ],
-      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.1293344214827945,
-        "3m": 0.10623377177374715,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 30876000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 0.691249743645811
+      "zscore": 0.025237202058297548
     },
     {
       "age_days": 31,
@@ -107,7 +87,7 @@
       "raw_value": 35674000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.2778005414609075
+      "zscore": 1.5135382196194458
     },
     {
       "age_days": 23,
@@ -127,7 +107,7 @@
       "raw_value": 7695000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.8535174996931566
+      "zscore": -0.6286215723087467
     },
     {
       "age_days": 32,
@@ -147,7 +127,7 @@
       "raw_value": 1256000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.344012401833727
+      "zscore": -1.1216115612370727
     },
     {
       "age_days": 31,
@@ -167,27 +147,7 @@
       "raw_value": 18997000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.007419506673162223
-    },
-    {
-      "age_days": 32,
-      "as_of": "2026-05-31",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:7eefbdfe913e20fbad4cd67b"
-      ],
-      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.1900026102827912,
-        "3m": 0.10155915193045284,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 30876000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 0.9123098533928137
+      "zscore": 0.2366949139263736
     },
     {
       "age_days": 61,
@@ -207,7 +167,7 @@
       "raw_value": 35674000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.2778005414609075
+      "zscore": 1.5135382196194458
     },
     {
       "age_days": 53,
@@ -227,7 +187,7 @@
       "raw_value": 7695000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.8535174996931566
+      "zscore": -0.6286215723087467
     },
     {
       "age_days": 62,
@@ -247,7 +207,7 @@
       "raw_value": 1256000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.344012401833727
+      "zscore": -1.1216115612370727
     },
     {
       "age_days": 61,
@@ -267,27 +227,7 @@
       "raw_value": 18997000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.007419506673162223
-    },
-    {
-      "age_days": 62,
-      "as_of": "2026-06-30",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:7eefbdfe913e20fbad4cd67b"
-      ],
-      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.20931858717893537,
-        "3m": 0.36443087889433134,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 30876000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 0.9123098533928137
+      "zscore": 0.2366949139263736
     },
     {
       "age_days": 92,
@@ -307,7 +247,7 @@
       "raw_value": 35674000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.6118552435861901
+      "zscore": 0.6284405181648639
     },
     {
       "age_days": 0,
@@ -327,7 +267,7 @@
       "raw_value": 54208000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.653220919115877
+      "zscore": 1.5904091805093954
     },
     {
       "age_days": 84,
@@ -347,7 +287,7 @@
       "raw_value": 7695000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.9601945155400163
+      "zscore": -0.8237511945651267
     },
     {
       "age_days": 93,
@@ -367,7 +307,7 @@
       "raw_value": 1256000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.3219811554847478
+      "zscore": -1.157954076664859
     },
     {
       "age_days": 92,
@@ -387,27 +327,7 @@
       "raw_value": 18997000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.3251715920029211
-    },
-    {
-      "age_days": 93,
-      "as_of": "2026-07-31",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:7eefbdfe913e20fbad4cd67b"
-      ],
-      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.09160356174125917,
-        "3m": null,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 30876000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 0.34227110032561836
+      "zscore": -0.23714442744427347
     },
     {
       "age_days": 123,
@@ -427,7 +347,7 @@
       "raw_value": 35674000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.6118552435861901
+      "zscore": 0.6284405181648639
     },
     {
       "age_days": 31,
@@ -447,7 +367,7 @@
       "raw_value": 54208000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.653220919115877
+      "zscore": 1.5904091805093954
     },
     {
       "age_days": 115,
@@ -467,7 +387,7 @@
       "raw_value": 7695000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.9601945155400163
+      "zscore": -0.8237511945651267
     },
     {
       "age_days": 124,
@@ -487,7 +407,7 @@
       "raw_value": 1256000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.3219811554847478
+      "zscore": -1.157954076664859
     },
     {
       "age_days": 123,
@@ -507,27 +427,7 @@
       "raw_value": 18997000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.3251715920029211
-    },
-    {
-      "age_days": 124,
-      "as_of": "2026-08-31",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:7eefbdfe913e20fbad4cd67b"
-      ],
-      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.011058794327986066,
-        "3m": null,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 30876000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 0.34227110032561836
+      "zscore": -0.23714442744427347
     },
     {
       "age_days": 153,
@@ -547,7 +447,7 @@
       "raw_value": 35674000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.6267266708507098
+      "zscore": 0.6381993744343535
     },
     {
       "age_days": 61,
@@ -567,7 +467,7 @@
       "raw_value": 54208000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.7480465007133466
+      "zscore": 1.6862732610857285
     },
     {
       "age_days": 145,
@@ -587,7 +487,7 @@
       "raw_value": 7695000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0660221971608752
+      "zscore": -0.9439771268399975
     },
     {
       "age_days": 154,
@@ -607,7 +507,7 @@
       "raw_value": 1256000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.4555861544547954
+      "zscore": -1.3080943037121353
     },
     {
       "age_days": 153,
@@ -627,27 +527,7 @@
       "raw_value": 18997000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.3822433735336214
-    },
-    {
-      "age_days": 154,
-      "as_of": "2026-09-30",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:7eefbdfe913e20fbad4cd67b"
-      ],
-      "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": null,
-        "3m": null,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 30876000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 0.3364443495125781
+      "zscore": -0.3048635481773321
     },
     {
       "age_days": 19,
@@ -667,7 +547,7 @@
       "raw_value": 28499000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.19263420407265758
+      "zscore": 0.23246234320938236
     },
     {
       "age_days": 184,
@@ -682,7 +562,7 @@
       "raw_value": 35674000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.6267266708507098
+      "zscore": 0.5320335073213429
     },
     {
       "age_days": 92,
@@ -697,7 +577,7 @@
       "raw_value": 54208000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.7480465007133466
+      "zscore": 1.610177944746859
     },
     {
       "age_days": 176,
@@ -712,7 +592,7 @@
       "raw_value": 7695000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0660221971608752
+      "zscore": -1.0955376168142195
     },
     {
       "age_days": 185,
@@ -727,7 +607,7 @@
       "raw_value": 1256000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.4555861544547954
+      "zscore": -1.4701017709408462
     },
     {
       "age_days": 184,
@@ -742,22 +622,22 @@
       "raw_value": 18997000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.3822433735336214
+      "zscore": -0.4380870701549348
     },
     {
-      "age_days": 185,
+      "age_days": 3,
       "as_of": "2026-10-31",
       "entity_id": "microsoft",
       "evidence_ids": [
-        "observation:7eefbdfe913e20fbad4cd67b"
+        "observation:930e2005f6d6efad1617b9d0"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
       "forward_returns": {},
-      "known_at": "2026-04-29",
-      "raw_value": 30876000000.0,
+      "known_at": "2026-10-28",
+      "raw_value": 39367000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.3364443495125781
+      "zscore": 0.7468596326808137
     },
     {
       "age_days": 50,
@@ -772,7 +652,7 @@
       "raw_value": 28499000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.19263420407265758
+      "zscore": 0.11465537316098479
     },
     {
       "age_days": 5,
@@ -977,7 +857,7 @@
       "raw_value": 45790000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.77651958556982
+      "zscore": 1.0352118015180196
     },
     {
       "age_days": 1,
@@ -997,7 +877,7 @@
       "raw_value": 717000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.6478114583027643
+      "zscore": -1.3520232990066505
     },
     {
       "age_days": 0,
@@ -1017,27 +897,7 @@
       "raw_value": 32226000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.046955849428721545
-    },
-    {
-      "age_days": 1,
-      "as_of": "2026-04-30",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:b7971ef9f2c10379be5ef93e"
-      ],
-      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.1293344214827945,
-        "3m": 0.10623377177374715,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 46679000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 0.8243360233042226
+      "zscore": 0.31681149748863113
     },
     {
       "age_days": 31,
@@ -1057,7 +917,7 @@
       "raw_value": 45790000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.1780207959452063
+      "zscore": 1.549830415943581
     },
     {
       "age_days": 23,
@@ -1077,7 +937,7 @@
       "raw_value": 2984000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.8969731875393495
+      "zscore": -0.7113072440816369
     },
     {
       "age_days": 30,
@@ -1097,7 +957,7 @@
       "raw_value": 532421000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0158119408691884
+      "zscore": -0.8408067909542007
     },
     {
       "age_days": 32,
@@ -1117,7 +977,7 @@
       "raw_value": 717000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0068645896923067
+      "zscore": -0.8310567902965874
     },
     {
       "age_days": 31,
@@ -1137,27 +997,7 @@
       "raw_value": 32226000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.5205144091773579
-    },
-    {
-      "age_days": 32,
-      "as_of": "2026-05-31",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:b7971ef9f2c10379be5ef93e"
-      ],
-      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.1900026102827912,
-        "3m": 0.10155915193045284,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 46679000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 1.2211145129782803
+      "zscore": 0.8333404093888442
     },
     {
       "age_days": 61,
@@ -1177,7 +1017,7 @@
       "raw_value": 45790000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.1780207959452063
+      "zscore": 1.549830415943581
     },
     {
       "age_days": 53,
@@ -1197,7 +1037,7 @@
       "raw_value": 2984000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.8969731875393495
+      "zscore": -0.7113072440816369
     },
     {
       "age_days": 60,
@@ -1217,7 +1057,7 @@
       "raw_value": 532421000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0158119408691884
+      "zscore": -0.8408067909542007
     },
     {
       "age_days": 62,
@@ -1237,7 +1077,7 @@
       "raw_value": 717000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0068645896923067
+      "zscore": -0.8310567902965874
     },
     {
       "age_days": 61,
@@ -1257,27 +1097,7 @@
       "raw_value": 32226000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.5205144091773579
-    },
-    {
-      "age_days": 62,
-      "as_of": "2026-06-30",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:b7971ef9f2c10379be5ef93e"
-      ],
-      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.20931858717893537,
-        "3m": 0.36443087889433134,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 46679000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 1.2211145129782803
+      "zscore": 0.8333404093888442
     },
     {
       "age_days": 92,
@@ -1297,7 +1117,7 @@
       "raw_value": 45790000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.0018203277962991
+      "zscore": 1.2035668011335343
     },
     {
       "age_days": 0,
@@ -1317,7 +1137,7 @@
       "raw_value": 45387000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.9824916454990752
+      "zscore": 1.1837832952193723
     },
     {
       "age_days": 84,
@@ -1337,7 +1157,7 @@
       "raw_value": 2984000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0512406509008982
+      "zscore": -0.8978047972823846
     },
     {
       "age_days": 91,
@@ -1357,7 +1177,7 @@
       "raw_value": 532421000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.1688232603737174
+      "zscore": -1.0181542455343329
     },
     {
       "age_days": 93,
@@ -1377,7 +1197,7 @@
       "raw_value": 717000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.1599704840716347
+      "zscore": -1.0090931543727197
     },
     {
       "age_days": 92,
@@ -1397,27 +1217,7 @@
       "raw_value": 32226000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.3512638844227351
-    },
-    {
-      "age_days": 93,
-      "as_of": "2026-07-31",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:b7971ef9f2c10379be5ef93e"
-      ],
-      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.09160356174125917,
-        "3m": null,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 46679000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 1.0444585376281408
+      "zscore": 0.537702100836531
     },
     {
       "age_days": 123,
@@ -1437,7 +1237,7 @@
       "raw_value": 45790000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.0018203277962991
+      "zscore": 1.2035668011335343
     },
     {
       "age_days": 31,
@@ -1457,7 +1257,7 @@
       "raw_value": 45387000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.9824916454990752
+      "zscore": 1.1837832952193723
     },
     {
       "age_days": 115,
@@ -1477,7 +1277,7 @@
       "raw_value": 2984000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.0512406509008982
+      "zscore": -0.8978047972823846
     },
     {
       "age_days": 122,
@@ -1497,7 +1297,7 @@
       "raw_value": 532421000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.1688232603737174
+      "zscore": -1.0181542455343329
     },
     {
       "age_days": 124,
@@ -1517,7 +1317,7 @@
       "raw_value": 717000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.1599704840716347
+      "zscore": -1.0090931543727197
     },
     {
       "age_days": 123,
@@ -1537,27 +1337,7 @@
       "raw_value": 32226000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.3512638844227351
-    },
-    {
-      "age_days": 124,
-      "as_of": "2026-08-31",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:b7971ef9f2c10379be5ef93e"
-      ],
-      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.011058794327986066,
-        "3m": null,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 46679000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 1.0444585376281408
+      "zscore": 0.537702100836531
     },
     {
       "age_days": 153,
@@ -1577,7 +1357,7 @@
       "raw_value": 45790000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.0820189507018345
+      "zscore": 1.2853957901424318
     },
     {
       "age_days": 61,
@@ -1597,7 +1377,7 @@
       "raw_value": 45387000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.061365330305173
+      "zscore": 1.2640394725814215
     },
     {
       "age_days": 145,
@@ -1617,7 +1397,7 @@
       "raw_value": 2984000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.1117747830437914
+      "zscore": -0.9830372855811544
     },
     {
       "age_days": 152,
@@ -1637,7 +1417,7 @@
       "raw_value": 532421000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.2374174183748752
+      "zscore": -1.1129546544394768
     },
     {
       "age_days": 154,
@@ -1657,7 +1437,7 @@
       "raw_value": 717000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.2279578039848122
+      "zscore": -1.103173196029815
     },
     {
       "age_days": 153,
@@ -1677,27 +1457,7 @@
       "raw_value": 32226000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.3868683128350478
-    },
-    {
-      "age_days": 154,
-      "as_of": "2026-09-30",
-      "entity_id": "microsoft",
-      "evidence_ids": [
-        "observation:b7971ef9f2c10379be5ef93e"
-      ],
-      "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {
-        "12m": null,
-        "1m": null,
-        "3m": null,
-        "6m": null
-      },
-      "known_at": "2026-04-29",
-      "raw_value": 46679000000.0,
-      "source_type": "actual",
-      "unit": "USD",
-      "zscore": 1.1275799148026582
+      "zscore": 0.5665940745157737
     },
     {
       "age_days": 19,
@@ -1717,7 +1477,7 @@
       "raw_value": 23103000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.08068250324123465
+      "zscore": 0.0831357988108194
     },
     {
       "age_days": 184,
@@ -1732,7 +1492,7 @@
       "raw_value": 45790000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.0820189507018345
+      "zscore": 0.9213945271810271
     },
     {
       "age_days": 92,
@@ -1747,7 +1507,7 @@
       "raw_value": 45387000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.061365330305173
+      "zscore": 0.9025433719531253
     },
     {
       "age_days": 176,
@@ -1762,7 +1522,7 @@
       "raw_value": 2984000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.1117747830437914
+      "zscore": -1.080944308267016
     },
     {
       "age_days": 183,
@@ -1777,7 +1537,7 @@
       "raw_value": 532421000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.2374174183748752
+      "zscore": -1.1956219665361576
     },
     {
       "age_days": 185,
@@ -1792,7 +1552,7 @@
       "raw_value": 717000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -1.2279578039848122
+      "zscore": -1.186987903556478
     },
     {
       "age_days": 184,
@@ -1807,22 +1567,22 @@
       "raw_value": 32226000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 0.3868683128350478
+      "zscore": 0.28691048372877137
     },
     {
-      "age_days": 185,
+      "age_days": 3,
       "as_of": "2026-10-31",
       "entity_id": "microsoft",
       "evidence_ids": [
-        "observation:b7971ef9f2c10379be5ef93e"
+        "observation:89221ad6a8dbed889ec49fd0"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
       "forward_returns": {},
-      "known_at": "2026-04-29",
-      "raw_value": 46679000000.0,
+      "known_at": "2026-10-28",
+      "raw_value": 58000000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": 1.1275799148026582
+      "zscore": 1.4925424312323425
     },
     {
       "age_days": 50,
@@ -1837,7 +1597,7 @@
       "raw_value": 23103000000.0,
       "source_type": "actual",
       "unit": "USD",
-      "zscore": -0.08068250324123465
+      "zscore": -0.1398366357356144
     },
     {
       "age_days": 5,
@@ -4456,95 +4216,94 @@
       "cross_sections": [
         {
           "as_of": "2026-04-30",
-          "ic": 0.4367586064037656,
-          "rank_ic": 0.4,
-          "sample_size": 4
+          "ic": 0.6994266772150436,
+          "rank_ic": 0.5,
+          "sample_size": 3
         },
         {
           "as_of": "2026-05-31",
-          "ic": -0.13910964587794428,
-          "rank_ic": -0.1,
-          "sample_size": 5
+          "ic": 0.15449254367338408,
+          "rank_ic": -0.2,
+          "sample_size": 4
         },
         {
           "as_of": "2026-06-30",
-          "ic": 0.42682791348600224,
-          "rank_ic": 0.0,
-          "sample_size": 5
+          "ic": 0.11465882440147511,
+          "rank_ic": -0.4,
+          "sample_size": 4
         },
         {
           "as_of": "2026-07-31",
-          "ic": -0.6071018101104413,
-          "rank_ic": -0.5428571428571428,
-          "sample_size": 6
+          "ic": -0.6893890723187553,
+          "rank_ic": -0.6,
+          "sample_size": 5
         },
         {
           "as_of": "2026-08-31",
-          "ic": -0.19656874226209925,
-          "rank_ic": -0.3142857142857143,
-          "sample_size": 6
+          "ic": -0.18071626207394995,
+          "rank_ic": -0.3,
+          "sample_size": 5
         }
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
       "horizon": "1m",
-      "pooled_ic": 0.02267521805924138,
-      "pooled_rank_ic": -0.15733862258964315,
+      "pooled_ic": -0.05281309800439998,
+      "pooled_rank_ic": -0.2858888365521995,
       "quantile_mean_returns": {
-        "1": 0.02425333005595398,
-        "2": -0.03673848479686111,
-        "3": 0.025402062050076713,
-        "4": -0.007154151364228834,
-        "5": -0.05029914514171652
+        "1": -0.007860450451853795,
+        "2": -0.05394730404888255,
+        "3": 0.03364514510815486,
+        "4": -0.03750182189778775,
+        "5": -0.042184280312189903
       },
-      "quantile_monotonicity": -0.5,
-      "rank_ic_ir": -0.3147311268181339,
-      "rank_ic_mean": -0.11142857142857142,
+      "quantile_monotonicity": -0.2,
+      "rank_ic_ir": -0.47809144373375745,
+      "rank_ic_mean": -0.2,
       "rank_ic_positive_ratio": 0.2,
-      "rank_ic_std": 0.3540436961386408,
-      "rank_ic_tstat": -0.7037601942004544,
-      "sample_size": 26,
-      "top_minus_bottom": -0.0745524751976705
+      "rank_ic_std": 0.4183300132670378,
+      "rank_ic_tstat": -1.0690449676496976,
+      "sample_size": 21,
+      "top_minus_bottom": -0.03432382986033611
     },
     {
       "cross_section_count": 3,
       "cross_sections": [
         {
           "as_of": "2026-04-30",
-          "ic": 0.021011727305964165,
+          "ic": -0.9292163554417521,
+          "rank_ic": -1.0,
+          "sample_size": 3
+        },
+        {
+          "as_of": "2026-05-31",
+          "ic": 0.09338593657899272,
           "rank_ic": -0.4,
           "sample_size": 4
         },
         {
-          "as_of": "2026-05-31",
-          "ic": 0.35060131290736163,
-          "rank_ic": 0.0,
-          "sample_size": 5
-        },
-        {
           "as_of": "2026-06-30",
-          "ic": 0.41962032878163447,
-          "rank_ic": 0.2,
-          "sample_size": 5
+          "ic": 0.17506332596703442,
+          "rank_ic": 0.0,
+          "sample_size": 4
         }
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
       "horizon": "3m",
-      "pooled_ic": 0.2649786223523045,
-      "pooled_rank_ic": 0.026880571164444218,
+      "pooled_ic": 0.005601139915953745,
+      "pooled_rank_ic": -0.2952188174856549,
       "quantile_mean_returns": {
         "1": -0.02082372894236828,
         "2": -0.1919106713615091,
-        "3": 0.12364988874444334,
-        "4": 0.11102995331618248,
-        "5": -0.07219565083738594
+        "3": 0.04393857452778205,
+        "4": -0.07219565083738594
       },
-      "quantile_monotonicity": 0.1,
-      "rank_ic_ir": -0.2182178902359924,
-      "rank_ic_mean": -0.06666666666666667,
-      "rank_ic_positive_ratio": 0.3333333333333333,
-      "rank_ic_std": 0.30550504633038933,
-      "rank_ic_tstat": -0.3779644730092272,
-      "sample_size": 14,
+      "quantile_monotonicity": 0.0,
+      "rank_ic_ir": -0.9271726499455307,
+      "rank_ic_mean": -0.4666666666666667,
+      "rank_ic_positive_ratio": 0.0,
+      "rank_ic_std": 0.5033222956847166,
+      "rank_ic_tstat": -1.6059101370939324,
+      "sample_size": 11,
       "top_minus_bottom": -0.05137192189501766
     },
     {
@@ -5062,96 +4821,96 @@
       "cross_sections": [
         {
           "as_of": "2026-04-30",
-          "ic": 0.5188690455036646,
-          "rank_ic": 0.8,
-          "sample_size": 4
+          "ic": 0.8319902943233336,
+          "rank_ic": 0.5,
+          "sample_size": 3
         },
         {
           "as_of": "2026-05-31",
-          "ic": -0.22613581959422416,
-          "rank_ic": -0.5428571428571428,
-          "sample_size": 6
+          "ic": 0.1326562292730528,
+          "rank_ic": -0.5,
+          "sample_size": 5
         },
         {
           "as_of": "2026-06-30",
-          "ic": 0.35663115221704395,
-          "rank_ic": 0.02857142857142857,
-          "sample_size": 6
+          "ic": -0.041879186665087345,
+          "rank_ic": -0.7,
+          "sample_size": 5
         },
         {
           "as_of": "2026-07-31",
-          "ic": -0.35590021324540777,
-          "rank_ic": -0.07142857142857142,
-          "sample_size": 7
+          "ic": -0.5746991937147453,
+          "rank_ic": -0.4857142857142857,
+          "sample_size": 6
         },
         {
           "as_of": "2026-08-31",
-          "ic": 0.21532109268847271,
-          "rank_ic": 0.32142857142857145,
-          "sample_size": 7
+          "ic": 0.268833530669193,
+          "rank_ic": 0.37142857142857144,
+          "sample_size": 6
         }
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
       "horizon": "1m",
-      "pooled_ic": 0.12444826543148713,
-      "pooled_rank_ic": 0.048152506553681376,
+      "pooled_ic": 0.020118926235169438,
+      "pooled_rank_ic": -0.24304664302843437,
       "quantile_mean_returns": {
-        "1": -0.006951026814815384,
-        "2": -0.05394730404888255,
-        "3": 0.011979594988056357,
-        "4": -0.0041345732216713,
-        "5": 0.03049458324134735
+        "1": -0.008502160396724958,
+        "2": 0.037467175895962844,
+        "3": -0.03738086508761205,
+        "4": -0.047338756981508995,
+        "5": -0.03750182189778775
       },
-      "quantile_monotonicity": 0.8,
-      "rank_ic_ir": 0.2157436073119822,
-      "rank_ic_mean": 0.10714285714285716,
-      "rank_ic_positive_ratio": 0.6,
-      "rank_ic_std": 0.49662123702196276,
-      "rank_ic_tstat": 0.4824173716606129,
-      "sample_size": 30,
-      "top_minus_bottom": 0.03744561005616273
+      "quantile_monotonicity": -0.8,
+      "rank_ic_ir": -0.29353573909599595,
+      "rank_ic_mean": -0.16285714285714284,
+      "rank_ic_positive_ratio": 0.4,
+      "rank_ic_std": 0.5548119740331965,
+      "rank_ic_tstat": -0.6563658664442896,
+      "sample_size": 25,
+      "top_minus_bottom": -0.02899966150106279
     },
     {
       "cross_section_count": 3,
       "cross_sections": [
         {
           "as_of": "2026-04-30",
-          "ic": 0.08535380757528215,
-          "rank_ic": 0.2,
-          "sample_size": 4
+          "ic": -0.9855137558071233,
+          "rank_ic": -1.0,
+          "sample_size": 3
         },
         {
           "as_of": "2026-05-31",
-          "ic": 0.34611209657475417,
-          "rank_ic": 0.02857142857142857,
-          "sample_size": 6
+          "ic": 0.061476329261064666,
+          "rank_ic": -0.7,
+          "sample_size": 5
         },
         {
           "as_of": "2026-06-30",
-          "ic": 0.6287931459693488,
-          "rank_ic": 0.3142857142857143,
-          "sample_size": 6
+          "ic": 0.4194451205217748,
+          "rank_ic": -0.2,
+          "sample_size": 5
         }
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
       "horizon": "3m",
-      "pooled_ic": 0.36543649367223785,
-      "pooled_rank_ic": 0.1743823037017289,
+      "pooled_ic": 0.08955509282687153,
+      "pooled_rank_ic": -0.4790837015518496,
       "quantile_mean_returns": {
-        "1": -0.01521981170765605,
-        "2": -0.1919106713615091,
-        "3": 0.04393857452778205,
-        "4": -0.012719176633674908,
-        "5": 0.2329950154123921
+        "1": -0.01540918904334887,
+        "2": -0.049657962420300995,
+        "3": -0.19650992970269823,
+        "4": 0.13235794722979144,
+        "5": -0.07219565083738594
       },
-      "quantile_monotonicity": 0.8,
-      "rank_ic_ir": 1.2583057392117916,
-      "rank_ic_mean": 0.18095238095238095,
-      "rank_ic_positive_ratio": 1.0,
-      "rank_ic_std": 0.14380637019563333,
-      "rank_ic_tstat": 2.1794494717703365,
-      "sample_size": 16,
-      "top_minus_bottom": 0.24821482712004814
+      "quantile_monotonicity": -0.2,
+      "rank_ic_ir": -1.5670935878004129,
+      "rank_ic_mean": -0.6333333333333333,
+      "rank_ic_positive_ratio": 0.0,
+      "rank_ic_std": 0.404145188432738,
+      "rank_ic_tstat": -2.714285714285714,
+      "sample_size": 13,
+      "top_minus_bottom": -0.05678646179403707
     },
     {
       "cross_section_count": 0,
@@ -6413,13 +6172,13 @@
     }
   ],
   "input_contract": {
-    "factor_panel_rows": 232,
+    "factor_panel_rows": 220,
     "financial_schema_version": "financial-database.v3",
     "raw_market_prices_persisted": false
   },
   "market_data": {
     "raw_persisted": false,
-    "raw_sha256": "7d975857c13dd69412cc0b6b49e8c5ddb9bb4d3d8ed71ee320dd7c6801dd9b47",
+    "raw_sha256": "141f026294ed5a4cd1ded2e092613db4839b93c2b4d93d4b67c1eb48c8d88c4e",
     "source": "Yahoo Finance via yfinance",
     "symbols": {
       "alphabet": "GOOGL",
