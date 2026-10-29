@@ -1,10 +1,10 @@
 {
   "schema_version": "verified-sec-fcf.v1",
-  "run_at": "2026-10-29T09:06:14.509801Z",
+  "run_at": "2026-10-29T17:11:13.673707Z",
   "freshness_gate_hours": 24,
-  "eligible_events_total": 1,
+  "eligible_events_total": 2,
   "stale_events_skipped_total": 7,
-  "verified_metrics_total": 1,
+  "verified_metrics_total": 2,
   "metrics": [
     {
       "event_id": "74aa33e551117b1c7b7651c9",
@@ -35,6 +35,37 @@
       "filed": "2026-10-28",
       "source": "SEC Company Facts API",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+      "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
+    },
+    {
+      "event_id": "68606eac9f4a3a0294ec63ac",
+      "company_id": "alphabet",
+      "ticker": "GOOGL",
+      "accession_number": "0001652044-26-000084",
+      "period_start": "2026-01-01",
+      "period_end": "2026-09-30",
+      "duration_days": 273,
+      "document_type": "10-Q",
+      "metric": "free_cash_flow",
+      "value": -4804000000,
+      "unit": "USD",
+      "accounting_basis": "derived-non-gaap",
+      "derivation": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
+      "inputs": {
+        "operating_cash_flow": {
+          "taxonomy": "us-gaap",
+          "concept": "NetCashProvidedByUsedInOperatingActivities",
+          "value": 127149000000
+        },
+        "capital_expenditures": {
+          "taxonomy": "us-gaap",
+          "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "value": 131953000000
+        }
+      },
+      "filed": "2026-10-29",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
       "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
     }
   ],
