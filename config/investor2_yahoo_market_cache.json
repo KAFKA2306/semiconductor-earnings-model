@@ -31,6 +31,6 @@
   "evidence_issue": 149,
   "audit": {
     "evidence_prefix": "central/investor2/private/yahoo-market-cache/evidence/v1",
-    "canonical_manifest_sha256": "2ef25485dff650297d78fac54c46fd3c5c00afa20a7c5c55ba24c69eb648265a"
+    "canonical_manifest_sha256": "3f73b200768167f4d77991b92c830074166da40e8b83fb53d3b161297dbedd1a"
   }
 }
