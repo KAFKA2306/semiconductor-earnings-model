@@ -80,7 +80,7 @@ def test_seed_ledger_is_source_traceable_and_complete() -> None:
     rows = ledger["observations"]
     assert len(rows) >= 8
     assert {row["concept_id"] for row in rows} >= {"nand_asp_change_qoq", "nand_bit_shipments_change_qoq"}
-    assert all(row["source_url"].startswith("https://investors.micron.com/") for row in rows if row["entity_id"] == "micron")
+    assert all(row["source_url"].startswith(("https://investors.micron.com/", "https://micron.gcs-web.com/", "https://s25.q4cdn.com/")) for row in rows if row["entity_id"] == "micron")
     assert all(row.get("reported_text") for row in rows if row["value_type"] == "actual")
     assert all(row.get("normalization_method") == core.BAND_POLICY_ID for row in rows if row["value_type"] == "actual")
 
@@ -109,3 +109,49 @@ def test_generated_database_exposes_nand_comparison_view() -> None:
         assert count >= 10
     finally:
         connection.close()
+
+
+def test_micron_real_release_formats_and_pdf_page_header() -> None:
+    # Minimal excerpts of the 2025-Q4 through 2026-Q4 official remarks formats.
+    examples = [
+        ("Q4", "declined in the mid-single-digit", "increased in the high single-digit", (-0.06, -0.04), (0.07, 0.09)),
+        ("Q1", "increased in the mid- to-high-single-digit", "increased in the mid-teens", (0.04, 0.09), (0.14, 0.16)),
+        ("Q2", "increased in the low-single-digit", "increased in the high-70s", (0.01, 0.03), (0.77, 0.79)),
+        ("Q3", "increased in the mid-single-digit", "increased in the mid-80s", (0.04, 0.06), (0.84, 0.86)),
+        ("Q4", "increased approximately 10%", "increased approximately 30%", (0.095, 0.105), (0.295, 0.305)),
+    ]
+    for quarter, bit_change, price_change, expected_bits, expected_price in examples:
+        extra_header = " Micron Technology, Inc. Fiscal Q4 Prepared Remarks " if "declined" in bit_change else ""
+        text = (
+            "DRAM Fiscal Q3 DRAM revenue. Bit shipments increased in the high-70s percentage range. "
+            "Prices increased in the low-60s percentage range. "
+            f"NAND Fiscal {quarter} NAND revenue. Sequentially, NAND revenue increased 5%. "
+            f"NAND bit shipments {bit_change}{extra_header} percentage range. "
+            f"Prices {price_change} percentage range. Gross margin."
+        )
+        result = core.extract_micron_nand_kpis(text)
+        assert (result["bit_shipments"]["value_low"], result["bit_shipments"]["value_high"]) == expected_bits
+        assert (result["asp"]["value_low"], result["asp"]["value_high"]) == expected_price
+
+
+def test_micron_parser_rejects_missing_nand_shipment_evidence() -> None:
+    import pytest
+
+    with pytest.raises(ValueError, match="shipment change"):
+        core.extract_micron_nand_kpis(
+            "DRAM Fiscal Q3 DRAM revenue. Bit shipments increased in the high-70s percentage range. "
+            "NAND Fiscal Q3 NAND revenue. Prices increased in the mid-80s percentage range."
+        )
+
+
+def test_micron_document_rejects_html_redirect() -> None:
+    import pytest
+    from update_nand_kpis import parse_document
+
+    with pytest.raises(ValueError, match="must be a PDF"):
+        parse_document(
+            {"entity_id": "micron", "adapter": "micron_prepared_remarks"},
+            {"source_url": "https://micron.gcs-web.com/static-files/example"},
+            b"<html><title>Investor Relations</title></html>",
+            "text/html",
+        )
