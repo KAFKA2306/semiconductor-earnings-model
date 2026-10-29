@@ -62,6 +62,7 @@ def test_exact_standard_capex_fact_is_persisted():
     assert result["status"] == "PASS"
     assert result["verified_metrics_total"] == 1
     metric = result["metrics"][0]
+    assert metric["metric"] == "capital_expenditures"
     assert metric["concept"] == "PaymentsToAcquirePropertyPlantAndEquipment"
     assert metric["period_start"] == "2026-01-01"
     assert metric["period_end"] == "2026-06-30"
