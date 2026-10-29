@@ -8,6 +8,7 @@ on:
       - "scripts/build_ai_infrastructure_view.py"
       - "site/**"
       - "tests/test_ai_infrastructure_observations.py"
+      - "tests/test_demand_aggregation_contract.py"
       - "README.md"
       - ".github/workflows/pages.yml"
   push:
@@ -105,15 +106,15 @@ jobs:
           assert q4['value'] == 41_000_000_000 and q4['value_type'] == 'actual'
           assert q1['value'] == 50_000_000_000 and q1['qualifier'] == 'greater_than' and q1['value_type'] == 'company_guidance'
           PY
-      - name: Run generated data contract tests
-        run: uv run python -m pytest -q
-      - name: Recalculate LangGraph audit
-        run: uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "22.18.0"
           cache: npm
           cache-dependency-path: site/package-lock.json
+      - name: Run generated data contract tests
+        run: uv run python -m pytest -q
+      - name: Recalculate LangGraph audit
+        run: uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
       - name: Build Astro site
         working-directory: site
         env:
