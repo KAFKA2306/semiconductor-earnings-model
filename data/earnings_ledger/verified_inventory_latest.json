@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-sec-inventory.v1",
-  "run_at": "2026-10-29T06:26:53.825701Z",
-  "eligible_events_total": 8,
-  "verified_metrics_total": 8,
+  "run_at": "2026-10-29T13:42:29.407106Z",
+  "eligible_events_total": 9,
+  "verified_metrics_total": 9,
   "metrics": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -162,6 +162,26 @@
       "filed": "2026-10-28",
       "source": "SEC Company Facts API",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+      "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
+    },
+    {
+      "event_id": "68606eac9f4a3a0294ec63ac",
+      "company_id": "alphabet",
+      "ticker": "GOOGL",
+      "accession_number": "0001652044-26-000084",
+      "period_end": "2026-09-30",
+      "document_type": "10-Q",
+      "metric": "inventory_net",
+      "value": 13308000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet",
+      "frame": "CY2026Q3I",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "filed": "2026-10-29",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
       "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
     }
   ],
