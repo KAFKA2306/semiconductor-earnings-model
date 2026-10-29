@@ -20,8 +20,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: verified-sec-revenue-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.ref == 'refs/heads/main' && 'earnings-ledger-main-writers' || format('{0}-{1}', github.workflow, github.ref) }}
+  cancel-in-progress: false
 
 jobs:
   extract-verified-revenue:
@@ -40,7 +40,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check pytest
 
       - name: Run regression tests
-        run: python -m pytest -q tests/test_verified_sec_revenue.py
+        run: python -m pytest -q tests/test_verified_sec_revenue.py tests/test_earnings_evidence_audit.py tests/test_verified_revenue_lineage.py
 
       - name: Extract verified SEC XBRL revenue with retry
         env:
@@ -68,16 +68,33 @@ jobs:
             exit 1
           fi
 
-      - name: Commit verified metric artifact
+      # A GITHUB_TOKEN push does not trigger the downstream push workflows.
+      # Audit and persist all three coupled artifacts in the same verified run.
+      - name: Refresh primary evidence for extracted metrics
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+        run: python scripts/audit_earnings_evidence.py
+
+      - name: Audit extracted revenue lineage
+        run: python scripts/audit_verified_revenue_lineage.py
+
+      - name: Commit verified revenue, evidence and lineage atomically
         if: github.event_name != 'pull_request'
         shell: bash
         run: |
-          if [ -z "$(git status --porcelain -- data/earnings_ledger/verified_revenue_latest.json)" ]; then
-            echo "No verified revenue changes."
+          paths=(
+            data/earnings_ledger/verified_revenue_latest.json
+            data/earnings_ledger/evidence_latest.json
+            data/earnings_ledger/verified_revenue_lineage_audit_latest.json
+          )
+          if [ -z "$(git status --porcelain -- "${paths[@]}")" ]; then
+            echo "Verified revenue, evidence and lineage are unchanged."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/earnings_ledger/verified_revenue_latest.json
-          git commit -m "data: update verified SEC revenue"
-          git push
+          git add -- "${paths[@]}"
+          git commit -m "data: update verified SEC revenue and lineage together"
+          # If another writer changes any ledger input, refuse to publish a stale audit.
+          export PUSH_GUARD_PATHS="data/earnings_ledger scripts/extract_verified_sec_revenue.py scripts/audit_earnings_evidence.py scripts/audit_verified_revenue_lineage.py"
+          bash scripts/push_earnings_commit_with_retry.sh
