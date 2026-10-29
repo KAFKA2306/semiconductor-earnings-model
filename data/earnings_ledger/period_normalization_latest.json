@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-10-29T05:50:40.120032Z",
-  "events_total": 22,
-  "normalized_events_total": 8,
+  "run_at": "2026-10-29T13:03:41.595207Z",
+  "events_total": 23,
+  "normalized_events_total": 9,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -75,6 +75,19 @@
       "document_type": "10-Q",
       "accession_number": "0001730168-26-000080",
       "period_end": "2026-08-02",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "68606eac9f4a3a0294ec63ac",
+      "company_id": "alphabet",
+      "document_type": "10-Q",
+      "accession_number": "0001652044-26-000084",
+      "period_end": "2026-09-30",
       "period_source": "SEC submissions reportDate",
       "period_kind": "INTERIM_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",

@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-29T10:59:16.938461Z",
-  "window_start": "2026-10-28T05:50:39.961583Z",
-  "window_end": "2026-10-29T05:50:39.961583Z",
-  "verified_events": 15,
+  "verified_at": "2026-10-29T13:03:43.328054Z",
+  "window_start": "2026-10-28T13:03:41.382524Z",
+  "window_end": "2026-10-29T13:03:41.382524Z",
+  "verified_events": 12,
   "required_metric_events": 8,
   "reused_evidence_events": 7,
   "evidence": [
@@ -106,62 +106,6 @@
       "status": "PASS"
     },
     {
-      "event_id": "101314394f03530073e2a1a5",
-      "company_id": "socionext",
-      "document_type": "TDNET_DISCLOSURE",
-      "published_at": "2026-10-28T06:30:00Z",
-      "source_url": "https://www.release.tdnet.info/inbs/140120261028556613.pdf",
-      "evidence_url": "https://www.release.tdnet.info/inbs/140120261028556613.pdf",
-      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
-      "source_content_sha256": "c6f2d7908efc0a5881762c61d98b143dea84c94ed7e48d7249b89e49248974c2",
-      "source_content_bytes": 83043,
-      "content_type": "application/pdf",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "25200cbf0cab9efd7db59c52",
-      "company_id": "advantest",
-      "document_type": "TDNET_DISCLOSURE",
-      "published_at": "2026-10-28T06:30:00Z",
-      "source_url": "https://www.release.tdnet.info/inbs/140120261028557599.pdf",
-      "evidence_url": "https://www.release.tdnet.info/inbs/140120261028557599.pdf",
-      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
-      "source_content_sha256": "9ff7b9ee62af0319e7a9280c657b78435aad99bd6aaeea55cdfb8501c369ad09",
-      "source_content_bytes": 261688,
-      "content_type": "application/pdf",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "40806a3dfefb1d3f31d47410",
-      "company_id": "advantest",
-      "document_type": "TDNET_DISCLOSURE",
-      "published_at": "2026-10-28T06:30:00Z",
-      "source_url": "https://www.release.tdnet.info/inbs/140120261028557653.pdf",
-      "evidence_url": "https://www.release.tdnet.info/inbs/140120261028557653.pdf",
-      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
-      "source_content_sha256": "dd2943b0cf0fe9554c8d69e52785b3637eaa023444282b46779ad849ae2f780b",
-      "source_content_bytes": 1480997,
-      "content_type": "application/pdf",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "4d56ad56f5cc3e6815eed524",
-      "company_id": "socionext",
-      "document_type": "TDNET_DISCLOSURE",
-      "published_at": "2026-10-28T06:30:00Z",
-      "source_url": "https://www.release.tdnet.info/inbs/140120261028557383.pdf",
-      "evidence_url": "https://www.release.tdnet.info/inbs/140120261028557383.pdf",
-      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
-      "source_content_sha256": "baeb89be60564148d1339a25a348da28862df008b361522970d3371f340384ea",
-      "source_content_bytes": 254631,
-      "content_type": "application/pdf",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
-      "status": "PASS"
-    },
-    {
       "event_id": "628e17ebc792004793213c56",
       "company_id": "alphabet",
       "document_type": "8-K",
@@ -172,7 +116,7 @@
       "source_content_sha256": "dc6e7f0354d6c35d83d37aa8be20ccf109c96a5db47e9918642104ce3887c302",
       "source_content_bytes": 152442,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
+      "verified_at": "2026-10-29T13:03:43.328054Z",
       "status": "PASS"
     },
     {
@@ -183,10 +127,10 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/0001193125-26-436122-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0000789019.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "4a627de2eff8be69e141de40545ce904e0e10873d8f26ebcc18eaadbe6670d2c",
-      "source_content_bytes": 185123,
+      "source_content_sha256": "a131887af6980d40200f02d34c0b447fcdd654afdf060e7ae1090becbcc6feab",
+      "source_content_bytes": 185279,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
+      "verified_at": "2026-10-29T13:03:43.328054Z",
       "status": "PASS"
     },
     {
@@ -197,10 +141,10 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/0001193125-26-436133-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0000789019.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "4a627de2eff8be69e141de40545ce904e0e10873d8f26ebcc18eaadbe6670d2c",
-      "source_content_bytes": 185123,
+      "source_content_sha256": "a131887af6980d40200f02d34c0b447fcdd654afdf060e7ae1090becbcc6feab",
+      "source_content_bytes": 185279,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
+      "verified_at": "2026-10-29T13:03:43.328054Z",
       "status": "PASS"
     },
     {
@@ -214,7 +158,21 @@
       "source_content_sha256": "d37fee537b268272772d51581237331a6751cbea17390932347aaa53b4b061a7",
       "source_content_bytes": 159128,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T10:59:16.938461Z",
+      "verified_at": "2026-10-29T13:03:43.328054Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "68606eac9f4a3a0294ec63ac",
+      "company_id": "alphabet",
+      "document_type": "10-Q",
+      "published_at": "2026-10-29T00:29:06Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/0001652044-26-000084-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0001652044.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "dc6e7f0354d6c35d83d37aa8be20ccf109c96a5db47e9918642104ce3887c302",
+      "source_content_bytes": 152442,
+      "content_type": "application/json",
+      "verified_at": "2026-10-29T13:03:43.328054Z",
       "status": "PASS"
     }
   ],
