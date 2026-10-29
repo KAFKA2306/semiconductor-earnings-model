@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-10-29T19:39:04.401861Z",
-  "events_total": 23,
-  "classified_events_total": 23,
+  "run_at": "2026-10-29T23:57:16.465639Z",
+  "events_total": 26,
+  "classified_events_total": 26,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -115,6 +115,16 @@
       "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
     },
     {
+      "event_id": "61228a6adb428de2131cc8a5",
+      "company_id": "amazon",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
       "event_id": "628e17ebc792004793213c56",
       "company_id": "alphabet",
       "document_type": "8-K",
@@ -205,6 +215,16 @@
       "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
     },
     {
+      "event_id": "be4a068c5d19ac0b063edd13",
+      "company_id": "kla",
+      "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
       "event_id": "d47fba975be6eebf5d64d944",
       "company_id": "oracle",
       "document_type": "8-K",
@@ -213,6 +233,16 @@
       "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
       "automatic_gaap_metric_use": false,
       "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
+      "event_id": "d870225294e77bef98f2ff13",
+      "company_id": "seagate",
+      "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
     },
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",

@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-29T19:42:51.375741Z",
-  "window_start": "2026-10-28T19:39:04.186397Z",
-  "window_end": "2026-10-29T19:39:04.186397Z",
+  "verified_at": "2026-10-29T23:57:18.320745Z",
+  "window_start": "2026-10-28T23:57:16.259200Z",
+  "window_end": "2026-10-29T23:57:16.259200Z",
   "verified_events": 12,
   "required_metric_events": 9,
-  "reused_evidence_events": 7,
+  "reused_evidence_events": 8,
   "evidence": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -106,34 +106,6 @@
       "status": "PASS"
     },
     {
-      "event_id": "628e17ebc792004793213c56",
-      "company_id": "alphabet",
-      "document_type": "8-K",
-      "published_at": "2026-10-28T20:01:33Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/0001652044-26-000080-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0001652044.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "dc6e7f0354d6c35d83d37aa8be20ccf109c96a5db47e9918642104ce3887c302",
-      "source_content_bytes": 152442,
-      "content_type": "application/json",
-      "verified_at": "2026-10-29T19:42:51.375741Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "1b7aa8f47415017ad82cf209",
-      "company_id": "microsoft",
-      "document_type": "8-K",
-      "published_at": "2026-10-28T20:04:44Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/0001193125-26-436122-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0000789019.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "a131887af6980d40200f02d34c0b447fcdd654afdf060e7ae1090becbcc6feab",
-      "source_content_bytes": 185279,
-      "content_type": "application/json",
-      "verified_at": "2026-10-29T19:42:51.375741Z",
-      "status": "PASS"
-    },
-    {
       "event_id": "74aa33e551117b1c7b7651c9",
       "company_id": "microsoft",
       "document_type": "10-Q",
@@ -148,20 +120,6 @@
       "status": "PASS"
     },
     {
-      "event_id": "a5bb46b4ce283174c9f3f03d",
-      "company_id": "kla",
-      "document_type": "8-K",
-      "published_at": "2026-10-28T20:07:50Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/319201/000031920126000032/0000319201-26-000032-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0000319201.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "d37fee537b268272772d51581237331a6751cbea17390932347aaa53b4b061a7",
-      "source_content_bytes": 159128,
-      "content_type": "application/json",
-      "verified_at": "2026-10-29T19:42:51.375741Z",
-      "status": "PASS"
-    },
-    {
       "event_id": "68606eac9f4a3a0294ec63ac",
       "company_id": "alphabet",
       "document_type": "10-Q",
@@ -169,10 +127,52 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/0001652044-26-000084-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0001652044.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "dc6e7f0354d6c35d83d37aa8be20ccf109c96a5db47e9918642104ce3887c302",
-      "source_content_bytes": 152442,
+      "source_content_sha256": "78c12fa9a0591186573e7f586b48fdfe033b0e510bf0c03e5853e30f4d4d91dd",
+      "source_content_bytes": 152594,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T19:42:51.375741Z",
+      "verified_at": "2026-10-29T23:57:18.320745Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "61228a6adb428de2131cc8a5",
+      "company_id": "amazon",
+      "document_type": "8-K",
+      "published_at": "2026-10-29T20:05:27Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/0001018724-26-000038-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0001018724.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "e82e5356f1bed043b84751d2b283d078320a3745269e0dd959e0096b7c2bae97",
+      "source_content_bytes": 160074,
+      "content_type": "application/json",
+      "verified_at": "2026-10-29T23:57:18.320745Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "be4a068c5d19ac0b063edd13",
+      "company_id": "kla",
+      "document_type": "10-Q",
+      "published_at": "2026-10-29T20:08:32Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/319201/000031920126000034/0000319201-26-000034-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000319201.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "5729cadfc0117c85fa03409e2c959ee21a94f96cd5462b2e25d1616a62282263",
+      "source_content_bytes": 159292,
+      "content_type": "application/json",
+      "verified_at": "2026-10-29T23:57:18.320745Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "d870225294e77bef98f2ff13",
+      "company_id": "seagate",
+      "document_type": "10-Q",
+      "published_at": "2026-10-29T20:11:59Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1137789/000113778926000309/0001137789-26-000309-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0001137789.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "e6403b1383b93cb83e7534e17a2bea4f437c9c86df588fbf361282d9c8b71308",
+      "source_content_bytes": 162862,
+      "content_type": "application/json",
+      "verified_at": "2026-10-29T23:57:18.320745Z",
       "status": "PASS"
     }
   ],

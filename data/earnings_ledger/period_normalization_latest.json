@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-10-29T19:39:04.356153Z",
-  "events_total": 23,
-  "normalized_events_total": 9,
+  "run_at": "2026-10-29T23:57:16.420662Z",
+  "events_total": 26,
+  "normalized_events_total": 11,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -114,6 +114,32 @@
       "document_type": "10-Q",
       "accession_number": "0000813672-26-000121",
       "period_end": "2026-09-30",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "be4a068c5d19ac0b063edd13",
+      "company_id": "kla",
+      "document_type": "10-Q",
+      "accession_number": "0000319201-26-000034",
+      "period_end": "2026-09-30",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "d870225294e77bef98f2ff13",
+      "company_id": "seagate",
+      "document_type": "10-Q",
+      "accession_number": "0001137789-26-000309",
+      "period_end": "2026-10-02",
       "period_source": "SEC submissions reportDate",
       "period_kind": "INTERIM_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",
