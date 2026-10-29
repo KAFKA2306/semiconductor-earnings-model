@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-29T09:59:14.205768Z",
+  "verified_at": "2026-10-29T10:59:16.938461Z",
   "window_start": "2026-10-28T05:50:39.961583Z",
   "window_end": "2026-10-29T05:50:39.961583Z",
   "verified_events": 15,
   "required_metric_events": 8,
-  "reused_evidence_events": 2,
+  "reused_evidence_events": 7,
   "evidence": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -116,7 +116,7 @@
       "source_content_sha256": "c6f2d7908efc0a5881762c61d98b143dea84c94ed7e48d7249b89e49248974c2",
       "source_content_bytes": 83043,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     },
     {
@@ -130,7 +130,7 @@
       "source_content_sha256": "9ff7b9ee62af0319e7a9280c657b78435aad99bd6aaeea55cdfb8501c369ad09",
       "source_content_bytes": 261688,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     },
     {
@@ -144,7 +144,7 @@
       "source_content_sha256": "dd2943b0cf0fe9554c8d69e52785b3637eaa023444282b46779ad849ae2f780b",
       "source_content_bytes": 1480997,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     },
     {
@@ -158,7 +158,7 @@
       "source_content_sha256": "baeb89be60564148d1339a25a348da28862df008b361522970d3371f340384ea",
       "source_content_bytes": 254631,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     },
     {
@@ -169,10 +169,10 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/0001652044-26-000080-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0001652044.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "d72a763837ec199093df1ec45f89ce03409583e9875ec97c395cdd654b9d3010",
-      "source_content_bytes": 152278,
+      "source_content_sha256": "dc6e7f0354d6c35d83d37aa8be20ccf109c96a5db47e9918642104ce3887c302",
+      "source_content_bytes": 152442,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     },
     {
@@ -186,7 +186,7 @@
       "source_content_sha256": "4a627de2eff8be69e141de40545ce904e0e10873d8f26ebcc18eaadbe6670d2c",
       "source_content_bytes": 185123,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     },
     {
@@ -200,7 +200,7 @@
       "source_content_sha256": "4a627de2eff8be69e141de40545ce904e0e10873d8f26ebcc18eaadbe6670d2c",
       "source_content_bytes": 185123,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     },
     {
@@ -214,7 +214,7 @@
       "source_content_sha256": "d37fee537b268272772d51581237331a6751cbea17390932347aaa53b4b061a7",
       "source_content_bytes": 159128,
       "content_type": "application/json",
-      "verified_at": "2026-10-29T09:59:14.205768Z",
+      "verified_at": "2026-10-29T10:59:16.938461Z",
       "status": "PASS"
     }
   ],
