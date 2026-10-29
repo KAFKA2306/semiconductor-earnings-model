@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-10-29T13:03:41.382524Z",
+  "run_at": "2026-10-29T19:39:04.186397Z",
   "accepted_events_total": 23,
   "rejected_events_total": 437,
   "source_status": [
@@ -122,7 +122,7 @@
       "source_id": "oracle",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "tdnet-japan-priority",

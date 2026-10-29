@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-10-29T13:03:41.595207Z",
+  "run_at": "2026-10-29T19:39:04.356153Z",
   "events_total": 23,
   "normalized_events_total": 9,
   "items": [
