@@ -18,6 +18,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: ${{ github.ref == 'refs/heads/main' && 'earnings-ledger-main-writers' || format('{0}-{1}', github.workflow, github.ref) }}
@@ -79,6 +80,7 @@ jobs:
         run: python scripts/audit_verified_revenue_lineage.py
 
       - name: Commit verified revenue, evidence and lineage atomically
+        id: persist
         if: github.event_name != 'pull_request'
         shell: bash
         run: |
@@ -89,6 +91,7 @@ jobs:
           )
           if [ -z "$(git status --porcelain -- "${paths[@]}")" ]; then
             echo "Verified revenue, evidence and lineage are unchanged."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -98,3 +101,12 @@ jobs:
           # If another writer changes any ledger input, refuse to publish a stale audit.
           export PUSH_GUARD_PATHS="data/earnings_ledger scripts/extract_verified_sec_revenue.py scripts/audit_earnings_evidence.py scripts/audit_verified_revenue_lineage.py"
           bash scripts/push_earnings_commit_with_retry.sh
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # A GITHUB_TOKEN data push does not trigger the Pages push workflow.
+      # Dispatch only after a successful, actual main update, never from a PR.
+      - name: Rebuild Pages after verified revenue changes
+        if: github.ref == 'refs/heads/main' && steps.persist.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
