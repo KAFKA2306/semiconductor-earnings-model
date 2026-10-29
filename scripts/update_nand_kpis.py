@@ -268,11 +268,13 @@ def parse_document(
     content: bytes,
     content_type: str,
 ) -> list[dict[str, Any]]:
-    text = (
-        pdf_text(content)
-        if content_type == "application/pdf" or content.startswith(b"%PDF")
-        else content.decode("utf-8", errors="replace")
-    )
+    is_pdf = content_type == "application/pdf" or content.startswith(b"%PDF")
+    if source["adapter"] == "micron_prepared_remarks" and not is_pdf:
+        raise ValueError(
+            f"Micron prepared remarks must be a PDF, got {content_type}; "
+            "check for an IR URL redirect"
+        )
+    text = pdf_text(content) if is_pdf else content.decode("utf-8", errors="replace")
     period = infer(text, document)
     if not period:
         return []
