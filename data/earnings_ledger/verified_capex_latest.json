@@ -15,7 +15,7 @@
       "period_end": "2026-09-30",
       "duration_days": 92,
       "document_type": "10-Q",
-      "metric": "payments_to_acquire_property_plant_and_equipment",
+      "metric": "capital_expenditures",
       "value": 39367000000,
       "unit": "USD",
       "taxonomy": "us-gaap",

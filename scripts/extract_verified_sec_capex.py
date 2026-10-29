@@ -129,7 +129,7 @@ def extract_event_capex(event: dict[str, Any], payload: dict[str, Any]) -> tuple
         "period_end": chosen["end"],
         "duration_days": (end - start).days + 1,
         "document_type": form,
-        "metric": "payments_to_acquire_property_plant_and_equipment",
+        "metric": "capital_expenditures",
         "value": chosen["val"],
         "unit": "USD",
         "taxonomy": "us-gaap",
