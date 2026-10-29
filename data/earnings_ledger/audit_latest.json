@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-10-28T22:59:58.447196Z",
+  "run_at": "2026-10-29T05:50:39.961583Z",
   "accepted_events_total": 22,
   "rejected_events_total": 436,
   "source_status": [
@@ -98,7 +98,7 @@
       "source_id": "alphabet",
       "status": "success",
       "accepted": 1,
-      "rejected": 6
+      "rejected": 0
     },
     {
       "source_id": "amazon",
