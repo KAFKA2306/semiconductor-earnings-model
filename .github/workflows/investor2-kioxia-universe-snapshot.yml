@@ -99,5 +99,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "data: refresh investor2 Kioxia universe snapshot"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          # Retry only unrelated main advances; reject concurrent source/ledger edits.
+          PUSH_GUARD_PATHS='config/investor2_kioxia_semiconductor_universe_50_2026-08-12.json scripts/investor2_kioxia_universe_snapshot.py data/edinetdb_quota/usage.json data/edinetdb_quota/investor2_kioxia_universe_ledger.json data/edinetdb_projections/KAFKA2306__investor2 data/financial_analysis/investor2/investor2-kioxia-semiconductor-universe-50-5y-quarterly.json' \
+            bash scripts/push_earnings_commit_with_retry.sh

@@ -31,6 +31,8 @@ jobs:
       SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
@@ -71,4 +73,6 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/financial_db/ai_infrastructure_sec_cash_ppe.json api/v1/ai-infrastructure
           git commit -m 'data: update AI infrastructure evidence'
-          git push
+          # Retry unrelated concurrent main pushes; fail closed if source or output changed.
+          PUSH_GUARD_PATHS='scripts/collect_ai_infrastructure_sec.py scripts/build_ai_infrastructure_view.py data/financial_db/ai_infrastructure_observations.json data/financial_db/ai_infrastructure_sec_cash_ppe.json api/v1/ai-infrastructure' \
+            bash scripts/push_earnings_commit_with_retry.sh
