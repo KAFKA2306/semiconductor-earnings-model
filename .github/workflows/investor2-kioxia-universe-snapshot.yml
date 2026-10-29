@@ -22,7 +22,7 @@ jobs:
     env:
       EDINETDB_API_KEY: ${{ secrets.EDINETDB_API_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
