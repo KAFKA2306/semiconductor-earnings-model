@@ -1,9 +1,27 @@
 {
   "schema_version": "verified-metric-accounting-basis-audit.v1",
-  "run_at": "2026-10-26T23:03:14.203099Z",
+  "run_at": "2026-10-29T02:05:37.092020Z",
   "artifacts_expected_total": 4,
-  "metrics_audited_total": 8,
+  "metrics_audited_total": 12,
   "items": [
+    {
+      "artifact": "verified_capex_latest.json",
+      "event_id": "74aa33e551117b1c7b7651c9",
+      "metric": "capital_expenditures",
+      "accounting_basis": "us-gaap-xbrl-fact",
+      "taxonomy": "us-gaap",
+      "concept": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "artifact": "verified_fcf_latest.json",
+      "event_id": "74aa33e551117b1c7b7651c9",
+      "metric": "free_cash_flow",
+      "accounting_basis": "derived-non-gaap",
+      "inputs": [
+        "capital_expenditures",
+        "operating_cash_flow"
+      ]
+    },
     {
       "artifact": "verified_inventory_latest.json",
       "event_id": "110d99434de9ce74bdd7a88d",
@@ -38,7 +56,23 @@
     },
     {
       "artifact": "verified_inventory_latest.json",
+      "event_id": "74aa33e551117b1c7b7651c9",
+      "metric": "inventory_net",
+      "accounting_basis": "us-gaap-xbrl-fact",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet"
+    },
+    {
+      "artifact": "verified_inventory_latest.json",
       "event_id": "837e53975925d9b420b0dc5e",
+      "metric": "inventory_net",
+      "accounting_basis": "us-gaap-xbrl-fact",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet"
+    },
+    {
+      "artifact": "verified_inventory_latest.json",
+      "event_id": "893c606bb5169a68452985f2",
       "metric": "inventory_net",
       "accounting_basis": "us-gaap-xbrl-fact",
       "taxonomy": "us-gaap",
