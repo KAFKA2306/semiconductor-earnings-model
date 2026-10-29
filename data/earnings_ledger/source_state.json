@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-10-29T19:39:04.186397Z",
+  "generated_from_run_at": "2026-10-29T23:57:16.259200Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -70,8 +70,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "a5bb46b4ce283174c9f3f03d",
-      "last_seen_published_at": "2026-10-28T20:07:50Z",
+      "last_seen_id": "be4a068c5d19ac0b063edd13",
+      "last_seen_published_at": "2026-10-29T20:08:32Z",
       "last_seen_disposition": "accepted"
     },
     {
@@ -88,8 +88,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "b825c7d35af4d23f8cc0185e",
-      "last_seen_published_at": "2026-09-09T00:13:26Z",
+      "last_seen_id": "a8a3279a06c9a0a34aef8481",
+      "last_seen_published_at": "2026-10-29T20:34:11Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -97,9 +97,9 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "96846354cebc0a8cb44e6ba6",
-      "last_seen_published_at": "2026-10-27T22:56:38Z",
-      "last_seen_disposition": "rejected"
+      "last_seen_id": "d870225294e77bef98f2ff13",
+      "last_seen_published_at": "2026-10-29T20:11:59Z",
+      "last_seen_disposition": "accepted"
     },
     {
       "source_id": "arm",
@@ -142,26 +142,26 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "68606eac9f4a3a0294ec63ac",
-      "last_seen_published_at": "2026-10-29T00:29:06Z",
-      "last_seen_disposition": "accepted"
+      "last_seen_id": "097c000c58f2e4b03a7a2136",
+      "last_seen_published_at": "2026-10-29T20:17:01Z",
+      "last_seen_disposition": "rejected"
     },
     {
       "source_id": "amazon",
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "bdef492e78e54bdb9b7072da",
-      "last_seen_published_at": "2026-09-09T20:54:30Z",
-      "last_seen_disposition": "rejected"
+      "last_seen_id": "61228a6adb428de2131cc8a5",
+      "last_seen_published_at": "2026-10-29T20:05:27Z",
+      "last_seen_disposition": "accepted"
     },
     {
       "source_id": "meta",
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "8e41b1ee6d1eb96a3b0f73f8",
-      "last_seen_published_at": "2026-10-28T22:25:43Z",
+      "last_seen_id": "6423c3bc80c81a44c2a6236a",
+      "last_seen_published_at": "2026-10-29T21:28:42Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -169,8 +169,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "f686d803bdc9f88644c05bc9",
-      "last_seen_published_at": "2026-09-10T18:30:31Z",
+      "last_seen_id": "44ad05c58f0ba9339f8771ce",
+      "last_seen_published_at": "2026-10-29T22:30:14Z",
       "last_seen_disposition": "rejected"
     },
     {
