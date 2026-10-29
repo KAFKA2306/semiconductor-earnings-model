@@ -11,10 +11,10 @@ REGISTRY = ROOT / "data/financial_db/nand_kpi_sources.json"
 def test_nand_source_registry_preserves_value_and_period_evidence() -> None:
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
     micron = next(source for source in registry["sources"] if source["entity_id"] == "micron")
-    assert len(micron["documents"]) >= 4
+    assert len(micron["documents"]) >= 5
     for document in micron["documents"]:
-        assert document["source_url"].startswith("https://investors.micron.com/")
-        assert document["period_source_url"].startswith("https://investors.micron.com/")
+        assert document["source_url"].startswith(("https://micron.gcs-web.com/static-files/", "https://s25.q4cdn.com/"))
+        assert document["period_source_url"].startswith(("https://investors.micron.com/", "https://micron.gcs-web.com/"))
         assert document["period_end"]
         assert document["fiscal_period"] in {"Q1", "Q2", "Q3", "Q4"}
 
