@@ -7,7 +7,7 @@
     "rows_without_start_price": 40,
     "test_count": 108
   },
-  "content_hash": "3b969e13d674dd0f5e7a18a2d35a17b95da65d59c58f286fe091c873d6a1acbe",
+  "content_hash": "e5f663dea3db0341d1f26308176dc8e79b1c9c6c77811cc217cbe01cbd9ae642",
   "factor_observations": [
     {
       "age_days": 0,
@@ -21,7 +21,7 @@
         "12m": null,
         "1m": -0.021907466068623593,
         "3m": -0.13290017087623673,
-        "6m": null
+        "6m": -0.26242199498997787
       },
       "known_at": "2026-04-30",
       "raw_value": 35674000000.0,
@@ -41,7 +41,7 @@
         "12m": null,
         "1m": -0.029607544881976255,
         "3m": -0.0325996954188712,
-        "6m": null
+        "6m": -0.04262895743811845
       },
       "known_at": "2026-04-29",
       "raw_value": 1256000000.0,
@@ -61,7 +61,7 @@
         "12m": null,
         "1m": -0.018695564614868876,
         "3m": -0.11910239585266935,
-        "6m": null
+        "6m": 0.020607682404516492
       },
       "known_at": "2026-04-30",
       "raw_value": 18997000000.0,
@@ -851,7 +851,7 @@
         "12m": null,
         "1m": -0.021907466068623593,
         "3m": -0.13290017087623673,
-        "6m": null
+        "6m": -0.26242199498997787
       },
       "known_at": "2026-04-30",
       "raw_value": 45790000000.0,
@@ -871,7 +871,7 @@
         "12m": null,
         "1m": -0.029607544881976255,
         "3m": -0.0325996954188712,
-        "6m": null
+        "6m": -0.04262895743811845
       },
       "known_at": "2026-04-29",
       "raw_value": 717000000.0,
@@ -891,7 +891,7 @@
         "12m": null,
         "1m": -0.018695564614868876,
         "3m": -0.11910239585266935,
-        "6m": null
+        "6m": 0.020607682404516492
       },
       "known_at": "2026-04-30",
       "raw_value": 32226000000.0,
@@ -1721,7 +1721,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 0.62,
@@ -1936,7 +1936,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 0.66,
@@ -2151,7 +2151,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 0.67,
@@ -2366,7 +2366,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 0.76,
@@ -2706,7 +2706,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 2708000000.0,
@@ -2921,7 +2921,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 7749000000.0,
@@ -3156,7 +3156,7 @@
         "12m": null,
         "1m": 0.6063966931660174,
         "3m": 0.16730348974295883,
-        "6m": null
+        "6m": 0.21298486742717326
       },
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
@@ -3371,7 +3371,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 5687000000.0,
@@ -3606,7 +3606,7 @@
         "12m": null,
         "1m": 0.6063966931660174,
         "3m": 0.16730348974295883,
-        "6m": null
+        "6m": 0.21298486742717326
       },
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
@@ -3841,7 +3841,7 @@
         "12m": null,
         "1m": 0.6063966931660174,
         "3m": 0.16730348974295883,
-        "6m": null
+        "6m": 0.21298486742717326
       },
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
@@ -4056,7 +4056,7 @@
         "12m": null,
         "1m": 1.0022817962955686,
         "3m": 0.6912754632309663,
-        "6m": null
+        "6m": 0.8065396938021507
       },
       "known_at": "2026-03-18",
       "raw_value": 7711000000.0,
@@ -4307,21 +4307,32 @@
       "top_minus_bottom": -0.05137192189501766
     },
     {
-      "cross_section_count": 0,
-      "cross_sections": [],
+      "cross_section_count": 1,
+      "cross_sections": [
+        {
+          "as_of": "2026-04-30",
+          "ic": -0.7276386107134373,
+          "rank_ic": -0.5,
+          "sample_size": 3
+        }
+      ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
       "horizon": "6m",
-      "pooled_ic": null,
-      "pooled_rank_ic": null,
-      "quantile_mean_returns": {},
-      "quantile_monotonicity": null,
+      "pooled_ic": -0.7276386107134373,
+      "pooled_rank_ic": -0.5,
+      "quantile_mean_returns": {
+        "1": -0.04262895743811845,
+        "2": 0.020607682404516492,
+        "3": -0.26242199498997787
+      },
+      "quantile_monotonicity": -0.5,
       "rank_ic_ir": null,
-      "rank_ic_mean": null,
-      "rank_ic_positive_ratio": null,
+      "rank_ic_mean": -0.5,
+      "rank_ic_positive_ratio": 0.0,
       "rank_ic_std": null,
       "rank_ic_tstat": null,
-      "sample_size": 0,
-      "top_minus_bottom": null
+      "sample_size": 3,
+      "top_minus_bottom": -0.21979303755185942
     },
     {
       "cross_section_count": 0,
@@ -4913,21 +4924,32 @@
       "top_minus_bottom": -0.05678646179403707
     },
     {
-      "cross_section_count": 0,
-      "cross_sections": [],
+      "cross_section_count": 1,
+      "cross_sections": [
+        {
+          "as_of": "2026-04-30",
+          "ic": -0.5702273754869698,
+          "rank_ic": -0.5,
+          "sample_size": 3
+        }
+      ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
       "horizon": "6m",
-      "pooled_ic": null,
-      "pooled_rank_ic": null,
-      "quantile_mean_returns": {},
-      "quantile_monotonicity": null,
+      "pooled_ic": -0.5702273754869698,
+      "pooled_rank_ic": -0.5,
+      "quantile_mean_returns": {
+        "1": -0.04262895743811845,
+        "2": 0.020607682404516492,
+        "3": -0.26242199498997787
+      },
+      "quantile_monotonicity": -0.5,
       "rank_ic_ir": null,
-      "rank_ic_mean": null,
-      "rank_ic_positive_ratio": null,
+      "rank_ic_mean": -0.5,
+      "rank_ic_positive_ratio": 0.0,
       "rank_ic_std": null,
       "rank_ic_tstat": null,
-      "sample_size": 0,
-      "top_minus_bottom": null
+      "sample_size": 3,
+      "top_minus_bottom": -0.21979303755185942
     },
     {
       "cross_section_count": 0,
@@ -6178,7 +6200,7 @@
   },
   "market_data": {
     "raw_persisted": false,
-    "raw_sha256": "0c2cf608a7686dd51a403197349d7e920cca13ec738f227e5c82a12754da6084",
+    "raw_sha256": "556c056f233305ac14c468e1628f410036d7428d4db9a3292990418b8206e0a0",
     "source": "Yahoo Finance via yfinance",
     "symbols": {
       "alphabet": "GOOGL",
