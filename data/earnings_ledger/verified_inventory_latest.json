@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-sec-inventory.v1",
-  "run_at": "2026-10-29T19:51:15.037020Z",
-  "eligible_events_total": 9,
-  "verified_metrics_total": 9,
+  "run_at": "2026-10-30T00:21:18.550256Z",
+  "eligible_events_total": 11,
+  "verified_metrics_total": 11,
   "metrics": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -182,6 +182,46 @@
       "filed": "2026-10-29",
       "source": "SEC Company Facts API",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+      "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
+    },
+    {
+      "event_id": "be4a068c5d19ac0b063edd13",
+      "company_id": "kla",
+      "ticker": "KLAC",
+      "accession_number": "0000319201-26-000034",
+      "period_end": "2026-09-30",
+      "document_type": "10-Q",
+      "metric": "inventory_net",
+      "value": 4090426000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet",
+      "frame": "CY2026Q3I",
+      "fiscal_year": 2027,
+      "fiscal_period": "Q1",
+      "filed": "2026-10-29",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000319201.json",
+      "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
+    },
+    {
+      "event_id": "d870225294e77bef98f2ff13",
+      "company_id": "seagate",
+      "ticker": "STX",
+      "accession_number": "0001137789-26-000309",
+      "period_end": "2026-10-02",
+      "document_type": "10-Q",
+      "metric": "inventory_net",
+      "value": 1700000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet",
+      "frame": "CY2026Q3I",
+      "fiscal_year": 2027,
+      "fiscal_period": "Q1",
+      "filed": "2026-10-29",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001137789.json",
       "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
     }
   ],
