@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-30T05:51:40.147868Z",
+  "verified_at": "2026-10-30T06:02:27.928322Z",
   "window_start": "2026-10-29T05:51:38.130557Z",
   "window_end": "2026-10-30T05:51:38.130557Z",
   "verified_events": 12,
@@ -144,7 +144,7 @@
       "source_content_sha256": "3f40a7f084b99052bb92ed6baa5d2d31fbd2dff63dbd62b288990d5e7ad0d72f",
       "source_content_bytes": 159768,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T05:51:40.147868Z",
+      "verified_at": "2026-10-30T06:02:27.928322Z",
       "status": "PASS"
     },
     {
@@ -158,7 +158,7 @@
       "source_content_sha256": "5263eeaab956e975edcd06f7a9efb2ebe0805f710ab904e88fb9f65e7a5c01a7",
       "source_content_bytes": 159131,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T05:51:40.147868Z",
+      "verified_at": "2026-10-30T06:02:27.928322Z",
       "status": "PASS"
     },
     {
@@ -172,7 +172,7 @@
       "source_content_sha256": "1635a8517e20e8aebaaec7c75655306573dd43d5c36078633c23c80929055065",
       "source_content_bytes": 162862,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T05:51:40.147868Z",
+      "verified_at": "2026-10-30T06:02:27.928322Z",
       "status": "PASS"
     }
   ],
