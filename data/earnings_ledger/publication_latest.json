@@ -1,52 +1,16 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-10-30T19:24:05.796325Z",
+  "generated_from_run_at": "2026-10-30T23:48:29.832999Z",
   "audit_status": "PASS",
-  "accepted_events_total": 6,
+  "accepted_events_total": 2,
   "ledger_accepted_events_total": 29,
-  "expired_events_total": 23,
-  "rejected_events_total": 447,
+  "expired_events_total": 27,
+  "rejected_events_total": 449,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
-    {
-      "event_id": "61228a6adb428de2131cc8a5",
-      "company_id": "amazon",
-      "company_name": "Amazon",
-      "document_type": "8-K",
-      "published_at": "2026-10-29T20:05:27Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/0001018724-26-000038-index.html",
-      "freshness": "PASS"
-    },
-    {
-      "event_id": "be4a068c5d19ac0b063edd13",
-      "company_id": "kla",
-      "company_name": "KLA",
-      "document_type": "10-Q",
-      "published_at": "2026-10-29T20:08:32Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/319201/000031920126000034/0000319201-26-000034-index.html",
-      "freshness": "PASS"
-    },
-    {
-      "event_id": "d870225294e77bef98f2ff13",
-      "company_id": "seagate",
-      "company_name": "Seagate Technology Holdings plc",
-      "document_type": "10-Q",
-      "published_at": "2026-10-29T20:11:59Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1137789/000113778926000309/0001137789-26-000309-index.html",
-      "freshness": "PASS"
-    },
-    {
-      "event_id": "9c69ab8ed31ee15fe168b045",
-      "company_id": "amazon",
-      "company_name": "Amazon",
-      "document_type": "10-Q",
-      "published_at": "2026-10-29T22:20:46Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/0001018724-26-000040-index.html",
-      "freshness": "PASS"
-    },
     {
       "event_id": "798a7a83b0a72bfd237a2d68",
       "company_id": "tokyo-electron",

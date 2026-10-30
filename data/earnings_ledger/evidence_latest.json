@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-30T19:29:54.849585Z",
-  "window_start": "2026-10-29T19:24:05.796325Z",
-  "window_end": "2026-10-30T19:24:05.796325Z",
-  "verified_events": 15,
+  "verified_at": "2026-10-30T23:48:31.963885Z",
+  "window_start": "2026-10-29T23:48:29.832999Z",
+  "window_end": "2026-10-30T23:48:29.832999Z",
+  "verified_events": 14,
   "required_metric_events": 12,
-  "reused_evidence_events": 9,
+  "reused_evidence_events": 12,
   "evidence": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -134,20 +134,6 @@
       "status": "PASS"
     },
     {
-      "event_id": "61228a6adb428de2131cc8a5",
-      "company_id": "amazon",
-      "document_type": "8-K",
-      "published_at": "2026-10-29T20:05:27Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/0001018724-26-000038-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0001018724.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "b79ff9133318a7b14a5294cdf479a125654f6f96e2fd8b15ba541d6490fe0628",
-      "source_content_bytes": 159932,
-      "content_type": "application/json",
-      "verified_at": "2026-10-30T19:29:54.849585Z",
-      "status": "PASS"
-    },
-    {
       "event_id": "be4a068c5d19ac0b063edd13",
       "company_id": "kla",
       "document_type": "10-Q",
@@ -200,7 +186,7 @@
       "source_content_sha256": "6d0523c4085e32d12e3cd5cae410fc9173f8add66091dc5dc9eeec35290719ba",
       "source_content_bytes": 279771,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-30T19:29:54.849585Z",
+      "verified_at": "2026-10-30T23:48:31.963885Z",
       "status": "PASS"
     },
     {
@@ -214,7 +200,7 @@
       "source_content_sha256": "1ab3ae5992cea9a413ecec56d00ab8e24acc161f0c4df228fd020edf7cf36840",
       "source_content_bytes": 240563,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-30T19:29:54.849585Z",
+      "verified_at": "2026-10-30T23:48:31.963885Z",
       "status": "PASS"
     }
   ],
