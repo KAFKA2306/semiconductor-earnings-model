@@ -1,25 +1,16 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-10-29T23:57:16.259200Z",
+  "generated_from_run_at": "2026-10-30T05:51:38.130557Z",
   "audit_status": "PASS",
-  "accepted_events_total": 4,
+  "accepted_events_total": 3,
   "ledger_accepted_events_total": 26,
-  "expired_events_total": 22,
+  "expired_events_total": 23,
   "rejected_events_total": 443,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
-    {
-      "event_id": "68606eac9f4a3a0294ec63ac",
-      "company_id": "alphabet",
-      "company_name": "Alphabet",
-      "document_type": "10-Q",
-      "published_at": "2026-10-29T00:29:06Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/0001652044-26-000084-index.html",
-      "freshness": "PASS"
-    },
     {
       "event_id": "61228a6adb428de2131cc8a5",
       "company_id": "amazon",
