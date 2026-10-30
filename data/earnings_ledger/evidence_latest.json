@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-30T19:24:06.606892Z",
+  "verified_at": "2026-10-30T19:29:54.849585Z",
   "window_start": "2026-10-29T19:24:05.796325Z",
   "window_end": "2026-10-30T19:24:05.796325Z",
   "verified_events": 15,
@@ -144,7 +144,7 @@
       "source_content_sha256": "b79ff9133318a7b14a5294cdf479a125654f6f96e2fd8b15ba541d6490fe0628",
       "source_content_bytes": 159932,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T19:24:06.606892Z",
+      "verified_at": "2026-10-30T19:29:54.849585Z",
       "status": "PASS"
     },
     {
@@ -158,7 +158,7 @@
       "source_content_sha256": "5263eeaab956e975edcd06f7a9efb2ebe0805f710ab904e88fb9f65e7a5c01a7",
       "source_content_bytes": 159131,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T19:24:06.606892Z",
+      "verified_at": "2026-10-30T19:29:54.849585Z",
       "status": "PASS"
     },
     {
@@ -172,7 +172,7 @@
       "source_content_sha256": "1635a8517e20e8aebaaec7c75655306573dd43d5c36078633c23c80929055065",
       "source_content_bytes": 162862,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T19:24:06.606892Z",
+      "verified_at": "2026-10-30T19:29:54.849585Z",
       "status": "PASS"
     },
     {
@@ -186,7 +186,7 @@
       "source_content_sha256": "b79ff9133318a7b14a5294cdf479a125654f6f96e2fd8b15ba541d6490fe0628",
       "source_content_bytes": 159932,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T19:24:06.606892Z",
+      "verified_at": "2026-10-30T19:29:54.849585Z",
       "status": "PASS"
     },
     {
@@ -200,7 +200,7 @@
       "source_content_sha256": "6d0523c4085e32d12e3cd5cae410fc9173f8add66091dc5dc9eeec35290719ba",
       "source_content_bytes": 279771,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-30T19:24:06.606892Z",
+      "verified_at": "2026-10-30T19:29:54.849585Z",
       "status": "PASS"
     },
     {
@@ -214,7 +214,7 @@
       "source_content_sha256": "1ab3ae5992cea9a413ecec56d00ab8e24acc161f0c4df228fd020edf7cf36840",
       "source_content_bytes": 240563,
       "content_type": "application/pdf",
-      "verified_at": "2026-10-30T19:24:06.606892Z",
+      "verified_at": "2026-10-30T19:29:54.849585Z",
       "status": "PASS"
     }
   ],
