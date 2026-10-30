@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-10-30T05:51:38.553420Z",
-  "events_total": 26,
-  "classified_events_total": 26,
+  "run_at": "2026-10-30T12:57:50.380395Z",
+  "events_total": 29,
+  "classified_events_total": 29,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -155,6 +155,16 @@
       "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
     },
     {
+      "event_id": "7032c28bf2b8ba1e33d4e124",
+      "company_id": "lasertec",
+      "document_type": "TDNET_DISCLOSURE",
+      "source_adapter": "tdnet_public",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
+      "automatic_gaap_metric_use": false,
+      "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
+    },
+    {
       "event_id": "74aa33e551117b1c7b7651c9",
       "company_id": "microsoft",
       "document_type": "10-Q",
@@ -163,6 +173,16 @@
       "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
       "automatic_gaap_metric_use": false,
       "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "798a7a83b0a72bfd237a2d68",
+      "company_id": "tokyo-electron",
+      "document_type": "TDNET_DISCLOSURE",
+      "source_adapter": "tdnet_public",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
+      "automatic_gaap_metric_use": false,
+      "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
     },
     {
       "event_id": "837e53975925d9b420b0dc5e",
@@ -177,6 +197,16 @@
     {
       "event_id": "893c606bb5169a68452985f2",
       "company_id": "cadence",
+      "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "9c69ab8ed31ee15fe168b045",
+      "company_id": "amazon",
       "document_type": "10-Q",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,

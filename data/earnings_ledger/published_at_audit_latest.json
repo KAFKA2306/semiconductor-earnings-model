@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-10-30T05:51:40.062159Z",
-  "events_total": 26,
-  "sec_events_total": 22,
-  "non_sec_events_not_independently_reverified": 4,
+  "run_at": "2026-10-30T12:57:51.365845Z",
+  "events_total": 29,
+  "sec_events_total": 23,
+  "non_sec_events_not_independently_reverified": 6,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -266,6 +266,18 @@
       "primary_acceptance_at": "2026-10-29T20:11:59.000Z",
       "ledger_published_at_utc": "2026-10-29T20:11:59Z",
       "primary_acceptance_at_utc": "2026-10-29T20:11:59Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "9c69ab8ed31ee15fe168b045",
+      "company_id": "amazon",
+      "accession_number": "0001018724-26-000040",
+      "ledger_published_at": "2026-10-29T22:20:46Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-10-29T22:20:46.000Z",
+      "ledger_published_at_utc": "2026-10-29T22:20:46Z",
+      "primary_acceptance_at_utc": "2026-10-29T22:20:46Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

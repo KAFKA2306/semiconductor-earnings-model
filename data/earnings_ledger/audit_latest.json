@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-10-30T05:51:38.130557Z",
-  "accepted_events_total": 26,
-  "rejected_events_total": 443,
+  "run_at": "2026-10-30T12:57:50.169671Z",
+  "accepted_events_total": 29,
+  "rejected_events_total": 447,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -103,7 +103,7 @@
     {
       "source_id": "amazon",
       "status": "success",
-      "accepted": 1,
+      "accepted": 2,
       "rejected": 0
     },
     {
@@ -127,8 +127,8 @@
     {
       "source_id": "tdnet-japan-priority",
       "status": "success",
-      "accepted": 0,
-      "rejected": 0
+      "accepted": 2,
+      "rejected": 3
     },
     {
       "source_id": "sk-hynix",

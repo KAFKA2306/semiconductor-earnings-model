@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-30T06:02:27.928322Z",
-  "window_start": "2026-10-29T05:51:38.130557Z",
-  "window_end": "2026-10-30T05:51:38.130557Z",
-  "verified_events": 12,
+  "verified_at": "2026-10-30T12:57:51.454029Z",
+  "window_start": "2026-10-29T12:57:50.169671Z",
+  "window_end": "2026-10-30T12:57:50.169671Z",
+  "verified_events": 15,
   "required_metric_events": 11,
   "reused_evidence_events": 9,
   "evidence": [
@@ -141,10 +141,10 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/0001018724-26-000038-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0001018724.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "3f40a7f084b99052bb92ed6baa5d2d31fbd2dff63dbd62b288990d5e7ad0d72f",
-      "source_content_bytes": 159768,
+      "source_content_sha256": "b79ff9133318a7b14a5294cdf479a125654f6f96e2fd8b15ba541d6490fe0628",
+      "source_content_bytes": 159932,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T06:02:27.928322Z",
+      "verified_at": "2026-10-30T12:57:51.454029Z",
       "status": "PASS"
     },
     {
@@ -158,7 +158,7 @@
       "source_content_sha256": "5263eeaab956e975edcd06f7a9efb2ebe0805f710ab904e88fb9f65e7a5c01a7",
       "source_content_bytes": 159131,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T06:02:27.928322Z",
+      "verified_at": "2026-10-30T12:57:51.454029Z",
       "status": "PASS"
     },
     {
@@ -172,7 +172,49 @@
       "source_content_sha256": "1635a8517e20e8aebaaec7c75655306573dd43d5c36078633c23c80929055065",
       "source_content_bytes": 162862,
       "content_type": "application/json",
-      "verified_at": "2026-10-30T06:02:27.928322Z",
+      "verified_at": "2026-10-30T12:57:51.454029Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "9c69ab8ed31ee15fe168b045",
+      "company_id": "amazon",
+      "document_type": "10-Q",
+      "published_at": "2026-10-29T22:20:46Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/0001018724-26-000040-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0001018724.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "b79ff9133318a7b14a5294cdf479a125654f6f96e2fd8b15ba541d6490fe0628",
+      "source_content_bytes": 159932,
+      "content_type": "application/json",
+      "verified_at": "2026-10-30T12:57:51.454029Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "798a7a83b0a72bfd237a2d68",
+      "company_id": "tokyo-electron",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-30T06:30:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120260924539503.pdf",
+      "evidence_url": "https://www.release.tdnet.info/inbs/140120260924539503.pdf",
+      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
+      "source_content_sha256": "6d0523c4085e32d12e3cd5cae410fc9173f8add66091dc5dc9eeec35290719ba",
+      "source_content_bytes": 279771,
+      "content_type": "application/pdf",
+      "verified_at": "2026-10-30T12:57:51.454029Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "7032c28bf2b8ba1e33d4e124",
+      "company_id": "lasertec",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-30T06:45:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120261030560435.pdf",
+      "evidence_url": "https://www.release.tdnet.info/inbs/140120261030560435.pdf",
+      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
+      "source_content_sha256": "1ab3ae5992cea9a413ecec56d00ab8e24acc161f0c4df228fd020edf7cf36840",
+      "source_content_bytes": 240563,
+      "content_type": "application/pdf",
+      "verified_at": "2026-10-30T12:57:51.454029Z",
       "status": "PASS"
     }
   ],

@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-10-30T05:51:38.130557Z",
+  "generated_from_run_at": "2026-10-30T12:57:50.169671Z",
   "audit_status": "PASS",
-  "accepted_events_total": 3,
-  "ledger_accepted_events_total": 26,
+  "accepted_events_total": 6,
+  "ledger_accepted_events_total": 29,
   "expired_events_total": 23,
-  "rejected_events_total": 443,
+  "rejected_events_total": 447,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
@@ -36,6 +36,33 @@
       "document_type": "10-Q",
       "published_at": "2026-10-29T20:11:59Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1137789/000113778926000309/0001137789-26-000309-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "9c69ab8ed31ee15fe168b045",
+      "company_id": "amazon",
+      "company_name": "Amazon",
+      "document_type": "10-Q",
+      "published_at": "2026-10-29T22:20:46Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/0001018724-26-000040-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "798a7a83b0a72bfd237a2d68",
+      "company_id": "tokyo-electron",
+      "company_name": "東エレク",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-30T06:30:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120260924539503.pdf",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "7032c28bf2b8ba1e33d4e124",
+      "company_id": "lasertec",
+      "company_name": "レーザーテック",
+      "document_type": "TDNET_DISCLOSURE",
+      "published_at": "2026-10-30T06:45:00Z",
+      "source_url": "https://www.release.tdnet.info/inbs/140120261030560435.pdf",
       "freshness": "PASS"
     }
   ],

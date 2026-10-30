@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-10-30T05:51:38.505780Z",
-  "events_total": 26,
-  "normalized_events_total": 11,
+  "run_at": "2026-10-30T12:57:50.334551Z",
+  "events_total": 29,
+  "normalized_events_total": 12,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -113,6 +113,19 @@
       "company_id": "cadence",
       "document_type": "10-Q",
       "accession_number": "0000813672-26-000121",
+      "period_end": "2026-09-30",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "9c69ab8ed31ee15fe168b045",
+      "company_id": "amazon",
+      "document_type": "10-Q",
+      "accession_number": "0001018724-26-000040",
       "period_end": "2026-09-30",
       "period_source": "SEC submissions reportDate",
       "period_kind": "INTERIM_REPORT_PERIOD_END",
