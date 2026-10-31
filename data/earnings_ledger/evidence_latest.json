@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-10-31T05:57:36.724758Z",
-  "window_start": "2026-10-30T05:43:56.394745Z",
-  "window_end": "2026-10-31T05:43:56.394745Z",
-  "verified_events": 14,
+  "verified_at": "2026-10-31T12:33:29.037496Z",
+  "window_start": "2026-10-30T12:33:26.941557Z",
+  "window_end": "2026-10-31T12:33:26.941557Z",
+  "verified_events": 12,
   "required_metric_events": 12,
   "reused_evidence_events": 12,
   "evidence": [
@@ -173,34 +173,6 @@
       "source_content_bytes": 159932,
       "content_type": "application/json",
       "verified_at": "2026-10-30T19:29:54.849585Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "798a7a83b0a72bfd237a2d68",
-      "company_id": "tokyo-electron",
-      "document_type": "TDNET_DISCLOSURE",
-      "published_at": "2026-10-30T06:30:00Z",
-      "source_url": "https://www.release.tdnet.info/inbs/140120260924539503.pdf",
-      "evidence_url": "https://www.release.tdnet.info/inbs/140120260924539503.pdf",
-      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
-      "source_content_sha256": "6d0523c4085e32d12e3cd5cae410fc9173f8add66091dc5dc9eeec35290719ba",
-      "source_content_bytes": 279771,
-      "content_type": "application/pdf",
-      "verified_at": "2026-10-31T05:57:36.724758Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "7032c28bf2b8ba1e33d4e124",
-      "company_id": "lasertec",
-      "document_type": "TDNET_DISCLOSURE",
-      "published_at": "2026-10-30T06:45:00Z",
-      "source_url": "https://www.release.tdnet.info/inbs/140120261030560435.pdf",
-      "evidence_url": "https://www.release.tdnet.info/inbs/140120261030560435.pdf",
-      "evidence_scope": "TDNET_DISCLOSURE_DOCUMENT",
-      "source_content_sha256": "1ab3ae5992cea9a413ecec56d00ab8e24acc161f0c4df228fd020edf7cf36840",
-      "source_content_bytes": 240563,
-      "content_type": "application/pdf",
-      "verified_at": "2026-10-31T05:57:36.724758Z",
       "status": "PASS"
     }
   ],
