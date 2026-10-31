@@ -1,74 +1,11 @@
 {
   "schema_version": "verified-sec-fcf.v1",
-  "run_at": "2026-10-30T06:37:52.877402Z",
+  "run_at": "2026-10-31T00:15:00.147053Z",
   "freshness_gate_hours": 24,
-  "eligible_events_total": 2,
-  "stale_events_skipped_total": 9,
-  "verified_metrics_total": 2,
-  "metrics": [
-    {
-      "event_id": "be4a068c5d19ac0b063edd13",
-      "company_id": "kla",
-      "ticker": "KLAC",
-      "accession_number": "0000319201-26-000034",
-      "period_start": "2026-07-01",
-      "period_end": "2026-09-30",
-      "duration_days": 92,
-      "document_type": "10-Q",
-      "metric": "free_cash_flow",
-      "value": 1336183000,
-      "unit": "USD",
-      "accounting_basis": "derived-non-gaap",
-      "derivation": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
-      "inputs": {
-        "operating_cash_flow": {
-          "taxonomy": "us-gaap",
-          "concept": "NetCashProvidedByUsedInOperatingActivities",
-          "value": 1530939000
-        },
-        "capital_expenditures": {
-          "taxonomy": "us-gaap",
-          "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-          "value": 194756000
-        }
-      },
-      "filed": "2026-10-29",
-      "source": "SEC Company Facts API",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000319201.json",
-      "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
-    },
-    {
-      "event_id": "d870225294e77bef98f2ff13",
-      "company_id": "seagate",
-      "ticker": "STX",
-      "accession_number": "0001137789-26-000309",
-      "period_start": "2026-07-04",
-      "period_end": "2026-10-02",
-      "duration_days": 91,
-      "document_type": "10-Q",
-      "metric": "free_cash_flow",
-      "value": 1479000000,
-      "unit": "USD",
-      "accounting_basis": "derived-non-gaap",
-      "derivation": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
-      "inputs": {
-        "operating_cash_flow": {
-          "taxonomy": "us-gaap",
-          "concept": "NetCashProvidedByUsedInOperatingActivities",
-          "value": 1690000000
-        },
-        "capital_expenditures": {
-          "taxonomy": "us-gaap",
-          "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-          "value": 211000000
-        }
-      },
-      "filed": "2026-10-29",
-      "source": "SEC Company Facts API",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001137789.json",
-      "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
-    }
-  ],
+  "eligible_events_total": 0,
+  "stale_events_skipped_total": 12,
+  "verified_metrics_total": 0,
+  "metrics": [],
   "issues": [],
   "status": "PASS",
   "contract": "FCF is a derived non-GAAP metric. Persist it only when live <=24h SEC 10-K/10-Q Company Facts provides one unambiguous USD us-gaap operating-cash-flow fact and one unambiguous USD us-gaap PP&E acquisition fact for the exact same accession, form, period start and period end. Missing, stale, future, malformed, mismatched or conflicting inputs never become metrics."
