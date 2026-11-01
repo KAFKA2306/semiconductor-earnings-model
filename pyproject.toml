@@ -11,3 +11,11 @@ dependencies = [
 dev = [
     "pytest>=8.0",
 ]
+
+[tool.uv]
+# Minimum patched versions for transitives; keep langgraph on the tested 0.4.x API.
+constraint-dependencies = [
+    "certifi>=2026.10.18",
+    "langgraph-sdk>=0.4.4",
+    "urllib3>=2.8.0",
+]
