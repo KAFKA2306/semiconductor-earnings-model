@@ -13,7 +13,7 @@ dev = [
 ]
 
 [tool.uv]
-# Minimum patched versions for transitives; keep langgraph on the tested 0.4.x API.
+# Minimum patched transitive versions; LangGraph 1.2.18 is covered by langgraph-compat CI.
 constraint-dependencies = [
     "certifi>=2026.10.18",
     "langgraph-sdk>=0.4.4",
