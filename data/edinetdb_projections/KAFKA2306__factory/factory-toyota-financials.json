@@ -7,8 +7,8 @@
   "provider_terms": "https://edinetdb.jp/legal/terms",
   "source_endpoint": "/v1/companies/E02144/financials",
   "request_fingerprint": "419b37cbc3fa2157cc6dd4e2961fb3f972e24dc11eb3e25cdb79fa54cfb8f967",
-  "fetched_at": "2026-10-31T02:29:02Z",
-  "response_sha256": "31ddcc34e040b47f80924ac52daf3937a404119d136639da20abdf44f0234f57",
+  "fetched_at": "2026-11-01T02:18:27Z",
+  "response_sha256": "f4ae6cd902e4f423ae29addb49159864a18245714f383fcb25bb330a68eca6fb",
   "record_count": 6,
   "records": [
     {
@@ -44,6 +44,8 @@
         "ghg_scope1_and2": "not_required_for_fiscal_year",
         "ghg_scope2": "not_required_for_fiscal_year",
         "ghg_scope3": "not_required_for_fiscal_year",
+        "interest_expenses": "suppressed_standalone_value",
+        "interest_income": "suppressed_standalone_value",
         "investment_securities": "not_applicable_accounting_standard",
         "investments_and_other_assets": "not_applicable_accounting_standard",
         "lease_obligations_cl": "not_applicable_accounting_standard",
@@ -58,7 +60,8 @@
         "provision_for_bonuses": "not_applicable_accounting_standard",
         "short_term_bonds_payable": "not_applicable_accounting_standard",
         "short_term_loans": "not_applicable_accounting_standard",
-        "short_term_securities": "not_applicable_accounting_standard"
+        "short_term_securities": "not_applicable_accounting_standard",
+        "treasury_stock": "suppressed_standalone_value"
       }
     },
     {
@@ -94,6 +97,8 @@
         "ghg_scope1_and2": "not_required_for_fiscal_year",
         "ghg_scope2": "not_required_for_fiscal_year",
         "ghg_scope3": "not_required_for_fiscal_year",
+        "interest_expenses": "suppressed_standalone_value",
+        "interest_income": "suppressed_standalone_value",
         "investment_securities": "not_applicable_accounting_standard",
         "investments_and_other_assets": "not_applicable_accounting_standard",
         "lease_obligations_cl": "not_applicable_accounting_standard",
@@ -108,7 +113,8 @@
         "provision_for_bonuses": "not_applicable_accounting_standard",
         "short_term_bonds_payable": "not_applicable_accounting_standard",
         "short_term_loans": "not_applicable_accounting_standard",
-        "short_term_securities": "not_applicable_accounting_standard"
+        "short_term_securities": "not_applicable_accounting_standard",
+        "treasury_stock": "suppressed_standalone_value"
       }
     },
     {
@@ -136,6 +142,8 @@
         "contract_liabilities": "not_applicable_accounting_standard",
         "current_portion_bonds_payable": "not_applicable_accounting_standard",
         "current_portion_lt_loans": "not_applicable_accounting_standard",
+        "interest_expenses": "suppressed_standalone_value",
+        "interest_income": "suppressed_standalone_value",
         "investment_securities": "not_applicable_accounting_standard",
         "investments_and_other_assets": "not_applicable_accounting_standard",
         "lease_obligations_cl": "not_applicable_accounting_standard",
@@ -148,7 +156,8 @@
         "provision_for_bonuses": "not_applicable_accounting_standard",
         "short_term_bonds_payable": "not_applicable_accounting_standard",
         "short_term_loans": "not_applicable_accounting_standard",
-        "short_term_securities": "not_applicable_accounting_standard"
+        "short_term_securities": "not_applicable_accounting_standard",
+        "treasury_stock": "suppressed_standalone_value"
       }
     },
     {
@@ -176,6 +185,8 @@
         "contract_liabilities": "not_applicable_accounting_standard",
         "current_portion_bonds_payable": "not_applicable_accounting_standard",
         "current_portion_lt_loans": "not_applicable_accounting_standard",
+        "interest_expenses": "suppressed_standalone_value",
+        "interest_income": "suppressed_standalone_value",
         "investment_securities": "not_applicable_accounting_standard",
         "investments_and_other_assets": "not_applicable_accounting_standard",
         "lease_obligations_cl": "not_applicable_accounting_standard",
@@ -188,7 +199,8 @@
         "provision_for_bonuses": "not_applicable_accounting_standard",
         "short_term_bonds_payable": "not_applicable_accounting_standard",
         "short_term_loans": "not_applicable_accounting_standard",
-        "short_term_securities": "not_applicable_accounting_standard"
+        "short_term_securities": "not_applicable_accounting_standard",
+        "treasury_stock": "suppressed_standalone_value"
       }
     },
     {
@@ -216,6 +228,8 @@
         "contract_liabilities": "not_applicable_accounting_standard",
         "current_portion_bonds_payable": "not_applicable_accounting_standard",
         "current_portion_lt_loans": "not_applicable_accounting_standard",
+        "interest_expenses": "suppressed_standalone_value",
+        "interest_income": "suppressed_standalone_value",
         "investment_securities": "not_applicable_accounting_standard",
         "investments_and_other_assets": "not_applicable_accounting_standard",
         "lease_obligations_cl": "not_applicable_accounting_standard",
@@ -228,7 +242,8 @@
         "provision_for_bonuses": "not_applicable_accounting_standard",
         "short_term_bonds_payable": "not_applicable_accounting_standard",
         "short_term_loans": "not_applicable_accounting_standard",
-        "short_term_securities": "not_applicable_accounting_standard"
+        "short_term_securities": "not_applicable_accounting_standard",
+        "treasury_stock": "suppressed_standalone_value"
       }
     },
     {
@@ -256,6 +271,8 @@
         "contract_liabilities": "not_applicable_accounting_standard",
         "current_portion_bonds_payable": "not_applicable_accounting_standard",
         "current_portion_lt_loans": "not_applicable_accounting_standard",
+        "interest_expenses": "suppressed_standalone_value",
+        "interest_income": "suppressed_standalone_value",
         "investment_securities": "not_applicable_accounting_standard",
         "investments_and_other_assets": "not_applicable_accounting_standard",
         "lease_obligations_cl": "not_applicable_accounting_standard",
@@ -268,7 +285,8 @@
         "provision_for_bonuses": "not_applicable_accounting_standard",
         "short_term_bonds_payable": "not_applicable_accounting_standard",
         "short_term_loans": "not_applicable_accounting_standard",
-        "short_term_securities": "not_applicable_accounting_standard"
+        "short_term_securities": "not_applicable_accounting_standard",
+        "treasury_stock": "suppressed_standalone_value"
       }
     }
   ]
