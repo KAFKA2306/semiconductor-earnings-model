@@ -1,0 +1,26 @@
+name: Temporary Python dependency runtime smoke (branch only)
+on:
+  push:
+    branches:
+      - fix/python-lock-vulns-20261101
+    paths:
+      - .github/workflows/tmp-python-deps-smoke-20261101.yml
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: "0.8.22"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: "3.12"
+      - name: Verify locked dependency resolution
+        run: |
+          uv lock --check
+          uv sync --frozen
+      - name: Run LangGraph and data-platform behavior tests
+        run: uv run python -m pytest tests/test_quant_audit_graph.py tests/test_data_platform_standard.py -q
