@@ -71,6 +71,48 @@ def test_rejects_conflicting_standard_revenue_values():
     assert issues[0]["code"] == "AMBIGUOUS_STANDARD_REVENUE_FACT"
 
 
+def test_quarterly_revenue_excludes_ytd_fact_with_same_end_date():
+    data = payload(100)
+    facts = data["facts"]["us-gaap"]["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"]
+    facts[0].update({"form": "10-Q", "start": "2026-03-30"})
+    facts.append({**facts[0], "start": "2025-12-29", "val": 300})
+
+    metric, issues = extract_event_revenue(event(document_type="10-Q"), data)
+    assert issues == []
+    assert metric is not None and metric["value"] == 100
+
+
+def test_annual_revenue_excludes_q4_fact_with_same_end_date():
+    data = payload(100)
+    facts = data["facts"]["us-gaap"]["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"]
+    facts[0]["start"] = "2025-06-30"
+    facts.append({**facts[0], "start": "2026-03-30", "val": 25})
+
+    metric, issues = extract_event_revenue(event(), data)
+    assert issues == []
+    assert metric is not None and metric["value"] == 100
+
+
+def test_rejects_conflicting_values_within_same_reporting_duration():
+    data = payload(100)
+    facts = data["facts"]["us-gaap"]["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"]
+    facts[0]["start"] = "2025-06-30"
+    facts.append({**facts[0], "val": 99})
+
+    metric, issues = extract_event_revenue(event(), data)
+    assert metric is None
+    assert issues[0]["code"] == "AMBIGUOUS_STANDARD_REVENUE_FACT"
+
+
+def test_rejects_when_only_wrong_duration_is_reported():
+    data = payload(25)
+    data["facts"]["us-gaap"]["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"][0]["start"] = "2026-03-30"
+
+    metric, issues = extract_event_revenue(event(), data)
+    assert metric is None
+    assert issues[0]["code"] == "NO_MATCHING_REVENUE_DURATION"
+
+
 def test_does_not_extract_from_non_annual_or_quarterly_form():
     metric, issues = extract_event_revenue(event(document_type="8-K"), payload())
     assert metric is None

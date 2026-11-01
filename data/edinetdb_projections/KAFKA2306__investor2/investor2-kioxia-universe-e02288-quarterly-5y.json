@@ -7,8 +7,8 @@
   "provider_terms": "https://edinetdb.jp/legal/terms",
   "source_endpoint": "/v1/companies/E02288/financials",
   "request_fingerprint": "e679af8f498e48ebd6c25ce95ba57a75655ec716e208fa9e0f03588600b662de",
-  "fetched_at": "2026-08-12T02:00:32Z",
-  "response_sha256": "9d5c3e4d7dbb53c76908940a051c0a84b0cdd4e61c94c3ad0d1c89a9cc2fd3b0",
+  "fetched_at": "2026-10-29T00:02:02Z",
+  "response_sha256": "b1da5b6f838c78357821a6d98d0956d211f24f2420631c743ea7fb53a826dbce",
   "record_count": 17,
   "records": [
     {
@@ -22,7 +22,13 @@
       "cf_operating": 29269000000.0,
       "cf_investing": 1739000000.0,
       "cf_financing": -19350000000.0,
+      "gross_profit": 36513000000.0,
+      "sga": 18664000000.0,
       "eps": 343.56,
+      "total_assets": 472518000000.0,
+      "net_assets": 260894000000.0,
+      "shareholders_equity": 237583000000.0,
+      "cash": 145925000000.0,
       "derivation_method": "direct_q1",
       "has_prev_ytd": false,
       "source_type": "edinet_quarterly"
@@ -38,7 +44,13 @@
       "cf_operating": -9109000000.0,
       "cf_investing": -4539000000.0,
       "cf_financing": -786000000.0,
+      "gross_profit": 39650000000.0,
+      "sga": 19327000000.0,
       "eps": 286.52000000000004,
+      "total_assets": 477427000000.0,
+      "net_assets": 274589000000.0,
+      "shareholders_equity": 251258000000.0,
+      "cash": 132580000000.0,
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
       "source_type": "edinet_quarterly",
@@ -55,7 +67,13 @@
       "cf_operating": 33494000000.0,
       "cf_investing": -2669000000.0,
       "cf_financing": -341000000.0,
+      "gross_profit": 37934000000.0,
+      "sga": 19451000000.0,
       "eps": 256.03999999999996,
+      "total_assets": 541866000000.0,
+      "net_assets": 283705000000.0,
+      "shareholders_equity": 263407000000.0,
+      "cash": 161228000000.0,
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
       "source_type": "edinet_quarterly",
@@ -72,10 +90,12 @@
       "cf_operating": 20252000000.0,
       "cf_investing": -7045000000.0,
       "cf_financing": -484000000.0,
+      "gross_profit": 40951000000.0,
       "eps": 330.2099999999999,
       "total_assets": 562816000000.0,
       "net_assets": 299926000000.0,
       "shareholders_equity": 279055000000.0,
+      "cash": 173660000000.0,
       "bps": 6325.44,
       "derivation_method": "annual_minus_ytd_q3",
       "has_prev_ytd": true,
@@ -96,7 +116,13 @@
       "cf_operating": 39803000000.0,
       "cf_investing": -17573000000.0,
       "cf_financing": -17219000000.0,
+      "gross_profit": 33648000000.0,
+      "sga": 20230000000.0,
       "eps": 198.86,
+      "total_assets": 611729000000.0,
+      "net_assets": 299104000000.0,
+      "shareholders_equity": 271138000000.0,
+      "cash": 181420000000.0,
       "derivation_method": "direct_q1",
       "has_prev_ytd": false,
       "source_type": "edinet_quarterly"
@@ -112,7 +138,13 @@
       "cf_operating": 29106000000.0,
       "cf_investing": -738000000.0,
       "cf_financing": -958000000.0,
+      "gross_profit": 46915000000.0,
+      "sga": 21783000000.0,
       "eps": 78.97999999999996,
+      "total_assets": 635600000000.0,
+      "net_assets": 316365000000.0,
+      "shareholders_equity": 288125000000.0,
+      "cash": 209610000000.0,
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
       "source_type": "edinet_quarterly",
@@ -129,7 +161,13 @@
       "cf_operating": 58419000000.0,
       "cf_investing": -4946000000.0,
       "cf_financing": -8239000000.0,
+      "gross_profit": 47394000000.0,
+      "sga": 22252000000.0,
       "eps": 192.42000000000002,
+      "total_assets": 691440000000.0,
+      "net_assets": 325755000000.0,
+      "shareholders_equity": 298426000000.0,
+      "cash": 254084000000.0,
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
       "source_type": "edinet_quarterly",
@@ -146,10 +184,12 @@
       "cf_operating": -31073000000.0,
       "cf_investing": -20199000000.0,
       "cf_financing": -8726000000.0,
+      "gross_profit": 54560000000.0,
       "eps": 271.84000000000003,
       "total_assets": 676808000000.0,
       "net_assets": 371911000000.0,
       "shareholders_equity": 337631000000.0,
+      "cash": 195423000000.0,
       "bps": 3831.1,
       "derivation_method": "annual_minus_ytd_q3",
       "has_prev_ytd": true,
@@ -173,10 +213,8 @@
       "net_assets": 382486000000.0,
       "derivation_method": "direct_q1",
       "has_prev_ytd": false,
-      "source_type": "ir_pdf",
-      "doc_id": "510db58f2058017dcf9c1736674a4f78f4994d154a8955faa1e1464737ba23d1",
-      "edinet_filing_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?510db58f2058017dcf9c1736674a4f78f4994d154a8955faa1e1464737ba23d1",
-      "edinet_view_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?510db58f2058017dcf9c1736674a4f78f4994d154a8955faa1e1464737ba23d1"
+      "source_type": "quarterly_disclosure",
+      "doc_id": "510db58f2058017dcf9c1736674a4f78f4994d154a8955faa1e1464737ba23d1"
     },
     {
       "fiscal_year": 2025,
@@ -191,10 +229,11 @@
       "total_assets": 668121000000.0,
       "net_assets": 395172000000.0,
       "shareholders_equity": 364420000000.0,
+      "cash": 198441000000.0,
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
       "source_type": "edinet_quarterly",
-      "prev_source_type": "ir_pdf"
+      "prev_source_type": "quarterly_disclosure"
     },
     {
       "fiscal_year": 2025,
@@ -210,11 +249,9 @@
       "net_assets": 415935000000.0,
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
-      "source_type": "ir_pdf",
+      "source_type": "quarterly_disclosure",
       "prev_source_type": "edinet_quarterly",
-      "doc_id": "72791ce76dd99aeb12855cbc71de8709700a15d1997b5df549e06eb61abc402e",
-      "edinet_filing_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?72791ce76dd99aeb12855cbc71de8709700a15d1997b5df549e06eb61abc402e",
-      "edinet_view_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?72791ce76dd99aeb12855cbc71de8709700a15d1997b5df549e06eb61abc402e"
+      "doc_id": "72791ce76dd99aeb12855cbc71de8709700a15d1997b5df549e06eb61abc402e"
     },
     {
       "fiscal_year": 2025,
@@ -229,11 +266,12 @@
       "total_assets": 671287000000.0,
       "net_assets": 420694000000.0,
       "shareholders_equity": 394468000000.0,
+      "cash": 198478000000.0,
       "bps": 4398.46,
       "derivation_method": "annual_minus_ytd_q3",
       "has_prev_ytd": true,
       "source_type": "edinet_annual",
-      "prev_source_type": "ir_pdf",
+      "prev_source_type": "quarterly_disclosure",
       "doc_id": "S100VZW3",
       "edinet_filing_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?S100VZW3",
       "edinet_view_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?S100VZW3"
@@ -253,10 +291,8 @@
       "net_assets": 412036000000.0,
       "derivation_method": "direct_q1",
       "has_prev_ytd": false,
-      "source_type": "ir_pdf",
-      "doc_id": "69ec3645c673c267c20d35c2355f88c3b31bfcee4febdfb1fe44b5f44780d891",
-      "edinet_filing_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?69ec3645c673c267c20d35c2355f88c3b31bfcee4febdfb1fe44b5f44780d891",
-      "edinet_view_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?69ec3645c673c267c20d35c2355f88c3b31bfcee4febdfb1fe44b5f44780d891"
+      "source_type": "quarterly_disclosure",
+      "doc_id": "69ec3645c673c267c20d35c2355f88c3b31bfcee4febdfb1fe44b5f44780d891"
     },
     {
       "fiscal_year": 2026,
@@ -272,10 +308,11 @@
       "total_assets": 667243000000.0,
       "net_assets": 429583000000.0,
       "shareholders_equity": 398181000000.0,
+      "cash": 188074000000.0,
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
       "source_type": "edinet_quarterly",
-      "prev_source_type": "ir_pdf"
+      "prev_source_type": "quarterly_disclosure"
     },
     {
       "fiscal_year": 2026,
@@ -292,10 +329,7 @@
       "derivation_method": "ytd_diff",
       "has_prev_ytd": true,
       "source_type": "quarterly_disclosure",
-      "prev_source_type": "edinet_quarterly",
-      "doc_id": "140120260212558191",
-      "edinet_filing_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?140120260212558191",
-      "edinet_view_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?140120260212558191"
+      "prev_source_type": "edinet_quarterly"
     },
     {
       "fiscal_year": 2026,
@@ -309,6 +343,7 @@
       "total_assets": 722421000000.0,
       "net_assets": 486684000000.0,
       "shareholders_equity": 446679000000.0,
+      "cash": 225734000000.0,
       "bps": 2573.25,
       "derivation_method": "annual_minus_ytd_q3",
       "has_prev_ytd": true,
@@ -332,10 +367,7 @@
       "shareholders_equity": 497227000000.0,
       "derivation_method": "direct_q1",
       "has_prev_ytd": false,
-      "source_type": "quarterly_disclosure",
-      "doc_id": "140120260727500405",
-      "edinet_filing_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?140120260727500405",
-      "edinet_view_url": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?140120260727500405"
+      "source_type": "quarterly_disclosure"
     }
   ]
 }

@@ -1,0 +1,38 @@
+name: NAND source parser regression
+
+on:
+  pull_request:
+    paths:
+      - 'data/financial_db/nand_kpi_sources.json'
+      - 'scripts/nand_kpi_core.py'
+      - 'scripts/update_nand_kpis.py'
+      - 'tests/test_nand_kpi_pipeline.py'
+      - 'tests/test_nand_source_registry.py'
+      - '.github/workflows/nand-parser-regression.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/financial_db/nand_kpi_sources.json'
+      - 'scripts/nand_kpi_core.py'
+      - 'scripts/update_nand_kpis.py'
+      - 'tests/test_nand_kpi_pipeline.py'
+      - 'tests/test_nand_source_registry.py'
+      - '.github/workflows/nand-parser-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  parser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.12'
+      - name: Install test runner
+        run: python -m pip install pytest
+      - name: Verify official sources and NAND-only parser
+        run: |
+          python -m pytest -q tests/test_nand_source_registry.py tests/test_nand_kpi_pipeline.py -k 'micron or source_registry or discovery'

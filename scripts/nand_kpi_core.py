@@ -74,47 +74,65 @@ def compare_intervals(actual: tuple[float, float], guidance: tuple[float, float]
 
 
 def extract_micron_nand_kpis(text: str) -> dict[str, Any]:
-    """Extract only the NAND paragraph and reject an earlier DRAM paragraph."""
+    """Parse the Micron NAND results section, not nearby DRAM or outlook text.
+
+    Official prepared remarks vary between qualitative bands and exact percentages.
+    A section must contain both shipment and price changes; otherwise fail closed.
+    """
     normalized = re.sub(r"\s+", " ", text.replace("–", "-").replace("—", "-"))
     normalized = re.sub(r"(?i)\b(low|mid|high)-\s*to-", r"\1-to-", normalized)
-    match = re.search(
-        r"\bNAND\b\s+Fiscal\s+Q[1-4]\s+NAND\s+revenue.{0,700}?"
-        r"(?:NAND\s+)?Bit shipments\s+"
-        r"(?P<bits>(?:increased|were up|declined|decreased).*?percentage range)"
-        r"(?:\.\s+|,\s+and\s+)"
-        r"Prices\s+"
-        r"(?P<prices>(?:increased|were up|declined|decreased).*?percentage range)",
+    anchor = re.search(
+        r"\bNAND\b\s+Fiscal\s+Q[1-4]\s+NAND\s+revenue\b",
         normalized,
         flags=re.IGNORECASE,
     )
-    if not match:
+    if not anchor:
         raise ValueError("Micron NAND KPI paragraph not found")
 
-    def parse(statement: str) -> tuple[tuple[float, float], str]:
-        lowered = statement.lower()
-        direction = "decline" if any(word in lowered for word in ("declined", "decreased", "down")) else "increase"
-        phrase_match = re.search(
-            r"((?:low|mid|high)(?:-to-(?:low|mid|high))?[- ]?(?:single[- ]digit|double[- ]digit|teens|\d{2}s))",
-            lowered,
-        )
-        if not phrase_match:
-            raise ValueError(f"No supported percentage phrase in {statement!r}")
-        phrase = phrase_match.group(1)
-        return percentage_interval(phrase, direction=direction), phrase
+    section = normalized[anchor.end():anchor.end() + 1050]
+    shipments = re.search(
+        r"\b(?:NAND\s+)?bit shipments\s+"
+        r"(?P<direction>increased|were up|declined|decreased|were down)\b",
+        section[:650],
+        flags=re.IGNORECASE,
+    )
+    if not shipments:
+        raise ValueError("Micron NAND shipment change not found")
+    price = re.search(
+        r"\bprices\s+(?P<direction>increased|were up|declined|decreased|were down)\b",
+        section[shipments.end():shipments.end() + 330],
+        flags=re.IGNORECASE,
+    )
+    if not price:
+        raise ValueError("Micron NAND price change not found")
 
-    bits, bits_phrase = parse(match.group("bits"))
-    prices, price_phrase = parse(match.group("prices"))
+    price_start = shipments.end() + price.start()
+    phrase_pattern = (
+        r"(?i)\b(?:(?:low|mid|high)(?:-to-(?:low|mid|high))?[- ]?"
+        r"(?:single[- ]digit|double[- ]digit|teens|\d{2}s)|"
+        r"(?:approximately|about|around)\s*\d+(?:\.\d+)?\s*%|"
+        r"\d+(?:\.\d+)?\s*%)"
+    )
+
+    def parse(statement: str) -> dict[str, Any]:
+        direction = (
+            "decline"
+            if re.search(r"\b(?:declined|decreased|were down)\b", statement, re.I)
+            else "increase"
+        )
+        match = re.search(phrase_pattern, statement)
+        if not match:
+            raise ValueError(f"No supported percentage phrase in {statement!r}")
+        phrase = match.group(0)
+        low, high = percentage_interval(phrase, direction=direction)
+        return {
+            "value_low": low,
+            "value_high": high,
+            "reported_text": statement[:match.end()].strip(),
+            "reported_phrase": phrase,
+        }
+
     return {
-        "bit_shipments": {
-            "value_low": bits[0],
-            "value_high": bits[1],
-            "reported_text": match.group("bits").strip(),
-            "reported_phrase": bits_phrase,
-        },
-        "asp": {
-            "value_low": prices[0],
-            "value_high": prices[1],
-            "reported_text": match.group("prices").strip(),
-            "reported_phrase": price_phrase,
-        },
+        "bit_shipments": parse(section[shipments.start():price_start]),
+        "asp": parse(section[price_start:price_start + 190]),
     }

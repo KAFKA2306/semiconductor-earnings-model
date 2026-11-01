@@ -1,6 +1,10 @@
 import json
 from collections import Counter, defaultdict
 from pathlib import Path
+import shutil
+import subprocess
+
+import pytest
 
 
 ROOT = Path(__file__).parents[1]
@@ -40,8 +44,51 @@ def test_same_period_aggregate_preserves_reported_capex_tags():
 
 
 def test_cohort_comparison_does_not_create_cross_tag_burden_rate():
-    period, companies = common_latest_companies(demand_api())
-    hyperscalers = [company for company in companies if company["role"] == "hyperscaler"]
-    tags = {company["quarters"][0]["capital_expenditures"]["fact_tag"] for company in hyperscalers}
-    assert period
-    assert len(tags) > 1
+    # Live SEC facts can legitimately use a single CapEx tag. Exercise the
+    # actual frontend aggregator with a controlled mixed-tag cohort instead.
+    if shutil.which("node") is None:
+        pytest.skip("Node.js is required to verify the frontend aggregation contract")
+
+    script = """
+import { buildDemandAggregation } from './site/src/lib/demand-aggregation.js';
+const company = (name, role, tag, capex, ocf) => ({
+  name, role,
+  quarters: [{
+    period_end: '2026-03-31',
+    capital_expenditures: { fact_tag: tag, value_usd: capex },
+    operating_cash_flow: { value_usd: ocf },
+  }],
+});
+const api = { companies: [
+  company('A', 'hyperscaler', 'PaymentsToAcquireProductiveAssets', 20, 100),
+  company('B', 'hyperscaler', 'PaymentsToAcquirePropertyPlantAndEquipment', 30, 200),
+  company('C', 'ai-cloud', 'PaymentsToAcquireProductiveAssets', 10, 100),
+]};
+const aggregation = buildDemandAggregation(api);
+const mixed = aggregation.cohorts.find((cohort) => cohort.id === 'hyperscalers');
+const single = aggregation.cohorts.find((cohort) => cohort.id === 'ai-cloud');
+console.log(JSON.stringify({
+  period: aggregation.commonPeriod,
+  mixedTags: mixed.tags.map((tag) => tag.tag),
+  mixedTotal: mixed.tags.reduce((total, tag) => total + tag.total, 0),
+  mixedBurden: mixed.comparableBurden,
+  singleTags: single.tags.map((tag) => tag.tag),
+  singleTotal: single.tags[0].total,
+  singleBurden: single.comparableBurden,
+}));
+"""
+    output = subprocess.run(
+        ["node", "--input-type=module", "--eval", script],
+        cwd=ROOT, capture_output=True, text=True, check=True,
+    )
+    actual = json.loads(output.stdout)
+    assert actual["period"] == "2026-03-31"
+    assert set(actual["mixedTags"]) == {
+        "PaymentsToAcquireProductiveAssets",
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+    }
+    assert actual["mixedTotal"] == 50
+    assert actual["mixedBurden"] is None
+    assert actual["singleTags"] == ["PaymentsToAcquireProductiveAssets"]
+    assert actual["singleTotal"] == 10
+    assert actual["singleBurden"] == 0.1

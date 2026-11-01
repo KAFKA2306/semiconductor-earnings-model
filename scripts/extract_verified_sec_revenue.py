@@ -6,7 +6,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -124,6 +124,21 @@ def load_companyfacts(
     return payload
 
 
+def matches_reporting_duration(fact: dict[str, Any], form: str) -> bool:
+    """Distinguish quarter and fiscal-year revenue from YTD/Q4 facts sharing an end date."""
+    try:
+        start = date.fromisoformat(str(fact["start"]))
+        end = date.fromisoformat(str(fact["end"]))
+    except (KeyError, TypeError, ValueError):
+        return False
+    days = (end - start).days + 1
+    if form == "10-Q":
+        return 65 <= days <= 110
+    if form == "10-K":
+        return 330 <= days <= 380
+    return False
+
+
 def extract_event_revenue(event: dict[str, Any], payload: dict[str, Any]) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
     event_id = str(event.get("event_id") or "")
     accession = str(event.get("accession_number") or "")
@@ -152,6 +167,21 @@ def extract_event_revenue(event: dict[str, Any], payload: dict[str, Any]) -> tup
 
     if not candidates:
         return None, [{"code": "NO_VERIFIED_STANDARD_REVENUE_FACT", "event_id": event_id, "accession_number": accession}]
+
+    # SEC Company Facts may contain both quarterly and year-to-date values for
+    # the same accession, form, end date and tag. A duration fact's start date
+    # distinguishes them; never resolve that conflict by picking a larger value.
+    if any("start" in candidate for candidate in candidates):
+        candidates = [candidate for candidate in candidates if matches_reporting_duration(candidate, form)]
+        if not candidates:
+            return None, [
+                {
+                    "code": "NO_MATCHING_REVENUE_DURATION",
+                    "event_id": event_id,
+                    "accession_number": accession,
+                    "document_type": form,
+                }
+            ]
 
     values = {candidate["val"] for candidate in candidates}
     if len(values) != 1:

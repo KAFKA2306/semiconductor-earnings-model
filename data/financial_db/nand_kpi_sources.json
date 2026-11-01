@@ -2,8 +2,14 @@
   "schema_version": "nand-kpi-source-registry.v1",
   "policy": {
     "purpose": "Discover and parse NAND ASP and bit-shipment disclosures from official company investor-relations materials.",
-    "allowed_source_tiers": ["primary_company"],
-    "allowed_document_types": ["earnings_prepared_remarks", "earnings_presentation", "earnings_release"],
+    "allowed_source_tiers": [
+      "primary_company"
+    ],
+    "allowed_document_types": [
+      "earnings_prepared_remarks",
+      "earnings_presentation",
+      "earnings_release"
+    ],
     "rules": [
       "Only official company domains are allowed.",
       "Preserve the reported text before converting qualitative bands to numeric intervals.",
@@ -18,8 +24,14 @@
     {
       "entity_id": "micron",
       "adapter": "micron_prepared_remarks",
-      "official_domains": ["investors.micron.com"],
-      "discovery_urls": ["https://investors.micron.com/quarterly-results"],
+      "official_domains": [
+        "investors.micron.com",
+        "micron.gcs-web.com",
+        "s25.q4cdn.com"
+      ],
+      "discovery_urls": [
+        "https://micron.gcs-web.com/quarterly-results"
+      ],
       "require_current_observation": true,
       "max_observation_age_days": 180,
       "documents": [
@@ -29,8 +41,8 @@
           "fiscal_period": "Q4",
           "as_of": "2025-09-23",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63",
-          "period_source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8"
+          "source_url": "https://micron.gcs-web.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63",
+          "period_source_url": "https://micron.gcs-web.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8"
         },
         {
           "period_end": "2025-11-27",
@@ -38,8 +50,8 @@
           "fiscal_period": "Q1",
           "as_of": "2025-12-17",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/088991c5-a249-4f66-a0a6-258d9b66f3f9",
-          "period_source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-first-quarter-fiscal-2026"
+          "source_url": "https://micron.gcs-web.com/static-files/088991c5-a249-4f66-a0a6-258d9b66f3f9",
+          "period_source_url": "https://micron.gcs-web.com/news-releases/news-release-details/micron-technology-inc-reports-results-first-quarter-fiscal-2026"
         },
         {
           "period_end": "2026-02-26",
@@ -47,8 +59,8 @@
           "fiscal_period": "Q2",
           "as_of": "2026-03-18",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/e089f8c0-065d-47b8-9d02-bfa863cdb357",
-          "period_source_url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2026"
+          "source_url": "https://micron.gcs-web.com/static-files/e089f8c0-065d-47b8-9d02-bfa863cdb357",
+          "period_source_url": "https://micron.gcs-web.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2026"
         },
         {
           "period_end": "2026-05-28",
@@ -56,15 +68,27 @@
           "fiscal_period": "Q3",
           "as_of": "2026-06-24",
           "document_type": "earnings_prepared_remarks",
-          "source_url": "https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe",
+          "source_url": "https://micron.gcs-web.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe",
           "period_source_url": "https://investors.micron.com/node/50671"
+        },
+        {
+          "period_end": "2026-09-03",
+          "fiscal_year": 2026,
+          "fiscal_period": "Q4",
+          "as_of": "2026-09-30",
+          "document_type": "earnings_prepared_remarks",
+          "source_url": "https://s25.q4cdn.com/621799436/files/doc_financials/2026/q4/Q4-FY26-Prepared-Remarks.pdf",
+          "period_source_url": "https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Fiscal-Fourth-Quarter-and-Full-Year-2026-Results/"
         }
       ]
     },
     {
       "entity_id": "kioxia-holdings",
       "adapter": "generic_nand_disclosure",
-      "official_domains": ["www.kioxia-holdings.com", "ssl4.eir-parts.net"],
+      "official_domains": [
+        "www.kioxia-holdings.com",
+        "ssl4.eir-parts.net"
+      ],
       "discovery_urls": [
         "https://www.kioxia-holdings.com/en-jp/ir/library/presentation.html",
         "https://www.kioxia-holdings.com/en-jp/ir/library/data.html",
@@ -75,7 +99,9 @@
     {
       "entity_id": "sandisk",
       "adapter": "generic_nand_disclosure",
-      "official_domains": ["investor.sandisk.com"],
+      "official_domains": [
+        "investor.sandisk.com"
+      ],
       "discovery_urls": [
         "https://investor.sandisk.com/",
         "https://investor.sandisk.com/financial-information/quarterly-results"
@@ -85,7 +111,10 @@
     {
       "entity_id": "samsung-electronics",
       "adapter": "generic_nand_disclosure",
-      "official_domains": ["www.samsung.com", "news.samsung.com"],
+      "official_domains": [
+        "www.samsung.com",
+        "news.samsung.com"
+      ],
       "discovery_urls": [
         "https://www.samsung.com/global/ir/financial-information/earnings-release/",
         "https://news.samsung.com/global/tag/earnings"
@@ -95,8 +124,13 @@
     {
       "entity_id": "sk-hynix",
       "adapter": "generic_nand_disclosure",
-      "official_domains": ["news.skhynix.com", "www.skhynix.com"],
-      "discovery_urls": ["https://news.skhynix.com/category/ir/"],
+      "official_domains": [
+        "news.skhynix.com",
+        "www.skhynix.com"
+      ],
+      "discovery_urls": [
+        "https://news.skhynix.com/category/ir/"
+      ],
       "documents": []
     }
   ]
