@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-node@v4
         with:
-          node-version: "22.18.0"
+          node-version: "22.23.4"
       - name: Test monetary unit conversion and mismatch rejection
         working-directory: site
         run: npm run test:unit-audit
