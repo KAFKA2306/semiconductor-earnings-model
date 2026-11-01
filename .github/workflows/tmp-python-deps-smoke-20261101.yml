@@ -5,6 +5,12 @@ on:
       - fix/python-lock-vulns-20261101
     paths:
       - .github/workflows/tmp-python-deps-smoke-20261101.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/tmp-python-deps-smoke-20261101.yml
+      - pyproject.toml
+      - uv.lock
 permissions:
   contents: read
 jobs:
