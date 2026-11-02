@@ -1,6 +1,6 @@
 {
   "schema_version": "verified-sec-fcf.v1",
-  "run_at": "2026-11-02T10:16:40.221417Z",
+  "run_at": "2026-11-02T20:34:26.983134Z",
   "freshness_gate_hours": 24,
   "eligible_events_total": 0,
   "stale_events_skipped_total": 12,
