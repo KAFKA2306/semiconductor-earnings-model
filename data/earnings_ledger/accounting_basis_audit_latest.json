@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-11-02T15:56:53.024817Z",
-  "events_total": 29,
-  "classified_events_total": 29,
+  "run_at": "2026-11-02T23:31:33.355961Z",
+  "events_total": 30,
+  "classified_events_total": 30,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -283,6 +283,16 @@
       "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
       "automatic_gaap_metric_use": false,
       "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "f1cc7558f827806c623c80b2",
+      "company_id": "apple",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
     },
     {
       "event_id": "ffaaef75f4f218cf2e970680",
