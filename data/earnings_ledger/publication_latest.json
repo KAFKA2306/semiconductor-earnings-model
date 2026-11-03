@@ -1,25 +1,16 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-11-03T16:15:36.256477Z",
+  "generated_from_run_at": "2026-11-03T21:49:21.976819Z",
   "audit_status": "PASS",
   "accepted_events_total": 2,
-  "ledger_accepted_events_total": 31,
-  "expired_events_total": 29,
-  "rejected_events_total": 465,
+  "ledger_accepted_events_total": 32,
+  "expired_events_total": 30,
+  "rejected_events_total": 467,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
-    {
-      "event_id": "f1cc7558f827806c623c80b2",
-      "company_id": "apple",
-      "company_name": "Apple",
-      "document_type": "8-K",
-      "published_at": "2026-11-02T21:30:23Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/0000320193-26-000024-index.html",
-      "freshness": "PASS"
-    },
     {
       "event_id": "9c5d305ebf216a7c1a6c5b8f",
       "company_id": "apple",
@@ -27,6 +18,15 @@
       "document_type": "10-K",
       "published_at": "2026-11-03T13:05:15Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/0000320193-26-000026-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "493e6f5f59484cc6254ad521",
+      "company_id": "amd",
+      "company_name": "Advanced Micro Devices",
+      "document_type": "8-K",
+      "published_at": "2026-11-03T21:16:27Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/0000002488-26-000188-index.html",
       "freshness": "PASS"
     }
   ],

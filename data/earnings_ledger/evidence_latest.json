@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-03T19:38:13.229999Z",
-  "window_start": "2026-11-02T16:15:36.256477Z",
-  "window_end": "2026-11-03T16:15:36.256477Z",
+  "verified_at": "2026-11-03T21:49:24.799541Z",
+  "window_start": "2026-11-02T21:49:21.976819Z",
+  "window_end": "2026-11-03T21:49:21.976819Z",
   "verified_events": 14,
   "required_metric_events": 13,
   "reused_evidence_events": 12,
@@ -176,20 +176,6 @@
       "status": "PASS"
     },
     {
-      "event_id": "f1cc7558f827806c623c80b2",
-      "company_id": "apple",
-      "document_type": "8-K",
-      "published_at": "2026-11-02T21:30:23Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/0000320193-26-000024-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0000320193.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "8ffac07be41cb9e633ec3d53586604f0074ae39d42df56746b9edaee8e5a3c26",
-      "source_content_bytes": 163919,
-      "content_type": "application/json",
-      "verified_at": "2026-11-03T19:38:13.229999Z",
-      "status": "PASS"
-    },
-    {
       "event_id": "9c5d305ebf216a7c1a6c5b8f",
       "company_id": "apple",
       "document_type": "10-K",
@@ -200,7 +186,21 @@
       "source_content_sha256": "8ffac07be41cb9e633ec3d53586604f0074ae39d42df56746b9edaee8e5a3c26",
       "source_content_bytes": 163919,
       "content_type": "application/json",
-      "verified_at": "2026-11-03T19:38:13.229999Z",
+      "verified_at": "2026-11-03T21:49:24.799541Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "493e6f5f59484cc6254ad521",
+      "company_id": "amd",
+      "document_type": "8-K",
+      "published_at": "2026-11-03T21:16:27Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/0000002488-26-000188-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000002488.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "76271cbc81bf9f2f78fcab555bbd83af8b2faaeb47ee6f57e8a70d1828514fba",
+      "source_content_bytes": 162363,
+      "content_type": "application/json",
+      "verified_at": "2026-11-03T21:49:24.799541Z",
       "status": "PASS"
     }
   ],

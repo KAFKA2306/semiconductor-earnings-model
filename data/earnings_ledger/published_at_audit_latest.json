@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-11-03T16:15:38.351762Z",
-  "events_total": 31,
-  "sec_events_total": 25,
+  "run_at": "2026-11-03T21:49:24.701075Z",
+  "events_total": 32,
+  "sec_events_total": 26,
   "non_sec_events_not_independently_reverified": 6,
   "items": [
     {
@@ -302,6 +302,18 @@
       "primary_acceptance_at": "2026-11-03T13:05:15.000Z",
       "ledger_published_at_utc": "2026-11-03T13:05:15Z",
       "primary_acceptance_at_utc": "2026-11-03T13:05:15Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "493e6f5f59484cc6254ad521",
+      "company_id": "amd",
+      "accession_number": "0000002488-26-000188",
+      "ledger_published_at": "2026-11-03T21:16:27Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-11-03T21:16:27.000Z",
+      "ledger_published_at_utc": "2026-11-03T21:16:27Z",
+      "primary_acceptance_at_utc": "2026-11-03T21:16:27Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

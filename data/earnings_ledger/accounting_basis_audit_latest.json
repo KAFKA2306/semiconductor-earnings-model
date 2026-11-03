@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-11-03T16:15:36.409230Z",
-  "events_total": 31,
-  "classified_events_total": 31,
+  "run_at": "2026-11-03T21:49:22.215490Z",
+  "events_total": 32,
+  "classified_events_total": 32,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -87,6 +87,16 @@
     {
       "event_id": "423c7d5ee9fb43d3653fbcef",
       "company_id": "nvidia",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
+    },
+    {
+      "event_id": "493e6f5f59484cc6254ad521",
+      "company_id": "amd",
       "document_type": "8-K",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,
