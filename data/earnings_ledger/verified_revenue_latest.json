@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-sec-revenue.v1",
-  "run_at": "2026-11-03T12:05:31.296853Z",
-  "eligible_events_total": 12,
-  "verified_metrics_total": 12,
+  "run_at": "2026-11-03T19:38:13.044958Z",
+  "eligible_events_total": 13,
+  "verified_metrics_total": 13,
   "metrics": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -265,6 +265,28 @@
       "filed": "2026-10-30",
       "source": "SEC Company Facts API freshness delta",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+      "source_kind": "api_freshness_delta",
+      "verification": "exact accession + exact form + exact period end + USD + standard us-gaap taxonomy"
+    },
+    {
+      "event_id": "9c5d305ebf216a7c1a6c5b8f",
+      "company_id": "apple",
+      "ticker": "AAPL",
+      "cik": 320193,
+      "accession_number": "0000320193-26-000026",
+      "period_end": "2026-09-26",
+      "document_type": "10-K",
+      "metric": "revenue",
+      "value": 478834000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "frame": "CY2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "filed": "2026-11-03",
+      "source": "SEC Company Facts API freshness delta",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
       "source_kind": "api_freshness_delta",
       "verification": "exact accession + exact form + exact period end + USD + standard us-gaap taxonomy"
     }
