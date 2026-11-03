@@ -1,11 +1,34 @@
 {
   "schema_version": "verified-sec-capex.v1",
-  "run_at": "2026-11-03T10:03:09.150098Z",
+  "run_at": "2026-11-03T18:02:29.885213Z",
   "freshness_gate_hours": 24,
-  "eligible_events_total": 0,
+  "eligible_events_total": 1,
   "stale_events_skipped_total": 12,
-  "verified_metrics_total": 0,
-  "metrics": [],
+  "verified_metrics_total": 1,
+  "metrics": [
+    {
+      "event_id": "9c5d305ebf216a7c1a6c5b8f",
+      "company_id": "apple",
+      "ticker": "AAPL",
+      "accession_number": "0000320193-26-000026",
+      "period_start": "2025-09-28",
+      "period_end": "2026-09-26",
+      "duration_days": 364,
+      "document_type": "10-K",
+      "metric": "capital_expenditures",
+      "value": 9041000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "frame": "CY2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "filed": "2026-11-03",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+      "verification": "live <=24h event + exact accession + exact form + exact period end + one unambiguous duration + USD + us-gaap PaymentsToAcquirePropertyPlantAndEquipment"
+    }
+  ],
   "issues": [],
   "status": "PASS",
   "contract": "Only live <=24h SEC 10-K/10-Q us-gaap PaymentsToAcquirePropertyPlantAndEquipment facts matching exact accession, form, period end, one unambiguous duration and USD are persisted. Missing, stale, future, malformed or conflicting values never become metrics."
