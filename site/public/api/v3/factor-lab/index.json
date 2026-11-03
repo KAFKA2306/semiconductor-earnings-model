@@ -4,10 +4,10 @@
     "factor_count": 27,
     "factor_row_count": 214,
     "rows_with_any_forward_return": 174,
-    "rows_without_start_price": 40,
+    "rows_without_start_price": 12,
     "test_count": 108
   },
-  "content_hash": "b5bcebc1fc3235ee8ee3acf64a6061b889f9fc5af0f69e98a4c0a897f5e56d62",
+  "content_hash": "60b04959aad85edc83b261b6a819b6916abd2b20cc49175f7756e693643fc6da",
   "factor_observations": [
     {
       "age_days": 0,
@@ -497,7 +497,12 @@
         "observation:7ed9dbf6aa9cc5f411404da1"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-30",
       "raw_value": 35674000000.0,
       "source_type": "actual",
@@ -512,7 +517,12 @@
         "observation:e8e6aef398a78ecd8f4d5a98"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-10-30",
       "raw_value": 77259000000.0,
       "source_type": "actual",
@@ -527,7 +537,12 @@
         "observation:70e5f3bef8234157b6f3e9a8"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-05-08",
       "raw_value": 7695000000.0,
       "source_type": "actual",
@@ -542,7 +557,12 @@
         "observation:8fda2906845f4e31bfe01559"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-29",
       "raw_value": 1256000000.0,
       "source_type": "actual",
@@ -557,7 +577,12 @@
         "observation:f1c47b9d75ab41f7385d005d"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-30",
       "raw_value": 18997000000.0,
       "source_type": "actual",
@@ -572,7 +597,12 @@
         "observation:930e2005f6d6efad1617b9d0"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-10-28",
       "raw_value": 39367000000.0,
       "source_type": "actual",
@@ -587,7 +617,12 @@
         "observation:977bd4a889498a040999bc98"
       ],
       "factor_name": "actual:capital_expenditures:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-09-11",
       "raw_value": 28499000000.0,
       "source_type": "actual",
@@ -727,7 +762,12 @@
         "micron:2026-05-28:eps_diluted:consolidated:actual:gaap"
       ],
       "factor_name": "actual:eps_diluted:USD_per_share:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-06-24",
       "raw_value": 24.67,
       "source_type": "actual",
@@ -1367,7 +1407,12 @@
         "observation:87da93ea05ea0ac3218fa4b1"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-30",
       "raw_value": 45790000000.0,
       "source_type": "actual",
@@ -1382,7 +1427,12 @@
         "observation:d26dbeb539b6c2efc135d1fb"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-10-30",
       "raw_value": 42422000000.0,
       "source_type": "actual",
@@ -1397,7 +1447,12 @@
         "observation:bdcb44a9b2dc6d5421d33e45"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-05-08",
       "raw_value": 2984000000.0,
       "source_type": "actual",
@@ -1412,7 +1467,12 @@
         "observation:b5e3c63e22364e41132e756f"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-05-01",
       "raw_value": 532421000.0,
       "source_type": "actual",
@@ -1427,7 +1487,12 @@
         "observation:b6a66a443b837772140034c6"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-29",
       "raw_value": 717000000.0,
       "source_type": "actual",
@@ -1442,7 +1507,12 @@
         "observation:f526d315a5dbcf3d6e58f938"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-30",
       "raw_value": 32226000000.0,
       "source_type": "actual",
@@ -1457,7 +1527,12 @@
         "observation:89221ad6a8dbed889ec49fd0"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-10-28",
       "raw_value": 58000000000.0,
       "source_type": "actual",
@@ -1472,7 +1547,12 @@
         "observation:761831b5a3b33dfb1ce276c8"
       ],
       "factor_name": "actual:operating_cash_flow:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-09-11",
       "raw_value": 23103000000.0,
       "source_type": "actual",
@@ -1717,7 +1797,12 @@
         "micron:2026-05-28:operating_margin:aebu:actual"
       ],
       "factor_name": "actual:operating_margin:ratio:quarter:segment:Automotive and Embedded Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-06-24",
       "raw_value": 0.75,
       "source_type": "actual",
@@ -1932,7 +2017,12 @@
         "micron:2026-05-28:operating_margin:cmbu:actual"
       ],
       "factor_name": "actual:operating_margin:ratio:quarter:segment:Cloud Memory Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-06-24",
       "raw_value": 0.78,
       "source_type": "actual",
@@ -2147,7 +2237,12 @@
         "micron:2026-05-28:operating_margin:cdbu:actual"
       ],
       "factor_name": "actual:operating_margin:ratio:quarter:segment:Core Data Center Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-06-24",
       "raw_value": 0.83,
       "source_type": "actual",
@@ -2362,7 +2457,12 @@
         "micron:2026-05-28:operating_margin:mcbu:actual"
       ],
       "factor_name": "actual:operating_margin:ratio:quarter:segment:Mobile and Client Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-06-24",
       "raw_value": 0.86,
       "source_type": "actual",
@@ -2487,7 +2587,12 @@
         "micron:2026-05-28:revenue:consolidated:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:consolidated:all_segments",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-06-24",
       "raw_value": 41460000000.0,
       "source_type": "actual",
@@ -2702,7 +2807,12 @@
         "micron:2026-02-26:revenue:aebu:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Automotive and Embedded Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-03-18",
       "raw_value": 2708000000.0,
       "source_type": "actual",
@@ -2917,7 +3027,12 @@
         "micron:2026-02-26:revenue:cmbu:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Cloud Memory Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-03-18",
       "raw_value": 7749000000.0,
       "source_type": "actual",
@@ -3152,7 +3267,12 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3367,7 +3487,12 @@
         "micron:2026-02-26:revenue:cdbu:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Core Data Center Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-03-18",
       "raw_value": 5687000000.0,
       "source_type": "actual",
@@ -3602,7 +3727,12 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3837,7 +3967,12 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -4052,7 +4187,12 @@
         "micron:2026-02-26:revenue:mcbu:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Mobile and Client Business Unit",
-      "forward_returns": {},
+      "forward_returns": {
+        "12m": null,
+        "1m": null,
+        "3m": null,
+        "6m": null
+      },
       "known_at": "2026-03-18",
       "raw_value": 7711000000.0,
       "source_type": "actual",
@@ -6104,7 +6244,7 @@
   },
   "market_data": {
     "raw_persisted": false,
-    "raw_sha256": "f4bb16a5e0dd7a0f4c6db9b0ae4ce7470655c7444d5383869cd700d88cdcb75f",
+    "raw_sha256": "7d00b7723ada5016b81f9fb8860fda458e58ad13e3ca55cea74988a5fe98af86",
     "source": "Yahoo Finance via yfinance",
     "symbols": {
       "alphabet": "GOOGL",
