@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-published-at-audit.v1",
-  "run_at": "2026-11-03T06:49:44.672414Z",
-  "events_total": 30,
-  "sec_events_total": 24,
+  "run_at": "2026-11-03T16:15:38.351762Z",
+  "events_total": 31,
+  "sec_events_total": 25,
   "non_sec_events_not_independently_reverified": 6,
   "items": [
     {
@@ -290,6 +290,18 @@
       "primary_acceptance_at": "2026-11-02T21:30:23.000Z",
       "ledger_published_at_utc": "2026-11-02T21:30:23Z",
       "primary_acceptance_at_utc": "2026-11-02T21:30:23Z",
+      "delta_seconds": 0.0,
+      "status": "PASS"
+    },
+    {
+      "event_id": "9c5d305ebf216a7c1a6c5b8f",
+      "company_id": "apple",
+      "accession_number": "0000320193-26-000026",
+      "ledger_published_at": "2026-11-03T13:05:15Z",
+      "verification_source": "SEC submissions acceptanceDateTime",
+      "primary_acceptance_at": "2026-11-03T13:05:15.000Z",
+      "ledger_published_at_utc": "2026-11-03T13:05:15Z",
+      "primary_acceptance_at_utc": "2026-11-03T13:05:15Z",
       "delta_seconds": 0.0,
       "status": "PASS"
     }

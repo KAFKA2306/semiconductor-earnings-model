@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-11-03T06:49:43.805119Z",
+  "generated_from_run_at": "2026-11-03T16:15:36.256477Z",
   "audit_status": "PASS",
-  "accepted_events_total": 1,
-  "ledger_accepted_events_total": 30,
+  "accepted_events_total": 2,
+  "ledger_accepted_events_total": 31,
   "expired_events_total": 29,
-  "rejected_events_total": 463,
+  "rejected_events_total": 465,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
@@ -18,6 +18,15 @@
       "document_type": "8-K",
       "published_at": "2026-11-02T21:30:23Z",
       "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/0000320193-26-000024-index.html",
+      "freshness": "PASS"
+    },
+    {
+      "event_id": "9c5d305ebf216a7c1a6c5b8f",
+      "company_id": "apple",
+      "company_name": "Apple",
+      "document_type": "10-K",
+      "published_at": "2026-11-03T13:05:15Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/0000320193-26-000026-index.html",
       "freshness": "PASS"
     }
   ],

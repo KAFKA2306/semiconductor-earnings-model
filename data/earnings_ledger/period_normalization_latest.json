@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-11-03T06:49:43.964152Z",
-  "events_total": 30,
-  "normalized_events_total": 12,
+  "run_at": "2026-11-03T16:15:36.374362Z",
+  "events_total": 31,
+  "normalized_events_total": 13,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -77,6 +77,19 @@
       "period_end": "2026-08-02",
       "period_source": "SEC submissions reportDate",
       "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "9c5d305ebf216a7c1a6c5b8f",
+      "company_id": "apple",
+      "document_type": "10-K",
+      "accession_number": "0000320193-26-000026",
+      "period_end": "2026-09-26",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "ANNUAL_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",
       "fiscal_year": null,
       "fiscal_quarter": null,

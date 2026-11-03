@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-03T12:05:31.466025Z",
-  "window_start": "2026-11-02T06:49:43.805119Z",
-  "window_end": "2026-11-03T06:49:43.805119Z",
-  "verified_events": 13,
+  "verified_at": "2026-11-03T16:15:38.414031Z",
+  "window_start": "2026-11-02T16:15:36.256477Z",
+  "window_end": "2026-11-03T16:15:36.256477Z",
+  "verified_events": 14,
   "required_metric_events": 12,
   "reused_evidence_events": 12,
   "evidence": [
@@ -183,10 +183,24 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/0000320193-26-000024-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0000320193.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "3ecd3634e81a5f55741ca9c812b66a8d5f9c4a9ba5fb454addf6c516e3f51370",
-      "source_content_bytes": 163755,
+      "source_content_sha256": "8ffac07be41cb9e633ec3d53586604f0074ae39d42df56746b9edaee8e5a3c26",
+      "source_content_bytes": 163919,
       "content_type": "application/json",
-      "verified_at": "2026-11-03T12:05:31.466025Z",
+      "verified_at": "2026-11-03T16:15:38.414031Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "9c5d305ebf216a7c1a6c5b8f",
+      "company_id": "apple",
+      "document_type": "10-K",
+      "published_at": "2026-11-03T13:05:15Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/0000320193-26-000026-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000320193.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "8ffac07be41cb9e633ec3d53586604f0074ae39d42df56746b9edaee8e5a3c26",
+      "source_content_bytes": 163919,
+      "content_type": "application/json",
+      "verified_at": "2026-11-03T16:15:38.414031Z",
       "status": "PASS"
     }
   ],

@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-11-03T06:49:44.022980Z",
-  "events_total": 30,
-  "classified_events_total": 30,
+  "run_at": "2026-11-03T16:15:36.409230Z",
+  "events_total": 31,
+  "classified_events_total": 31,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -198,6 +198,16 @@
       "event_id": "893c606bb5169a68452985f2",
       "company_id": "cadence",
       "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
+    },
+    {
+      "event_id": "9c5d305ebf216a7c1a6c5b8f",
+      "company_id": "apple",
+      "document_type": "10-K",
       "source_adapter": "sec_edgar",
       "metric_level_basis_required": true,
       "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
