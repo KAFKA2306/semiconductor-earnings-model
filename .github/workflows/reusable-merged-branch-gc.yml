@@ -30,6 +30,12 @@ jobs:
       - name: Compile pinned GC implementation
         run: python -m py_compile .gc-control/scripts/cleanup_merged_branches.py
 
+      - name: Verify branch selection safety tests
+        if: ${{ !inputs.apply }}
+        run: |
+          python -m pip install pytest==8.4.2
+          python -m pytest -q .gc-control/tests/test_cleanup_merged_branches.py
+
       - name: Dry-run deletion proof
         if: ${{ !inputs.apply }}
         run: python .gc-control/scripts/cleanup_merged_branches.py --repo "$GITHUB_REPOSITORY"
