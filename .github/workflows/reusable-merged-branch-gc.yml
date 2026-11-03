@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: KAFKA2306/semiconductor-earnings-model
-          ref: 886d945beff9e09cbf9a7fd4ce2e6e83a6e86ac6
+          ref: ec21b7c3ccaef3ca95560b003df1c67635323a9a
           path: .gc-control
           persist-credentials: false
 
