@@ -19,6 +19,7 @@ EPHEMERAL_PREFIXES = (
     "design/",
     "docs/",
     "feat/",
+    "factory/",
     "fix/",
     "refactor/",
     "test/",

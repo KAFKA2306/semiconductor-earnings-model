@@ -118,3 +118,27 @@ def test_foreign_fork_pr_does_not_authorize_deletion() -> None:
         ],
     )
     assert result["fix/name"] == ("keep", "no_merge_proof")
+
+
+def test_factory_branch_gc_requires_exact_merge_proof_and_preserves_active_work() -> None:
+    """Factory work branches are ephemeral, but never deleted merely by prefix."""
+    result = decision_map(
+        branches=[
+            gc.Branch("main", "main-sha"),
+            gc.Branch("factory/merged", "merged-head"),
+            gc.Branch("factory/open", "open-head"),
+            gc.Branch("factory/unmerged", "unmerged-head"),
+            gc.Branch("factory/changed-after-merge", "new-head"),
+            gc.Branch("factory/protected", "protected-head", protected=True),
+        ],
+        open_heads=[head("factory/open", "open-head", merged=False)],
+        closed_heads=[
+            head("factory/merged", "merged-head", merged=True),
+            head("factory/changed-after-merge", "old-head", merged=True),
+        ],
+    )
+    assert result["factory/merged"] == ("delete", "exact_merged_pr_head")
+    assert result["factory/open"] == ("keep", "open_pull_request")
+    assert result["factory/unmerged"] == ("keep", "no_merge_proof")
+    assert result["factory/changed-after-merge"] == ("keep", "no_merge_proof")
+    assert result["factory/protected"] == ("keep", "protected")
