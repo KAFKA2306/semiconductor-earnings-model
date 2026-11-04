@@ -1,25 +1,16 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-11-04T12:09:56.908565Z",
+  "generated_from_run_at": "2026-11-04T19:46:39.310206Z",
   "audit_status": "PASS",
-  "accepted_events_total": 3,
+  "accepted_events_total": 2,
   "ledger_accepted_events_total": 33,
-  "expired_events_total": 30,
-  "rejected_events_total": 475,
+  "expired_events_total": 31,
+  "rejected_events_total": 476,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
   "events": [
-    {
-      "event_id": "9c5d305ebf216a7c1a6c5b8f",
-      "company_id": "apple",
-      "company_name": "Apple",
-      "document_type": "10-K",
-      "published_at": "2026-11-03T13:05:15Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/0000320193-26-000026-index.html",
-      "freshness": "PASS"
-    },
     {
       "event_id": "493e6f5f59484cc6254ad521",
       "company_id": "amd",
