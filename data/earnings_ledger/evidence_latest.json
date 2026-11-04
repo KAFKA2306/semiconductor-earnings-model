@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-04T00:42:20.280644Z",
-  "window_start": "2026-11-02T21:49:21.976819Z",
-  "window_end": "2026-11-03T21:49:21.976819Z",
+  "verified_at": "2026-11-04T02:20:53.470640Z",
+  "window_start": "2026-11-03T02:20:52.481905Z",
+  "window_end": "2026-11-04T02:20:52.481905Z",
   "verified_events": 14,
   "required_metric_events": 13,
   "reused_evidence_events": 12,
@@ -186,7 +186,7 @@
       "source_content_sha256": "8ffac07be41cb9e633ec3d53586604f0074ae39d42df56746b9edaee8e5a3c26",
       "source_content_bytes": 163919,
       "content_type": "application/json",
-      "verified_at": "2026-11-04T00:42:20.280644Z",
+      "verified_at": "2026-11-04T02:20:53.470640Z",
       "status": "PASS"
     },
     {
@@ -200,7 +200,7 @@
       "source_content_sha256": "76271cbc81bf9f2f78fcab555bbd83af8b2faaeb47ee6f57e8a70d1828514fba",
       "source_content_bytes": 162363,
       "content_type": "application/json",
-      "verified_at": "2026-11-04T00:42:20.280644Z",
+      "verified_at": "2026-11-04T02:20:53.470640Z",
       "status": "PASS"
     }
   ],
