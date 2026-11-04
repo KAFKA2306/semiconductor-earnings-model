@@ -1,22 +1,22 @@
 {
   "schema_version": "verified-sec-fcf.v1",
-  "run_at": "2026-11-04T07:05:35.804951Z",
+  "run_at": "2026-11-04T16:40:55.757741Z",
   "freshness_gate_hours": 24,
   "eligible_events_total": 1,
-  "stale_events_skipped_total": 12,
+  "stale_events_skipped_total": 13,
   "verified_metrics_total": 1,
   "metrics": [
     {
-      "event_id": "9c5d305ebf216a7c1a6c5b8f",
-      "company_id": "apple",
-      "ticker": "AAPL",
-      "accession_number": "0000320193-26-000026",
-      "period_start": "2025-09-28",
+      "event_id": "54bc39f439e3a1a286571326",
+      "company_id": "amd",
+      "ticker": "AMD",
+      "accession_number": "0000002488-26-000191",
+      "period_start": "2025-12-28",
       "period_end": "2026-09-26",
-      "duration_days": 364,
-      "document_type": "10-K",
+      "duration_days": 273,
+      "document_type": "10-Q",
       "metric": "free_cash_flow",
-      "value": 136056000000,
+      "value": 4678000000,
       "unit": "USD",
       "accounting_basis": "derived-non-gaap",
       "derivation": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
@@ -24,17 +24,17 @@
         "operating_cash_flow": {
           "taxonomy": "us-gaap",
           "concept": "NetCashProvidedByUsedInOperatingActivities",
-          "value": 145097000000
+          "value": 6523000000
         },
         "capital_expenditures": {
           "taxonomy": "us-gaap",
           "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
-          "value": 9041000000
+          "value": 1845000000
         }
       },
-      "filed": "2026-11-03",
+      "filed": "2026-11-04",
       "source": "SEC Company Facts API",
-      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000002488.json",
       "verification": "derived only from two live <=24h SEC Company Facts USD inputs sharing exact accession, form, period start and period end; FCF is explicitly non-GAAP derived"
     }
   ],
