@@ -1,8 +1,8 @@
 {
   "schema_version": "verified-sec-inventory.v1",
-  "run_at": "2026-11-04T06:58:17.954885Z",
-  "eligible_events_total": 13,
-  "verified_metrics_total": 13,
+  "run_at": "2026-11-04T16:33:47.033439Z",
+  "eligible_events_total": 14,
+  "verified_metrics_total": 14,
   "metrics": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -262,6 +262,26 @@
       "filed": "2026-11-03",
       "source": "SEC Company Facts API",
       "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+      "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
+    },
+    {
+      "event_id": "54bc39f439e3a1a286571326",
+      "company_id": "amd",
+      "ticker": "AMD",
+      "accession_number": "0000002488-26-000191",
+      "period_end": "2026-09-26",
+      "document_type": "10-Q",
+      "metric": "inventory_net",
+      "value": 11463000000,
+      "unit": "USD",
+      "taxonomy": "us-gaap",
+      "concept": "InventoryNet",
+      "frame": "CY2026Q3I",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q3",
+      "filed": "2026-11-04",
+      "source": "SEC Company Facts API",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000002488.json",
       "verification": "exact accession + exact form + exact period end + USD + us-gaap InventoryNet"
     }
   ],
