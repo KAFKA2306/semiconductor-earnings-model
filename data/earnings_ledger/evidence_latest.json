@@ -1,10 +1,10 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-04T12:09:58.650562Z",
+  "verified_at": "2026-11-04T18:05:36.439799Z",
   "window_start": "2026-11-03T12:09:56.908565Z",
   "window_end": "2026-11-04T12:09:56.908565Z",
   "verified_events": 15,
-  "required_metric_events": 13,
+  "required_metric_events": 14,
   "reused_evidence_events": 12,
   "evidence": [
     {
@@ -186,7 +186,7 @@
       "source_content_sha256": "ffcd46214e4547e94dee763cc9545ab3d5ecc9adce0892e451aa6ff3c248bc8a",
       "source_content_bytes": 163919,
       "content_type": "application/json",
-      "verified_at": "2026-11-04T12:09:58.650562Z",
+      "verified_at": "2026-11-04T18:05:36.439799Z",
       "status": "PASS"
     },
     {
@@ -200,7 +200,7 @@
       "source_content_sha256": "dd391f0451ace48db9819f59fa7a05c08b3d2429f06b889d557d58604d55310a",
       "source_content_bytes": 162525,
       "content_type": "application/json",
-      "verified_at": "2026-11-04T12:09:58.650562Z",
+      "verified_at": "2026-11-04T18:05:36.439799Z",
       "status": "PASS"
     },
     {
@@ -214,7 +214,7 @@
       "source_content_sha256": "dd391f0451ace48db9819f59fa7a05c08b3d2429f06b889d557d58604d55310a",
       "source_content_bytes": 162525,
       "content_type": "application/json",
-      "verified_at": "2026-11-04T12:09:58.650562Z",
+      "verified_at": "2026-11-04T18:05:36.439799Z",
       "status": "PASS"
     }
   ],
