@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-04T09:29:41.429448Z",
-  "window_start": "2026-11-03T02:20:52.481905Z",
-  "window_end": "2026-11-04T02:20:52.481905Z",
-  "verified_events": 14,
+  "verified_at": "2026-11-04T12:09:58.650562Z",
+  "window_start": "2026-11-03T12:09:56.908565Z",
+  "window_end": "2026-11-04T12:09:56.908565Z",
+  "verified_events": 15,
   "required_metric_events": 13,
   "reused_evidence_events": 12,
   "evidence": [
@@ -186,7 +186,7 @@
       "source_content_sha256": "ffcd46214e4547e94dee763cc9545ab3d5ecc9adce0892e451aa6ff3c248bc8a",
       "source_content_bytes": 163919,
       "content_type": "application/json",
-      "verified_at": "2026-11-04T09:29:41.429448Z",
+      "verified_at": "2026-11-04T12:09:58.650562Z",
       "status": "PASS"
     },
     {
@@ -197,10 +197,24 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/0000002488-26-000188-index.html",
       "evidence_url": "https://data.sec.gov/submissions/CIK0000002488.json",
       "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "76271cbc81bf9f2f78fcab555bbd83af8b2faaeb47ee6f57e8a70d1828514fba",
-      "source_content_bytes": 162363,
+      "source_content_sha256": "dd391f0451ace48db9819f59fa7a05c08b3d2429f06b889d557d58604d55310a",
+      "source_content_bytes": 162525,
       "content_type": "application/json",
-      "verified_at": "2026-11-04T09:29:41.429448Z",
+      "verified_at": "2026-11-04T12:09:58.650562Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "54bc39f439e3a1a286571326",
+      "company_id": "amd",
+      "document_type": "10-Q",
+      "published_at": "2026-11-03T23:00:17Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000191/0000002488-26-000191-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0000002488.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "dd391f0451ace48db9819f59fa7a05c08b3d2429f06b889d557d58604d55310a",
+      "source_content_bytes": 162525,
+      "content_type": "application/json",
+      "verified_at": "2026-11-04T12:09:58.650562Z",
       "status": "PASS"
     }
   ],

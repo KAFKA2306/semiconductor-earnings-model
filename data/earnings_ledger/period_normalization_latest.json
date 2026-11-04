@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-period-normalization.v2",
-  "run_at": "2026-11-04T02:20:52.648870Z",
-  "events_total": 32,
-  "normalized_events_total": 13,
+  "run_at": "2026-11-04T12:09:57.072171Z",
+  "events_total": 33,
+  "normalized_events_total": 14,
   "items": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -75,6 +75,19 @@
       "document_type": "10-Q",
       "accession_number": "0001730168-26-000080",
       "period_end": "2026-08-02",
+      "period_source": "SEC submissions reportDate",
+      "period_kind": "INTERIM_REPORT_PERIOD_END",
+      "period_kind_source": "SEC form type",
+      "fiscal_year": null,
+      "fiscal_quarter": null,
+      "normalization_status": "PRIMARY_PERIOD_END_AND_REPORT_KIND_ONLY"
+    },
+    {
+      "event_id": "54bc39f439e3a1a286571326",
+      "company_id": "amd",
+      "document_type": "10-Q",
+      "accession_number": "0000002488-26-000191",
+      "period_end": "2026-09-26",
       "period_source": "SEC submissions reportDate",
       "period_kind": "INTERIM_REPORT_PERIOD_END",
       "period_kind_source": "SEC form type",

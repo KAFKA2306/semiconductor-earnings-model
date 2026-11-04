@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-11-04T02:20:52.696078Z",
-  "events_total": 32,
-  "classified_events_total": 32,
+  "run_at": "2026-11-04T12:09:57.121495Z",
+  "events_total": 33,
+  "classified_events_total": 33,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -123,6 +123,16 @@
       "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
       "automatic_gaap_metric_use": false,
       "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
+    },
+    {
+      "event_id": "54bc39f439e3a1a286571326",
+      "company_id": "amd",
+      "document_type": "10-Q",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "US_GAAP_PRIMARY_FINANCIAL_STATEMENTS_PRESENT",
+      "automatic_gaap_metric_use": false,
+      "reason": "The filing contains primary US-GAAP financial statements, but individual extracted metrics still require statement/XBRL provenance before being labeled GAAP."
     },
     {
       "event_id": "61228a6adb428de2131cc8a5",
