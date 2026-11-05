@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-11-04T19:46:39.310206Z",
+  "generated_from_run_at": "2026-11-05T00:54:18.936130Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -106,8 +106,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "896f07f7cd34f41aca165034",
-      "last_seen_published_at": "2026-09-10T16:22:37Z",
+      "last_seen_id": "8653cc1c0338c649507d4190",
+      "last_seen_published_at": "2026-11-04T21:05:52Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -133,8 +133,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "1528a61abe6322eee4ac966a",
-      "last_seen_published_at": "2026-11-02T12:00:26Z",
+      "last_seen_id": "2ac317d5560fa41f90ad9e7e",
+      "last_seen_published_at": "2026-11-04T21:01:27Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -142,8 +142,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "39b9e890ea45128d14854f06",
-      "last_seen_published_at": "2026-11-02T22:01:06Z",
+      "last_seen_id": "48aa4128b997f157767c45cb",
+      "last_seen_published_at": "2026-11-04T21:21:20Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -151,8 +151,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "fc924ac1d456680717c5ffd3",
-      "last_seen_published_at": "2026-11-04T15:20:59Z",
+      "last_seen_id": "62300a6108b46c2b7803d59d",
+      "last_seen_published_at": "2026-11-04T22:26:58Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -160,8 +160,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "cd3112ba0390134f2eaa6194",
-      "last_seen_published_at": "2026-11-04T11:01:27Z",
+      "last_seen_id": "2a2cd3d7411d379e1c0f2516",
+      "last_seen_published_at": "2026-11-04T23:36:30Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -178,8 +178,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "dfbfb5acb298de6aab0bf64f",
-      "last_seen_published_at": "2026-11-04T00:52:48Z",
+      "last_seen_id": "29d69fa11655a0edbabc544a",
+      "last_seen_published_at": "2026-11-04T21:49:48Z",
       "last_seen_disposition": "rejected"
     },
     {
