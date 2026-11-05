@@ -1,11 +1,11 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-04T23:46:30.297399Z",
-  "window_start": "2026-11-03T19:46:39.310206Z",
-  "window_end": "2026-11-04T19:46:39.310206Z",
-  "verified_events": 15,
+  "verified_at": "2026-11-05T00:54:19.865308Z",
+  "window_start": "2026-11-04T00:54:18.936130Z",
+  "window_end": "2026-11-05T00:54:18.936130Z",
+  "verified_events": 14,
   "required_metric_events": 14,
-  "reused_evidence_events": 13,
+  "reused_evidence_events": 14,
   "evidence": [
     {
       "event_id": "eaf7cce59f6f7acaabe282cc",
@@ -187,20 +187,6 @@
       "source_content_bytes": 163919,
       "content_type": "application/json",
       "verified_at": "2026-11-04T18:05:36.439799Z",
-      "status": "PASS"
-    },
-    {
-      "event_id": "493e6f5f59484cc6254ad521",
-      "company_id": "amd",
-      "document_type": "8-K",
-      "published_at": "2026-11-03T21:16:27Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/0000002488-26-000188-index.html",
-      "evidence_url": "https://data.sec.gov/submissions/CIK0000002488.json",
-      "evidence_scope": "SEC_SUBMISSIONS_JSON",
-      "source_content_sha256": "dd391f0451ace48db9819f59fa7a05c08b3d2429f06b889d557d58604d55310a",
-      "source_content_bytes": 162525,
-      "content_type": "application/json",
-      "verified_at": "2026-11-04T23:46:30.297399Z",
       "status": "PASS"
     },
     {

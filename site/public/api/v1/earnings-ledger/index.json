@@ -1,35 +1,16 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-11-04T19:46:39.310206Z",
+  "generated_from_run_at": "2026-11-05T00:54:18.936130Z",
   "audit_status": "PASS",
-  "accepted_events_total": 2,
+  "accepted_events_total": 0,
   "ledger_accepted_events_total": 33,
-  "expired_events_total": 31,
-  "rejected_events_total": 476,
+  "expired_events_total": 33,
+  "rejected_events_total": 485,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
-  "events": [
-    {
-      "event_id": "493e6f5f59484cc6254ad521",
-      "company_id": "amd",
-      "company_name": "Advanced Micro Devices",
-      "document_type": "8-K",
-      "published_at": "2026-11-03T21:16:27Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/0000002488-26-000188-index.html",
-      "freshness": "PASS"
-    },
-    {
-      "event_id": "54bc39f439e3a1a286571326",
-      "company_id": "amd",
-      "company_name": "Advanced Micro Devices",
-      "document_type": "10-Q",
-      "published_at": "2026-11-03T23:00:17Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000191/0000002488-26-000191-index.html",
-      "freshness": "PASS"
-    }
-  ],
+  "events": [],
   "audit_artifacts": {
     "ledger": "audit_latest.json",
     "semantic_duplicates": "semantic_duplicate_audit_latest.json",
