@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-11-05T23:38:53.333672Z",
+  "run_at": "2026-11-06T06:49:39.153284Z",
   "accepted_events_total": 33,
   "rejected_events_total": 505,
   "source_status": [
@@ -110,7 +110,7 @@
       "source_id": "meta",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 1
     },
     {
       "source_id": "apple",
