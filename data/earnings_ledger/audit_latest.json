@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-11-06T21:30:06.432223Z",
+  "run_at": "2026-11-07T01:56:25.347811Z",
   "accepted_events_total": 33,
-  "rejected_events_total": 512,
+  "rejected_events_total": 514,
   "source_status": [
     {
       "source_id": "nvidia",
@@ -56,7 +56,7 @@
       "source_id": "micron",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "western-digital",
@@ -98,7 +98,7 @@
       "source_id": "alphabet",
       "status": "success",
       "accepted": 0,
-      "rejected": 1
+      "rejected": 0
     },
     {
       "source_id": "amazon",
