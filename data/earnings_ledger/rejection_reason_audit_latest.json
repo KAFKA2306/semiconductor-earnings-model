@@ -52,7 +52,7 @@
     "SCHEDULE 13G/A": 1,
     "TDNET_DISCLOSURE": 14
   },
-  "generated_at": "2026-11-07T08:48:53.352115Z",
+  "generated_at": "2026-11-07T16:27:27.010194Z",
   "issues": [],
   "policy": {
     "accepted_rejected_collision_fails_closed": true,
