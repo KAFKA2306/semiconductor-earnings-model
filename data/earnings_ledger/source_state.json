@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-source-state.v1",
-  "generated_from_run_at": "2026-11-09T20:45:33.785904Z",
+  "generated_from_run_at": "2026-11-10T04:07:32.136726Z",
   "sources": [
     {
       "source_id": "nvidia",
@@ -79,8 +79,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "21ac8fda2010b6e8476180e6",
-      "last_seen_published_at": "2026-11-05T21:33:48Z",
+      "last_seen_id": "0d016738e6c93bad1b337226",
+      "last_seen_published_at": "2026-11-09T22:34:42Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -124,8 +124,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "a6e8844cb50600be1050df10",
-      "last_seen_published_at": "2026-10-27T22:07:26Z",
+      "last_seen_id": "8a0a3564f5ade84fa54251ff",
+      "last_seen_published_at": "2026-11-09T21:29:26Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -133,8 +133,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "b5e8223b5ff4d92d6a669a7d",
-      "last_seen_published_at": "2026-11-05T16:34:35Z",
+      "last_seen_id": "18f096f30901778570f52ff0",
+      "last_seen_published_at": "2026-11-09T23:04:33Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -160,8 +160,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "96038a59b5a9badb125b3366",
-      "last_seen_published_at": "2026-11-06T23:36:37Z",
+      "last_seen_id": "339bb806fc3029550e59d483",
+      "last_seen_published_at": "2026-11-09T21:22:59Z",
       "last_seen_disposition": "rejected"
     },
     {
@@ -169,8 +169,8 @@
       "adapter": "sec_edgar",
       "enabled": true,
       "collection_status": "success",
-      "last_seen_id": "4052ba365b14033e0ffb8870",
-      "last_seen_published_at": "2026-11-06T21:30:47Z",
+      "last_seen_id": "23613d88232b1d5bef28fe23",
+      "last_seen_published_at": "2026-11-09T22:00:55Z",
       "last_seen_disposition": "rejected"
     },
     {
