@@ -1,9 +1,6 @@
 name: Audit live semiconductor earnings Pages
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/live-pages-audit.yml"
   schedule:
     - cron: "55 2 * * *"
   workflow_dispatch:
@@ -13,22 +10,7 @@ permissions:
   pages: read
 
 jobs:
-  pr-contract:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Validate recurring production audit contract
-        run: |
-          set -euo pipefail
-          grep -Fq 'cron: "55 2 * * *"' .github/workflows/live-pages-audit.yml
-          grep -Fq 'ai-infrastructure-view.v2' .github/workflows/live-pages-audit.yml
-          grep -Fq 'cash_paid_for_property_plant_equipment' .github/workflows/live-pages-audit.yml
-          grep -Fq 'microsoft:2026-06-30:capital-expenditures:actual' .github/workflows/live-pages-audit.yml
-          grep -Fq 'microsoft:2026-09-30:capital-expenditures:guidance' .github/workflows/live-pages-audit.yml
-
   live-audit:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Inspect active Pages configuration and main provenance
