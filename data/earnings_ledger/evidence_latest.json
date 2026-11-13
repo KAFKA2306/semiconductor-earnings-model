@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-13T09:33:06.154575Z",
+  "verified_at": "2026-11-13T09:44:28.696883Z",
   "window_start": "2026-11-12T09:33:04.904178Z",
   "window_end": "2026-11-13T09:33:04.904178Z",
   "verified_events": 15,
@@ -214,7 +214,7 @@
       "source_content_sha256": "bd35a826257fd83379f9b533c2287510fde9dc9218ef02df0aafe956d0ff8e19",
       "source_content_bytes": 159958,
       "content_type": "application/json",
-      "verified_at": "2026-11-13T09:33:06.154575Z",
+      "verified_at": "2026-11-13T09:44:28.696883Z",
       "status": "PASS"
     }
   ],
