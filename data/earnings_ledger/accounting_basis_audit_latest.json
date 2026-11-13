@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-accounting-basis-audit.v1",
-  "run_at": "2026-11-12T18:20:10.498039Z",
-  "events_total": 33,
-  "classified_events_total": 33,
+  "run_at": "2026-11-13T01:05:31.386823Z",
+  "events_total": 34,
+  "classified_events_total": 34,
   "items": [
     {
       "event_id": "101314394f03530073e2a1a5",
@@ -53,6 +53,16 @@
       "event_accounting_context": "UNVERIFIED_PRIMARY_SOURCE_BASIS",
       "automatic_gaap_metric_use": false,
       "reason": "No deterministic accounting-basis rule is implemented for this source adapter."
+    },
+    {
+      "event_id": "289d9e376f09cc53b6e600b2",
+      "company_id": "applied-materials",
+      "document_type": "8-K",
+      "source_adapter": "sec_edgar",
+      "metric_level_basis_required": true,
+      "event_accounting_context": "MIXED_OR_UNVERIFIED_EARNINGS_MATERIAL",
+      "automatic_gaap_metric_use": false,
+      "reason": "Earnings materials may contain both GAAP and non-GAAP measures; classify each metric only from explicit primary-source labeling or reconciliation."
     },
     {
       "event_id": "30f27afcf8a3ddabb7925cf8",
