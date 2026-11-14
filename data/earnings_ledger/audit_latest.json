@@ -1,6 +1,6 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-11-14T15:06:07.795966Z",
+  "run_at": "2026-11-14T20:43:34.834012Z",
   "accepted_events_total": 34,
   "rejected_events_total": 594,
   "source_status": [
@@ -62,7 +62,7 @@
       "source_id": "western-digital",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 1
     },
     {
       "source_id": "seagate",
