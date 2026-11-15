@@ -1,0 +1,14 @@
+version: 2
+models:
+  - name: silver_equity_brief_facts
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+      - name: evidence_id
+        data_tests: [not_null]
+  - name: gold_nand_equity_brief
+    columns:
+      - name: boom_quarters
+        data_tests: [unique, not_null]
+      - name: equity_value
+        data_tests: [not_null]

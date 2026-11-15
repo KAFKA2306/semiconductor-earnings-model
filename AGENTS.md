@@ -83,3 +83,10 @@ A claim becomes work only when deleting it makes one acceptance criterion unprov
 - Lower effort to inspect alternative explanations and revise or discard a hypothesis; avoid leading questions that simply confirm the user's first guess.
 - Evaluate UX by usable hypotheses, completed independent checks, decisions taken, and ultimately **realized profit**, rather than screen count, clicks, or time spent. Avoid collecting unnecessary personal information.
 - Before building a new widget, state the user hypothesis it enables, how it will be checked, and what economic decision it could improve. Prefer a minimal interaction experiment over a large speculative redesign.
+
+## Domain research evaluation
+
+- Define the thesis, observable drivers, falsification conditions and canonical evidence before selecting the toolchain. Keep those definitions versioned independently of the runner.
+- Reconstruct the evidence available at the decision cutoff. Exercise amendments, splits, stale or incomplete data, and unseen periods in independent checks.
+- Promote a candidate only after source linkage, calculation, replay, and fail-closed checks pass. Compare successful runs on the same inputs using measured tokens and elapsed time.
+- Use a deterministic path for acquisition, normalization, calculations, and ordinary updates. Reserve model calls for unresolved interpretation and record provider usage when available.

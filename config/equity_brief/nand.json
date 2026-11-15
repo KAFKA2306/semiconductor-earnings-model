@@ -1,0 +1,332 @@
+{
+  "version": 1,
+  "ticker": "285A",
+  "timezone": "+09:00",
+  "case_as_of": "2026-11-15",
+  "mission": "NAND好況の残存期間と平常化後の株主向けキャッシュフローを逆算する",
+  "documents": {
+    "results": [
+      "https://www2.jpx.co.jp/disc/285A0/140120261030561535.pdf",
+      "2026-10-30T18:45:00+09:00",
+      "primary"
+    ],
+    "returns": [
+      "https://www2.jpx.co.jp/disc/285A0/140120261030561562.pdf",
+      "2026-10-30T18:45:00+09:00",
+      "primary"
+    ],
+    "bain": [
+      "https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/S100YBT0.pdf",
+      "2026-06-16T16:09:00+09:00",
+      "primary"
+    ],
+    "half": [
+      "https://ssl4.eir-parts.net/doc/285A/yuho_pdf/S100ZCHE/00.pdf",
+      "2026-11-06",
+      "primary"
+    ],
+    "ifis": [
+      "https://kabuyoho.jp/reportAnalyst?bcode=285A",
+      "2026-11-13",
+      "market"
+    ]
+  },
+  "facts": [
+    {
+      "id": "q3_cumulative_profit",
+      "source": "results",
+      "page": 2,
+      "kind": "guidance",
+      "period": "2026-04-01/2026-12-31",
+      "unit": "JPY",
+      "pattern": "\\(累計\\)\\s+百万円\\s+[\\d,]+\\s+%\\s+-\\s+百万円\\s+([\\d,]+)\\s+%\\s+-\\s+1\\s+期末発行",
+      "scale": 1000000
+    },
+    {
+      "id": "half_profit",
+      "source": "results",
+      "page": 1,
+      "kind": "actual",
+      "period": "2026-04-01/2026-09-30",
+      "unit": "JPY",
+      "pattern": "2,235,582\\s+[-－―]\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "issued",
+      "source": "results",
+      "page": 2,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "split_adjusted_shares",
+      "pattern": "中間期\\s+([0-9,]+)株\\s+2026年3月期\\s+1,638,258,870株",
+      "scale": 1
+    },
+    {
+      "id": "treasury",
+      "source": "results",
+      "page": 2,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "split_adjusted_shares",
+      "pattern": "中間期\\s+([0-9,]+)株\\s+2026年3月期\\s+483株",
+      "scale": 1
+    },
+    {
+      "id": "october_shares_added",
+      "source": "half",
+      "page": 12,
+      "kind": "actual",
+      "period": "2026-10-01/2026-10-31",
+      "unit": "split_adjusted_shares",
+      "pattern": "発行済株式総数が([0-9,]+)株、",
+      "scale": 1
+    },
+    {
+      "id": "cash",
+      "source": "results",
+      "page": 10,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "JPY",
+      "pattern": "現金及び現金同等物\\s+470,707\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "tax_payable",
+      "source": "results",
+      "page": 11,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "JPY",
+      "pattern": "未払法人所得税\\s+104,516\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "current_borrowing",
+      "source": "results",
+      "page": 11,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "JPY",
+      "pattern": "社債及び借入金\\s+175,452\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "long_borrowing",
+      "source": "results",
+      "page": 11,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "JPY",
+      "pattern": "社債及び借入金\\s+872,116\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "current_lease",
+      "source": "results",
+      "page": 11,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "JPY",
+      "pattern": "リース負債\\s+43,911\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "long_lease",
+      "source": "results",
+      "page": 11,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "JPY",
+      "pattern": "リース負債\\s+161,710\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "operating_cf",
+      "source": "results",
+      "page": 17,
+      "kind": "actual",
+      "period": "2026-04-01/2026-09-30",
+      "unit": "JPY",
+      "pattern": "営業活動によるキャッシュ・フロー\\s+175,152\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "plant_capex",
+      "source": "results",
+      "page": 17,
+      "kind": "actual",
+      "period": "2026-04-01/2026-09-30",
+      "unit": "JPY",
+      "pattern": "有形固定資産の取得による支出\\s+[△▲]143,127\\s+[△▲]([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "intangible_capex",
+      "source": "results",
+      "page": 17,
+      "kind": "actual",
+      "period": "2026-04-01/2026-09-30",
+      "unit": "JPY",
+      "pattern": "無形資産の取得による支出\\s+[△▲]1,923\\s+[△▲]([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "buyback",
+      "source": "results",
+      "page": 17,
+      "kind": "actual",
+      "period": "2026-04-01/2026-09-30",
+      "unit": "JPY",
+      "pattern": "自己株式の取得による支出\\s+[-－―]\\s+[△▲]([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "dividend_pre_split",
+      "source": "returns",
+      "page": 1,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "JPY/pre_split_share",
+      "pattern": "配当金\\s+([0-9]+)\\s*円\\s*00\\s*銭",
+      "scale": 1
+    },
+    {
+      "id": "excess_return_percent",
+      "source": "returns",
+      "page": 1,
+      "kind": "policy",
+      "period": "2026-10-30",
+      "unit": "percent",
+      "pattern": "余剰となった資金の\\s*([0-9]+)[％%]を株主還元",
+      "scale": 1
+    },
+    {
+      "id": "split_factor",
+      "source": "returns",
+      "page": 1,
+      "kind": "actual",
+      "period": "2026-10-01",
+      "unit": "ratio",
+      "pattern": "普通株式1株につき\\s*([0-9]+)\\s*株の割合.*?決定額",
+      "scale": 1
+    },
+    {
+      "id": "cayman1a_june4",
+      "source": "bain",
+      "page": 6,
+      "kind": "actual",
+      "period": "2026-06-04",
+      "unit": "JPY/pre_split_share",
+      "pattern": "2026年6月4日[\\s\\S]{0,150}?処分\\s+([\\d,.]+)",
+      "scale": 1
+    },
+    {
+      "id": "cayman1a_june11",
+      "source": "bain",
+      "page": 6,
+      "kind": "actual",
+      "period": "2026-06-11",
+      "unit": "JPY/pre_split_share",
+      "pattern": "2026年6月11日[\\s\\S]{0,150}?処分\\s+([\\d,.]+)",
+      "scale": 1
+    },
+    {
+      "id": "cayman2_holding",
+      "source": "half",
+      "page": 13,
+      "kind": "actual",
+      "period": "2026-09-30",
+      "unit": "percent",
+      "pattern": "77,400,000\\s+([0-9.]+)",
+      "scale": 1
+    },
+    {
+      "id": "previous_profit",
+      "source": "half",
+      "page": 4,
+      "kind": "actual",
+      "period": "2025-04-01/2026-03-31",
+      "unit": "JPY",
+      "pattern": "58,946\\s+2,197,871\\s+([0-9,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "close",
+      "source": "ifis",
+      "page": null,
+      "kind": "market",
+      "period": "2026-11-13",
+      "unit": "JPY/share",
+      "pattern": "current_stock_price[^>]*>\\s*([0-9,.]+)円[\\s\\S]{0,360}?\\(11/13 15:30\\)",
+      "scale": 1
+    },
+    {
+      "id": "fy_consensus",
+      "source": "ifis",
+      "page": null,
+      "kind": "consensus",
+      "period": "2026-04-01/2027-03-31",
+      "unit": "JPY",
+      "pattern": "202703\\s+コ\\s+&nbsp;\\s*</td>\\s*(?:<td[^>]*>[\\s\\S]*?</td>\\s*){3}<td[^>]*>\\s*<span[^>]*>([\\d,]+)</span>",
+      "scale": 1000000
+    },
+    {
+      "id": "sales_receivables_increase",
+      "source": "results",
+      "page": 17,
+      "kind": "actual",
+      "period": "2026-04-01/2026-09-30",
+      "unit": "JPY",
+      "pattern": "債権の増減額\\(△は増加\\)\\s+4,191\\s+△([\\d,]+)",
+      "scale": 1000000
+    },
+    {
+      "id": "q3_profit",
+      "source": "results",
+      "page": 8,
+      "kind": "guidance",
+      "period": "2026-10-01/2026-12-31",
+      "unit": "JPY",
+      "pattern": "四半期利益\\s+8,422億円\\s+1兆3,557億円\\s+([\\d]+兆[\\d,]+)億円",
+      "scale": 100000000
+    },
+    {
+      "id": "full_year_capex",
+      "source": "half",
+      "page": 10,
+      "kind": "guidance",
+      "period": "2026-04-01/2027-03-31",
+      "unit": "JPY",
+      "pattern": "本半期報告書提出日時点においては約([\\d,]+)億円",
+      "scale": 100000000
+    }
+  ],
+  "scenario": {
+    "claimed_pe": 2.5,
+    "discount_rate": 0.1,
+    "terminal_growth": 0,
+    "boom_quarterly_operating_cf_jpy": 1000000000000,
+    "boom_quarterly_capex_jpy": 175000000000,
+    "boom_quarterly_extra_cash_tax_jpy": 250000000000,
+    "boom_quarterly_incremental_working_capital_jpy": 0,
+    "boom_quarterly_net_borrowing_jpy": 0,
+    "normal_annual_capex_jpy": null,
+    "normal_annual_net_borrowing_jpy": 0,
+    "boom_quarters": [
+      0,
+      2,
+      4,
+      8,
+      12
+    ]
+  },
+  "model": "gold_nand_equity_brief",
+  "latest_sale_state": "disclosed_transactions_only",
+  "unknowns": [
+    "売却単価が開示されていない取引の加重平均",
+    "好況の残存期間",
+    "平常時のNAND契約価格とビット出荷量"
+  ]
+}
