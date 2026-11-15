@@ -221,3 +221,5 @@ GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local 
 このプロジェクトは財務・業界研究用です。投資助言、売買推奨、将来利益の保証ではありません。
 
 **README最終監査:** 2026-08-14
+
+[キオクシアの投資仮説を再現するCLI](docs/equity-brief.md)

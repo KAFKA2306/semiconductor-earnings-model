@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+exec uv run --no-project --python 3.12 \
+  --with 'pypdf[crypto]==7.1.0' --with 'duckdb==2.0.0' --with 'dbt-duckdb==1.11.0' --with 'dbt-core==1.12.7' \
+  "$root/scripts/equity_brief.py" "$@"

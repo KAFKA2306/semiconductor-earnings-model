@@ -1,0 +1,12 @@
+description: Check a historical NAND research snapshot with independent arithmetic
+prompts:
+  - "{{snapshot}}"
+providers:
+  - "exec: python3 ../../scripts/equity_brief_eval.py"
+tests:
+  - vars:
+      snapshot: "{{env.EQUITY_BRIEF_SNAPSHOT}}"
+    assert:
+      - type: is-json
+      - type: javascript
+        value: Object.values(JSON.parse(output)).every(value => value === true)
