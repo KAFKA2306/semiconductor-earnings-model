@@ -1,8 +1,8 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-15T09:37:42.359554Z",
-  "window_start": "2026-11-14T09:28:19.064602Z",
-  "window_end": "2026-11-15T09:28:19.064602Z",
+  "verified_at": "2026-11-15T17:12:38.603253Z",
+  "window_start": "2026-11-14T17:12:37.676811Z",
+  "window_end": "2026-11-15T17:12:37.676811Z",
   "verified_events": 14,
   "required_metric_events": 14,
   "reused_evidence_events": 14,
