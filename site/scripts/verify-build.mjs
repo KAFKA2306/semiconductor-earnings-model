@@ -237,7 +237,7 @@ for (const marker of [
 }
 const earningsData = JSON.parse(fs.readFileSync(earningsApiPath, 'utf8'));
 const base = '/' + process.env.GITHUB_REPOSITORY.split('/')[1] + '/';
-for (const page of [home, earnings]) {
+const directoryRows = [home, earnings].map(page => {
   if (!page.includes('data-earnings-page') ||
       !page.includes('<title>半導体企業の四半期決算</title>') ||
       !page.includes('href="' + base + 'projects/"') ||
@@ -247,14 +247,21 @@ for (const page of [home, earnings]) {
   if (expectedSha && !page.includes('data-build-sha="' + expectedSha + '"')) {
     throw new Error('Earnings entry does not expose build SHA ' + expectedSha);
   }
-}
+  return page.match(/<tr\b[^>]*\bdata-company-row\b[^>]*>[\s\S]*?<\/tr>/g) ?? [];
+});
 for (const company of earningsData.companies) {
   const route = 'earnings/' + company.id + '/';
-  if (![home, earnings].every(page => page.includes('href="' + base + route + '"'))) {
-    throw new Error('Earnings entry cannot reach ' + company.id);
+  const latest = company.quarters[0];
+  const expectedFilings = latest ? new Set([latest.revenue.source_url, latest.operating_income.source_url]) : new Set();
+  for (const rows of directoryRows) {
+    const row = rows.find(entry => entry.includes('href="' + base + route + '"'));
+    if (!row) throw new Error('Earnings entry cannot reach ' + company.id);
+    const links = Array.from(row.matchAll(/<a\b(?=[^>]*\bdata-filing-link\b)[^>]*\bhref="([^"]+)"[^>]*>/g), match => match[1]);
+    if (links.length !== expectedFilings.size || [...expectedFilings].some(url => !links.includes(url))) {
+      throw new Error('Earnings entry shows incorrect or missing quarter filings for ' + company.id);
+    }
   }
   const report = fs.readFileSync(path.join(dist, route, 'index.html'), 'utf8');
-  const latest = company.quarters[0];
   if (!latest) {
     if (report.includes('<table') || !report.includes('現在の収録データにありません')) {
       throw new Error('Missing quarters are not explicit for ' + company.id);

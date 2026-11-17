@@ -31,7 +31,7 @@ const analysis = [
   </script>}
   <div class="intro">
     <h1>半導体企業の四半期決算</h1>
-    <p class="muted">SECに四半期報告書（10-Q）を提出する半導体企業の売上高と営業利益です。企業名を選ぶと、過去の実績と提出書類を確認できます。</p>
+    <p class="muted">半導体企業の四半期売上高と営業利益を、米証券取引委員会（SEC）への提出書類と一緒に確認できます。企業名から過去の実績を開けます。</p>
   </div>
   <div class="overview">
     <section aria-labelledby="companies-heading">
@@ -48,7 +48,7 @@ const analysis = [
           <colgroup><col class="company-col" /><col class="date-col" /><col /><col /></colgroup>
           <thead><tr>
             <th scope="col">企業</th>
-            <th scope="col">期末日</th>
+            <th scope="col">期末日・資料</th>
             <th scope="col" class="num">売上高</th>
             <th scope="col" class="num">営業利益</th>
           </tr></thead>
@@ -57,7 +57,19 @@ const analysis = [
               <tr data-company-row data-search-terms={company.name + ' ' + company.ticker}>
                 <th scope="row"><a href={base + 'earnings/' + company.id + '/'}>{company.name}</a><small>{company.ticker}</small></th>
                 {latest ? <>
-                  <td><time datetime={latest.period_end}>{latest.period_end}</time></td>
+                  <td>
+                    <time datetime={latest.period_end}>{latest.period_end}</time>
+                    <small class="filings">
+                      {latest.revenue.source_url === latest.operating_income.source_url ? (
+                        <a href={latest.revenue.source_url} data-filing-link aria-label={`${company.name} ${latest.period_end}期のSEC提出書類`}>提出書類</a>
+                      ) : (
+                        <>
+                          <a href={latest.revenue.source_url} data-filing-link aria-label={`${company.name} ${latest.period_end}期の売上高のSEC提出書類`}>売上高の資料</a>
+                          <a href={latest.operating_income.source_url} data-filing-link aria-label={`${company.name} ${latest.period_end}期の営業利益のSEC提出書類`}>営業利益の資料</a>
+                        </>
+                      )}
+                    </small>
+                  </td>
                   <td class="num">{hundredMillion.format(latest.revenue.reported_value / 100000000)}</td>
                   <td class="num" data-negative={latest.operating_income.reported_value < 0 || undefined}>{hundredMillion.format(latest.operating_income.reported_value / 100000000)}</td>
                 </> : <td colspan="3" class="muted">対象の四半期データなし</td>}
@@ -105,6 +117,7 @@ const analysis = [
   .table-note { font-size: .82rem; margin: .45rem 0 .65rem; }
   .company-col { width: 42%; }
   .date-col { width: 24%; }
+  .filings a { display: block; width: fit-content; padding-block: .2rem; }
   .empty-search { padding: 1rem; margin: 0; }
   .analysis { padding: 1rem 1.15rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--surface); }
   .analysis ul { list-style: none; padding: 0; margin: .45rem 0 0; }
