@@ -7,64 +7,84 @@ on:
 
 permissions:
   contents: read
+  deployments: read
   pages: read
 
 jobs:
   live-audit:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect active Pages configuration and main provenance
+      - name: Resolve the latest successful Pages deployment
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
-            | tee pages-config.json \
-            | jq '{html_url, status, build_type, source, public}'
-          main_sha="$(curl --fail --silent --show-error \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/main" | jq -er '.sha')"
-          echo "MAIN_SHA=${main_sha}" | tee -a "$GITHUB_ENV"
-          echo "Expected live build SHA: ${main_sha}"
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          github_api() {
+            curl --fail --silent --show-error --max-time 20 \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" "$api/$1"
+          }
 
-      - name: Print live severe-scenario financial summary
-        run: |
-          curl --fail --silent --show-error --location "https://kafka2306.github.io/semiconductor-earnings-model/api/v1/semiconductor-resilience/index.json?summary=${GITHUB_SHA}" -o resilience.json
-          python -c 'import json; d=json.load(open("resilience.json")); cs=[c for c in d["companies"] if c["years"]]; print(f"SUMMARY generated_at={d[chr(103)+chr(101)+chr(110)+chr(101)+chr(114)+chr(97)+chr(116)+chr(101)+chr(100)+chr(95)+chr(97)+chr(116)]} companies={len(cs)} hash={d[chr(99)+chr(111)+chr(110)+chr(116)+chr(101)+chr(110)+chr(116)+chr(95)+chr(104)+chr(97)+chr(115)+chr(104)]}"); [(lambda r,y: print(f"SEVERE {c[chr(116)+chr(105)+chr(99)+chr(107)+chr(101)+chr(114)]} period={y[chr(112)+chr(101)+chr(114)+chr(105)+chr(111)+chr(100)+chr(95)+chr(101)+chr(110)+chr(100)]} liquid={y[chr(108)+chr(105)+chr(113)+chr(117)+chr(105)+chr(100)+chr(95)+chr(114)+chr(101)+chr(115)+chr(101)+chr(114)+chr(118)+chr(101)][chr(114)+chr(101)+chr(112)+chr(111)+chr(114)+chr(116)+chr(101)+chr(100)+chr(95)+chr(118)+chr(97)+chr(108)+chr(117)+chr(101)]} stressed_fcf={r[chr(115)+chr(116)+chr(114)+chr(101)+chr(115)+chr(115)+chr(101)+chr(100)+chr(95)+chr(102)+chr(114)+chr(101)+chr(101)+chr(95)+chr(99)+chr(97)+chr(115)+chr(104)+chr(95)+chr(102)+chr(108)+chr(111)+chr(119)+chr(95)+chr(117)+chr(115)+chr(100)]} runway={r[chr(108)+chr(105)+chr(113)+chr(117)+chr(105)+chr(100)+chr(95)+chr(114)+chr(101)+chr(115)+chr(101)+chr(114)+chr(118)+chr(101)+chr(95)+chr(114)+chr(117)+chr(110)+chr(119)+chr(97)+chr(121)+chr(95)+chr(121)+chr(101)+chr(97)+chr(114)+chr(115)]} band={r[chr(114)+chr(117)+chr(110)+chr(119)+chr(97)+chr(121)+chr(95)+chr(98)+chr(97)+chr(110)+chr(100)]}"))(next(x for x in c["scenarios"] if x["scenario_id"]=="severe"), c["years"][0]) for c in cs]'
+          pages="$(github_api pages)"
+          pages_url="$(jq -er '.html_url | select(startswith("https://"))' <<< "$pages")"
+          main_sha="$(github_api commits/main | jq -er '.sha | select(test("^[0-9a-f]{40}$"))')"
+          deployments="$(github_api 'deployments?environment=github-pages&ref=main&per_page=30' \
+            | jq -r 'sort_by(.created_at, .id) | reverse | .[] | [.id, .sha] | @tsv')"
+
+          deployed_sha=""
+          while IFS=$'\t' read -r deployment_id candidate_sha; do
+            test -n "$deployment_id" || break
+            state="$(github_api "deployments/$deployment_id/statuses?per_page=1" | jq -r '.[0].state // "unreported"')"
+            if [[ "$state" == success ]]; then
+              deployed_sha="$candidate_sha"
+              break
+            fi
+            echo "Pages deployment $deployment_id has status $state"
+          done <<< "$deployments"
+          if [[ ! "$deployed_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo '::error::No successful GitHub Pages deployment was found for main.'
+            exit 1
+          fi
+
+          printf 'PAGES_URL=%s\nDEPLOYED_SHA=%s\nMAIN_SHA=%s\n' "${pages_url%/}" "$deployed_sha" "$main_sha" >> "$GITHUB_ENV"
+          echo "Expected live build SHA: $deployed_sha (deployment $deployment_id)"
+          if [[ "$deployed_sha" != "$main_sha" ]]; then
+            echo "::notice::Pages is auditing deployed revision $deployed_sha; main is currently $main_sha."
+          fi
 
       - name: Verify live research workbench, auxiliary research surfaces, and generated APIs
         shell: bash
         run: |
           set -euo pipefail
-          base="https://kafka2306.github.io/semiconductor-earnings-model"
+          base="$PAGES_URL"
           tmp="$(mktemp -d)"
 
           matched=false
-          for attempt in $(seq 1 42); do
+          for attempt in $(seq 1 12); do
             curl --fail --silent --show-error --location "$base/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/root.html" || true
             curl --fail --silent --show-error --location "$base/resilience/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.html" || true
             curl --fail --silent --show-error --location "$base/api/v1/ai-infrastructure/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/ai.json" || true
             curl --fail --silent --show-error --location "$base/api/v1/semiconductor-resilience/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.json" || true
-            if grep -Fq "data-build-sha=\"${MAIN_SHA}\"" "$tmp/root.html" 2>/dev/null \
-              && grep -Fq "data-build-sha=\"${MAIN_SHA}\"" "$tmp/resilience.html" 2>/dev/null \
+            if grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/root.html" 2>/dev/null \
+              && grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/resilience.html" 2>/dev/null \
               && python -m json.tool "$tmp/ai.json" >/dev/null 2>&1 \
               && python -m json.tool "$tmp/resilience.json" >/dev/null 2>&1; then
               matched=true
               break
             fi
-            echo "Live build has not propagated to ${MAIN_SHA} (attempt ${attempt})."
-            sleep 10
+            echo "Live Pages does not yet match deployment ${DEPLOYED_SHA} (attempt ${attempt})."
+            sleep 5
           done
-          test "$matched" = true
+          if [[ "$matched" != true ]]; then
+            echo "::error::Live Pages did not match successful deployment ${DEPLOYED_SHA}."
+            exit 1
+          fi
 
           for route in projects model resilience china-ai investment-policy ledger; do
             curl --fail --silent --show-error --location "$base/$route/?smoke=${GITHUB_SHA}" -o "$tmp/$route.html"
+            grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/$route.html"
             grep -Fq 'data-workbench' "$tmp/$route.html"
             ! grep -Fq 'pastel-watercolor.css' "$tmp/$route.html"
           done
@@ -73,6 +93,7 @@ jobs:
             grep -Fq 'RESEARCH WORKBENCH' "$tmp/$route.html"
           done
           curl --fail --silent --show-error --location "$base/earnings/?smoke=${GITHUB_SHA}" -o "$tmp/earnings.html"
+          grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/earnings.html"
           grep -Fq 'data-earnings-page' "$tmp/root.html"
           grep -Fq 'data-earnings-page' "$tmp/earnings.html"
           grep -Fq 'data-chart-panel' "$tmp/projects.html"
@@ -112,8 +133,19 @@ jobs:
           assert all(company["years"][0]["operating_cash_flow"]["source_url"].startswith("https://www.sec.gov/") for company in companies)
           assert audit["snapshot_hash"]
           assert audit["audit"]["findings"] is not None
+
+          print(f"SUMMARY generated_at={resilience['generated_at']} companies={len(companies)} hash={resilience['content_hash']}")
+          for company in companies:
+              annual = company["years"][0]
+              severe = next(row for row in company["scenarios"] if row["scenario_id"] == "severe")
+              print(
+                  f"SEVERE {company['ticker']} period={annual['period_end']} "
+                  f"liquid={annual['liquid_reserve']['reported_value']} stressed_fcf={severe['stressed_free_cash_flow_usd']} "
+                  f"runway={severe['liquid_reserve_runway_years']} band={severe['runway_band']}"
+              )
           print(json.dumps({
-              "live_build_sha": os.environ["MAIN_SHA"],
+              "live_build_sha": os.environ["DEPLOYED_SHA"],
+              "main_sha": os.environ["MAIN_SHA"],
               "ai_infrastructure_observations": len(ai["observations"]),
               "resilience_content_hash": resilience["content_hash"],
               "companies_with_data": len(companies),
