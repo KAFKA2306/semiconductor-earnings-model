@@ -63,11 +63,11 @@ jobs:
 
           matched=false
           for attempt in $(seq 1 12); do
-            curl --fail --silent --show-error --location "$base/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/root.html" || true
-            curl --fail --silent --show-error --location "$base/resilience/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.html" || true
-            curl --fail --silent --show-error --location "$base/api/v1/ai-infrastructure/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/ai.json" || true
-            curl --fail --silent --show-error --location "$base/api/v1/semiconductor-resilience/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.json" || true
-            if grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/root.html" 2>/dev/null \
+            if curl --fail --silent --show-error --location --max-time 20 "$base/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/root.html" \
+              && curl --fail --silent --show-error --location --max-time 20 "$base/resilience/?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.html" \
+              && curl --fail --silent --show-error --location --max-time 20 "$base/api/v1/ai-infrastructure/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/ai.json" \
+              && curl --fail --silent --show-error --location --max-time 20 "$base/api/v1/semiconductor-resilience/index.json?smoke=${GITHUB_SHA}-${attempt}" -o "$tmp/resilience.json" \
+              && grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/root.html" 2>/dev/null \
               && grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/resilience.html" 2>/dev/null \
               && python -m json.tool "$tmp/ai.json" >/dev/null 2>&1 \
               && python -m json.tool "$tmp/resilience.json" >/dev/null 2>&1; then
@@ -83,7 +83,7 @@ jobs:
           fi
 
           for route in projects model resilience china-ai investment-policy ledger; do
-            curl --fail --silent --show-error --location "$base/$route/?smoke=${GITHUB_SHA}" -o "$tmp/$route.html"
+            curl --fail --silent --show-error --location --max-time 20 "$base/$route/?smoke=${GITHUB_SHA}" -o "$tmp/$route.html"
             grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/$route.html"
             grep -Fq 'data-workbench' "$tmp/$route.html"
             ! grep -Fq 'pastel-watercolor.css' "$tmp/$route.html"
@@ -92,7 +92,7 @@ jobs:
           for route in projects model resilience; do
             grep -Fq 'RESEARCH WORKBENCH' "$tmp/$route.html"
           done
-          curl --fail --silent --show-error --location "$base/earnings/?smoke=${GITHUB_SHA}" -o "$tmp/earnings.html"
+          curl --fail --silent --show-error --location --max-time 20 "$base/earnings/?smoke=${GITHUB_SHA}" -o "$tmp/earnings.html"
           grep -Fq "data-build-sha=\"${DEPLOYED_SHA}\"" "$tmp/earnings.html"
           grep -Fq 'data-earnings-page' "$tmp/root.html"
           grep -Fq 'data-earnings-page' "$tmp/earnings.html"
@@ -101,10 +101,10 @@ jobs:
           grep -Fq 'data-watchlist-filter' "$tmp/projects.html"
           ! grep -Fq 'pastel-watercolor.css' "$tmp/root.html"
 
-          curl --fail --silent --show-error --location "$base/api/v1/index.json?smoke=${GITHUB_SHA}" -o "$tmp/index.json"
-          curl --fail --silent --show-error --location "$base/api/v1/semiconductor-profit/index.json?smoke=${GITHUB_SHA}" -o "$tmp/profit.json"
-          curl --fail --silent --show-error --location "$base/api/v1/demand/index.json?smoke=${GITHUB_SHA}" -o "$tmp/demand.json"
-          curl --fail --silent --show-error --location "$base/data/quant-audit.json?smoke=${GITHUB_SHA}" -o "$tmp/audit.json"
+          curl --fail --silent --show-error --location --max-time 20 "$base/api/v1/index.json?smoke=${GITHUB_SHA}" -o "$tmp/index.json"
+          curl --fail --silent --show-error --location --max-time 20 "$base/api/v1/semiconductor-profit/index.json?smoke=${GITHUB_SHA}" -o "$tmp/profit.json"
+          curl --fail --silent --show-error --location --max-time 20 "$base/api/v1/demand/index.json?smoke=${GITHUB_SHA}" -o "$tmp/demand.json"
+          curl --fail --silent --show-error --location --max-time 20 "$base/data/quant-audit.json?smoke=${GITHUB_SHA}" -o "$tmp/audit.json"
 
           jq -e '.schema_version == "ai-infrastructure-view.v2"' "$tmp/ai.json" >/dev/null
           jq -e '[.observations[] | select(.concept_id == "capital_expenditures" and .source_tier == "primary_regulatory")] | length == 0' "$tmp/ai.json" >/dev/null
