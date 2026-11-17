@@ -7,7 +7,7 @@
 ## Kafstylerの導入
 
 - Codexでは、このリポジトリを開き、プロジェクトのプラグイン一覧から Kafstyler を確認します。CLIではルートで `codex plugin marketplace add .` を実行し、`codex plugin add kafstyler@semiconductor-earnings-model` で導入します。新しいセッションの `/hooks` でフックを確認します。
-- Claude Codeでは、このリポジトリを信頼済みのプロジェクトとして開くと、`kafka-agent-tools` の Kafstyler がプロジェクト設定に現れます。自律開発では、扱うIssueを指定して `/loop 5m /kafstyler:deliver 対象Issueの完了条件まで実装と検証を進める` を使います。
+- Claude Codeでは、このリポジトリを信頼済みのプロジェクトとして開くと、`kafka-agent-tools` の Kafstyler がプロジェクト設定に現れます。自律開発では、`/loop 5m /kafstyler:deliver <IssueのURLと今回の合格条件>` を使い、[登録と解除の手順](https://github.com/KAFKA2306/kafstyler/blob/main/skills/deliver/SKILL.md#claude-codeの-loop-連携)を確認します。
 - 配布元、更新方法、対象のクライアントは [Kafstylerの導入手順](https://github.com/KAFKA2306/kafstyler#プラグインの使い方)を確認してください。定期実行では [AGENTS.mdの一回の自律改善](../AGENTS.md#一回の自律改善)を入口にします。
 
 ## Setup
