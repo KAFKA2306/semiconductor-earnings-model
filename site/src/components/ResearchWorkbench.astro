@@ -275,7 +275,7 @@ const icons = {
   quality:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6 2v5c0 4-2.5 6.5-6 8-3.5-1.5-6-4-6-8v-5zM10 6v5M10 14h.01"/></svg>',
 };
 const nav = [['projects',icons.projects,'Projects'],['companies',icons.companies,'Companies'],['financials',icons.financials,'Financials'],['capacity',icons.capacity,'Capacity'],['facilities',icons.facilities,'Facilities'],['activity',icons.activity,'Activity'],['evidence',icons.evidence,'Evidence'],['quality',icons.quality,'Quality']];
-const hrefFor = (key) => key === 'projects' ? base : base + key + '/';
+const hrefFor = (key) => base + key + '/';
 ---
 
 <link rel="stylesheet" href={base + 'assets/bi-workbench.css'} />

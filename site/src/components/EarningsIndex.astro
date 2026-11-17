@@ -1,0 +1,123 @@
+---
+import EarningsLayout from './EarningsLayout.astro';
+import { earningsApi, hundredMillion, readEarnings } from '../lib/earnings-pages.mjs';
+
+const { previousView } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const { companies, generated_at: generatedAt } = readEarnings();
+const entries = companies.map(company => ({ company, latest: company.quarters[0] }));
+entries.sort((a, b) =>
+  (b.latest?.period_end ?? '').localeCompare(a.latest?.period_end ?? '') ||
+  a.company.name.localeCompare(b.company.name)
+);
+const snapshotDate = new Intl.DateTimeFormat('ja-JP', {
+  dateStyle: 'medium',
+  timeZone: 'Asia/Tokyo',
+}).format(new Date(generatedAt));
+const analysis = [
+  ['projects/', '設備投資・生産計画', '企業や工場の投資案件を探す'],
+  ['financials/', '財務指標を詳しく調べる', 'キャッシュフローや設備投資額などを見る'],
+  ['ledger/', '直近24時間の決算台帳', '公開監査を通った新しい開示を見る'],
+  ['quality/', 'データ品質を調べる', '出典の種類や収録状況を確かめる'],
+];
+---
+<EarningsLayout title="半導体企業の四半期決算" description="半導体企業の四半期売上高と営業利益を、SECの提出書類までたどれます。">
+  {previousView && <script is:inline define:vars={{ previousUrl: base + previousView + '/' }}>
+    const query = new URLSearchParams(location.search);
+    const savedViewKeys = ['q', 'country', 'role', 'quality', 'status', 'watchlist', 'sort', 'dir', 'sorts', 'row', 'compare', 'cols', 'f', 'x'];
+    if (savedViewKeys.some(key => query.has(key))) {
+      location.replace(previousUrl + location.search + location.hash);
+    }
+  </script>}
+  <div class="intro">
+    <h1>半導体企業の四半期決算</h1>
+    <p class="muted">SECに四半期報告書（10-Q）を提出する半導体企業の売上高と営業利益です。企業名を選ぶと、過去の実績と提出書類を確認できます。</p>
+  </div>
+  <div class="overview">
+    <section aria-labelledby="companies-heading">
+      <div class="table-heading">
+        <h2 id="companies-heading">企業別決算</h2>
+        <label class="company-search" hidden>
+          <span>企業名・ティッカーで検索</span>
+          <input type="search" placeholder="例：NVIDIA、NVDA" autocomplete="off" />
+        </label>
+      </div>
+      <p class="table-note muted">各社の収録済み最新四半期 · 単位は億米ドル · 取得日 <time datetime={generatedAt}>{snapshotDate}</time></p>
+      <div class="table-panel">
+        <table class="earnings-table" aria-labelledby="companies-heading">
+          <colgroup><col class="company-col" /><col class="date-col" /><col /><col /></colgroup>
+          <thead><tr>
+            <th scope="col">企業</th>
+            <th scope="col">期末日</th>
+            <th scope="col" class="num">売上高</th>
+            <th scope="col" class="num">営業利益</th>
+          </tr></thead>
+          <tbody>
+            {entries.map(({ company, latest }) => (
+              <tr data-company-row data-search-terms={company.name + ' ' + company.ticker}>
+                <th scope="row"><a href={base + 'earnings/' + company.id + '/'}>{company.name}</a><small>{company.ticker}</small></th>
+                {latest ? <>
+                  <td><time datetime={latest.period_end}>{latest.period_end}</time></td>
+                  <td class="num">{hundredMillion.format(latest.revenue.reported_value / 100000000)}</td>
+                  <td class="num" data-negative={latest.operating_income.reported_value < 0 || undefined}>{hundredMillion.format(latest.operating_income.reported_value / 100000000)}</td>
+                </> : <td colspan="3" class="muted">対象の四半期データなし</td>}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="empty-search muted" hidden role="status">一致する企業がありません。</p>
+      </div>
+      <p class="table-note muted">収録対象は10-Qで同じ期間の2指標を確認できた四半期です。年次報告書（10-K）のみで確認できる期間は対象外です。<a href={base + earningsApi}>元データ（JSON）</a></p>
+    </section>
+    <aside class="analysis" aria-labelledby="analysis-heading">
+      <h2 id="analysis-heading">詳しく調べる</h2>
+      <ul>
+        {analysis.map(([path, label, detail]) => (
+          <li><a href={base + path}>{label}</a><small>{detail}</small></li>
+        ))}
+      </ul>
+    </aside>
+  </div>
+</EarningsLayout>
+
+<script>
+  const label = document.querySelector('.company-search');
+  const search = label.querySelector('input');
+  const rows = Array.from(document.querySelectorAll('[data-company-row]'));
+  const empty = document.querySelector('.empty-search');
+  label.hidden = false;
+  search.addEventListener('input', () => {
+    const query = search.value.normalize('NFKC').trim().toLowerCase();
+    for (const row of rows) {
+      row.hidden = !row.dataset.searchTerms.toLowerCase().includes(query);
+    }
+    empty.hidden = rows.some(row => !row.hidden);
+  });
+</script>
+
+<style>
+  .intro { margin-bottom: 2rem; }
+  .intro p { margin: .65rem 0 0; }
+  .overview { display: grid; grid-template-columns: minmax(0, 1fr) 16rem; gap: clamp(1.2rem, 4vw, 2.5rem); align-items: start; }
+  .table-heading { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: .6rem; }
+  .company-search { display: grid; gap: .15rem; font-size: .8rem; color: var(--muted); }
+  .company-search input { min-width: 0; width: 15rem; max-width: 100%; border: 1px solid #8b9caf; border-radius: .42rem; padding: .5rem .7rem; font: inherit; color: inherit; background: var(--surface); }
+  .table-note { font-size: .82rem; margin: .45rem 0 .65rem; }
+  .company-col { width: 42%; }
+  .date-col { width: 24%; }
+  .empty-search { padding: 1rem; margin: 0; }
+  .analysis { padding: 1rem 1.15rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--surface); }
+  .analysis ul { list-style: none; padding: 0; margin: .45rem 0 0; }
+  .analysis li + li { border-top: 1px solid var(--line); }
+  .analysis a { display: inline-block; padding-block: .42rem .1rem; font-weight: 650; }
+  .analysis small { display: block; color: var(--muted); padding-bottom: .55rem; }
+  @media (max-width: 800px) { .overview { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 540px) {
+    .intro { margin-bottom: 1.25rem; }
+    .table-heading { align-items: start; flex-direction: column; }
+    .company-search { width: 100%; }
+    .company-search input { width: 100%; font-size: 1rem; }
+    .company-col { width: 35%; }
+    .date-col { width: 27%; }
+  }
+</style>

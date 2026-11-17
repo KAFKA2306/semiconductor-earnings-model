@@ -1,0 +1,64 @@
+---
+import EarningsLayout from '../../components/EarningsLayout.astro';
+import { money, readEarnings } from '../../lib/earnings-pages.mjs';
+
+export function getStaticPaths() {
+  return readEarnings().companies.map(company => ({ params: { company: company.id }, props: { company } }));
+}
+
+const { company } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const facts = [['revenue', '売上高'], ['operating_income', '営業利益']];
+---
+<EarningsLayout title={company.name + 'の四半期決算 | 半導体決算'} description={company.name + 'の四半期売上高、営業利益、SEC提出書類。'}>
+  <a class="back" href={base + 'earnings/'}>← 企業別決算へ</a>
+  <h1>{company.name}<span class="ticker">{company.ticker}</span></h1>
+  {company.quarters.length ? (
+    <section class="history" aria-labelledby="history-heading">
+      <h2 id="history-heading">四半期の実績</h2>
+      <p class="muted">単位は米ドル。各指標の下に提出日を表示しています。「10-Q」からSEC提出書類を開けます。</p>
+      <div class="table-panel">
+        <table class="earnings-table" aria-labelledby="history-heading">
+          <thead><tr>
+            <th scope="col">対象期間</th>
+            {facts.map(([, label]) => <th scope="col" class="num">{label}</th>)}
+          </tr></thead>
+          <tbody>
+            {company.quarters.map(quarter => (
+              <tr>
+                <th scope="row">
+                  <time datetime={quarter.period_end}>{quarter.period_end}</time>
+                  <small><time datetime={quarter.period_start}>{quarter.period_start}</time> 開始</small>
+                </th>
+                {facts.map(([key, label]) => {
+                  const fact = quarter[key];
+                  return (
+                    <td class="num" data-negative={fact.reported_value < 0 || undefined}>
+                      {money.format(fact.reported_value)}
+                      <small>
+                        <a href={fact.source_url} aria-label={quarter.period_end + '期 ' + label + 'のSEC提出書類 10-Q'}>10-Q</a>
+                        <time datetime={fact.filed}>{fact.filed}</time>
+                      </small>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  ) : <p class="muted">売上高と営業利益の両方を確認できた四半期が、現在の収録データにありません。</p>}
+</EarningsLayout>
+
+<style>
+  .back { display: inline-block; margin-bottom: .9rem; }
+  .ticker { display: inline-block; margin-inline-start: .65rem; font-size: .95rem; vertical-align: middle; color: var(--muted); }
+  .history { margin-top: 1.65rem; }
+  .history p { margin: .3rem 0 .8rem; font-size: .9rem; }
+  .history td small a { display: inline-block; margin-inline-end: .25rem; padding-block: .2rem; }
+  @media (max-width: 540px) {
+    .history td small time { display: block; }
+    .history .earnings-table :is(td, th) time { white-space: nowrap; }
+  }
+</style>
