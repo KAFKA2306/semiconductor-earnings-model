@@ -23,6 +23,7 @@ a{color:var(--wb-accent)}button:focus-visible,a:focus-visible,input:focus-visibl
 .wb-top-action{height:34px;border:1px solid var(--wb-line);background:#fff;color:var(--wb-ink);padding:0 10px;cursor:pointer}
 .wb-top-action:hover{border-color:var(--wb-line-strong);background:#f9fafb}.wb-top-action.primary{border-color:var(--wb-accent);background:var(--wb-accent);color:#fff}.wb-top-action.primary:hover{background:#1849a9}.wb-top-action.utility{color:var(--wb-muted);background:#f9fafb}
 .wb-context{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;border-bottom:1px solid var(--wb-line);background:#fff}
+.wb-earnings-link{display:inline-flex;align-items:center;min-height:32px;white-space:nowrap;color:var(--wb-accent);text-underline-offset:3px}
 .wb-title{min-width:0}.wb-title h1{font-size:14px;margin:0;font-weight:800}.wb-title p{margin:2px 0 0;color:var(--wb-muted);font-size:11px}
 .wb-summary{display:flex;gap:14px;white-space:nowrap;font-variant-numeric:tabular-nums}.wb-summary b{font-weight:800}.wb-summary span{color:var(--wb-muted);font-size:11px}
 .wb-controls{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--wb-line);background:#f9fafb;overflow-x:auto}
