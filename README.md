@@ -16,7 +16,8 @@
 
 - [ドキュメント索引](docs/README.md)
 - [正本・派生・公開の境界](docs/architecture.md)
-- [変更範囲別の検証手順](docs/development.md)
+- [開発・検証手順とKafstylerの導入](docs/development.md)
+- [自律改善の進め方](AGENTS.md#一回の自律改善)
 
 
 ## Vision
