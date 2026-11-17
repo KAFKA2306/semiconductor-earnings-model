@@ -4,6 +4,9 @@ import path from 'node:path';
 const root = process.cwd();
 const dist = path.join(root, 'dist');
 const indexPath = path.join(dist, 'index.html');
+const projectsPath = path.join(dist, 'projects/index.html');
+const earningsPath = path.join(dist, 'earnings/index.html');
+const earningsApiPath = path.join(dist, 'api/v1/semiconductor-profit/index.json');
 const componentPath = path.join(root, 'src/components/ResearchWorkbench.astro');
 const cssPath = path.join(dist, 'assets/bi-workbench.css');
 const jsPath = path.join(dist, 'assets/bi-workbench.js');
@@ -14,11 +17,13 @@ const auxCssPath = path.join(dist, 'assets/aux-workbench.css');
 const financialPath = path.join(dist, 'api/v3/financial-database/index.json');
 const infrastructurePath = path.join(dist, 'api/v1/ai-infrastructure/index.json');
 
-for (const file of [indexPath, componentPath, cssPath, jsPath, statePath, chartEnginePath, dataEnginePath, auxCssPath, financialPath, infrastructurePath]) {
+for (const file of [indexPath, projectsPath, earningsPath, earningsApiPath, componentPath, cssPath, jsPath, statePath, chartEnginePath, dataEnginePath, auxCssPath, financialPath, infrastructurePath]) {
   if (!fs.existsSync(file)) throw new Error('Required Pages artifact is missing: ' + path.relative(root, file));
 }
 
-const html = fs.readFileSync(indexPath, 'utf8');
+const home = fs.readFileSync(indexPath, 'utf8');
+const earnings = fs.readFileSync(earningsPath, 'utf8');
+const html = fs.readFileSync(projectsPath, 'utf8');
 const component = fs.readFileSync(componentPath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
 const js = fs.readFileSync(jsPath, 'utf8');
@@ -31,7 +36,7 @@ const infrastructure = JSON.parse(fs.readFileSync(infrastructurePath, 'utf8'));
 const expectedSha = process.env.PUBLIC_BUILD_SHA;
 
 if (!html.includes('<title>Projects | Semiconductor Research Workbench</title>')) {
-  throw new Error('Screener-first workbench root title is missing');
+  throw new Error('Projects workbench title is missing');
 }
 for (const marker of [
   'data-workbench',
@@ -65,9 +70,9 @@ for (const marker of [
   'Save workspace',
   'Export',
 ]) {
-  if (!html.includes(marker)) throw new Error('Workbench root is missing marker: ' + marker);
+  if (!html.includes(marker)) throw new Error('Projects workbench is missing marker: ' + marker);
 }
-for (const route of ['companies','financials','capacity','facilities','activity','evidence','quality','earnings','model','resilience']) {
+for (const route of ['companies','financials','capacity','facilities','activity','evidence','quality','model','resilience']) {
   const file = path.join(dist, route, 'index.html');
   if (!fs.existsSync(file)) throw new Error('Workbench route is missing: ' + route);
   const page = fs.readFileSync(file, 'utf8');
@@ -230,8 +235,39 @@ for (const marker of [
 ]) {
   if (!component.includes(marker)) throw new Error('Canonical workbench contract is missing: ' + marker);
 }
+const earningsData = JSON.parse(fs.readFileSync(earningsApiPath, 'utf8'));
+const base = '/' + process.env.GITHUB_REPOSITORY.split('/')[1] + '/';
+for (const page of [home, earnings]) {
+  if (!page.includes('data-earnings-page') ||
+      !page.includes('<title>半導体企業の四半期決算</title>') ||
+      !page.includes('href="' + base + 'projects/"') ||
+      page.includes('data-inspector')) {
+    throw new Error('Earnings entry does not show the company directory');
+  }
+  if (expectedSha && !page.includes('data-build-sha="' + expectedSha + '"')) {
+    throw new Error('Earnings entry does not expose build SHA ' + expectedSha);
+  }
+}
+for (const company of earningsData.companies) {
+  const route = 'earnings/' + company.id + '/';
+  if (![home, earnings].every(page => page.includes('href="' + base + route + '"'))) {
+    throw new Error('Earnings entry cannot reach ' + company.id);
+  }
+  const report = fs.readFileSync(path.join(dist, route, 'index.html'), 'utf8');
+  const latest = company.quarters[0];
+  if (!latest) {
+    if (report.includes('<table') || !report.includes('現在の収録データにありません')) {
+      throw new Error('Missing quarters are not explicit for ' + company.id);
+    }
+    continue;
+  }
+  if (!report.includes('datetime="' + latest.period_end + '"') ||
+      ![latest.revenue, latest.operating_income].every(fact => report.includes('href="' + fact.source_url + '"'))) {
+    throw new Error('Latest quarter or its filings are missing for ' + company.id);
+  }
+}
 if (expectedSha && !html.includes('data-build-sha="' + expectedSha + '"')) {
-  throw new Error('Pages root does not expose build SHA ' + expectedSha);
+  throw new Error('Projects workbench does not expose build SHA ' + expectedSha);
 }
 
 if (infrastructure.schema_version !== 'ai-infrastructure-view.v2') {
@@ -250,4 +286,4 @@ if ((financial.views?.nand_kpi_comparisons?.length ?? 0) < 4) {
   throw new Error('NAND comparison view is incomplete');
 }
 
-console.log('pages_root_contract=PASS workbench=screener-first routes=8 cross_filter=PASS ai_schema=' + infrastructure.schema_version + ' hash=' + financial.content_hash);
+console.log('earnings_entry=PASS projects_workbench=PASS cross_filter=PASS ai_schema=' + infrastructure.schema_version + ' hash=' + financial.content_hash);

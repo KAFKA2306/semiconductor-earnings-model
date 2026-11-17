@@ -141,7 +141,7 @@ jobs:
           npm run build
       - name: Verify ledger page live publication boundary
         run: uv run python scripts/check_ledger_page_publication_boundary.py
-      - name: Verify BI workbench and legacy-route retirement
+      - name: Verify BI workbench and supporting routes
         run: |
           set -euo pipefail
           test -s site/dist/assets/bi-workbench.css
@@ -151,7 +151,7 @@ jobs:
           test -s site/dist/api/v3/financial-database/star-schema.json
           test -s site/dist/api/v3/financial-database/financial.db
           for page in \
-            site/dist/index.html \
+            site/dist/projects/index.html \
             site/dist/companies/index.html \
             site/dist/financials/index.html \
             site/dist/capacity/index.html \
@@ -159,7 +159,6 @@ jobs:
             site/dist/activity/index.html \
             site/dist/evidence/index.html \
             site/dist/quality/index.html \
-            site/dist/earnings/index.html \
             site/dist/model/index.html \
             site/dist/resilience/index.html; do
             test -s "$page"
@@ -169,15 +168,14 @@ jobs:
             ! grep -Fq 'research-context.js' "$page"
             ! grep -Fq 'research-context.css' "$page"
           done
-          grep -Fq 'data-view="financials"' site/dist/earnings/index.html
           grep -Fq 'data-view="projects"' site/dist/model/index.html
           grep -Fq 'data-view="quality"' site/dist/resilience/index.html
-          grep -Fq 'data-open-columns' site/dist/index.html
-          grep -Fq 'data-open-compare' site/dist/index.html
-          grep -Fq 'data-open-views' site/dist/index.html
-          grep -Fq 'data-command' site/dist/index.html
-          grep -Fq 'data-inspector' site/dist/index.html
-          grep -Fq 'data-compare-bar' site/dist/index.html
+          grep -Fq 'data-open-columns' site/dist/projects/index.html
+          grep -Fq 'data-open-compare' site/dist/projects/index.html
+          grep -Fq 'data-open-views' site/dist/projects/index.html
+          grep -Fq 'data-command' site/dist/projects/index.html
+          grep -Fq 'data-inspector' site/dist/projects/index.html
+          grep -Fq 'data-compare-bar' site/dist/projects/index.html
           for page in site/dist/china-ai/index.html site/dist/investment-policy/index.html site/dist/ledger/index.html; do
             test -s "$page"
             grep -Fq 'data-aux-workbench' "$page"
@@ -200,10 +198,10 @@ jobs:
           mkdir -p visual-evidence
           row_id="$(jq -r '.projects[0].project_id' dist/api/v2/projects/index.json)"
           encoded_row="$(python -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$row_id")"
-          url="http://127.0.0.1:4321/semiconductor-earnings-model/?row=$encoded_row"
+          url="http://127.0.0.1:4321/semiconductor-earnings-model/projects/?row=$encoded_row"
           npx --yes playwright@1.55.0 screenshot --viewport-size="1440,900" --wait-for-timeout=900 "$url" visual-evidence/workbench-1440x900.png
           npx --yes playwright@1.55.0 screenshot --viewport-size="1366,768" --wait-for-timeout=900 "$url" visual-evidence/workbench-1366x768.png
-          npx --yes playwright@1.55.0 screenshot --viewport-size="390,844" --wait-for-timeout=900 "http://127.0.0.1:4321/semiconductor-earnings-model/" visual-evidence/workbench-390x844-grid.png
+          npx --yes playwright@1.55.0 screenshot --viewport-size="390,844" --wait-for-timeout=900 "http://127.0.0.1:4321/semiconductor-earnings-model/projects/" visual-evidence/workbench-390x844-grid.png
           npx --yes playwright@1.55.0 screenshot --viewport-size="390,844" --wait-for-timeout=900 "$url" visual-evidence/workbench-390x844-inspector.png
           test -s visual-evidence/workbench-1440x900.png
           test -s visual-evidence/workbench-1366x768.png

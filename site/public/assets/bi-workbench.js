@@ -455,8 +455,7 @@
     for (const kind of ['projects','financials','evidence']) {
       menu.querySelector('[data-cell-action="' + kind + '"]')?.addEventListener('click',()=>{
         closeCellMenu();
-        const target = kind === 'projects' ? '' : kind + '/';
-        location.href=(payload.base || '/') + target + '?q=' + encodeURIComponent(entityId);
+        location.href=(payload.base || '/') + kind + '/?q=' + encodeURIComponent(entityId);
       });
     }
     menu.querySelector('[data-cell-action="copy"]')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(value);toast('Value copied')}catch{toast('Copy failed')}closeCellMenu()});
@@ -575,7 +574,7 @@
   const linkedWorkspaceHtml = row => {
     const linked = linkedByEntity[row.entity_id] || {};
     const specs = [
-      ['projects','Projects',''],
+      ['projects','Projects','projects/'],
       ['financials','Financials','financials/'],
       ['facilities','Facilities','facilities/'],
       ['evidence','Evidence','evidence/'],

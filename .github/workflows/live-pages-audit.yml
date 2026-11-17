@@ -63,18 +63,21 @@ jobs:
           done
           test "$matched" = true
 
-          for route in earnings model resilience china-ai investment-policy ledger; do
+          for route in projects model resilience china-ai investment-policy ledger; do
             curl --fail --silent --show-error --location "$base/$route/?smoke=${GITHUB_SHA}" -o "$tmp/$route.html"
             grep -Fq 'data-workbench' "$tmp/$route.html"
             ! grep -Fq 'pastel-watercolor.css' "$tmp/$route.html"
           done
 
-          for route in earnings model resilience; do
+          for route in projects model resilience; do
             grep -Fq 'RESEARCH WORKBENCH' "$tmp/$route.html"
           done
-          grep -Fq 'data-chart-panel' "$tmp/root.html"
-          grep -Fq 'data-workspace-dialog' "$tmp/root.html"
-          grep -Fq 'data-watchlist-filter' "$tmp/root.html"
+          curl --fail --silent --show-error --location "$base/earnings/?smoke=${GITHUB_SHA}" -o "$tmp/earnings.html"
+          grep -Fq 'data-earnings-page' "$tmp/root.html"
+          grep -Fq 'data-earnings-page' "$tmp/earnings.html"
+          grep -Fq 'data-chart-panel' "$tmp/projects.html"
+          grep -Fq 'data-workspace-dialog' "$tmp/projects.html"
+          grep -Fq 'data-watchlist-filter' "$tmp/projects.html"
           ! grep -Fq 'pastel-watercolor.css' "$tmp/root.html"
 
           curl --fail --silent --show-error --location "$base/api/v1/index.json?smoke=${GITHUB_SHA}" -o "$tmp/index.json"

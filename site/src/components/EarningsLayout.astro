@@ -1,0 +1,73 @@
+---
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const buildSha = import.meta.env.PUBLIC_BUILD_SHA || 'local';
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f8fa" />
+    <title>{title}</title>
+  </head>
+  <body data-earnings-page data-build-sha={buildSha}>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href={base}>半導体決算</a>
+        <nav aria-label="主要ページ">
+          <a href={base + 'earnings/'}>企業別決算</a>
+          <a href={base + 'projects/'}>設備投資</a>
+          <a href={base + 'financials/'}>財務分析</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wrap"><slot /></main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    font-family: system-ui, "Noto Sans CJK JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+    line-height: 1.65;
+    color: #192537;
+    background: #f7f8fa;
+    --line: #dce3ea;
+    --muted: #49586b;
+    --link: #124d81;
+    --surface: #fff;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; min-width: 0; }
+  a { color: var(--link); text-underline-offset: .18em; }
+  a:focus-visible, input:focus-visible { outline: 3px solid #1868ad; outline-offset: 3px; }
+  [hidden] { display: none !important; }
+  .wrap { width: min(100% - 2.5rem, 71rem); margin-inline: auto; }
+  .site-header { background: var(--surface); border-bottom: 1px solid var(--line); }
+  .header-inner { min-height: 4rem; display: flex; align-items: center; justify-content: space-between; gap: .5rem 1.5rem; flex-wrap: wrap; padding-block: .5rem; }
+  .site-header nav { display: flex; gap: .25rem 1.3rem; flex-wrap: wrap; }
+  .site-header a { display: inline-block; padding-block: .3rem; color: inherit; }
+  .site-header .brand { font-weight: 750; text-decoration: none; font-size: 1.12rem; }
+  main.wrap { padding-block: clamp(1.5rem, 5vw, 3.6rem) 3rem; }
+  [data-earnings-page] h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.65rem); line-height: 1.22; letter-spacing: -.025em; }
+  [data-earnings-page] h2 { margin: 0; font-size: 1.18rem; }
+  .muted { color: var(--muted); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .num[data-negative] { color: #963c37; }
+  .table-panel { border: 1px solid var(--line); border-radius: .75rem; background: var(--surface); overflow: hidden; }
+  .earnings-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+  .earnings-table :is(th, td) { padding: .8rem .95rem; border-bottom: 1px solid var(--line); text-align: left; overflow-wrap: anywhere; }
+  .earnings-table thead th { background: #edf2f7; font-size: .79rem; color: var(--muted); }
+  .earnings-table tbody th { font-weight: 600; }
+  .earnings-table tbody tr:last-child > * { border-bottom: 0; }
+  .earnings-table .num { text-align: right; }
+  .earnings-table small { display: block; color: var(--muted); font-size: .75rem; }
+  @media (max-width: 540px) {
+    .wrap { width: calc(100% - 1.5rem); }
+    .header-inner { justify-content: flex-start; column-gap: 1rem; }
+    .site-header nav { gap: .7rem; font-size: .8rem; }
+    .earnings-table :is(th, td) { padding: .65rem .47rem; }
+    .earnings-table { font-size: .88rem; }
+  }
+</style>

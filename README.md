@@ -41,9 +41,12 @@
 
 ## 最初に見るページ
 
-- [統合リサーチ画面・財務耐久力比較](https://kafka2306.github.io/semiconductor-earnings-model/resilience/)
-- [決算の一次事実台帳](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)
-- [需要から利益までの計算モデル](https://kafka2306.github.io/semiconductor-earnings-model/model/)
+- [企業別の四半期決算](https://kafka2306.github.io/semiconductor-earnings-model/earnings/)で企業を選ぶと、売上高・営業利益の実績とSEC提出書類を確認できます。
+- [設備投資・生産計画](https://kafka2306.github.io/semiconductor-earnings-model/projects/)で投資案件を調べ、[財務指標](https://kafka2306.github.io/semiconductor-earnings-model/financials/)でキャッシュフローなどの詳しい項目を確認できます。
+- [直近24時間の決算台帳](https://kafka2306.github.io/semiconductor-earnings-model/ledger/)は公開監査を通過した開示を掲載します。
+
+### データを再利用する
+
 - [信用需給・デレバレッジAPI](https://kafka2306.github.io/semiconductor-earnings-model/api/v1/market-positioning/index.json)
 - [Financial Database v3 JSON](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/index.json)
 - [Analytical Star Schema](https://kafka2306.github.io/semiconductor-earnings-model/api/v3/financial-database/star-schema.json)
@@ -68,15 +71,15 @@
 
 ### `/earnings/`
 
-開示された売上高、営業利益、営業CF、設備投資、期間、XBRLタグ、提出書類URLを保存する一次事実台帳です。
+SECの10-Qから同じ期間の売上高と営業利益を確認できた四半期を会社別に表示します。会社ページには、対象期間、米ドル建ての実績、各指標の提出日と提出書類リンクを掲載します。トップもこの企業一覧を表示します。
 
-### `/resilience/`
+### `/projects/` と `/financials/`
 
-四半期の成長性と収益性、年次のFCF・流動性・負債、同業中央値、下振れシナリオ、データ品質フラグを統合した比較画面です。
+設備投資案件と財務指標をそれぞれ検索、比較、書き出しできます。`/model/` は設備投資案件、`/resilience/` はデータ品質を表示します。
 
-### `/model/`
+### `/ledger/`
 
-既知の入力、計算式、中間値、未知の変数、最終判断を分離し、需要から利益までの計算境界を示します。
+一次資料と24時間の鮮度条件を満たし、公開監査を通った決算開示を表示します。
 
 ### `/api/v1/market-positioning/`
 

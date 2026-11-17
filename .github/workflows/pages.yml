@@ -168,6 +168,7 @@ jobs:
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/api/v3/financial-database/financial.db")" = "200"
           test "$(curl -fsS -o /dev/null -w '%{http_code}' "$base/data/quant-audit.json")" = "200"
 
+          projects_html="$(curl -fsSL "$base/projects/")"
           root_html="$(curl -fsSL "$base/")"
           earnings_html="$(curl -fsSL "$base/earnings/")"
           model_html="$(curl -fsSL "$base/model/")"
@@ -181,11 +182,11 @@ jobs:
           resilience_hash="$(jq -er '.content_hash' <<< "$resilience_json")"
           research_hash="$(jq -er '.content_hash' <<< "$research_json")"
 
-          grep -Fq "SEMICON LEDGER" <<< "$root_html"
-          grep -Fq "RESEARCH WORKBENCH" <<< "$root_html"
-          grep -Fq "data-workbench" <<< "$root_html"
-          grep -Fq "data-inspector" <<< "$root_html"
-          grep -Fq "data-compare-bar" <<< "$root_html"
+          grep -Fq "data-earnings-page" <<< "$root_html"
+          grep -Fq "半導体企業の四半期決算" <<< "$root_html"
+          grep -Fq 'data-view="projects"' <<< "$projects_html"
+          grep -Fq "data-inspector" <<< "$projects_html"
+          grep -Fq "data-compare-bar" <<< "$projects_html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$root_html"
           jq -e '.schema_version == "ai-infrastructure-view.v2"' <<< "$ai_json" >/dev/null
           jq -e '[.observations[] | select(.concept_id == "capital_expenditures" and .source_tier == "primary_regulatory")] | length == 0' <<< "$ai_json" >/dev/null
@@ -193,9 +194,13 @@ jobs:
           jq -e 'any(.observations[]; .id == "microsoft:2026-06-30:capital-expenditures:actual" and .value == 41000000000 and .value_type == "actual")' <<< "$ai_json" >/dev/null
           jq -e 'any(.observations[]; .id == "microsoft:2026-09-30:capital-expenditures:guidance" and .value == 50000000000 and .qualifier == "greater_than" and .value_type == "company_guidance")' <<< "$ai_json" >/dev/null
 
-          grep -Fq "data-workbench" <<< "$earnings_html"
-          grep -Fq "RESEARCH WORKBENCH" <<< "$earnings_html"
-          grep -Fq "Financials | Semiconductor Research Workbench" <<< "$earnings_html"
+          grep -Fq "data-earnings-page" <<< "$earnings_html"
+          grep -Fq "半導体企業の四半期決算" <<< "$earnings_html"
+          company_id="$(jq -er '[.companies[] | select(.quarters | length > 0)][0].id' <<< "$(curl -fsSL "$base/api/v1/semiconductor-profit/index.json")")"
+          company_html="$(curl -fsSL "$base/earnings/$company_id/")"
+          grep -Fq "/earnings/$company_id/" <<< "$root_html"
+          grep -Fq "https://www.sec.gov/Archives/" <<< "$company_html"
+          grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$company_html"
           grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" <<< "$earnings_html"
           grep -Fq "data-workbench" <<< "$model_html"
           grep -Fq "Projects & Model Inputs | Semiconductor Research Workbench" <<< "$model_html"
