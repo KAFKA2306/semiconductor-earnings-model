@@ -17,13 +17,30 @@
 5. 同じIssueかPRに、対象SHAとKafstyler SHA、再現条件、変更前後の比較結果、一次URL、公開版、残件の再開条件を簡潔に残す。取得できなかった値は未計測、確認できなかった状態は未確認と記す。進展のない観測や同じエラーを繰り返し記録しない。
 6. 対象固有の不足は規約か実装で直す。Kafstylerに共通する不足は再現入力、影響、参照SHA、改善案を既存の許可された非公開記録に残し、保守担当へ渡す。権限に阻まれた操作はサービス名、操作、エラー、再開条件を記録し、実施できる工程を続ける。
 
-## データ、変換、配布の責任
+## 1. Fixed Point
+
+A claim becomes work only when deleting it makes one acceptance criterion unprovable.
+
+### Functional Contract
+
+Data provenance is reproducible.
 
 - [構成と正本の一覧](docs/architecture.md)に従う。決算開示の証拠の正本は `data/earnings_ledger/` とする。取得側が一次資料の取得と検証、元データの保存、識別子を担う。SEC/EDGAR、TDnet/JPX、企業IR、公式API、契約で認められた提供元を使う。
 - スキーマが求める資料の識別子・URL、公開日時・観測日時、会計期間と会計基準、単位と通貨、値の種別、証拠ID、ハッシュを保つ。実績、会社予想、市場予想、推計、シナリオ、派生値、棄却記録を区別する。派生値で実績を上書きしない。
 - 欠損、古さ、矛盾、非開示、比較不能を表示する。欠損をゼロとして処理せず、不明な値、期間、会計基準、出典、通貨、桁、予想を推測で補わない。出典欠落、スキーマ不正、ハッシュや来歴不整合、期間・単位の曖昧さ、監査失敗では該当する公開処理を止める。
 - 集計・正規化・結合は既存のdbtモデルを優先する。dbtはSilverからGoldへの再現可能な変換、モデルの品質テストとCI、系譜、生成文書・カタログを担う。Goldの変換をUI・API・Google Sheets・BIへ複製しない。確立していない因果は、既存の証拠へ追加の結合や注記で表す。dbtの検証失敗でも該当する分析・公開を止める。
-- 予定時刻の実行、mainへの統合、公開は個別に確認する。公開監査は配布の版、応答内容、正本の値を直接照合する。監査結果は再実行できるようにし、所管ワークフローが要求する `audit_latest.json` を保存する。可逆な変更は `git revert` で戻せるようにする。
+
+### Non-Functional Contract
+
+Audit results can be replayed. Observability is preserved.
+
+- 公開監査は配布の版、応答内容、正本の値を直接照合する。`.github/workflows/` の所管ワークフローが要求する `audit_latest.json` を保存する。
+
+### Operational Contract
+
+Rollback remains possible.
+
+- データ契約は `pytest` と既存チェックで検証する。予定時刻の実行、mainへの統合、公開を個別に確認する。可逆な変更は `git revert` で戻せるようにする。
 
 ## 画面と分析の受入条件
 
