@@ -1,9 +1,9 @@
 {
   "schema_version": "earnings-evidence-audit.v1",
-  "verified_at": "2026-11-17T13:38:49.139775Z",
-  "window_start": "2026-11-16T13:28:33.362725Z",
-  "window_end": "2026-11-17T13:28:33.362725Z",
-  "verified_events": 14,
+  "verified_at": "2026-11-17T22:25:57.896591Z",
+  "window_start": "2026-11-16T22:25:56.890664Z",
+  "window_end": "2026-11-17T22:25:56.890664Z",
+  "verified_events": 15,
   "required_metric_events": 14,
   "reused_evidence_events": 14,
   "evidence": [
@@ -201,6 +201,20 @@
       "source_content_bytes": 162525,
       "content_type": "application/json",
       "verified_at": "2026-11-04T23:46:30.297399Z",
+      "status": "PASS"
+    },
+    {
+      "event_id": "b12efd96de2a774d29b40935",
+      "company_id": "nvidia",
+      "document_type": "8-K",
+      "published_at": "2026-11-17T21:20:51Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/0001045810-26-000088-index.html",
+      "evidence_url": "https://data.sec.gov/submissions/CIK0001045810.json",
+      "evidence_scope": "SEC_SUBMISSIONS_JSON",
+      "source_content_sha256": "9290cead11724c53b1db3675b98b0af6b49bc981eb34b4cef68a705ce48e83bc",
+      "source_content_bytes": 160103,
+      "content_type": "application/json",
+      "verified_at": "2026-11-17T22:25:57.896591Z",
       "status": "PASS"
     }
   ],
