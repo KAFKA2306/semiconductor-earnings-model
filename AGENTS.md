@@ -75,6 +75,12 @@ A claim becomes work only when deleting it makes one acceptance criterion unprov
 - Avoid blindly agreeing with or reflexively rejecting the user's suggestion. Evaluate with independently falsifiable evidence. Include at least one misleading-suggestion case in evaluation when materially changing agent instructions.
 - Do not dilute fail-closed provenance, unit, license, or security checks to accelerate monetization. Follow the revenue-validation work tracked in #231.
 
+## Kafstylerの適用
+
+作業開始時に [Kafstylerのmain](https://github.com/KAFKA2306/kafstyler/tree/main) のコミットを確定し、その版の `AGENTS.md` と作業に必要な `skills/<name>/SKILL.md` を適用する。まず `charter` で利用者の完了場面と合格条件を定める。検証結果には、参照したコミットと通常の利用経路で観察した結果を残す。プロジェクト固有の不足はこのファイルか実装で直し、共通手順の不足はKafstylerの改善手順で扱う。
+
+決算画面の変更では、公開トップから会社を選び、同じ四半期の売上高と営業利益を見つけ、各指標の提出書類を開けることをデスクトップとスマートフォン幅で確認する。取得日、対象期間、通貨、実績、未収録を区別する。詳細分析へのリンクと共有済みの絞り込みURLも確かめる。
+
 ## UX purpose: elicit valuable user hypotheses
 
 - UI/UX exists to help users formulate **high-quality, testable work/analysis hypotheses** that can lead to economic value, not merely to increase engagement or visual polish.
