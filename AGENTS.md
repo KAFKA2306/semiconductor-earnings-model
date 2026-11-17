@@ -1,98 +1,37 @@
-# Semiconductor Earnings Agent Contract
+# 半導体決算・財務データ研究基盤の作業規約
 
-`AGENTS.md` is the repository-wide agent instruction source. Tool-specific instruction files must not duplicate it.
-
-## Data contract
-
-This repository is a reproducible primary-financial-facts system.
-
-- Preserve source identity, URL, publication/observation time, fiscal period, unit/currency, value type, evidence identifiers, and hashes when the owning schema requires them.
-- Keep observed actuals, guidance, consensus, estimates, scenarios, derived values, and rejected records distinct.
-- Null is not zero. Missing, stale, ambiguous, incomparable, or rejected data must remain explicit.
-- Do not infer missing financial values, periods, consensus, provenance, source identity, accounting basis, currency, or scale.
-- `data/earnings_ledger/` is the canonical earnings evidence boundary unless current code/schema defines another owner.
-- Prefer SEC/EDGAR, TDnet/JPX, issuer IR, official APIs, or the repository's authorized provider for current primary facts.
-- Fail closed on missing sources, schema errors, hash/provenance failures, ambiguous periods/units, or failed audits. Do not weaken data-integrity gates to make CI pass.
-
-## dbt responsibility
-
-dbt is a first-class repository responsibility for reproducible analytical transformation, not a second source of truth.
-
-- Source acquisition, source verification, raw snapshots, and canonical identity remain upstream responsibilities.
-- dbt owns reproducible Silver-to-Gold transformation where analytical normalization or joining is required.
-- dbt owns model-level data-quality tests, lineage metadata, generated docs/catalog artifacts, and CI checks for those transformations.
-- New analytical marts must preserve evidence lineage and must not overwrite or silently reinterpret observed facts.
-- UI, API, Google Sheets, and BI consumers must not independently reimplement business transformations already owned by a tested Gold model.
-- A dbt failure must fail the affected analytical/publication path closed. Do not weaken provenance, period, unit, or verification requirements to obtain a green build.
-- Prefer additive models and explicit context joins over causal labels unless causality is separately evidenced.
-
-## Evidence boundary
-
-A successful command is not the business postcondition. Verify the ledger row, manifest/hash, audit result, generated artifact, API, or deployed surface that owns the claim.
-
-Repository merge and product/data release are separate. Release requires direct verification of the merged revision and actual published/live artifact or surface.
-
-
-## 1. Fixed Point
-
-A claim becomes work only when deleting it makes one acceptance criterion unprovable.
-
-### Functional Contract
-
-- Data provenance is reproducible.
-- Canonical source identity and schema ownership remain explicit.
-- Derived values never overwrite observed facts.
-
-### Non-Functional Contract
-
-- Audit results can be replayed.
-- Observability is preserved.
-- NULL remains distinct from zero and undisclosed remains explicit.
-
-### Operational Contract
-
-- Rollback remains possible.
-- Verify data contracts with `pytest` and repository checks before merge.
-- Preserve `data/earnings_ledger/` as the canonical earnings evidence boundary.
-- Preserve generated `audit_latest.json` evidence where the owning workflow requires it.
-- CI evidence lives under `.github/workflows/`.
-- Reversible changes must remain recoverable with normal Git history, including `git revert`.
-
-## Outcome-first task interpretation (Altitude / Depth / Range / Speed)
-
-- **Altitude:** Interpret a task as a verifiable user outcome, not only the named intermediate step. Infer the smallest justified acceptance criteria from the request and current repository state; do not silently expand scope or override explicit instructions.
-- **Depth:** Use primary/current evidence and real domain tools and methods. Verify the actual postcondition independently of agent self-report, preferably on the exact changed revision or target runtime.
-- **Range:** Combine code, data, tests, runtime/UI, and domain expertise when that materially improves the outcome, while respecting canonical owners and avoiding duplicate systems.
-- **Speed:** Complete authorized read-only and reversible work through implementation, focused checks, and read-back without unnecessary approval loops. Bound retries and stop at the proven outcome.
-- These principles never bypass repository-specific security, privacy, permission, publication, spending, destructive-action, or release boundaries. State verified results and any remaining `UNVERIFIED` layers.
-
-## Revenue-first decisions and hypothesis independence
-
-- The ultimate product/business objective is **maximize realized net revenue/profit**, subject to law, security, data licensing, privacy, user constraints, and the repository's evidence and data-integrity contracts. Features, code volume, model novelty, traffic, and visual polish are means, not ends.
-- Prioritize hypotheses that can be tested through payment intent or actual purchases. Record pricing, conversions, refunds, external costs, maintenance effort, and observation windows; never label projected revenue as realized revenue.
-- Keep the user-defined outcome and constraints separate from the user's proposed cause, edit location, technology, or solution. Treat those suggestions as hypotheses, not verified facts or implicit acceptance criteria.
-- Before implementing a proposed fix, inspect the relevant code, logs, primary evidence, and tests. If the suggestion is wrong, explain the evidence briefly and implement the smallest authorized alternative that delivers the stated outcome.
-- Avoid blindly agreeing with or reflexively rejecting the user's suggestion. Evaluate with independently falsifiable evidence. Include at least one misleading-suggestion case in evaluation when materially changing agent instructions.
-- Do not dilute fail-closed provenance, unit, license, or security checks to accelerate monetization. Follow the revenue-validation work tracked in #231.
+利用者が半導体企業の業績仮説を立て、実績、見通し、出典を自分で確かめられる研究基盤を運用する。開発・収集・分析・公開・運用にこの規約を適用する。
 
 ## Kafstylerの適用
 
-作業開始時に [Kafstylerのmain](https://github.com/KAFKA2306/kafstyler/tree/main) のコミットを確定し、その版の `AGENTS.md` と作業に必要な `skills/<name>/SKILL.md` を適用する。まず `charter` で利用者の完了場面と合格条件を定める。検証結果には、参照したコミットと通常の利用経路で観察した結果を残す。プロジェクト固有の不足はこのファイルか実装で直し、共通手順の不足はKafstylerの改善手順で扱う。
+- Claude CodeとCodexは[開発手順](docs/development.md#kafstylerの導入)からプラグインを使う。定期実行などプラグインを使えない環境では、毎回[Kafstylerのmain](https://github.com/KAFKA2306/kafstyler/tree/main)とこのリポジトリのmainを取得し、それぞれのSHAを固定して規約を読む。Kafstylerの機能一覧から必要なスキルを選び、同じSHAで本文を読む。
+- 目標設定から始め、利用者が普段どう操作し、何を見れば完了と分かるかを定める。依頼で示された原因や修正案は、コード・ログ・一次資料・実測で検証する仮説として扱う。作業規約を実質的に変えるときは、誤った原因を示す依頼でも適切な判断ができるかを確認する。
+- データ構造や入出力契約の変更には、設計前にKafstylerのデータ設計手順を使う。実装後は通常の利用経路を試し、同じ条件で変更前後を評価する。文書は正本の記述と照合し、置き換えた手順や重複を整理する。
 
-決算画面の変更では、公開トップから会社を選び、同じ四半期の売上高と営業利益を見つけ、各指標の提出書類を開けることをデスクトップとスマートフォン幅で確認する。取得日、対象期間、通貨、実績、未収録を区別する。詳細分析へのリンクと共有済みの絞り込みURLも確かめる。
+## 一回の自律改善
 
-## UX purpose: elicit valuable user hypotheses
+1. [Actions](https://github.com/KAFKA2306/semiconductor-earnings-model/actions)、[公開サイト](https://kafka2306.github.io/semiconductor-earnings-model/)、既存Issue・PR、前回の証拠を確認する。既存の担当がいればその成果を再利用し、同じ変更を並行して書き込まない。作業を分担する場合は書き込み担当を一人に決める。
+2. 利用を止めている公開・出典・データ品質の問題を先に扱う。次に、決算の確認、仮説の検証、データ再利用、実現純利益に効果が見込める未完了作業を調べる。既存Issueから、今回の権限と時間で検証可能な一件を選ぶ。問題を再現できず、新しい根拠もなければ更新を見送る。
+3. 選んだ一件を普段の入口から再現し、基準SHA、入力、実際の結果、合格条件を固定する。現行実装と公式の方法を比べ、具体的な差を直す最小の変更を実装する。取得、集計、照合は既存のコマンドを優先する。モデルは解釈や修正案の判断が必要な箇所で使い、使用量・所要時間を取得できるときは実測を記録する。
+4. [変更範囲別の検証](docs/development.md#fast-checks-by-change-type)と通常の利用経路を試す。PRの先端SHAと必須チェックを確認し、mainに統合して読み戻す。公開する変更は、配布されたSHAと実際の画面・API・成果物を確認する。対象ごとの完了条件を満たした時点で後片付けまで行う。マージ済みの作業ブランチはGitの履歴で変更を保全し、既存の削除手順で処理する。
+5. 同じIssueかPRに、対象SHAとKafstyler SHA、再現条件、変更前後の比較結果、一次URL、公開版、残件の再開条件を簡潔に残す。取得できなかった値は未計測、確認できなかった状態は未確認と記す。進展のない観測や同じエラーを繰り返し記録しない。
+6. 対象固有の不足は規約か実装で直す。Kafstylerに共通する不足は再現入力、影響、参照SHA、改善案を既存の許可された非公開記録に残し、保守担当へ渡す。権限に阻まれた操作はサービス名、操作、エラー、再開条件を記録し、実施できる工程を続ける。
 
-- UI/UX exists to help users formulate **high-quality, testable work/analysis hypotheses** that can lead to economic value, not merely to increase engagement or visual polish.
-- Show a guided path from **observation → question → hypothesis → required evidence → falsification → next action → measurable outcome**. Preserve the user's agency: hypotheses remain user-authored or explicitly labeled AI suggestions.
-- Use real source-linked data, comparisons, missing-data notices, and counterexamples to help the user discover non-obvious opportunities. Never present inferred causes or investment outcomes as established facts.
-- Lower effort to inspect alternative explanations and revise or discard a hypothesis; avoid leading questions that simply confirm the user's first guess.
-- Evaluate UX by usable hypotheses, completed independent checks, decisions taken, and ultimately **realized profit**, rather than screen count, clicks, or time spent. Avoid collecting unnecessary personal information.
-- Before building a new widget, state the user hypothesis it enables, how it will be checked, and what economic decision it could improve. Prefer a minimal interaction experiment over a large speculative redesign.
+## データ、変換、配布の責任
 
-## Domain research evaluation
+- [構成と正本の一覧](docs/architecture.md)に従う。決算開示の証拠の正本は `data/earnings_ledger/` とする。取得側が一次資料の取得と検証、元データの保存、識別子を担う。SEC/EDGAR、TDnet/JPX、企業IR、公式API、契約で認められた提供元を使う。
+- スキーマが求める資料の識別子・URL、公開日時・観測日時、会計期間と会計基準、単位と通貨、値の種別、証拠ID、ハッシュを保つ。実績、会社予想、市場予想、推計、シナリオ、派生値、棄却記録を区別する。派生値で実績を上書きしない。
+- 欠損、古さ、矛盾、非開示、比較不能を表示する。欠損をゼロとして処理せず、不明な値、期間、会計基準、出典、通貨、桁、予想を推測で補わない。出典欠落、スキーマ不正、ハッシュや来歴不整合、期間・単位の曖昧さ、監査失敗では該当する公開処理を止める。
+- 集計・正規化・結合は既存のdbtモデルを優先する。dbtはSilverからGoldへの再現可能な変換、モデルの品質テストとCI、系譜、生成文書・カタログを担う。Goldの変換をUI・API・Google Sheets・BIへ複製しない。確立していない因果は、既存の証拠へ追加の結合や注記で表す。dbtの検証失敗でも該当する分析・公開を止める。
+- 予定時刻の実行、mainへの統合、公開は個別に確認する。公開監査は配布の版、応答内容、正本の値を直接照合する。監査結果は再実行できるようにし、所管ワークフローが要求する `audit_latest.json` を保存する。可逆な変更は `git revert` で戻せるようにする。
 
-- Define the thesis, observable drivers, falsification conditions and canonical evidence before selecting the toolchain. Keep those definitions versioned independently of the runner.
-- Reconstruct the evidence available at the decision cutoff. Exercise amendments, splits, stale or incomplete data, and unseen periods in independent checks.
-- Promote a candidate only after source linkage, calculation, replay, and fail-closed checks pass. Compare successful runs on the same inputs using measured tokens and elapsed time.
-- Use a deterministic path for acquisition, normalization, calculations, and ordinary updates. Reserve model calls for unresolved interpretation and record provider usage when available.
+## 画面と分析の受入条件
+
+- 決算画面を変えたら、公開トップから企業を選び、同じ四半期の売上高・営業利益を見つけ、各指標の提出書類を開く。PCとスマートフォン幅で、取得日、対象期間、通貨、実績、未収録、詳細分析へのリンク、共有済みの絞り込みURLを確認する。
+- 分析画面は、観測、問い、仮説、必要な証拠、反証、次の行動、測定できる結果をつなぐ。利用者が別の説明と比較し、仮説を修正できるようにする。利用者の仮説とAIが提案した仮説を表示で区別する。新しい機能には、対象の仮説、検証できる証拠、影響を受ける判断を示す。
+- 分析を変更するときは、仮説、観測指標、反証条件、証拠の版を実行手段から独立させる。判断時点で入手できた証拠を復元し、訂正、分割、古さ、未取得、未知の期間を含めて検証する。出典、計算、再現、公開停止の条件が通った候補を採用する。同じ入力で所要時間と取得できたトークン使用量を比べる。
+
+## 実現純利益の確認
+
+- [収益検証](https://github.com/KAFKA2306/semiconductor-earnings-model/issues/231)では、支払意思や実際の購入で確かめられる仮説を優先する。価格、成約、返金、外部費用、保守工数、観測期間を記録し、実測と推計を区別する。
+- 使える仮説、独立した検証、判断に使われた件数、実現純利益を評価する。必要な範囲で利用状況を計測し、法令、利用契約、プライバシー、公開・費用の権限、出典とデータ品質の条件を守る。

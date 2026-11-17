@@ -1,0 +1,21 @@
+{
+  "name": "semiconductor-earnings-model",
+  "interface": {
+    "displayName": "半導体決算"
+  },
+  "plugins": [
+    {
+      "name": "kafstyler",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/KAFKA2306/kafstyler.git",
+        "sha": "3b640abf05dc8883b59a0208bc118f25d49cbca9"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

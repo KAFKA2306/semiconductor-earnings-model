@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "kafka-agent-tools": {
+      "source": {
+        "source": "github",
+        "repo": "KAFKA2306/agent-resources"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "kafstyler@kafka-agent-tools": true
+  }
+}
