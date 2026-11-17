@@ -252,12 +252,13 @@ const directoryRows = [home, earnings].map(page => {
 for (const company of earningsData.companies) {
   const route = 'earnings/' + company.id + '/';
   const latest = company.quarters[0];
-  const expectedFilings = latest ? new Set([latest.revenue.source_url, latest.operating_income.source_url]) : new Set();
+  const expectedFilings = latest ? [...new Set([latest.revenue.source_url, latest.operating_income.source_url])] : [];
   for (const rows of directoryRows) {
     const row = rows.find(entry => entry.includes('href="' + base + route + '"'));
     if (!row) throw new Error('Earnings entry cannot reach ' + company.id);
     const links = Array.from(row.matchAll(/<a\b(?=[^>]*\bdata-filing-link\b)[^>]*\bhref="([^"]+)"[^>]*>/g), match => match[1]);
-    if (links.length !== expectedFilings.size || [...expectedFilings].some(url => !links.includes(url))) {
+    if ((latest && !row.includes('datetime="' + latest.period_end + '"')) ||
+        links.length !== expectedFilings.length || expectedFilings.some((url, i) => url !== links[i])) {
       throw new Error('Earnings entry shows incorrect or missing quarter filings for ' + company.id);
     }
   }
