@@ -77,9 +77,15 @@ A claim becomes work only when deleting it makes one acceptance criterion unprov
 
 ## Kafstylerの適用
 
-作業開始時に [Kafstylerのmain](https://github.com/KAFKA2306/kafstyler/tree/main) のコミットを確定し、その版の `AGENTS.md` と作業に必要な `skills/<name>/SKILL.md` を適用する。まず `charter` で利用者の完了場面と合格条件を定める。検証結果には、参照したコミットと通常の利用経路で観察した結果を残す。プロジェクト固有の不足はこのファイルか実装で直し、共通手順の不足はKafstylerの改善手順で扱う。
+[Kafstylerの導入手順](https://github.com/KAFKA2306/kafstyler#プラグインの使い方)に従い、このリポジトリで起動する。Claude Codeでは `/loop 5m /kafstyler:deliver <IssueのURLと今回の合格条件>` で開始し、登録と解除を[自律開発の手順](https://github.com/KAFKA2306/kafstyler/blob/main/skills/deliver/SKILL.md)で確認する。プラグインを使えない実行環境では、着手前に [Kafstylerのmain](https://github.com/KAFKA2306/kafstyler/tree/main) のコミットを確定し、その版の `AGENTS.md` と必要なスキルの本文を使う。どの環境でも使用した版とスキルを作業記録に残す。
 
-決算画面の変更では、公開トップから会社を選び、同じ四半期の売上高と営業利益を見つけ、各指標の提出書類を開けることをデスクトップとスマートフォン幅で確認する。取得日、対象期間、通貨、実績、未収録を区別する。詳細分析へのリンクと共有済みの絞り込みURLも確かめる。
+### 自律改善の1回分
+
+1. 対象の `main`、公開先、既存のIssue・PR、該当する監査結果を読む。統合や配布の確認が残る案件から再開する。新規は、普段の利用経路で再現できる実害を、影響と観測できる改善幅で比べて1件選ぶ。進行中の同じ案件があれば引き継ぐ。
+2. `charter` で利用者が終えたい操作と合格条件を定め、変更前の実測を取る。`deliver` で直し、`scrutiny` で通り抜ける失敗例を探し、`benchmark` で同じ入力を再実行する。データ契約を変える場合は先に `schema` を使う。
+3. 対象の手順で必須チェックと通常操作を確認し、PRを統合する。公開する変更は配信されたSHAと実際の操作結果も確認する。既存のIssueかPRに、対象とKafstylerのSHA、操作・期待値・実測、公開確認、次に再開する条件を残す。必須の確認が残る案件はその条件が変わった回に再開する。着手できる案件がない回は確認した事実を報告する。プロジェクト固有の不足はこの規約か実装で直し、共通手順の不足はKafstylerの改善手順に渡す。
+
+決算画面の変更では、公開トップから企業を選び、同じ四半期の売上高と営業利益を見つけ、各指標の提出書類を開く。デスクトップとスマートフォン幅で試し、取得日、対象期間、通貨、実績、未収録の表示を確かめる。詳細分析への往復と共有済みの絞り込みURLも試す。
 
 ## UX purpose: elicit valuable user hypotheses
 
