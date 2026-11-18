@@ -1,3 +1,12 @@
+---
+type: "documentation"
+description: "半導体企業の実績・会社予想・設備投資を一次資料と期間・単位を保って検証する研究基盤の入口。"
+tags:
+  - semiconductor/earnings
+  - semiconductor/research
+  - data/evidence
+---
+
 # 半導体決算・財務データ研究基盤
 
 [![Publish earnings model](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/semiconductor-earnings-model/actions/workflows/pages.yml)
