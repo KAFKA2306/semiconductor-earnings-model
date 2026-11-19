@@ -203,31 +203,7 @@ MCPは公式Python SDK v2の `MCPServer` を使うstateless Streamable HTTP `/mc
 
 ## ローカル検証
 
-```bash
-uv sync
-: "${SEC_USER_AGENT:?set SEC_USER_AGENT to identify the real operator/contact}"
-uv run python scripts/build_primary_api.py
-uv run python scripts/build_semiconductor_profit_api.py
-uv run python scripts/build_semiconductor_resilience_api_v2.py
-uv run python scripts/build_semiconductor_research_api.py
-uv run python scripts/finalize_semiconductor_research_api.py
-uv run python scripts/build_demand_api.py
-uv run python scripts/update_nand_kpis.py --offline
-uv run python scripts/update_market_positioning.py
-uv run python scripts/build_financial_database_with_nand.py
-uv run python scripts/build_star_schema.py
-uv run python scripts/check_readme_pages_link.py
-uv run python scripts/build_model_snapshot.py
-uv run python scripts/run_quant_audit.py data/quant_audit/semiconductor_latest.json --output site/public/data/quant-audit.json
-uv run python scripts/check_data_platform_standard.py
-uv run --with "mcp>=2,<3" python scripts/check_mcp_contract.py
-uv run python -m pytest -q
-npm --prefix site ci
-npm --prefix site run test:unit-audit
-GITHUB_REPOSITORY=KAFKA2306/semiconductor-earnings-model PUBLIC_BUILD_SHA=local npm --prefix site run build
-```
-
-`SEC_USER_AGENT`には実際の運用者を識別できる連絡情報を設定してください。信用需給の認証済み取得には、`JQUANTS_API_KEY`と`DATA_GO_KR_SERVICE_KEY`も設定します。
+[環境を準備](docs/development.md#setup)し、[変更範囲別の検査](docs/development.md#fast-checks-by-change-type)を選んでください。複数のデータ経路を変更する場合やマージ前に全体を確かめる場合は、[一括検証](docs/development.md#full-local-verification)を実行してください。
 
 ## 注意
 
