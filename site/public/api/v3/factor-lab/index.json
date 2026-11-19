@@ -3,11 +3,11 @@
     "attached_row_count": 214,
     "factor_count": 27,
     "factor_row_count": 214,
-    "rows_with_any_forward_return": 174,
-    "rows_without_start_price": 12,
+    "rows_with_any_forward_return": 141,
+    "rows_without_start_price": 48,
     "test_count": 108
   },
-  "content_hash": "60b04959aad85edc83b261b6a819b6916abd2b20cc49175f7756e693643fc6da",
+  "content_hash": "dfd0a93ba258acc91a83e4d4a68b3b0c0df1b5f660d4cf50465066e0d2056d44",
   "factor_observations": [
     {
       "age_days": 0,
@@ -3047,12 +3047,7 @@
         "sandisk:2025-10-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.14297950855764907,
-        "3m": 1.9456155611334962,
-        "6m": 7.380977632663871
-      },
+      "forward_returns": {},
       "known_at": "2025-11-06",
       "raw_value": 652000000.0,
       "source_type": "actual",
@@ -3067,12 +3062,7 @@
         "sandisk:2025-10-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": 1.427542287247309,
-        "3m": 1.9182322277343045,
-        "6m": 7.561041068755442
-      },
+      "forward_returns": {},
       "known_at": "2025-11-06",
       "raw_value": 652000000.0,
       "source_type": "actual",
@@ -3087,12 +3077,7 @@
         "sandisk:2026-01-02:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.06938845202055322,
-        "3m": 0.8878299617993535,
-        "6m": 0.9361885157311136
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 907000000.0,
       "source_type": "actual",
@@ -3107,12 +3092,7 @@
         "sandisk:2026-01-02:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.07524070524648163,
-        "3m": 1.8452381034539362,
-        "6m": 1.5306905536001305
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 907000000.0,
       "source_type": "actual",
@@ -3127,12 +3107,7 @@
         "sandisk:2026-01-02:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.7258632596983634,
-        "3m": 2.57876079636014,
-        "6m": 1.7225736403337328
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 907000000.0,
       "source_type": "actual",
@@ -3147,12 +3122,7 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.6063966931660174,
-        "3m": 0.16730348974295883,
-        "6m": 0.21298486742717326
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3167,12 +3137,7 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.2908431848761248,
-        "3m": -0.11055227661683753,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3187,12 +3152,7 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.4370659788399216,
-        "3m": -0.23924123593206115,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3207,12 +3167,7 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.2896454712558534,
-        "3m": -0.05263283234626759,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3227,12 +3182,7 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.11054450046227315,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3247,12 +3197,7 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.3385271454178749,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3267,12 +3212,7 @@
         "sandisk:2026-04-03:revenue:consumer:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Consumer",
-      "forward_returns": {
-        "12m": null,
-        "1m": null,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 820000000.0,
       "source_type": "actual",
@@ -3507,12 +3447,7 @@
         "sandisk:2025-10-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.14297950855764907,
-        "3m": 1.9456155611334962,
-        "6m": 7.380977632663871
-      },
+      "forward_returns": {},
       "known_at": "2025-11-06",
       "raw_value": 269000000.0,
       "source_type": "actual",
@@ -3527,12 +3462,7 @@
         "sandisk:2025-10-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": 1.427542287247309,
-        "3m": 1.9182322277343045,
-        "6m": 7.561041068755442
-      },
+      "forward_returns": {},
       "known_at": "2025-11-06",
       "raw_value": 269000000.0,
       "source_type": "actual",
@@ -3547,12 +3477,7 @@
         "sandisk:2026-01-02:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.06938845202055322,
-        "3m": 0.8878299617993535,
-        "6m": 0.9361885157311136
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 440000000.0,
       "source_type": "actual",
@@ -3567,12 +3492,7 @@
         "sandisk:2026-01-02:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.07524070524648163,
-        "3m": 1.8452381034539362,
-        "6m": 1.5306905536001305
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 440000000.0,
       "source_type": "actual",
@@ -3587,12 +3507,7 @@
         "sandisk:2026-01-02:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.7258632596983634,
-        "3m": 2.57876079636014,
-        "6m": 1.7225736403337328
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 440000000.0,
       "source_type": "actual",
@@ -3607,12 +3522,7 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.6063966931660174,
-        "3m": 0.16730348974295883,
-        "6m": 0.21298486742717326
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3627,12 +3537,7 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.2908431848761248,
-        "3m": -0.11055227661683753,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3647,12 +3552,7 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.4370659788399216,
-        "3m": -0.23924123593206115,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3667,12 +3567,7 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.2896454712558534,
-        "3m": -0.05263283234626759,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3687,12 +3582,7 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.11054450046227315,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3707,12 +3597,7 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.3385271454178749,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3727,12 +3612,7 @@
         "sandisk:2026-04-03:revenue:datacenter:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Datacenter",
-      "forward_returns": {
-        "12m": null,
-        "1m": null,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 1467000000.0,
       "source_type": "actual",
@@ -3747,12 +3627,7 @@
         "sandisk:2025-10-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.14297950855764907,
-        "3m": 1.9456155611334962,
-        "6m": 7.380977632663871
-      },
+      "forward_returns": {},
       "known_at": "2025-11-06",
       "raw_value": 1387000000.0,
       "source_type": "actual",
@@ -3767,12 +3642,7 @@
         "sandisk:2025-10-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": 1.427542287247309,
-        "3m": 1.9182322277343045,
-        "6m": 7.561041068755442
-      },
+      "forward_returns": {},
       "known_at": "2025-11-06",
       "raw_value": 1387000000.0,
       "source_type": "actual",
@@ -3787,12 +3657,7 @@
         "sandisk:2026-01-02:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.06938845202055322,
-        "3m": 0.8878299617993535,
-        "6m": 0.9361885157311136
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 1678000000.0,
       "source_type": "actual",
@@ -3807,12 +3672,7 @@
         "sandisk:2026-01-02:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.07524070524648163,
-        "3m": 1.8452381034539362,
-        "6m": 1.5306905536001305
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 1678000000.0,
       "source_type": "actual",
@@ -3827,12 +3687,7 @@
         "sandisk:2026-01-02:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.7258632596983634,
-        "3m": 2.57876079636014,
-        "6m": 1.7225736403337328
-      },
+      "forward_returns": {},
       "known_at": "2026-01-29",
       "raw_value": 1678000000.0,
       "source_type": "actual",
@@ -3847,12 +3702,7 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.6063966931660174,
-        "3m": 0.16730348974295883,
-        "6m": 0.21298486742717326
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -3867,12 +3717,7 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.2908431848761248,
-        "3m": -0.11055227661683753,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -3887,12 +3732,7 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.4370659788399216,
-        "3m": -0.23924123593206115,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -3907,12 +3747,7 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.2896454712558534,
-        "3m": -0.05263283234626759,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -3927,12 +3762,7 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": 0.11054450046227315,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -3947,12 +3777,7 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": -0.3385271454178749,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -3967,12 +3792,7 @@
         "sandisk:2026-04-03:revenue:edge:actual"
       ],
       "factor_name": "actual:revenue:USD:quarter:segment:Edge",
-      "forward_returns": {
-        "12m": null,
-        "1m": null,
-        "3m": null,
-        "6m": null
-      },
+      "forward_returns": {},
       "known_at": "2026-04-30",
       "raw_value": 3663000000.0,
       "source_type": "actual",
@@ -6244,7 +6064,7 @@
   },
   "market_data": {
     "raw_persisted": false,
-    "raw_sha256": "1f3b6835a909ef54ca5d39154ff81e350b9ceb44d3ac19e8dc3f5ee994332d62",
+    "raw_sha256": "347427e80d0f53a4577604c0020269bf59aa9aba8fdc514023816048abbce3b0",
     "source": "Yahoo Finance via yfinance",
     "symbols": {
       "alphabet": "GOOGL",
