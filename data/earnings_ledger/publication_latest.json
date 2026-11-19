@@ -1,26 +1,16 @@
 {
   "schema_version": "earnings-ledger-publication.v1",
-  "generated_from_run_at": "2026-11-18T17:16:11.038722Z",
+  "generated_from_run_at": "2026-11-19T00:24:11.366777Z",
   "audit_status": "PASS",
-  "accepted_events_total": 1,
+  "accepted_events_total": 0,
   "ledger_accepted_events_total": 35,
-  "expired_events_total": 34,
-  "rejected_events_total": 642,
+  "expired_events_total": 35,
+  "rejected_events_total": 651,
   "unsupported_or_disabled_sources": [
     "sk-hynix",
     "samsung-electronics"
   ],
-  "events": [
-    {
-      "event_id": "b12efd96de2a774d29b40935",
-      "company_id": "nvidia",
-      "company_name": "NVIDIA",
-      "document_type": "8-K",
-      "published_at": "2026-11-17T21:20:51Z",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/0001045810-26-000088-index.html",
-      "freshness": "PASS"
-    }
-  ],
+  "events": [],
   "audit_artifacts": {
     "ledger": "audit_latest.json",
     "semantic_duplicates": "semantic_duplicate_audit_latest.json",
