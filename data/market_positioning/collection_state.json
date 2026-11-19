@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-18T18:18:33+00:00",
-  "new_observations": 3,
+  "generated_at": "2026-11-19T03:44:56+00:00",
+  "new_observations": 11,
   "schema_version": "1.0.0",
   "sources": [
     {
@@ -14,12 +14,10 @@
       "status": "disabled_missing_secret"
     },
     {
-      "archive_errors": [
-        "https://www.semiconductors.org/policies/tax/market-data/?type=post: IncompleteRead(0 bytes read)"
-      ],
-      "observations": 3,
+      "archive_errors": [],
+      "observations": 11,
       "release_errors": [],
-      "release_links": 3,
+      "release_links": 11,
       "source": "sia_wsts",
       "status": "ok"
     }
