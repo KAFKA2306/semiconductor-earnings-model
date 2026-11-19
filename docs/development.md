@@ -1,6 +1,12 @@
-# Development and verification
+---
+type: "documentation"
+description: "半導体決算・財務データ研究基盤の環境準備、ローカル実行、変更範囲別の検証手順。"
+tags:
+  - semiconductor/earnings
+  - semiconductor/development
+---
 
-この文書は、READMEに散在していたローカル実行・検証コマンドをまとめます。
+# Development and verification
 
 リポジトリ全体の契約は [../AGENTS.md](../AGENTS.md)、正本境界は [architecture.md](architecture.md) を先に確認してください。
 
@@ -116,6 +122,7 @@ uv run python scripts/finalize_semiconductor_research_api.py
 uv run python scripts/build_demand_api.py
 uv run python scripts/update_nand_kpis.py --offline
 uv run python scripts/build_financial_database_with_nand.py
+uv run python scripts/build_star_schema.py
 uv run python scripts/check_readme_pages_link.py
 uv run python scripts/build_model_snapshot.py
 uv run python scripts/run_quant_audit.py \
