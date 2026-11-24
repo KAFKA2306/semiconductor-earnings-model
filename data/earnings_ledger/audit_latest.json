@@ -1,14 +1,14 @@
 {
   "schema_version": "earnings-ledger-audit.v1",
-  "run_at": "2026-11-24T04:49:54.697724Z",
+  "run_at": "2026-11-24T17:47:33.358466Z",
   "accepted_events_total": 35,
-  "rejected_events_total": 704,
+  "rejected_events_total": 705,
   "source_status": [
     {
       "source_id": "nvidia",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 1
     },
     {
       "source_id": "amd",
@@ -74,7 +74,7 @@
       "source_id": "arm",
       "status": "success",
       "accepted": 0,
-      "rejected": 2
+      "rejected": 1
     },
     {
       "source_id": "synopsys",
