@@ -8466,6 +8466,89 @@
           "completed_at": "2026-11-23T03:45:29Z"
         }
       }
+    },
+    "2026-11-24": {
+      "requests": {
+        "2e1e0a9684b3d280cb2ebf6feddd085cdc9153ce0e622c33203f4c2a7c0955e0": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies",
+          "params": [
+            [
+              "edinet_code",
+              "E02144"
+            ],
+            [
+              "edinet_code",
+              "E35948"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/factory",
+            "KAFKA2306/investor2",
+            "KAFKA2306/semiconductor-earnings-model"
+          ],
+          "response_sha256": "23a871b57462fc8118484f5dc1c5664f892cf4abff08f114814997615844d6b5",
+          "completed_at": "2026-11-24T06:58:39Z"
+        },
+        "419b37cbc3fa2157cc6dd4e2961fb3f972e24dc11eb3e25cdb79fa54cfb8f967": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E02144/financials",
+          "params": [
+            [
+              "include_null_reasons",
+              "true"
+            ],
+            [
+              "include_nulls",
+              "true"
+            ],
+            [
+              "period",
+              "annual"
+            ],
+            [
+              "years",
+              "6"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/factory"
+          ],
+          "response_sha256": "42d6b2cc465a0c02dfdf2dacb284348d96d82b996eca6c15269891bbbb5155ef",
+          "completed_at": "2026-11-24T06:58:39Z"
+        },
+        "0f4eefa448c82d686bb15db909760186483e13f9d52afd62570a29a1fcd528ad": {
+          "status": "success",
+          "method": "GET",
+          "path": "/v1/companies/E35948/financials",
+          "params": [
+            [
+              "include_null_reasons",
+              "true"
+            ],
+            [
+              "include_nulls",
+              "true"
+            ],
+            [
+              "period",
+              "annual"
+            ],
+            [
+              "years",
+              "6"
+            ]
+          ],
+          "consumers": [
+            "KAFKA2306/investor2",
+            "KAFKA2306/semiconductor-earnings-model"
+          ],
+          "response_sha256": "d9b253516328fecca2db43a4dd8a7a7baed2e01ccbad90505d2548cb7bd56e12",
+          "completed_at": "2026-11-24T06:58:40Z"
+        }
+      }
     }
   }
 }
